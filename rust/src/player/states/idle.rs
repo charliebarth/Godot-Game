@@ -1,4 +1,4 @@
-use crate::player::traits::player_state::State;
+use crate::player::traits::state::State;
 
 #[derive(PartialEq, Debug)]
 pub struct Idle {}

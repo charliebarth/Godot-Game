@@ -4,11 +4,15 @@ mod player {
 
     pub mod player;
     mod traits {
-        pub mod player_state;
+        pub mod state;
     }
 
     mod enums {
         pub mod player_states;
+    }
+
+    mod states {
+        pub mod jump;
     }
 }
 
