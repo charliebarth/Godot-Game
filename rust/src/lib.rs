@@ -12,8 +12,6 @@ mod player {
     }
 }
 
-// const MAX_JUMP_HEIGHT: f32 = 300.0;
-
 struct MyExtension;
 
 #[gdextension]
