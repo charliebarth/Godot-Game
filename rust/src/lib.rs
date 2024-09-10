@@ -4,11 +4,7 @@ mod player {
 
     pub mod player;
     mod traits {
-        pub mod state;
-    }
-
-    mod enums {
-        pub mod player_states;
+        pub mod player_state;
     }
 
     mod states {

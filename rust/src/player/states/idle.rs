@@ -1,9 +1,9 @@
-use crate::player::traits::state::State;
+use crate::player::traits::state::PlayerState;
 
 #[derive(PartialEq, Debug)]
 pub struct Idle {}
 
-impl State for Idle {
+impl PlayerState for Idle {
     fn enter() {}
 
     fn update() {}

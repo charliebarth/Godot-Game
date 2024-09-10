@@ -1,9 +1,9 @@
-use crate::player::traits::state::State;
+use crate::player::traits::player_state::PlayerState;
 
 #[derive(PartialEq, Debug)]
 pub struct Jump {}
 
-impl State for Jump {
+impl PlayerState for Jump {
     fn enter() {}
 
     fn update() {}

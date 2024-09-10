@@ -2,7 +2,7 @@
 /// CS 495 Capstone 1
 ///
 /// A trait defining what methods all player states must have.
-pub trait State {
+pub trait PlayerState {
     /// Called when first transitioning to the player state. This will trigger any
     /// associated actions such as applying to physics to make the player jump.
     /// This method can contain one time logic that shouldn't trigger every frame
