@@ -8,7 +8,8 @@ use godot::classes::ICharacterBody2D;
 // use godot::meta::FromGodot;
 use godot::prelude::*;
 
-use super::enums::player_states::PlayerStates;
+use super::states::jump::Jump;
+use super::traits::player_state::State;
 
 // const MAX_JUMP_HEIGHT: f32 = 300.0;
 
@@ -16,8 +17,8 @@ use super::enums::player_states::PlayerStates;
 #[class(base=CharacterBody2D)]
 struct Player {
     base: Base<CharacterBody2D>,
-    cur_state: PlayerStates,
-    last_state: PlayerStates,
+    cur_state: Box<dyn State>,
+    last_state: Box<dyn State>,
 }
 
 #[godot_api]
@@ -26,7 +27,7 @@ impl ICharacterBody2D for Player {
         Self {
             base,
             cur_state: PlayerStates::Idle,
-            last_state: PlayerStates::Fall,
+            last_state: PlayerStates::Jump(Jump),
         }
     }
 
