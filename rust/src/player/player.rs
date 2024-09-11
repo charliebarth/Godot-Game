@@ -12,6 +12,8 @@ use super::player_states::jump::Jump;
 use super::traits::player_state::PlayerState;
 
 // const MAX_JUMP_HEIGHT: f32 = 300.0;
+const MAX_HEALTH: u8 = 100;
+const MIN_HEALTH: u8 = 0;
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
@@ -19,6 +21,8 @@ pub struct Player {
     base: Base<CharacterBody2D>,
     direction: f32,
     gravity: f64,
+    health: u8,
+    delta: f64,
     current_state: Box<dyn PlayerState>,
 }
 
@@ -33,11 +37,14 @@ impl ICharacterBody2D for Player {
             base,
             current_state: Box::new(Jump),
             direction: 1.0,
+            health: 100,
+            delta: 0.0,
             gravity,
         }
     }
 
     fn physics_process(&mut self, delta: f64) {
+        self.set_delta(delta);
         let mut base_vel = self.base_mut().get_velocity();
 
         if !self.base().is_on_floor() {
@@ -62,5 +69,39 @@ impl Player {
 
     pub fn get_current_state(&self) -> Box<dyn PlayerState> {
         self.current_state.clone()
+    }
+
+    fn set_delta(&mut self, delta: f64) {
+        self.delta = delta;
+    }
+
+    pub fn get_delta(&self) -> f64 {
+        self.delta
+    }
+
+    pub fn get_health(&self) -> u8 {
+        self.health
+    }
+
+    pub fn set_dir(&mut self, dir: f32) {
+        self.direction = dir;
+    }
+
+    pub fn get_dir(&self) -> f32 {
+        self.direction
+    }
+
+    pub fn adjust_health(&mut self, health: i8) {
+        // Adjust health positively or negatively
+        let new_health = if health < 0 {
+            // Subtract health, but ensure we handle underflow
+            self.health.wrapping_sub(-health as u8) // `-health` converts to positive
+        } else {
+            // Add health, but ensure no overflow
+            self.health.saturating_add(health as u8)
+        };
+
+        // Clamp health between MIN_HEALTH and MAX_HEALTH
+        self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
     }
 }
