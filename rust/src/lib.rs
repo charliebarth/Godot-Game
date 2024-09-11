@@ -3,12 +3,9 @@ use godot::prelude::*;
 mod player {
 
     pub mod player;
-    mod traits {
-        pub mod player_state;
-    }
 
-    mod states {
-        pub mod jump;
+    mod enums {
+        pub mod player_state;
     }
 }
 
