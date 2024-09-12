@@ -104,4 +104,17 @@ impl Player {
         // Clamp health between MIN_HEALTH and MAX_HEALTH
         self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
     }
+
+    pub fn get_horizontal_movement(&mut self) -> f32 {
+        let move_left = StringName::from("move_left");
+        let move_right = StringName::from("move_right");
+        Input::singleton().get_axis(move_left, move_right)
+    }
+
+    pub fn apply_horizontal_velocity(&mut self, direction: f32, speed: f32) {
+        let mut base = self.base_mut();
+        let mut base_vel = base.get_velocity();
+        base_vel.x = speed * direction;
+        base.set_velocity(base_vel);
+    }
 }
