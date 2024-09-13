@@ -12,22 +12,17 @@ impl PlayerState for TurnAround {
         let horizontal_dir = player.get_horizontal_movement();
 
         if horizontal_dir == 0.0 {
-            return;
+            return; // No movement
         }
 
         let mut base_vel = player.base_mut().get_velocity();
 
+        // If player has already turned, accelerate in the new direction
         if horizontal_dir != player.get_dir() {
-            if base_vel.x.abs() > 0.1 {
-                base_vel.x *= 0.5;
-            } else {
-                player.set_dir(horizontal_dir);
-                base_vel.x = horizontal_dir * 50.0;
+            // Start acceleration from the current velocity, increasing until reaching normal speed
+            if base_vel.x.abs() < 125.0 {
+                base_vel.x += horizontal_dir * 5.0; // Gradually increase the speed
             }
-        }
-
-        if base_vel.x.abs() < 125.0 {
-            base_vel.x += horizontal_dir * 5.0;
         }
 
         player.base_mut().set_velocity(base_vel);
