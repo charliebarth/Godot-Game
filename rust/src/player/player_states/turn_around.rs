@@ -52,4 +52,8 @@ impl PlayerState for TurnAround {
     fn clone(&self) -> Box<dyn PlayerState> {
         Box::new(TurnAround)
     }
+
+    fn as_str(&self) -> &str {
+        "turn_around"
+    }
 }

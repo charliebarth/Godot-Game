@@ -17,4 +17,8 @@ impl PlayerState for Fall {
     fn clone(&self) -> Box<dyn PlayerState> {
         Box::new(Fall)
     }
+
+    fn as_str(&self) -> &str {
+        "fall"
+    }
 }

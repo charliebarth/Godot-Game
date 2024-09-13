@@ -41,4 +41,8 @@ impl PlayerState for Run {
     fn clone(&self) -> Box<dyn PlayerState> {
         Box::new(Run)
     }
+
+    fn as_str(&self) -> &str {
+        "run"
+    }
 }

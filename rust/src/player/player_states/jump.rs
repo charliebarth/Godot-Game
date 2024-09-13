@@ -40,4 +40,8 @@ impl PlayerState for Jump {
     fn clone(&self) -> Box<dyn PlayerState> {
         Box::new(Jump)
     }
+
+    fn as_str(&self) -> &str {
+        "jump"
+    }
 }

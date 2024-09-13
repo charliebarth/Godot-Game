@@ -27,4 +27,8 @@ impl PlayerState for Idle {
     fn clone(&self) -> Box<dyn PlayerState> {
         Box::new(Idle)
     }
+
+    fn as_str(&self) -> &str {
+        "idle"
+    }
 }

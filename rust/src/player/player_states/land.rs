@@ -29,4 +29,8 @@ impl PlayerState for Land {
     fn clone(&self) -> Box<dyn PlayerState> {
         Box::new(Land)
     }
+
+    fn as_str(&self) -> &str {
+        "land"
+    }
 }
