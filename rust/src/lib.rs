@@ -28,6 +28,8 @@ mod player {
     }
 }
 
+pub mod metalReserveBarManager;
+
 struct MyExtension;
 
 #[gdextension]
