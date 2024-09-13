@@ -24,6 +24,7 @@ pub struct Player {
     health: u8,
     delta: f64,
     current_state: Box<dyn PlayerState>,
+    anim_finished: bool,
 }
 
 #[godot_api]
@@ -40,6 +41,7 @@ impl ICharacterBody2D for Player {
             health: 100,
             delta: 0.0,
             gravity,
+            anim_finished: false,
         }
     }
 
@@ -65,6 +67,8 @@ impl Player {
     pub fn set_state(&mut self, new_state: Box<dyn PlayerState>) {
         self.current_state = new_state;
         self.get_current_state().enter(self);
+        self.anim_finished = false;
+        // TODO: Player animation
     }
 
     pub fn get_current_state(&self) -> Box<dyn PlayerState> {
@@ -83,12 +87,16 @@ impl Player {
         self.health
     }
 
-    pub fn set_dir(&mut self, dir: f32) {
-        self.direction = dir;
-    }
-
     pub fn get_dir(&self) -> f32 {
         self.direction
+    }
+
+    pub fn set_dir(&mut self, direction: f32) {
+        if direction < 0.0 {
+            self.direction = -1.0;
+        } else if direction > 0.0 {
+            self.direction = 1.0;
+        }
     }
 
     pub fn adjust_health(&mut self, health: i8) {
@@ -105,6 +113,9 @@ impl Player {
         self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
     }
 
+    /// Represents the direction the player is trying to move
+    /// Returns 1 when the move right button is pressed, -1 when the move left button is pressed, and 0 if neither is pressed
+    // TODO: Rename
     pub fn get_horizontal_movement(&mut self) -> f32 {
         let move_left = StringName::from("move_left");
         let move_right = StringName::from("move_right");
@@ -116,5 +127,13 @@ impl Player {
         let mut base_vel = base.get_velocity();
         base_vel.x = speed * direction;
         base.set_velocity(base_vel);
+    }
+
+    pub fn set_anim_finished(&mut self) {
+        self.anim_finished = true;
+    }
+
+    pub fn is_anim_finished(&self) -> bool {
+        self.anim_finished
     }
 }

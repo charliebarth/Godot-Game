@@ -17,6 +17,7 @@ mod player {
         pub mod jump_fall;
         pub mod land;
         pub mod run;
+        pub mod turn_around;
     }
 }
 
