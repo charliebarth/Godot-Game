@@ -8,11 +8,7 @@ use super::{fall::Fall, idle::Idle, jump::Jump, run::Run};
 pub struct Land;
 
 impl PlayerState for Land {
-    fn enter(&self, player: &mut Player) {
-        let mut base_vel = player.base_mut().get_velocity();
-        base_vel.y = 0.0;
-        player.base_mut().set_velocity(base_vel);
-    }
+    fn enter(&self, _player: &mut Player) {}
 
     fn update(&self, player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();

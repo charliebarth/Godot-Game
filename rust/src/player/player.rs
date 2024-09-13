@@ -48,6 +48,16 @@ impl ICharacterBody2D for Player {
     fn physics_process(&mut self, delta: f64) {
         self.set_delta(delta);
         self.get_current_state().update(self);
+
+        let mut base_vel = self.base_mut().get_velocity();
+
+        if !self.base().is_on_floor() {
+            base_vel.y += (self.gravity * self.delta) as f32;
+        } else {
+            base_vel.y = 0.0;
+        }
+        self.base_mut().set_velocity(base_vel);
+
         self.base_mut().move_and_slide();
     }
 }
