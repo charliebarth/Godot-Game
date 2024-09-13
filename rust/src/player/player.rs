@@ -1,3 +1,4 @@
+use godot::classes::AnimatedSprite2D;
 // use godot::builtin::StringName;
 // use godot::builtin::Vector2;
 // use godot::classes::AnimatedSprite2D;
@@ -66,8 +67,8 @@ impl Player {
     pub fn set_state(&mut self, new_state: Box<dyn PlayerState>) {
         self.current_state = new_state;
         self.get_current_state().enter(self);
+        self.update_animation();
         self.anim_finished = false;
-        // TODO: Player animation
     }
 
     pub fn get_current_state(&self) -> Box<dyn PlayerState> {
@@ -138,5 +139,35 @@ impl Player {
 
     pub fn get_gravity(&self) -> f64 {
         self.gravity
+    }
+
+    fn update_animation(&mut self) {
+        let mut sprite = self
+            .base()
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+
+        self.set_animation_direction(&mut sprite);
+
+        let animation_name = StringName::from(self.get_current_state().as_str());
+        if sprite.get_animation() != animation_name {
+            sprite.set_animation(animation_name.into());
+            sprite.play();
+        }
+    }
+
+    fn set_animation_direction(&mut self, sprite: &mut Gd<AnimatedSprite2D>) {
+        let mut scale = sprite.get_scale();
+        let mut pos = sprite.get_position();
+
+        if self.direction < 0.0 && scale.x != -1.0 {
+            scale.x = -1.0;
+            pos.x -= 9.0;
+        } else if self.direction > 0.0 && scale.x != 1.0 {
+            scale.x = 1.0;
+            pos.x += 9.0;
+        }
+
+        sprite.set_scale(scale);
+        sprite.set_position(pos);
     }
 }
