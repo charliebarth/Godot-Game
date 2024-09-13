@@ -1,4 +1,4 @@
-[gd_scene load_steps=109 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=111 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -19,6 +19,8 @@
 [ext_resource type="Texture2D" uid="uid://dml3kcgdisqxd" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchTransition.png" id="13_j5nd0"]
 [ext_resource type="Texture2D" uid="uid://bp24is0wwsbdv" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallSlide.png" id="15_h50qw"]
 [ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="18_wsmie"]
+[ext_resource type="PackedScene" uid="uid://ckj1p3ma4w4b2" path="res://scenes/health_bar.tscn" id="20_vju5u"]
+[ext_resource type="PackedScene" uid="uid://b2cab082bt2gh" path="res://scenes/metal_reserve_bars.tscn" id="21_guekr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mkisa"]
 atlas = ExtResource("1_28re0")
@@ -725,7 +727,33 @@ animations = [{
 }]
 
 [node name="Player" type="Player"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"clamber"
+animation = &"death"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 8)
+zoom = Vector2(4, 4)
+
+[node name="HealthBar" parent="Camera2D" instance=ExtResource("20_vju5u")]
+offset_left = -144.0
+offset_top = -81.0
+offset_right = -59.0
+offset_bottom = -54.0
+
+[node name="MetalReserveBars" parent="Camera2D" instance=ExtResource("21_guekr")]
+offset_left = -129.0
+offset_top = -61.0
+offset_right = -66.0
+offset_bottom = -20.0

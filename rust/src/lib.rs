@@ -10,6 +10,8 @@ use godot::prelude::*;
 
 // const MAX_JUMP_HEIGHT: f32 = 300.0;
 
+pub mod metalReserveBarManager;
+
 struct MyExtension;
 
 #[gdextension]
