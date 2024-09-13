@@ -11,14 +11,12 @@ mod player {
     }
 
     mod player_states {
-        pub mod decelerate;
         pub mod fall;
         pub mod idle;
         pub mod jump;
         pub mod jump_fall;
         pub mod land;
         pub mod run;
-        pub mod turn_around;
     }
 }
 
