@@ -9,7 +9,7 @@ use godot::classes::ProjectSettings;
 // use godot::meta::FromGodot;
 use godot::prelude::*;
 
-use super::player_states::jump::Jump;
+use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
 
 // const MAX_JUMP_HEIGHT: f32 = 300.0;
@@ -37,7 +37,7 @@ impl ICharacterBody2D for Player {
 
         Self {
             base,
-            current_state: Box::new(Jump),
+            current_state: Box::new(Idle),
             direction: 1.0,
             health: 100,
             delta: 0.0,
@@ -47,28 +47,42 @@ impl ICharacterBody2D for Player {
     }
 
     fn ready(&mut self) {
+        self.set_state(Box::new(Idle));
+
         let method_name: StringName = "set_anim_finished".into();
         let callable: Callable = self.base_mut().callable(method_name);
+        let signal: StringName = "animation_finished".into();
+
         let mut sprite = self
             .base()
             .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
-        let signal: StringName = "animation_finished".into();
+
         sprite.connect(signal, callable);
         godot_print!("Connected signal");
     }
 
     fn physics_process(&mut self, delta: f64) {
         self.set_delta(delta);
-        self.get_current_state().update(self);
 
         let mut base_vel = self.base_mut().get_velocity();
+
+        let sprite = self
+            .base()
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+
+        if !sprite.is_playing() {
+            self.set_anim_finished();
+        }
 
         if !self.base().is_on_floor() {
             base_vel.y += (self.gravity * self.delta) as f32;
         } else {
             base_vel.y = 0.0;
         }
+
         self.base_mut().set_velocity(base_vel);
+
+        self.get_current_state().update(self);
 
         self.base_mut().move_and_slide();
     }
@@ -76,6 +90,7 @@ impl ICharacterBody2D for Player {
 
 impl Player {
     pub fn set_state(&mut self, new_state: Box<dyn PlayerState>) {
+        godot_print!("{}", new_state.as_str());
         self.current_state = new_state;
         self.get_current_state().enter(self);
         self.update_animation();
