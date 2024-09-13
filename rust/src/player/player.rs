@@ -46,6 +46,17 @@ impl ICharacterBody2D for Player {
         }
     }
 
+    fn ready(&mut self) {
+        let method_name: StringName = "set_anim_finished".into();
+        let callable: Callable = self.base_mut().callable(method_name);
+        let mut sprite = self
+            .base()
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+        let signal: StringName = "animation_finished".into();
+        sprite.connect(signal, callable);
+        godot_print!("Connected signal");
+    }
+
     fn physics_process(&mut self, delta: f64) {
         self.set_delta(delta);
         self.get_current_state().update(self);
@@ -130,6 +141,7 @@ impl Player {
     }
 
     pub fn set_anim_finished(&mut self) {
+        godot_print!("Recieved signal");
         self.anim_finished = true;
     }
 
