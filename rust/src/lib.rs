@@ -11,6 +11,7 @@ mod player {
     }
 
     mod player_states {
+        pub mod decelerate;
         pub mod fall;
         pub mod idle;
         pub mod jump;
