@@ -8,7 +8,9 @@ use super::{fall::Fall, jump::Jump, run::Run};
 pub struct Idle;
 
 impl PlayerState for Idle {
-    fn enter(&self, _player: &mut Player) {}
+    fn enter(&self, player: &mut Player) {
+        player.apply_horizontal_velocity(1.0, 0.0);
+    }
 
     fn update(&self, player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
