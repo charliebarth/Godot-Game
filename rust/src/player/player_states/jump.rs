@@ -4,7 +4,7 @@ use crate::player::{player::Player, traits::player_state::PlayerState};
 
 use super::{fall::Fall, idle::Idle, jump_fall::JumpFall, land::Land};
 
-const MAX_JUMP_HEIGHT: f32 = 300.0;
+const MAX_JUMP_HEIGHT: f32 = 375.0;
 
 #[derive(Clone)]
 pub struct Jump;
@@ -29,12 +29,9 @@ impl PlayerState for Jump {
 
         if y_vel > -10.0 && y_vel < 10.0 {
             player.set_state(Box::new(JumpFall))
-        } else if y_vel >= 10.0 {
-            player.set_state(Box::new(Fall))
         } else if player.base_mut().is_on_floor() {
             player.set_state(Box::new(Land))
         }
-        player.set_state(Box::new(Idle))
     }
 
     fn clone(&self) -> Box<dyn PlayerState> {
