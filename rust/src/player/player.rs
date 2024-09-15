@@ -53,9 +53,7 @@ impl ICharacterBody2D for Player {
         let callable: Callable = self.base_mut().callable(method_name);
         let signal: StringName = "animation_finished".into();
 
-        let mut sprite = self
-            .base()
-            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+        let mut sprite = self.get_sprite();
 
         sprite.connect(signal, callable);
         godot_print!("Connected signal");
@@ -66,9 +64,7 @@ impl ICharacterBody2D for Player {
 
         let mut base_vel = self.base_mut().get_velocity();
 
-        let sprite = self
-            .base()
-            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+        let sprite = self.get_sprite();
 
         if !sprite.is_playing() {
             self.set_anim_finished();
@@ -196,5 +192,9 @@ impl Player {
 
         sprite.set_scale(scale);
         sprite.set_position(pos);
+    }
+
+    pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
+        self.base().get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
     }
 }
