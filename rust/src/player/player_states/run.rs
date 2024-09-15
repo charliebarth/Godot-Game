@@ -18,8 +18,8 @@ impl PlayerState for Run {
         player.set_dir(horizontal_dir);
         player.apply_horizontal_velocity(horizontal_dir, 140.0);
 
-        let animation_speed = if horizontal_dir.abs() < 0.1 {
-            0.1
+        let animation_speed = if horizontal_dir.abs() < 0.2 {
+            0.2
         } else {
             horizontal_dir.abs()
         };
