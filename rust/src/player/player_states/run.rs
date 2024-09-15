@@ -18,7 +18,13 @@ impl PlayerState for Run {
         player.set_dir(horizontal_dir);
         player.apply_horizontal_velocity(horizontal_dir, 140.0);
 
-        player.get_sprite().set_speed_scale(horizontal_dir.abs());
+        let animation_speed = if horizontal_dir.abs() < 0.1 {
+            0.1
+        } else {
+            horizontal_dir.abs()
+        };
+
+        player.get_sprite().set_speed_scale(animation_speed);
     }
 
     fn update(&self, player: &mut Player) {
