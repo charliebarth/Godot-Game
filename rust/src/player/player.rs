@@ -195,6 +195,7 @@ impl Player {
     }
 
     pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
-        self.base().get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
+        self.base()
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
     }
 }
