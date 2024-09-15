@@ -2,7 +2,7 @@ use godot::{builtin::Vector2, obj::WithBaseField};
 
 use crate::player::{player::Player, traits::player_state::PlayerState};
 
-use super::{fall::Fall, idle::Idle, jump_fall::JumpFall, land::Land};
+use super::{jump_fall::JumpFall, land::Land};
 
 const MAX_JUMP_HEIGHT: f32 = 375.0;
 
