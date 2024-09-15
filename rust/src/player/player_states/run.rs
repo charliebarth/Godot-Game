@@ -4,6 +4,8 @@ use crate::player::{player::Player, traits::player_state::PlayerState};
 
 use super::{fall::Fall, idle::Idle, jump::Jump};
 
+const MAX_RUN_SPEED: f32 = 140.0;
+
 #[derive(Clone)]
 pub struct Run;
 
@@ -16,7 +18,7 @@ impl PlayerState for Run {
         }
 
         player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, 140.0);
+        player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED);
 
         let animation_speed = if horizontal_dir.abs() < 0.2 {
             0.2
