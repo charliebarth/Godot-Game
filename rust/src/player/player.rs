@@ -3,8 +3,6 @@ use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::ProjectSettings;
 use godot::prelude::*;
-use std::collections::HashMap;
-use std::time::Instant;
 
 use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
@@ -24,7 +22,6 @@ pub struct Player {
     current_state: Box<dyn PlayerState>,
     previous_state: Box<dyn PlayerState>,
     anim_finished: bool,
-    button_press_times: HashMap<StringName, Instant>,
 }
 
 #[godot_api]
@@ -43,7 +40,6 @@ impl ICharacterBody2D for Player {
             delta: 0.0,
             gravity,
             anim_finished: false,
-            button_press_times: HashMap::new(),
         }
     }
 
@@ -69,6 +65,9 @@ impl ICharacterBody2D for Player {
         }
 
         self.base_mut().set_velocity(base_vel);
+
+        let mut sprite: Gd<AnimatedSprite2D> = self.get_sprite();
+        sprite.set_speed_scale(1.0);
 
         self.get_current_state().update(self);
         self.update_animation();
@@ -135,15 +134,14 @@ impl Player {
         Input::singleton().get_axis(move_left, move_right)
     }
 
-    pub fn apply_horizontal_velocity(&mut self, direction: f32, speed: f32) {
+    pub fn apply_horizontal_velocity(&mut self, direction: f32, max_speed: f32) {
         let mut base = self.base_mut();
         let mut base_vel = base.get_velocity();
-        base_vel.x = speed * direction;
+        base_vel.x = max_speed * direction;
         base.set_velocity(base_vel);
     }
 
     pub fn set_anim_finished(&mut self) {
-        godot_print!("Recieved signal");
         self.anim_finished = true;
     }
 
@@ -188,18 +186,6 @@ impl Player {
     pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
         self.base()
             .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
-    }
-
-    pub fn set_button_press_time(&mut self, button: StringName, press_time: Instant) {
-        self.button_press_times.insert(button, press_time);
-    }
-
-    pub fn get_button_press_time(&self, button: &StringName) -> Option<&Instant> {
-        self.button_press_times.get(button)
-    }
-
-    pub fn remove_button_press_time(&mut self, button: &StringName) {
-        self.button_press_times.remove(button);
     }
 
     pub fn get_previous_state(&self) -> Box<dyn PlayerState> {

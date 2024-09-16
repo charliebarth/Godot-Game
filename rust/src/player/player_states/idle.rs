@@ -2,7 +2,7 @@ use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
 
 use crate::player::{player::Player, traits::player_state::PlayerState};
 
-use super::{fall::Fall, jump::Jump, run::Run};
+use super::{crouch::Crouch, fall::Fall, jump::Jump, run::Run};
 
 #[derive(Clone)]
 pub struct Idle;
@@ -23,6 +23,8 @@ impl PlayerState for Idle {
             player.set_state(Box::new(Fall));
         } else if horizontal_dir != 0.0 {
             player.set_state(Box::new(Run));
+        } else if Input::singleton().is_action_just_pressed(StringName::from("crouch")) {
+            player.set_state(Box::new(Crouch));
         }
     }
 

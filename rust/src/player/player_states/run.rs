@@ -1,5 +1,4 @@
 use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
-use std::time::{Duration, Instant};
 
 use crate::player::{
     player::{Player, MAX_RUN_SPEED},
@@ -18,7 +17,6 @@ impl PlayerState for Run {
 
     fn update(&self, player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
-        let b_button = StringName::from("b_button");
 
         if horizontal_dir == 0.0 {
             player.set_state(Box::new(Idle));
@@ -28,20 +26,10 @@ impl PlayerState for Run {
             player.set_state(Box::new(Jump));
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
-        } else if Input::singleton().is_action_just_released(b_button.clone()) {
-            if let Some(start_time) = player.get_button_press_time(&b_button) {
-                let duration_held = start_time.elapsed();
-                if duration_held < Duration::from_millis(300) {
-                    player.set_state(Box::new(Roll)); // If held less than 300ms, roll
-                } else {
-                    player.set_state(Box::new(Crouch)); // If held for 300ms or more, crouch
-                }
-
-                // Remove the press time after processing using the remover
-                player.remove_button_press_time(&b_button);
-            }
-        } else if Input::singleton().is_action_just_pressed(b_button.clone()) {
-            player.set_button_press_time(b_button.clone(), Instant::now());
+        } else if Input::singleton().is_action_just_pressed(StringName::from("crouch")) {
+            player.set_state(Box::new(Crouch));
+        } else if Input::singleton().is_action_just_pressed(StringName::from("roll")) {
+            player.set_state(Box::new(Roll));
         } else {
             self.run(player);
         }
