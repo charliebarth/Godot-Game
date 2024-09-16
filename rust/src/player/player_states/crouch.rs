@@ -10,6 +10,8 @@ use crate::player::{player::Player, traits::player_state::PlayerState};
 
 use super::{fall::Fall, idle::Idle};
 
+const CROUCH_SPEED: f32 = 75.0;
+
 #[derive(Clone)]
 pub struct Crouch;
 
@@ -54,7 +56,7 @@ impl Crouch {
         let horizontal_dir = player.get_horizontal_movement();
 
         player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, 100.0);
+        player.apply_horizontal_velocity(horizontal_dir, CROUCH_SPEED);
 
         if animation_name == "crouch_walk" && horizontal_dir == 0.0 {
             player.get_sprite().pause();
