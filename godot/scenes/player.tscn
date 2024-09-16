@@ -630,7 +630,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"roll",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -744,9 +744,9 @@ height = 32.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"turn_around"
-frame = 2
-frame_progress = 0.939354
+animation = &"roll"
+frame = 11
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5, 24)
