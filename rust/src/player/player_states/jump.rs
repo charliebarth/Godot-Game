@@ -41,7 +41,7 @@ impl PlayerState for Jump {
 
     fn as_str(&self, player: &mut Player) -> &str {
         let y_vel = player.base_mut().get_velocity().y;
-        if y_vel > -10.0 && y_vel < 10.0 {
+        if y_vel > -10.0 {
             "jump_fall"
         } else {
             "jump"
