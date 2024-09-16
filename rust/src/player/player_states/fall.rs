@@ -38,7 +38,7 @@ impl Fall {
         }
 
         player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED);
+        player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED / 2.0);
 
         // TODO: Rewrite this and as_str to swap between run and walk
         let animation_speed = if horizontal_dir.abs() < 0.3 {
