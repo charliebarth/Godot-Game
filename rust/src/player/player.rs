@@ -1,18 +1,14 @@
 use godot::classes::AnimatedSprite2D;
-// use godot::builtin::StringName;
-// use godot::builtin::Vector2;
-// use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::ProjectSettings;
-// use godot::classes::Input;
-// use godot::meta::FromGodot;
 use godot::prelude::*;
+use std::collections::HashMap;
+use std::time::Instant;
 
 use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
 
-// const MAX_JUMP_HEIGHT: f32 = 300.0;
 const MAX_HEALTH: u8 = 100;
 const MIN_HEALTH: u8 = 0;
 
@@ -25,7 +21,9 @@ pub struct Player {
     health: u8,
     delta: f64,
     current_state: Box<dyn PlayerState>,
+    previous_state: Box<dyn PlayerState>,
     anim_finished: bool,
+    button_press_times: HashMap<StringName, Instant>,
 }
 
 #[godot_api]
@@ -38,25 +36,18 @@ impl ICharacterBody2D for Player {
         Self {
             base,
             current_state: Box::new(Idle),
+            previous_state: Box::new(Idle),
             direction: 1.0,
             health: 100,
             delta: 0.0,
             gravity,
             anim_finished: false,
+            button_press_times: HashMap::new(),
         }
     }
 
     fn ready(&mut self) {
         self.set_state(Box::new(Idle));
-
-        let method_name: StringName = "set_anim_finished".into();
-        let callable: Callable = self.base_mut().callable(method_name);
-        let signal: StringName = "animation_finished".into();
-
-        let mut sprite = self.get_sprite();
-
-        sprite.connect(signal, callable);
-        godot_print!("Connected signal");
     }
 
     fn physics_process(&mut self, delta: f64) {
@@ -79,6 +70,7 @@ impl ICharacterBody2D for Player {
         self.base_mut().set_velocity(base_vel);
 
         self.get_current_state().update(self);
+        self.update_animation();
 
         self.base_mut().move_and_slide();
     }
@@ -86,10 +78,9 @@ impl ICharacterBody2D for Player {
 
 impl Player {
     pub fn set_state(&mut self, new_state: Box<dyn PlayerState>) {
-        godot_print!("{}", new_state.as_str());
+        self.previous_state = self.get_current_state();
         self.current_state = new_state;
         self.get_current_state().enter(self);
-        self.update_animation();
         self.anim_finished = false;
     }
 
@@ -165,13 +156,11 @@ impl Player {
     }
 
     fn update_animation(&mut self) {
-        let mut sprite = self
-            .base()
-            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+        let mut sprite = self.get_sprite();
 
         self.set_animation_direction(&mut sprite);
 
-        let animation_name = StringName::from(self.get_current_state().as_str());
+        let animation_name = StringName::from(self.get_current_state().as_str(self));
         if sprite.get_animation() != animation_name {
             sprite.set_animation(animation_name.into());
             sprite.play();
@@ -197,5 +186,21 @@ impl Player {
     pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
         self.base()
             .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
+    }
+
+    pub fn set_button_press_time(&mut self, button: StringName, press_time: Instant) {
+        self.button_press_times.insert(button, press_time);
+    }
+
+    pub fn get_button_press_time(&self, button: &StringName) -> Option<&Instant> {
+        self.button_press_times.get(button)
+    }
+
+    pub fn remove_button_press_time(&mut self, button: &StringName) {
+        self.button_press_times.remove(button);
+    }
+
+    pub fn get_previous_state(&self) -> Box<dyn PlayerState> {
+        self.previous_state.clone()
     }
 }
