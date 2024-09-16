@@ -1,11 +1,12 @@
 use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
 use std::time::{Duration, Instant};
 
-use crate::player::{player::Player, traits::player_state::PlayerState};
+use crate::player::{
+    player::{Player, MAX_RUN_SPEED},
+    traits::player_state::PlayerState,
+};
 
 use super::{crouch::Crouch, fall::Fall, idle::Idle, jump::Jump, roll::Roll};
-
-const MAX_RUN_SPEED: f32 = 140.0;
 
 #[derive(Clone)]
 pub struct Run;

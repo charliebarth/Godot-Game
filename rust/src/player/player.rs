@@ -11,6 +11,7 @@ use super::traits::player_state::PlayerState;
 
 const MAX_HEALTH: u8 = 100;
 const MIN_HEALTH: u8 = 0;
+pub const MAX_RUN_SPEED: f32 = 140.0;
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
