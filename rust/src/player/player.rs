@@ -161,6 +161,7 @@ impl Player {
 
         let animation_name = StringName::from(self.get_current_state().as_str(self));
         if sprite.get_animation() != animation_name {
+            godot_print!("Animation name: {}", animation_name);
             self.anim_finished = false;
             sprite.set_animation(animation_name.into());
             sprite.play();
