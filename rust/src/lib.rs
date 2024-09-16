@@ -15,7 +15,6 @@ mod player {
         pub mod fall;
         pub mod idle;
         pub mod jump;
-        pub mod jump_fall;
         pub mod land;
         pub mod roll;
         pub mod run;
