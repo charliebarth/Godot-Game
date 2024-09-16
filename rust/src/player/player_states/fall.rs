@@ -18,7 +18,7 @@ impl PlayerState for Fall {
         Box::new(Fall)
     }
 
-    fn as_str(&self) -> &str {
+    fn as_str(&self, _player: &mut Player) -> &str {
         "fall"
     }
 }

@@ -30,7 +30,7 @@ impl PlayerState for Land {
         Box::new(Land)
     }
 
-    fn as_str(&self) -> &str {
+    fn as_str(&self, _player: &mut Player) -> &str {
         "land"
     }
 }
