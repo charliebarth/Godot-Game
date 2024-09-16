@@ -18,7 +18,7 @@ impl PlayerState for Crouch {
         Box::new(Crouch)
     }
 
-    fn as_str(&self, player: &mut Player) -> &str {
+    fn as_str(&self, _player: &mut Player) -> &str {
         "fall"
     }
 }
