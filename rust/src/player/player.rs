@@ -81,7 +81,6 @@ impl Player {
         self.previous_state = self.get_current_state();
         self.current_state = new_state;
         self.get_current_state().enter(self);
-        self.anim_finished = false;
     }
 
     pub fn get_current_state(&self) -> Box<dyn PlayerState> {
@@ -162,6 +161,7 @@ impl Player {
 
         let animation_name = StringName::from(self.get_current_state().as_str(self));
         if sprite.get_animation() != animation_name {
+            self.anim_finished = false;
             sprite.set_animation(animation_name.into());
             sprite.play();
         }
