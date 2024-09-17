@@ -5,7 +5,7 @@ use crate::player::{
     traits::player_state::PlayerState,
 };
 
-use super::{crouch::Crouch, fall::Fall, idle::Idle, jump::Jump, roll::Roll};
+use super::{crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, roll::Roll};
 
 #[derive(Clone)]
 pub struct Run;
@@ -27,7 +27,7 @@ impl PlayerState for Run {
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
         } else if Input::singleton().is_action_just_pressed(StringName::from("crouch")) {
-            player.set_state(Box::new(Crouch));
+            player.set_state(Box::new(CrouchStart));
         } else if Input::singleton().is_action_just_pressed(StringName::from("roll")) {
             player.set_state(Box::new(Roll));
         } else {

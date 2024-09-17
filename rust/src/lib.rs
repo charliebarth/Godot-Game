@@ -12,6 +12,8 @@ mod player {
 
     mod player_states {
         pub mod crouch;
+        pub mod crouch_end;
+        pub mod crouch_start;
         pub mod fall;
         pub mod idle;
         pub mod jump;
