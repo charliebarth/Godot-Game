@@ -413,7 +413,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"crouch_end",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -424,7 +424,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"crouch_start",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -744,7 +744,7 @@ height = 32.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"crouch_walk"
+animation = &"crouch_start"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5, 24)
