@@ -1,7 +1,6 @@
 use godot::classes::AnimatedSprite2D;
 use godot::{
     classes::Input,
-    global::godot_print,
     obj::{Gd, WithBaseField},
     prelude::StringName,
 };
@@ -20,7 +19,6 @@ impl PlayerState for Crouch {
 
     fn update(&self, player: &mut Player) {
         let animation_name = self.as_str(player);
-        godot_print!("Crouch Animation name: {}", animation_name);
 
         if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
@@ -58,10 +56,14 @@ impl Crouch {
         player.set_dir(horizontal_dir);
         player.apply_horizontal_velocity(horizontal_dir, CROUCH_SPEED);
 
-        if animation_name == "crouch_walk" && horizontal_dir == 0.0 {
-            player.get_sprite().pause();
-        } else {
-            player.get_sprite().play();
+        if animation_name == "crouch_walk" {
+            let animation_speed = if horizontal_dir == 0.0 || horizontal_dir.abs() > 0.5 {
+                horizontal_dir.abs()
+            } else {
+                0.5
+            };
+
+            player.get_sprite().set_speed_scale(animation_speed);
         }
     }
 }
