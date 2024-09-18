@@ -28,7 +28,9 @@ mod player {
     }
 }
 
-pub mod metalReserveBarManager;
+pub mod metal_reserve_bar_manager;
+
+pub mod metal_bar;
 
 struct MyExtension;
 
