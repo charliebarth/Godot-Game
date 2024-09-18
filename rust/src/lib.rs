@@ -47,7 +47,9 @@ pub mod coin_counter;
 pub mod metal_object;
 pub mod player_manager;
 
-pub mod metalReserveBarManager;
+pub mod metal_reserve_bar_manager;
+
+pub mod metal_bar;
 
 struct MyExtension;
 
