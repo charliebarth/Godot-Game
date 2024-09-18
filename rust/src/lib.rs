@@ -20,6 +20,7 @@ mod player {
         pub mod land;
         pub mod roll;
         pub mod run;
+        pub mod slide;
     }
 }
 
