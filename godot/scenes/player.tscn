@@ -751,3 +751,5 @@ frame_progress = 0.830921
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5, 24)
 shape = SubResource("CapsuleShape2D_bajs7")
+
+[node name="InputManager" type="InputManager" parent="."]

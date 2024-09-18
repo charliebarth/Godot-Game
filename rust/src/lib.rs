@@ -2,6 +2,7 @@ use godot::prelude::*;
 
 mod player {
 
+    pub mod input_manager;
     pub mod player;
 
     mod enums {}
