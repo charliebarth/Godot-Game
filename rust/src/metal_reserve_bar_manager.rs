@@ -1,22 +1,23 @@
-use godot::prelude::*;
-use godot::classes::{IVBoxContainer, Node, VBoxContainer};  // Import Node and VBoxContainer
-use std::cell::Ref;
-
-
 /// UNFINISHED 
 /// 
 /// Controls the metal bars on screen, stores bars that are not currently on screen and has methods 
 /// to add and remove bars from the on screen Vbox by name. 
 /// 
 /// Author : Trinity Pittman
-/// Version : 09/12/2024
+/// Version : 09/18/2024
 
+use godot::prelude::*;
+use godot::classes::{IVBoxContainer, Node, VBoxContainer};  // Import Node and VBoxContainer
+use std::cell::Ref;
+
+const MAX_BARS_ON_SCREEN: u8 = 4;
 
 #[derive(GodotClass)]
 #[class(base=VBoxContainer)]
 pub struct MetalReserveBarManager {
+    base: Base<VBoxContainer>,
     /// data structure (like a list) where metals not on screen will be stored 
-    unused_metals: Vec<Ref<Node>>,      
+    unused_metals: Vec<Node>,      
 }
 
 
@@ -26,10 +27,15 @@ pub struct MetalReserveBarManager {
 impl IVBoxContainer for  MetalReserveBarManager {    
     // Initialization method for `MetalReserveBarManager`
     fn init(base: Base<VBoxContainer>) -> Self {
-        MetalReserveBarManager {
+        Self {
+            base,
             unused_metals: Vec::new(),
         }
     }       
+
+    fn ready(&mut self) { 
+
+    }
 
 }
 
