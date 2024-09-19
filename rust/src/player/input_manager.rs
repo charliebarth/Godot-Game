@@ -1,3 +1,4 @@
+use godot::classes::InputMap;
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::HashMap;
 use std::time::Instant;
@@ -23,7 +24,7 @@ impl INode2D for InputManager {
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
-        let button_name = event.as_text().to_string();
+        let button_name = self.event_to_input_name(event.clone());
 
         if event.is_pressed() {
             self.button_press_times
@@ -32,7 +33,7 @@ impl INode2D for InputManager {
 
         if event.is_released() {
             if let Some(press_time) = self.button_press_times.get(&button_name) {
-                if button_name.contains("Xbox B") {
+                if button_name == "b_button" {
                     let duration = press_time.elapsed();
                     godot_print!("duration: {}", duration.as_millis());
 
@@ -67,5 +68,27 @@ impl InputManager {
         } else {
             false
         }
+    }
+
+    fn event_to_input_name(&self, event: Gd<InputEvent>) -> String {
+        let mut input_map = InputMap::singleton();
+        let inputs = input_map.get_actions();
+
+        let length = inputs.len();
+        for i in (0..length).rev() {
+            let input = inputs.get(i).unwrap();
+            let input_str = input.to_string();
+
+            // Skip inputs that start with "ui_"
+            if input_str.starts_with("ui_") {
+                continue;
+            }
+
+            if input_map.event_is_action(event.clone(), input.clone()) {
+                return input_str;
+            }
+        }
+
+        "".to_string()
     }
 }
