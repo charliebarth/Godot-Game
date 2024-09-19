@@ -1,6 +1,8 @@
 use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
 
-use crate::player::{player::Player, traits::player_state::PlayerState};
+use crate::player::{
+    enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
+};
 
 use super::{crouch_start::CrouchStart, fall::Fall, jump::Jump, run::Run};
 
@@ -14,6 +16,8 @@ impl PlayerState for Idle {
 
     fn update(&self, player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
+        let mut input_manager_unbound = player.get_input_manager();
+        let mut input_manager = input_manager_unbound.bind_mut();
 
         if Input::singleton().is_action_just_pressed(StringName::from("jump"))
             && player.base().is_on_floor()
@@ -23,7 +27,7 @@ impl PlayerState for Idle {
             player.set_state(Box::new(Fall));
         } else if horizontal_dir != 0.0 {
             player.set_state(Box::new(Run));
-        } else if Input::singleton().is_action_just_pressed(StringName::from("crouch")) {
+        } else if input_manager.fetch_event(PlayerEvents::Crouch) {
             player.set_state(Box::new(CrouchStart));
         }
     }

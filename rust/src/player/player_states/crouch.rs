@@ -1,5 +1,6 @@
 use godot::{classes::Input, obj::WithBaseField};
 
+use crate::player::enums::player_events::PlayerEvents;
 use crate::player::{player::Player, traits::player_state::PlayerState};
 
 use super::crouch_end::CrouchEnd;
@@ -15,11 +16,14 @@ impl PlayerState for Crouch {
     fn enter(&self, _player: &mut Player) {}
 
     fn update(&self, player: &mut Player) {
-        if Input::singleton().is_action_pressed("stand".into()) {
+        let mut input_manager_unbound = player.get_input_manager();
+        let mut input_manager = input_manager_unbound.bind_mut();
+
+        if input_manager.fetch_event(PlayerEvents::Crouch) {
             player.set_state(Box::new(CrouchEnd));
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
-        } else if Input::singleton().is_action_pressed("roll".into()) {
+        } else if input_manager.fetch_event(PlayerEvents::Roll) {
             player.set_state(Box::new(Roll));
         } else {
             self.run(player);

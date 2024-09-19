@@ -5,7 +5,9 @@ mod player {
     pub mod input_manager;
     pub mod player;
 
-    mod enums {}
+    mod enums {
+        pub mod player_events;
+    }
 
     mod traits {
         pub mod player_state;
