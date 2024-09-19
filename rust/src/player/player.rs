@@ -4,6 +4,7 @@ use godot::classes::ICharacterBody2D;
 use godot::classes::ProjectSettings;
 use godot::prelude::*;
 
+use super::input_manager::InputManager;
 use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
 
@@ -160,7 +161,6 @@ impl Player {
 
         let animation_name = StringName::from(self.get_current_state().as_str(self));
         if sprite.get_animation() != animation_name {
-            godot_print!("Animation name: {}", animation_name);
             self.anim_finished = false;
             sprite.set_animation(animation_name.into());
             sprite.play();
@@ -190,5 +190,9 @@ impl Player {
 
     pub fn get_previous_state(&self) -> Box<dyn PlayerState> {
         self.previous_state.clone()
+    }
+
+    pub fn get_input_manager(&self) -> Gd<InputManager> {
+        self.base().get_node_as::<InputManager>("InputManager")
     }
 }
