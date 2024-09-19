@@ -5,13 +5,17 @@ use crate::player::{
     traits::player_state::PlayerState,
 };
 
-use super::{crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, roll::Roll};
+use super::{
+    crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, roll::Roll, slide::Slide,
+};
 
 #[derive(Clone)]
 pub struct Run;
 
 impl PlayerState for Run {
     fn enter(&self, player: &mut Player) {
+        // clear sprint toggle from input manager
+        // player.get_input_manager().clear_action_toggle("sprint");
         self.run(player);
     }
 
@@ -29,7 +33,7 @@ impl PlayerState for Run {
         } else if Input::singleton().is_action_just_pressed(StringName::from("crouch")) {
             player.set_state(Box::new(CrouchStart));
         } else if Input::singleton().is_action_just_pressed(StringName::from("roll")) {
-            player.set_state(Box::new(Roll));
+            player.set_state(Box::new(Slide));
         } else {
             self.run(player);
         }
