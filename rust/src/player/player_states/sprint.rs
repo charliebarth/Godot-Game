@@ -31,8 +31,8 @@ impl PlayerState for Sprint {
             player.set_state(Box::new(Fall));
         // If player attempts to crouch while sprinting they slide into a crouch
         } else if input_manager.fetch_event(PlayerEvents::Crouch) {
-            player.set_previous_state(Box::new(CrouchStart));
             player.set_state(Box::new(Slide));
+            player.set_previous_state(Box::new(CrouchStart));
         // If player attempts to roll while sprinting they slide instead
         } else if input_manager.fetch_event(PlayerEvents::Roll) {
             player.set_state(Box::new(Slide));
@@ -52,8 +52,8 @@ impl PlayerState for Sprint {
 
 impl Sprint {
     fn run(&self, player: &mut Player) {
-        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.4);
+        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.3);
 
-        player.get_sprite().set_speed_scale(1.4);
+        player.get_sprite().set_speed_scale(1.3);
     }
 }
