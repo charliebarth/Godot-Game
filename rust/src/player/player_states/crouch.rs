@@ -6,6 +6,7 @@ use crate::player::{player::Player, traits::player_state::PlayerState};
 use super::crouch_end::CrouchEnd;
 use super::fall::Fall;
 use super::roll::Roll;
+use super::run::Run;
 
 const CROUCH_SPEED: f32 = 75.0;
 
@@ -24,7 +25,13 @@ impl PlayerState for Crouch {
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
         } else if input_manager.fetch_event(PlayerEvents::Roll) {
-            player.set_state(Box::new(Roll));
+            if player.get_horizontal_movement() != 0.0 {
+                player.set_state(Box::new(Roll));
+            } else {
+                player.set_state(Box::new(CrouchEnd));
+            }
+        } else if input_manager.fetch_event(PlayerEvents::Sprint) {
+            player.set_state(Box::new(Run));
         } else {
             self.run(player);
         }
