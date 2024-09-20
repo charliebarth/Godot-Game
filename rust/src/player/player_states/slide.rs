@@ -8,7 +8,7 @@ pub struct Slide;
 
 impl PlayerState for Slide {
     fn enter(&self, player: &mut Player) {
-        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.6);
+        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.5);
     }
 
     fn update(&self, player: &mut Player) {
