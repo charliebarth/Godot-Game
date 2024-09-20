@@ -37,7 +37,13 @@ impl Fall {
             return;
         }
 
+        let speed = if horizontal_dir.signum() == player.get_dir().signum() {
+            MAX_RUN_SPEED
+        } else {
+            MAX_RUN_SPEED / 2.0
+        };
+
         player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED / 2.0);
+        player.apply_horizontal_velocity(horizontal_dir, speed);
     }
 }
