@@ -6,8 +6,8 @@
 use godot::prelude::*;
 use godot::classes::{ITextureProgressBar, TextureProgressBar};
 
-const MAX_RESERVE: u8 = 100;
-const MIN_RESERVE: u8 = 0;
+const MAX_RESERVE: f64 = 100.0;
+const MIN_RESERVE: f64 = 0.0;
 
 
 #[derive(GodotClass)]
@@ -15,7 +15,7 @@ const MIN_RESERVE: u8 = 0;
 pub struct MetalBar {
     base: Base<TextureProgressBar>,
     /// The amount of Metal reserved in the bar 
-    reserves: u8,
+    reserves: f64,
 }
 
 
@@ -26,7 +26,7 @@ impl ITextureProgressBar for MetalBar {
 
         Self {
             base,
-            reserves: 0,
+            reserves: 0.0,
         }
     }
 
@@ -39,21 +39,29 @@ impl ITextureProgressBar for MetalBar {
 
 impl MetalBar {
 
-    pub fn get_reserves(&mut self) -> u8 {
+    pub fn get_reserves(&mut self) -> f64 {
         self.reserves
     }
 
-    pub fn set_value(&mut self, reserves: u8){
-        self.base.value = reserves; //ngl i have no idea how to make this work 
+    pub fn set_value(&mut self, reserves: f64){
+        self.base_mut().set_value(reserves); 
     }
 
 
-    pub fn adjust_reserves(&mut self, reserve: i8) {
+    pub fn adjust_reserves(&mut self, reserve: f64) {
 
-        let new_reserve = if reserve < 0 {
-            self.reserves.wrapping_sub(-reserve as u8)
+        let new_reserve = if reserve < 0.0 {
+            if self.reserves < -reserve {
+                MIN_RESERVE
+            } else {
+                self.reserves + reserve
+            }
         } else {
-            self.reserves.saturating_add(reserve as u8)
+            if self.reserves + reserve > MAX_RESERVE {
+                MAX_RESERVE
+            } else {
+                self.reserves + reserve
+            }
         };
 
         self.reserves = new_reserve.clamp(MIN_RESERVE, MAX_RESERVE);

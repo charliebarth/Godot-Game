@@ -7,8 +7,11 @@
 /// Version : 09/18/2024
 
 use godot::prelude::*;
-use godot::classes::{IVBoxContainer, Node, VBoxContainer};  // Import Node and VBoxContainer
-use std::cell::Ref;
+use godot::classes::{IVBoxContainer, VBoxContainer};  // Import Node and VBoxContainer
+pub use crate::metal_bar::MetalBar;
+
+use std::collections::HashMap;
+
 
 const MAX_BARS_ON_SCREEN: u8 = 4;
 
@@ -17,8 +20,9 @@ const MAX_BARS_ON_SCREEN: u8 = 4;
 pub struct MetalReserveBarManager {
     base: Base<VBoxContainer>,
     /// data structure (like a list) where metals not on screen will be stored 
-    unused_metals: Vec<Node>,      
+    unused_metals: HashMap<String, Gd<MetalBar>>,      
 }
+
 
 
 
@@ -29,11 +33,12 @@ impl IVBoxContainer for  MetalReserveBarManager {
     fn init(base: Base<VBoxContainer>) -> Self {
         Self {
             base,
-            unused_metals: Vec::new(),
+            unused_metals: HashMap::new(),
         }
     }       
 
     fn ready(&mut self) { 
+        // Create Metals that are auto added to VBox 
 
     }
 
@@ -41,31 +46,10 @@ impl IVBoxContainer for  MetalReserveBarManager {
 
 impl MetalReserveBarManager{
 
-    pub fn remove_metal(&mut self, owner: Ref<VBoxContainer>, bar_name: &str) {
-        // If the metal bar isn't found in Godot, show an error message
-        if let Some(node) = owner.get_node_as(bar_name) {
-            self.unused_metals.push(node.claim());  // Store the removed node in the vector
-            owner.remove_child(node);              // Remove the node from VBox
-        } else {
-            godot_print!("Bar with name '{}' not found", bar_name);
-        }
-    }
+    pub fn add_remove(&mut self, unbind: Gd<MetalBar>, _bind: String){
+        self.base_mut().remove_child(unbind);
+        // self.unused_metals.insert(unbind);
 
-    pub fn add_metal(&mut self, owner: &VBoxContainer, bar_name: &str) {
-        let index = self.unused_metals.iter().position(|node| {
-            if let Some(node) = unsafe { node.assume_safe() } {
-                node.name().to_string() == bar_name
-            } else {
-                false
-            }
-        });
-
-        if let Some(index) = index {
-            let node = self.unused_metals.remove(index);
-            owner.add_child(node);  // Re-add the node to VBox
-        } else {
-            godot_print!("Bar with name '{}' not found in removed nodes", bar_name);
-        }
+        // let metal_bind: Gd<MetalBar> =  self.unused_metals.get(bind);
     }
 }
-
