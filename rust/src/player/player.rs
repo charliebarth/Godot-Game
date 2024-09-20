@@ -171,11 +171,11 @@ impl Player {
         let mut scale = sprite.get_scale();
         let mut pos = sprite.get_position();
 
-        if self.direction < 0.0 && scale.x != -1.0 {
-            scale.x = -1.0;
+        if self.direction < 0.0 && scale.x != -1.3 {
+            scale.x = -1.3;
             pos.x -= 9.0;
-        } else if self.direction > 0.0 && scale.x != 1.0 {
-            scale.x = 1.0;
+        } else if self.direction > 0.0 && scale.x != 1.3 {
+            scale.x = 1.3;
             pos.x += 9.0;
         }
 

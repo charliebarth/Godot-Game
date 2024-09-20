@@ -737,19 +737,25 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bajs7"]
-radius = 6.0
-height = 32.0
+radius = 7.0
+height = 44.0
 
 [node name="Player" type="Player"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, -2)
+scale = Vector2(1.3, 1.3)
 sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"slide"
+animation = &"idle"
 frame = 4
-frame_progress = 0.830921
+frame_progress = 0.337152
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-5, 24)
+position = Vector2(-5, 28)
 shape = SubResource("CapsuleShape2D_bajs7")
 
 [node name="InputManager" type="InputManager" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-5, 28)
+zoom = Vector2(1.4, 1.4)
