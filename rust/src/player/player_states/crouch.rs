@@ -1,4 +1,4 @@
-use godot::{classes::Input, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
 use crate::player::enums::player_events::PlayerEvents;
 use crate::player::{player::Player, traits::player_state::PlayerState};

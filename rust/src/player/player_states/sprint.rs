@@ -6,14 +6,12 @@ use crate::player::{
     traits::player_state::PlayerState,
 };
 
-use super::{
-    crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, roll::Roll, sprint::Sprint,
-};
+use super::{crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, slide::Slide};
 
 #[derive(Clone)]
-pub struct Run;
+pub struct Sprint;
 
-impl PlayerState for Run {
+impl PlayerState for Sprint {
     fn enter(&self, player: &mut Player) {
         self.run(player);
     }
@@ -31,19 +29,20 @@ impl PlayerState for Run {
             player.set_state(Box::new(Jump));
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
+        // If player attempts to crouch while sprinting they slide into a crouch
         } else if input_manager.fetch_event(PlayerEvents::Crouch) {
-            player.set_state(Box::new(CrouchStart));
+            player.set_previous_state(Box::new(CrouchStart));
+            player.set_state(Box::new(Slide));
+        // If player attempts to roll while sprinting they slide instead
         } else if input_manager.fetch_event(PlayerEvents::Roll) {
-            player.set_state(Box::new(Roll));
-        } else if input_manager.fetch_event(PlayerEvents::Sprint) {
-            player.set_state(Box::new(Sprint));
+            player.set_state(Box::new(Slide));
         } else {
             self.run(player);
         }
     }
 
     fn clone(&self) -> Box<dyn PlayerState> {
-        Box::new(Run)
+        Box::new(Sprint)
     }
 
     fn as_str(&self, _player: &mut Player) -> &str {
@@ -51,23 +50,10 @@ impl PlayerState for Run {
     }
 }
 
-impl Run {
+impl Sprint {
     fn run(&self, player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
+        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.4);
 
-        if horizontal_dir == 0.0 {
-            return;
-        }
-
-        player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED);
-
-        let animation_speed = if horizontal_dir.abs() < 0.3 {
-            0.3
-        } else {
-            horizontal_dir.abs()
-        };
-
-        player.get_sprite().set_speed_scale(animation_speed);
+        player.get_sprite().set_speed_scale(1.4);
     }
 }

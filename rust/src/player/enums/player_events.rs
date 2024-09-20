@@ -3,13 +3,15 @@ pub enum PlayerEvents {
     Jump,
     Crouch,
     Roll,
+    Sprint,
 }
 
 impl PlayerEvents {
     // Method to convert from string to the corresponding event
     pub fn from_string(button: &str) -> Option<PlayerEvents> {
         match button {
-            "A" => Some(PlayerEvents::Jump),
+            "jump" => Some(PlayerEvents::Jump),
+            "sprint" => Some(PlayerEvents::Sprint),
             _ => None,
         }
     }

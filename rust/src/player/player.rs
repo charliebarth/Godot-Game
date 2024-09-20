@@ -192,6 +192,10 @@ impl Player {
         self.previous_state.clone()
     }
 
+    pub fn set_previous_state(&mut self, state: Box<dyn PlayerState>) {
+        self.previous_state = state;
+    }
+
     pub fn get_input_manager(&self) -> Gd<InputManager> {
         self.base().get_node_as::<InputManager>("InputManager")
     }

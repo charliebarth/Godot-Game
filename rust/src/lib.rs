@@ -24,6 +24,7 @@ mod player {
         pub mod roll;
         pub mod run;
         pub mod slide;
+        pub mod sprint;
     }
 }
 
