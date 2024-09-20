@@ -37,7 +37,7 @@ impl INode2D for InputManager {
                     let duration = press_time.elapsed();
                     godot_print!("duration: {}", duration.as_millis());
 
-                    if duration < std::time::Duration::from_millis(300) {
+                    if duration < std::time::Duration::from_millis(250) {
                         self.events.insert(PlayerEvents::Roll, 0);
                     } else {
                         self.events.insert(PlayerEvents::Crouch, 0);
