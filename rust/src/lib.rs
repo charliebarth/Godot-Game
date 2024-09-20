@@ -1,29 +1,34 @@
-// use godot::builtin::StringName;
-// use godot::builtin::Vector2;
-// use godot::classes::AnimatedSprite2D;
-use godot::classes::CharacterBody2D;
-use godot::classes::ICharacterBody2D;
-// use godot::classes::Input;
-// use godot::classes::ProjectSettings;
-// use godot::meta::FromGodot;
 use godot::prelude::*;
 
-// const MAX_JUMP_HEIGHT: f32 = 300.0;
+mod player {
+
+    pub mod input_manager;
+    pub mod player;
+
+    mod enums {
+        pub mod player_events;
+    }
+
+    mod traits {
+        pub mod player_state;
+    }
+
+    mod player_states {
+        pub mod crouch;
+        pub mod crouch_end;
+        pub mod crouch_start;
+        pub mod fall;
+        pub mod idle;
+        pub mod jump;
+        pub mod land;
+        pub mod roll;
+        pub mod run;
+        pub mod slide;
+        pub mod sprint;
+    }
+}
 
 struct MyExtension;
 
 #[gdextension]
 unsafe impl ExtensionLibrary for MyExtension {}
-
-#[derive(GodotClass)]
-#[class(base=CharacterBody2D)]
-struct Player {
-    base: Base<CharacterBody2D>,
-}
-
-#[godot_api]
-impl ICharacterBody2D for Player {
-    fn init(base: Base<CharacterBody2D>) -> Self {
-        Self { base }
-    }
-}

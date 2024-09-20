@@ -1,4 +1,4 @@
-[gd_scene load_steps=109 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=111 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -220,6 +220,10 @@ region = Rect2(0, 0, 120, 80)
 atlas = ExtResource("4_qy4av")
 region = Rect2(120, 0, 120, 80)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_isx8j"]
+atlas = ExtResource("1_3j2pw")
+region = Rect2(240, 0, 120, 80)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ooxrs"]
 atlas = ExtResource("9_i4qf4")
 region = Rect2(0, 0, 120, 80)
@@ -409,7 +413,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"crouch_end",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -420,7 +424,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"crouch_start",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -576,7 +580,15 @@ animations = [{
 "texture": SubResource("AtlasTexture_fanys")
 }],
 "loop": false,
-"name": &"jump_fall_transition",
+"name": &"jump_fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_isx8j")
+}],
+"loop": true,
+"name": &"land",
 "speed": 5.0
 }, {
 "frames": [{
@@ -618,7 +630,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"roll",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -685,7 +697,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"slide",
-"speed": 11.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -699,7 +711,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"turn_around",
-"speed": 5.0
+"speed": 17.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -724,8 +736,20 @@ animations = [{
 "speed": 7.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bajs7"]
+radius = 6.0
+height = 32.0
+
 [node name="Player" type="Player"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"clamber"
+animation = &"slide"
+frame = 4
+frame_progress = 0.830921
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-5, 24)
+shape = SubResource("CapsuleShape2D_bajs7")
+
+[node name="InputManager" type="InputManager" parent="."]
