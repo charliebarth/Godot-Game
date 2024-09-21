@@ -48,12 +48,12 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_jhmiw"]
 radius = 7.07107
 
-[node name="Coin" type="Coin"]
+[node name="Area2D" type="Area2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_8dn5o")
 autoplay = "default"
-frame_progress = 0.988928
+frame_progress = 0.865278
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_jhmiw")

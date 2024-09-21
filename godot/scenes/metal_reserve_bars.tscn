@@ -5,10 +5,11 @@
 [ext_resource type="Texture2D" uid="uid://0nchavw40n32" path="res://assets/HealthMetalBars/metal_bar_prog_green.png" id="3_lidnm"]
 [ext_resource type="Texture2D" uid="uid://lo6uvw6eymoi" path="res://assets/HealthMetalBars/metal_bar_prog_purple.png" id="4_blyk0"]
 
-[node name="MetalReserveBarManager" type="VBoxContainer"]
+[node name="MetalReserveBarManager" type="MetalReserveBarManager"]
 offset_left = -40.0
 offset_top = -36.0
-offset_bottom = 4.0
+offset_right = 23.0
+offset_bottom = 5.0
 theme_override_constants/separation = -1
 
 [node name="MetalBar" parent="." instance=ExtResource("1_cbnqj")]
