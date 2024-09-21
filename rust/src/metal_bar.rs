@@ -31,6 +31,7 @@ impl ITextureProgressBar for MetalBar {
     }
 
     fn ready(&mut self){
+        self.base_mut().set_value(0.0);
         // do i need to set textures?
     }
 
