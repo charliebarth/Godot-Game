@@ -1,4 +1,4 @@
-[gd_scene load_steps=109 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=114 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -19,6 +19,9 @@
 [ext_resource type="Texture2D" uid="uid://dml3kcgdisqxd" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchTransition.png" id="13_j5nd0"]
 [ext_resource type="Texture2D" uid="uid://bp24is0wwsbdv" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallSlide.png" id="15_h50qw"]
 [ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="18_wsmie"]
+[ext_resource type="PackedScene" uid="uid://b2cab082bt2gh" path="res://scenes/metal_reserve_bars.tscn" id="20_elmgo"]
+[ext_resource type="PackedScene" uid="uid://ckj1p3ma4w4b2" path="res://scenes/health_bar.tscn" id="21_7ckqq"]
+[ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mkisa"]
 atlas = ExtResource("1_28re0")
@@ -741,16 +744,6 @@ radius = 7.0
 height = 44.0
 
 [node name="Player" type="Player"]
-_import_path = NodePath("")
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-script = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -2)
@@ -769,3 +762,21 @@ shape = SubResource("CapsuleShape2D_bajs7")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-5, 28)
 zoom = Vector2(1.4, 1.4)
+
+[node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
+offset_left = -395.0
+offset_top = -177.0
+offset_right = -332.0
+offset_bottom = -136.0
+
+[node name="HealthBar" parent="." instance=ExtResource("21_7ckqq")]
+offset_left = -410.0
+offset_top = -200.0
+offset_right = -325.0
+offset_bottom = -173.0
+
+[node name="Panel" parent="." instance=ExtResource("22_l2cmc")]
+offset_left = -315.0
+offset_top = -196.0
+offset_right = -282.0
+offset_bottom = -180.0
