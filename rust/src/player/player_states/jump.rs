@@ -7,7 +7,7 @@ use crate::player::{
 
 use super::{fall::Fall, land::Land};
 
-const MAX_JUMP_HEIGHT: f32 = 575.0;
+const MAX_JUMP_HEIGHT: f32 = 500.0;
 
 #[derive(Clone)]
 pub struct Jump;

@@ -27,9 +27,9 @@ impl PlayerState for Idle {
             player.set_state(Box::new(Fall));
         } else if horizontal_dir != 0.0 {
             player.set_state(Box::new(Run));
-        } else if input_manager.fetch_event(PlayerEvents::Crouch) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Crouch) {
             player.set_state(Box::new(CrouchStart));
-        } else if input_manager.fetch_event(PlayerEvents::Roll) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             player.set_state(Box::new(CrouchStart));
         }
     }

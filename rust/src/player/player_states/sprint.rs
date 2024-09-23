@@ -30,11 +30,11 @@ impl PlayerState for Sprint {
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
         // If player attempts to crouch while sprinting they slide into a crouch
-        } else if input_manager.fetch_event(PlayerEvents::Crouch) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Crouch) {
             player.set_state(Box::new(Slide));
             player.set_previous_state(Box::new(CrouchStart));
         // If player attempts to roll while sprinting they slide instead
-        } else if input_manager.fetch_event(PlayerEvents::Roll) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             player.set_state(Box::new(Slide));
         } else {
             self.run(player);

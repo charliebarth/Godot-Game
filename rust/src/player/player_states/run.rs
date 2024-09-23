@@ -31,11 +31,11 @@ impl PlayerState for Run {
             player.set_state(Box::new(Jump));
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
-        } else if input_manager.fetch_event(PlayerEvents::Crouch) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Crouch) {
             player.set_state(Box::new(CrouchStart));
-        } else if input_manager.fetch_event(PlayerEvents::Roll) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             player.set_state(Box::new(Roll));
-        } else if input_manager.fetch_event(PlayerEvents::Sprint) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Sprint) {
             player.set_state(Box::new(Sprint));
         } else {
             self.run(player);

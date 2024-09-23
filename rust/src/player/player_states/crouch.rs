@@ -20,17 +20,17 @@ impl PlayerState for Crouch {
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
-        if input_manager.fetch_event(PlayerEvents::Crouch) {
+        if input_manager.fetch_player_event(PlayerEvents::Crouch) {
             player.set_state(Box::new(CrouchEnd));
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));
-        } else if input_manager.fetch_event(PlayerEvents::Roll) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             if player.get_horizontal_movement() != 0.0 {
                 player.set_state(Box::new(Roll));
             } else {
                 player.set_state(Box::new(CrouchEnd));
             }
-        } else if input_manager.fetch_event(PlayerEvents::Sprint) {
+        } else if input_manager.fetch_player_event(PlayerEvents::Sprint) {
             player.set_state(Box::new(Run));
         } else {
             self.run(player);
