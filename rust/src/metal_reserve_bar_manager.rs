@@ -4,7 +4,7 @@
 /// to add and remove bars from the on screen Vbox by name. 
 /// 
 /// Author : Trinity Pittman
-/// Version : 09/18/2024
+/// Version : 09/22/2024
 
 use godot::prelude::*;
 use godot::classes::{IVBoxContainer, VBoxContainer};  // Import Node and VBoxContainer
@@ -23,9 +23,6 @@ pub struct MetalReserveBarManager {
     unused_metals: HashMap<String, Gd<MetalBar>>,      
 }
 
-
-
-
 /// where the methods that belong to MetalReserveBarManager will be stored
 #[godot_api]
 impl IVBoxContainer for  MetalReserveBarManager {    
@@ -38,7 +35,7 @@ impl IVBoxContainer for  MetalReserveBarManager {
     }       
 
     fn ready(&mut self) { 
-        // Create Metals that are auto added to VBox 
+        // Create Metals that are auto added to VBox based on the keybound metals 
 
     }
 
