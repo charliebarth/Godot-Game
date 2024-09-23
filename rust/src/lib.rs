@@ -6,10 +6,12 @@ mod player {
     pub mod player;
 
     mod enums {
+        pub mod metal_events;
         pub mod player_events;
     }
 
     mod traits {
+        pub mod metal;
         pub mod player_state;
     }
 
@@ -25,6 +27,10 @@ mod player {
         pub mod run;
         pub mod slide;
         pub mod sprint;
+    }
+
+    mod metals {
+        pub mod pewter;
     }
 }
 
