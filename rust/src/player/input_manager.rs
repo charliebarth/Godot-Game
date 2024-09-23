@@ -3,14 +3,16 @@ use godot::{classes::InputEvent, prelude::*};
 use std::collections::HashMap;
 use std::time::Instant;
 
+use super::enums::metal_events::MetalEvents;
 use super::enums::player_events::PlayerEvents;
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct InputManager {
     base: Base<Node2D>,
-    button_press_times: HashMap<String, Instant>,
-    events: HashMap<PlayerEvents, u32>,
+    button_press_times: HashMap<PlayerEvents, Instant>,
+    player_events: HashMap<PlayerEvents, u32>,
+    metal_events: Vec<MetalEvents>,
 }
 
 #[godot_api]
@@ -19,51 +21,34 @@ impl INode2D for InputManager {
         Self {
             base,
             button_press_times: HashMap::new(),
-            events: HashMap::new(),
+            player_events: HashMap::new(),
+            metal_events: Vec::new(),
         }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
         let button_name = self.event_to_input_name(event.clone());
 
-        if event.is_pressed() {
-            self.button_press_times
-                .insert(button_name.clone(), Instant::now());
-        }
-
-        if event.is_released() {
-            if let Some(press_time) = self.button_press_times.get(&button_name) {
-                if button_name == "b_button" {
-                    let duration = press_time.elapsed();
-                    godot_print!("duration: {}", duration.as_millis());
-
-                    if duration < std::time::Duration::from_millis(250) {
-                        self.events.insert(PlayerEvents::Roll, 0);
-                    } else {
-                        self.events.insert(PlayerEvents::Crouch, 0);
-                    }
-                } else if let Some(event) = PlayerEvents::from_string(&button_name) {
-                    self.events.insert(event, 0);
-                }
-
-                self.button_press_times.remove(&button_name);
-            }
+        if let Some(player_event) = PlayerEvents::from_string(&button_name) {
+            self.process_player_events(player_event, event);
+        } else if let Some(metal_event) = MetalEvents::from_string(&button_name) {
+            self.process_metal_events(metal_event, event);
         }
     }
 
     fn physics_process(&mut self, _delta: f64) {
-        for timer in self.events.values_mut() {
+        for timer in self.player_events.values_mut() {
             *timer += 1;
         }
 
         // Expire events after a certain number of frames (e.g., 60 frames)
-        self.events.retain(|_, timer| *timer < 3);
+        self.player_events.retain(|_, timer| *timer < 3);
     }
 }
 
 impl InputManager {
-    pub fn fetch_event(&mut self, event: PlayerEvents) -> bool {
-        if let Some(_) = self.events.remove(&event) {
+    pub fn fetch_player_event(&mut self, event: PlayerEvents) -> bool {
+        if let Some(_) = self.player_events.remove(&event) {
             true
         } else {
             false
@@ -90,5 +75,44 @@ impl InputManager {
         }
 
         "".to_string()
+    }
+
+    fn process_metal_events(&mut self, metal_event: MetalEvents, event: Gd<InputEvent>) {
+        if event.is_pressed() && !self.metal_events.contains(&metal_event) {
+            self.metal_events.push(metal_event);
+        } else if event.is_released() && self.metal_events.contains(&metal_event) {
+            self.metal_events.remove(
+                self.metal_events
+                    .iter()
+                    .position(|x| *x == metal_event)
+                    .unwrap(),
+            );
+        }
+    }
+
+    fn process_player_events(&mut self, player_event: PlayerEvents, event: Gd<InputEvent>) {
+        if event.is_pressed() {
+            self.button_press_times
+                .insert(player_event.clone(), Instant::now());
+        } else if event.is_released() {
+            if let Some(press_time) = self.button_press_times.get(&player_event) {
+                let mut player_event = player_event;
+
+                if player_event == PlayerEvents::Roll {
+                    let duration = press_time.elapsed();
+
+                    if duration > std::time::Duration::from_millis(250) {
+                        player_event = PlayerEvents::Crouch;
+                    }
+                }
+
+                self.player_events.insert(player_event.clone(), 0);
+                self.button_press_times.remove(&player_event);
+            }
+        }
+    }
+
+    pub fn fetch_metal_event(&mut self, metal_event: MetalEvents) -> bool {
+        self.metal_events.contains(&metal_event)
     }
 }
