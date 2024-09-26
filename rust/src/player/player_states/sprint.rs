@@ -1,9 +1,7 @@
 use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
 
 use crate::player::{
-    enums::player_events::PlayerEvents,
-    player::{Player, MAX_RUN_SPEED},
-    traits::player_state::PlayerState,
+    enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
 };
 
 use super::{crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, slide::Slide};
@@ -52,7 +50,7 @@ impl PlayerState for Sprint {
 
 impl Sprint {
     fn run(&self, player: &mut Player) {
-        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.3);
+        player.apply_horizontal_velocity(player.get_dir(), player.get_run_speed() * 1.3);
 
         player.get_sprite().set_speed_scale(1.3);
     }

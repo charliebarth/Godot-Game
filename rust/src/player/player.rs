@@ -10,8 +10,8 @@ use super::traits::player_state::PlayerState;
 
 const MAX_HEALTH: u8 = 100;
 const MIN_HEALTH: u8 = 0;
-pub const MAX_RUN_SPEED: f32 = 160.0;
-
+const DEFAULT_RUN_SPEED: f32 = 160.0;
+const DEFAULT_JUMP_FORCE: f32 = 400.0;
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
 pub struct Player {
@@ -23,6 +23,8 @@ pub struct Player {
     current_state: Box<dyn PlayerState>,
     previous_state: Box<dyn PlayerState>,
     anim_finished: bool,
+    run_speed: f32,
+    jump_force: f32,
 }
 
 #[godot_api]
@@ -41,6 +43,8 @@ impl ICharacterBody2D for Player {
             delta: 0.0,
             gravity,
             anim_finished: false,
+            run_speed: DEFAULT_RUN_SPEED,
+            jump_force: DEFAULT_JUMP_FORCE,
         }
     }
 
@@ -198,5 +202,21 @@ impl Player {
 
     pub fn get_input_manager(&self) -> Gd<InputManager> {
         self.base().get_node_as::<InputManager>("InputManager")
+    }
+
+    pub fn get_run_speed(&self) -> f32 {
+        self.run_speed
+    }
+
+    pub fn get_jump_force(&self) -> f32 {
+        self.jump_force
+    }
+
+    pub fn set_run_speed(&mut self, speed: f32) {
+        self.run_speed = speed;
+    }
+
+    pub fn set_jump_force(&mut self, force: f32) {
+        self.jump_force = force;
     }
 }

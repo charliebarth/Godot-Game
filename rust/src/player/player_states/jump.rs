@@ -1,25 +1,18 @@
 use godot::{builtin::Vector2, obj::WithBaseField};
 
-use crate::player::{
-    player::{Player, MAX_RUN_SPEED},
-    traits::player_state::PlayerState,
-};
+use crate::player::{player::Player, traits::player_state::PlayerState};
 
 use super::{fall::Fall, land::Land};
-
-const MAX_JUMP_HEIGHT: f32 = 500.0;
 
 #[derive(Clone)]
 pub struct Jump;
 
 impl PlayerState for Jump {
     fn enter(&self, player: &mut Player) {
+        let jump_force = player.get_jump_force();
         let mut base = player.base_mut();
-        if !base.is_on_floor() {
-            return;
-        }
 
-        let jump_force = base.get_velocity().y + -MAX_JUMP_HEIGHT;
+        let jump_force = base.get_velocity().y + -jump_force;
         let jump_vel = Vector2::new(base.get_velocity().x, base.get_velocity().y + jump_force);
         base.set_velocity(jump_vel);
     }
@@ -57,9 +50,9 @@ impl Jump {
         }
 
         if horizontal_dir.signum() != player.get_dir().signum() {
-            player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED / 2.0);
+            player.apply_horizontal_velocity(horizontal_dir, player.get_run_speed() / 2.0);
         } else {
-            player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED);
+            player.apply_horizontal_velocity(horizontal_dir, player.get_run_speed());
         }
     }
 }

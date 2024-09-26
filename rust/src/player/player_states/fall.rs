@@ -1,10 +1,6 @@
 use godot::obj::WithBaseField;
 
-use crate::player::{
-    player::{Player, MAX_RUN_SPEED},
-    player_states::land::Land,
-    traits::player_state::PlayerState,
-};
+use crate::player::{player::Player, player_states::land::Land, traits::player_state::PlayerState};
 
 #[derive(Clone)]
 pub struct Fall;
@@ -38,9 +34,9 @@ impl Fall {
         }
 
         let speed = if horizontal_dir.signum() == player.get_dir().signum() {
-            MAX_RUN_SPEED
+            player.get_run_speed()
         } else {
-            MAX_RUN_SPEED / 2.0
+            player.get_run_speed() / 2.0
         };
 
         player.set_dir(horizontal_dir);

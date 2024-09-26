@@ -1,9 +1,7 @@
 use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
 
 use crate::player::{
-    enums::player_events::PlayerEvents,
-    player::{Player, MAX_RUN_SPEED},
-    traits::player_state::PlayerState,
+    enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
 };
 
 use super::{
@@ -60,7 +58,7 @@ impl Run {
         }
 
         player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED);
+        player.apply_horizontal_velocity(horizontal_dir, player.get_run_speed());
 
         let animation_speed = if horizontal_dir.abs() < 0.3 {
             0.3

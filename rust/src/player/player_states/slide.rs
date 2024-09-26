@@ -1,14 +1,11 @@
-use crate::player::{
-    player::{Player, MAX_RUN_SPEED},
-    traits::player_state::PlayerState,
-};
+use crate::player::{player::Player, traits::player_state::PlayerState};
 
 #[derive(Clone)]
 pub struct Slide;
 
 impl PlayerState for Slide {
     fn enter(&self, player: &mut Player) {
-        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.5);
+        player.apply_horizontal_velocity(player.get_dir(), player.get_run_speed() * 1.5);
     }
 
     fn update(&self, player: &mut Player) {
