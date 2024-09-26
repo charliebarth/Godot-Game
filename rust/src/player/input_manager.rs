@@ -12,7 +12,7 @@ pub struct InputManager {
     base: Base<Node2D>,
     button_press_times: HashMap<PlayerEvents, Instant>,
     player_events: HashMap<PlayerEvents, u32>,
-    metal_events: Vec<MetalEvents>,
+    metal_events: HashMap<MetalEvents, Instant>,
 }
 
 #[godot_api]
@@ -22,7 +22,7 @@ impl INode2D for InputManager {
             base,
             button_press_times: HashMap::new(),
             player_events: HashMap::new(),
-            metal_events: Vec::new(),
+            metal_events: HashMap::new(),
         }
     }
 
@@ -78,15 +78,32 @@ impl InputManager {
     }
 
     fn process_metal_events(&mut self, metal_event: MetalEvents, event: Gd<InputEvent>) {
-        if event.is_pressed() && !self.metal_events.contains(&metal_event) {
-            self.metal_events.push(metal_event);
-        } else if event.is_released() && self.metal_events.contains(&metal_event) {
-            self.metal_events.remove(
-                self.metal_events
-                    .iter()
-                    .position(|x| *x == metal_event)
-                    .unwrap(),
-            );
+        if event.is_pressed() {
+            // When pressed, always insert the burn variant
+            self.metal_events
+                .insert(metal_event.clone(), Instant::now());
+        } else if event.is_released() && self.metal_events.contains_key(&metal_event) {
+            if let Some(press_time) = self.metal_events.get(&metal_event) {
+                let duration = press_time.elapsed();
+
+                if duration <= std::time::Duration::from_millis(250) {
+                    // the burn type will always be burn because the from_string method only returns burn and that is what is passed into this function
+                    // if low burn is already toggled on then when it is tapped again it should be toggled off and thus removed from the map
+                    // if low burn is not toggled on then it should be toggled on and added to the map thus we need to replace the burn event with the low burn event
+                    if !self
+                        .metal_events
+                        .contains_key(&metal_event.get_low_burn_variant())
+                    {
+                        self.metal_events
+                            .insert(metal_event.get_low_burn_variant(), Instant::now());
+                    }
+
+                    self.metal_events.remove(&metal_event);
+                } else {
+                    // For longer presses, simply remove the event
+                    self.metal_events.remove(&metal_event);
+                }
+            }
         }
     }
 
@@ -113,6 +130,10 @@ impl InputManager {
     }
 
     pub fn fetch_metal_event(&mut self, metal_event: MetalEvents) -> bool {
-        self.metal_events.contains(&metal_event)
+        if let Some(_) = self.metal_events.get(&metal_event) {
+            true
+        } else {
+            false
+        }
     }
 }
