@@ -1,3 +1,4 @@
+use crate::player::enums::metal_events::{BurnType, MetalEvents};
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
@@ -6,7 +7,6 @@ pub struct Pewter {
     current_reserve: f64,
     burn_rate: f64,
     low_burn_rate: f64,
-    is_low_burn: bool,
 }
 
 impl Pewter {
@@ -16,13 +16,33 @@ impl Pewter {
             current_reserve,
             burn_rate,
             low_burn_rate,
-            is_low_burn: false,
         }
     }
 }
 
 impl Metal for Pewter {
-    fn burn(&self, player: &mut Player) {}
-    fn low_burn(&self, player: &mut Player) {}
-    fn update(&self, player: &mut Player) {}
+    fn burn(&mut self, player: &mut Player) {
+        self.current_reserve -= self.burn_rate;
+        player.set_run_speed(player.get_run_speed() * 1.5);
+        player.set_jump_force(player.get_jump_force() * 1.5);
+    }
+    fn low_burn(&mut self, player: &mut Player) {
+        self.current_reserve -= self.low_burn_rate;
+        player.set_run_speed(player.get_run_speed() * 1.2);
+        player.set_jump_force(player.get_jump_force() * 1.2);
+    }
+    fn update(&mut self, player: &mut Player) {
+        let mut godot_input_manager = player.get_input_manager();
+        let mut input_manager = godot_input_manager.bind_mut();
+
+        if self.current_reserve <= 0.0 {
+            return;
+        }
+
+        if input_manager.fetch_metal_event(MetalEvents::Pewter(BurnType::LowBurn)) {
+            self.low_burn(player);
+        } else if input_manager.fetch_metal_event(MetalEvents::Pewter(BurnType::Burn)) {
+            self.burn(player);
+        }
+    }
 }
