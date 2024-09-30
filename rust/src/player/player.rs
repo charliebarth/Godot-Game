@@ -2,6 +2,7 @@ use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::ProjectSettings;
+use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
 use super::input_manager::InputManager;
@@ -124,6 +125,20 @@ impl Player {
 
         // Clamp health between MIN_HEALTH and MAX_HEALTH
         self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
+        let children: Array<Gd<Node>> = self.base.to_gd().get_children();
+        for i in 0..children.len() {
+            let child : Gd<Node> = children.get(i).expect("");
+            
+            if child.get_name().to_string() == "HealthBar" {
+                if let health_bar = child.cast::<TextureProgressBar>() {
+                    // Set the health value 
+                    //health_bar.set_value(self.health); // TODO needs to be a f64 **
+                }
+
+            }
+            
+        
+        }
     }
 
     /// Represents the direction the player is trying to move
