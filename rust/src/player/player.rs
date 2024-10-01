@@ -6,13 +6,19 @@ use godot::prelude::*;
 
 use super::input_manager::InputManager;
 use super::metal_manager::MetalManager;
+use super::metal_reserve_bar_manager::MetalReserveBarManager;
 use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
 
 const MAX_HEALTH: u8 = 100;
 const MIN_HEALTH: u8 = 0;
-const DEFAULT_RUN_SPEED: f32 = 160.0;
-const DEFAULT_JUMP_FORCE: f32 = 400.0;
+const DEFAULT_RUN_SPEED: f32 = 200.0;
+const DEFAULT_JUMP_FORCE: f32 = 450.0;
+const MAX_RUN_SPEED: f32 = 300.0;
+const MIN_RUN_SPEED: f32 = 100.0;
+const MAX_JUMP_FORCE: f32 = 550.0;
+const MIN_JUMP_FORCE: f32 = 300.0;
+
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
 pub struct Player {
@@ -81,8 +87,11 @@ impl ICharacterBody2D for Player {
         self.base_mut().set_velocity(base_vel);
 
         // Reset the speed scale of the player's sprite to avoid old animation speeds from affecting the new animation
+        // Also reset the run and jump force of the player to their default values
         let mut sprite: Gd<AnimatedSprite2D> = self.get_sprite();
         sprite.set_speed_scale(1.0);
+        self.set_run_speed(DEFAULT_RUN_SPEED);
+        self.set_jump_force(DEFAULT_JUMP_FORCE);
 
         // Update all metals held by the player
         self.get_metal_manager().bind_mut().update(self);
@@ -297,7 +306,7 @@ impl Player {
     /// # Arguments
     /// * `speed` - The speed to set the player to
     pub fn set_run_speed(&mut self, speed: f32) {
-        self.run_speed = speed;
+        self.run_speed = speed.clamp(MIN_RUN_SPEED, MAX_RUN_SPEED);
     }
 
     /// Set the jump force of the player
@@ -305,7 +314,7 @@ impl Player {
     /// # Arguments
     /// * `force` - The force to set the player to
     pub fn set_jump_force(&mut self, force: f32) {
-        self.jump_force = force;
+        self.jump_force = force.clamp(MIN_JUMP_FORCE, MAX_JUMP_FORCE);
     }
 }
 
@@ -334,5 +343,14 @@ impl Player {
     pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
         self.base()
             .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
+    }
+
+    /// Getter for the MetalReserveBarManager node
+    ///
+    /// # Returns
+    /// * `MetalReserveBarManager` - The MetalReserveBarManager node
+    pub fn get_metal_reserve_bar_manager(&self) -> Gd<MetalReserveBarManager> {
+        self.base()
+            .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager")
     }
 }
