@@ -764,10 +764,10 @@ position = Vector2(-5, 28)
 zoom = Vector2(1.4, 1.4)
 
 [node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
-offset_left = -395.0
-offset_top = -177.0
-offset_right = -332.0
-offset_bottom = -136.0
+offset_left = -403.0
+offset_top = -176.0
+offset_right = -340.0
+offset_bottom = -135.0
 
 [node name="HealthBar" parent="." instance=ExtResource("21_7ckqq")]
 offset_left = -410.0
@@ -780,3 +780,5 @@ offset_left = -315.0
 offset_top = -196.0
 offset_right = -282.0
 offset_bottom = -180.0
+
+[node name="MetalManager" type="MetalManager" parent="."]
