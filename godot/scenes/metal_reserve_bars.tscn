@@ -13,22 +13,22 @@ offset_right = 23.0
 offset_bottom = 5.0
 theme_override_constants/separation = -1
 
-[node name="MetalBar" type="MetalBar" parent="."]
-layout_mode = 2
-texture_under = ExtResource("1_tlylw")
-texture_progress = ExtResource("2_xcijk")
-
-[node name="MetalBar2" type="MetalBar" parent="."]
+[node name="steel" type="TextureProgressBar" parent="."]
 layout_mode = 2
 texture_under = ExtResource("1_tlylw")
 texture_progress = ExtResource("3_xiqgp")
 
-[node name="MetalBar3" type="MetalBar" parent="."]
+[node name="iron" type="TextureProgressBar" parent="."]
 layout_mode = 2
 texture_under = ExtResource("1_tlylw")
 texture_progress = ExtResource("4_b1vhx")
 
-[node name="MetalBar4" type="MetalBar" parent="."]
+[node name="pewter" type="TextureProgressBar" parent="."]
+layout_mode = 2
+texture_under = ExtResource("1_tlylw")
+texture_progress = ExtResource("2_xcijk")
+
+[node name="tin" type="TextureProgressBar" parent="."]
 layout_mode = 2
 texture_under = ExtResource("1_tlylw")
 texture_progress = ExtResource("5_1g0gn")
