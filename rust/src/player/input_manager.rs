@@ -96,14 +96,14 @@ impl InputManager {
                     {
                         self.metal_events
                             .insert(metal_event.get_low_burn_variant(), Instant::now());
+                    } else {
+                        self.metal_events
+                            .remove(&metal_event.get_low_burn_variant());
                     }
-
-                    self.metal_events.remove(&metal_event);
-                } else {
-                    // For longer presses, simply remove the event
-                    self.metal_events.remove(&metal_event);
                 }
             }
+
+            self.metal_events.remove(&metal_event);
         }
     }
 
