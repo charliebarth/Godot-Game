@@ -4,6 +4,7 @@ mod player {
 
     pub mod input_manager;
     pub mod metal_manager;
+    pub mod metal_reserve_bar_manager;
     pub mod player;
 
     mod enums {
@@ -34,10 +35,6 @@ mod player {
         pub mod pewter;
     }
 }
-
-pub mod metal_reserve_bar_manager;
-
-pub mod metal_bar;
 
 pub mod coin;
 
