@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=4 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=32 format=4 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="1_hjsr2"]
 [ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="2_lppkk"]
@@ -10,7 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://bc7fpplo5rlur" path="res://assets/Maps/dungeon/Textures/TX Dungeon Spider Web.png" id="8_f41fw"]
 [ext_resource type="Texture2D" uid="uid://byhuhw43cb8fg" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props Shadow.png" id="9_tiebx"]
 [ext_resource type="Texture2D" uid="uid://djgj8feyaey46" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props Animation.png" id="10_6j3yr"]
-[ext_resource type="PackedScene" uid="uid://gjuprjol1d4y" path="res://scenes/player.tscn" id="11_kh5lt"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w5xli"]
 texture = ExtResource("1_hjsr2")
@@ -12542,5 +12541,8 @@ position = Vector2(-10, 295)
 [node name="SpawnFour" type="Marker2D" parent="."]
 position = Vector2(-2, -843)
 
-[node name="Player" parent="." instance=ExtResource("11_kh5lt")]
-position = Vector2(-269, -58)
+[node name="PlayerManager" type="PlayerManager" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-3, -269)
+zoom = Vector2(0.75, 0.75)

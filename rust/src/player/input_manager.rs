@@ -13,6 +13,7 @@ pub struct InputManager {
     button_press_times: HashMap<PlayerEvents, Instant>,
     player_events: HashMap<PlayerEvents, u32>,
     metal_events: HashMap<MetalEvents, Instant>,
+    device_id: i32,
 }
 
 #[godot_api]
@@ -23,10 +24,15 @@ impl INode2D for InputManager {
             button_press_times: HashMap::new(),
             player_events: HashMap::new(),
             metal_events: HashMap::new(),
+            device_id: -1,
         }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
+        if self.device_id == -1 || event.get_device() != self.device_id {
+            return;
+        }
+
         let button_name = self.event_to_input_name(event.clone());
 
         if let Some(player_event) = PlayerEvents::from_string(&button_name) {
@@ -141,5 +147,9 @@ impl InputManager {
         } else {
             false
         }
+    }
+
+    pub fn set_device_id(&mut self, device_id: i32) {
+        self.device_id = device_id;
     }
 }

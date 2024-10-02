@@ -37,8 +37,8 @@ mod player {
 }
 
 pub mod coin;
-
 pub mod coin_counter;
+pub mod player_manager;
 
 struct MyExtension;
 

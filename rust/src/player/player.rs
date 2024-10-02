@@ -317,6 +317,15 @@ impl Player {
     pub fn set_jump_force(&mut self, force: f32) {
         self.jump_force = force.clamp(MIN_JUMP_FORCE, MAX_JUMP_FORCE);
     }
+
+    /// Set the device ID of the player
+    ///
+    /// # Arguments
+    /// * `device_id` - The device ID to set
+    pub fn set_device_id(&mut self, device_id: i32) {
+        let mut input_manager_unbound = self.get_input_manager();
+        input_manager_unbound.bind_mut().set_device_id(device_id);
+    }
 }
 
 /// Getters for nodes
