@@ -1,12 +1,11 @@
 use godot::classes::{Area2D, IArea2D};
-/// UNFINISHED
 /// Represents a coin.
 ///
 /// Author : Trinity Pittman
-/// Version : 09/22/2024
+/// Version : 10/02/2024
 use godot::prelude::*;
 
-use crate::coin_counter::CoinCounter;
+use crate::player::player::Player;
 
 /// Represents a coin
 #[derive(GodotClass)]
@@ -23,14 +22,23 @@ impl IArea2D for Coin {
     }
 }
 
+#[godot_api]
 impl Coin {
-    // When someone enters this coins hit box we call the method to add a coin to that players
-    // coin counter.
-    // fn on_body_entered(&mut self, body: Gd<Node>){
+    /// When someone enters this coins hit box we call the method to add a coin to that players  
+    /// coin counter.
+    ///
+    /// Args:
+    ///      body (Gd<Node2D>): the Node that enters this coin
+    #[func]
+    fn coin_pickup(&mut self, body: Gd<Node2D>) {
+        let body_name = body.get_name();
+        godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
 
-    //     if body.has_method(StringName::from("add_coin")) {
-    //         body.call("add_coin".into(), &[]); //This wont work for some reason
-    //     }
-    //     self.base_mut().queue_free();
-    // }
+        if let Ok(mut player) = body.try_cast::<Player>() {
+            player.bind_mut().adjust_coins(1); // Dereference and call the method
+            self.base_mut().queue_free(); // Remove the coin from the scene
+        } else {
+            godot_print!("Something other than player entered the coin.");
+        }
+    }
 }

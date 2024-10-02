@@ -6,6 +6,7 @@ use std::time::Instant;
 use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
+use godot::classes::Label;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
@@ -21,6 +22,7 @@ use super::input_manager::InputManager;
 use super::metal_line::MetalLine;
 use super::metal_manager::MetalManager;
 use super::metal_reserve_bar_manager::MetalReserveBarManager;
+use crate::coin_counter::CoinCounter;
 
 const MAX_HEALTH: f64 = 100.0;
 const MIN_HEALTH: f64 = 0.0;
@@ -223,6 +225,40 @@ impl Player {
 
         // Update the health bar of the player
         self.get_health_bar().set_value(self.get_health());
+    }
+
+    /// Adjusts the coins in this players coin_counter positively or negatively.
+    ///
+    /// Args:
+    ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
+    pub fn adjust_coins(&mut self, pos_neg: i8) {
+        // Get all the children of the player
+        let children: Array<Gd<Node>> = self.base.to_gd().get_children();
+        for i in 0..children.len() {
+            // Go through the children and find the `Coin_Counter_Panel`
+            let child: Gd<Node> = children.get(i).expect("");
+            if child.get_name().to_string() == "Coin_Counter_Panel" {
+                // Get all the children of the Coin_Counter_Panel
+                let children_counter: Array<Gd<Node>> = child.get_children();
+                for j in 0..children_counter.len() {
+                    // Go through the Coin_Counter_Panel to find `CoinCounter`
+                    let child_counter: Gd<Node> = children_counter.get(j).expect("");
+                    if child_counter.get_name().to_string() == "CoinCounter" {
+                        // Cast the child to CoinCounter and call `add_coin` or `remove_coin`
+                        if let Ok(mut coin_label) = child_counter.try_cast::<CoinCounter>() {
+                            if pos_neg == -1 {
+                                // Dereference and call the method
+                                coin_label.bind_mut().remove_coin();
+                            } else {
+                                coin_label.bind_mut().add_coin();
+                            }
+                        } else {
+                            godot_print!("Failed to cast node to CoinCounter");
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// Represents the direction the player is trying to move

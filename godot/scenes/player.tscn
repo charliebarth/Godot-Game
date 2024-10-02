@@ -828,7 +828,7 @@ offset_bottom = -161.0
 
 [node name="MetalManager" type="MetalManager" parent="."]
 
-[node name="Panel" parent="." instance=ExtResource("22_l2cmc")]
+[node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
 offset_left = -379.0
 offset_top = -220.0
 offset_right = -346.0
