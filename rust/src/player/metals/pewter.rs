@@ -1,5 +1,3 @@
-use godot::global::godot_print;
-
 use crate::player::enums::metal_events::{BurnType, MetalEvents};
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
