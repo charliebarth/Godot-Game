@@ -1,6 +1,8 @@
-use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
-use crate::player::{player::Player, traits::player_state::PlayerState};
+use crate::player::{
+    enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
+};
 
 use super::{fall::Fall, idle::Idle, jump::Jump, run::Run};
 
@@ -12,10 +14,10 @@ impl PlayerState for Land {
 
     fn update(&self, player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
+        let mut input_manager_unbound = player.get_input_manager();
+        let mut input_manager = input_manager_unbound.bind_mut();
 
-        if Input::singleton().is_action_just_pressed(StringName::from("jump"))
-            && player.base().is_on_floor()
-        {
+        if input_manager.fetch_player_event(PlayerEvents::Jump) && player.base().is_on_floor() {
             player.set_state(Box::new(Jump));
         } else if !player.base().is_on_floor() {
             player.set_state(Box::new(Fall));

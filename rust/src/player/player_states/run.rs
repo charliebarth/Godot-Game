@@ -1,4 +1,4 @@
-use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
 use crate::player::{
     enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
@@ -23,7 +23,7 @@ impl PlayerState for Run {
 
         if horizontal_dir == 0.0 {
             player.set_state(Box::new(Idle));
-        } else if Input::singleton().is_action_just_pressed(StringName::from("jump"))
+        } else if input_manager.fetch_player_event(PlayerEvents::Jump)
             && player.base().is_on_floor()
         {
             player.set_state(Box::new(Jump));
