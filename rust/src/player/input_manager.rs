@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::time::Instant;
 
 use super::enums::metal_events::MetalEvents;
-use super::enums::player_events::PlayerEvents;
+use super::enums::player_events::{PlayerEvents, TriggerEvents};
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
@@ -109,8 +109,14 @@ impl InputManager {
 
     fn process_player_events(&mut self, player_event: PlayerEvents, event: Gd<InputEvent>) {
         if event.is_pressed() {
-            self.button_press_times
-                .insert(player_event.clone(), Instant::now());
+            let trigger_event = TriggerEvents::trigger_for_player_event(player_event.clone());
+
+            if trigger_event == TriggerEvents::OnPress {
+                self.player_events.insert(player_event.clone(), 0);
+            } else if trigger_event == TriggerEvents::OnRelease {
+                self.button_press_times
+                    .insert(player_event.clone(), Instant::now());
+            }
         } else if event.is_released() {
             if let Some(press_time) = self.button_press_times.get(&player_event) {
                 let mut player_event = player_event;
