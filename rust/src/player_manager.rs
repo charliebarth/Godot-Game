@@ -42,6 +42,11 @@ impl INode2D for PlayerManager {
 
             level.add_child(player);
 
+            if self.players.is_empty() {
+                let camera = level.get_node_as::<Camera2D>("OverviewCamera");
+                level.remove_child(camera);
+            }
+
             self.players.push(device);
         }
     }

@@ -12543,6 +12543,6 @@ position = Vector2(-2, -843)
 
 [node name="PlayerManager" type="PlayerManager" parent="."]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="OverviewCamera" type="Camera2D" parent="."]
 position = Vector2(-3, -269)
 zoom = Vector2(0.75, 0.75)
