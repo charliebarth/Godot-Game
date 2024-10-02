@@ -2,6 +2,7 @@ use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::ProjectSettings;
+use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
 use super::input_manager::InputManager;
@@ -10,8 +11,8 @@ use super::metal_reserve_bar_manager::MetalReserveBarManager;
 use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
 
-const MAX_HEALTH: u8 = 100;
-const MIN_HEALTH: u8 = 0;
+const MAX_HEALTH: f64 = 100.0;
+const MIN_HEALTH: f64 = 0.0;
 const DEFAULT_RUN_SPEED: f32 = 200.0;
 const DEFAULT_JUMP_FORCE: f32 = 450.0;
 const MAX_RUN_SPEED: f32 = 300.0;
@@ -25,7 +26,7 @@ pub struct Player {
     base: Base<CharacterBody2D>,
     direction: f32,
     gravity: f64,
-    health: u8,
+    health: f64,
     delta: f64,
     current_state: Box<dyn PlayerState>,
     previous_state: Box<dyn PlayerState>,
@@ -46,7 +47,7 @@ impl ICharacterBody2D for Player {
             current_state: Box::new(Idle),
             previous_state: Box::new(Idle),
             direction: 1.0,
-            health: 100,
+            health: MAX_HEALTH,
             delta: 0.0,
             gravity,
             anim_finished: false,
@@ -64,6 +65,9 @@ impl ICharacterBody2D for Player {
 
         // Start the player in the idle state
         self.set_state(Box::new(Idle));
+
+        // Set the health bar to the player's health
+        self.get_health_bar().set_value(self.get_health());
     }
 
     fn physics_process(&mut self, delta: f64) {
@@ -146,8 +150,8 @@ impl Player {
     /// Get the health of the player
     ///
     /// # Returns
-    /// * `u8` - The health of the player
-    pub fn get_health(&self) -> u8 {
+    /// * `f64` - The health of the player
+    pub fn get_health(&self) -> f64 {
         self.health
     }
 
@@ -176,19 +180,16 @@ impl Player {
     /// Adjust the health of the player
     ///
     /// # Arguments
-    /// * `health` - The amount to adjust the health by
-    pub fn adjust_health(&mut self, health: i8) {
-        // Adjust health positively or negatively
-        let new_health = if health < 0 {
-            // Subtract health, but ensure we handle underflow
-            self.health.wrapping_sub(-health as u8) // `-health` converts to positive
-        } else {
-            // Add health, but ensure no overflow
-            self.health.saturating_add(health as u8)
-        };
+    /// * `adjustment` - The amount to adjust the health by
+    pub fn adjust_health(&mut self, adjustment: f64) {
+        // Adjust health by the specified amount
+        self.health += adjustment;
 
         // Clamp health between MIN_HEALTH and MAX_HEALTH
-        self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
+        self.health = self.health.clamp(MIN_HEALTH, MAX_HEALTH);
+
+        // Update the health bar of the player
+        self.get_health_bar().set_value(self.get_health());
     }
 
     /// Represents the direction the player is trying to move
@@ -352,5 +353,13 @@ impl Player {
     pub fn get_metal_reserve_bar_manager(&self) -> Gd<MetalReserveBarManager> {
         self.base()
             .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager")
+    }
+
+    /// Getter for the HealthBar node
+    ///
+    /// # Returns
+    /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
+    pub fn get_health_bar(&self) -> Gd<TextureProgressBar> {
+        self.base().get_node_as::<TextureProgressBar>("HealthBar")
     }
 }
