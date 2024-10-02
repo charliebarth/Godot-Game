@@ -1,10 +1,14 @@
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
+/// This enum is used to determine whether an event registered by the InputManager should be triggered on press or release.
 pub enum TriggerEvents {
+    /// The event should be triggered on press.
     OnPress,
+    /// The event should be triggered on release.
     OnRelease,
 }
 
 impl TriggerEvents {
+    /// Returns the corresponding trigger event for a given player event.
     pub fn trigger_for_player_event(event: PlayerEvents) -> TriggerEvents {
         match event {
             PlayerEvents::Jump => TriggerEvents::OnPress,
@@ -15,15 +19,20 @@ impl TriggerEvents {
     }
 }
 #[derive(Debug, Hash, PartialEq, Eq, Clone)]
+/// This enum defines the valid player events and is used to identify events in the InputManager.
 pub enum PlayerEvents {
+    /// The player has jumped.
     Jump,
+    /// The player has crouched.
     Crouch,
+    /// The player has rolled.
     Roll,
+    /// The player has sprinted.
     Sprint,
 }
 
 impl PlayerEvents {
-    // Method to convert from string to the corresponding event
+    /// Converts a string to the corresponding player event.
     pub fn from_string(button: &str) -> Option<PlayerEvents> {
         match button {
             "jump" => Some(PlayerEvents::Jump),
