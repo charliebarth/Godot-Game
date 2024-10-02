@@ -4,6 +4,10 @@ use crate::player::{player::Player, traits::player_state::PlayerState};
 
 use super::{fall::Fall, land::Land};
 
+// TODO: Allow the player to flip direction in the first couple of frames of the jump
+// TODO: Only reduce the backwards momentum if the signum of the horizontal velocity is opposite.
+// If the players momentum is in the same direction or zero, then don't reduce it.
+
 #[derive(Clone)]
 pub struct Jump;
 
