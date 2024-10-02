@@ -1,18 +1,20 @@
-/// UNFINISHED
 /// Represents a coin counter.
 /// 
 /// Author : Trinity Pittman
-/// Version : 09/22/2024
+/// Version : 10/02/2024
 
 use godot::prelude::*;
 use godot::classes::{Label, ILabel};
+
+// The amount of coins a player starts with 
+const STARTING_COIN_COUNT: f64 = 10.0;
 
 /// Struct that represents a Coin Counter
 #[derive(GodotClass)]
 #[class(base=Label)]
 pub struct CoinCounter {
     base: Base<Label>,
-    /// The amount of Metal reserved in the bar 
+    /// The amount of coins 
     coins: f64,
 }
 
@@ -25,7 +27,7 @@ impl ILabel for CoinCounter {
 
         Self {
             base,
-            coins: 10.0,
+            coins: STARTING_COIN_COUNT,  
         }
     }
 
@@ -39,9 +41,8 @@ impl CoinCounter {
 
     /// Increments the number of coins
     pub fn add_coin(&mut self){
-        let new_coins = self.coins + 1.;
-
-        self.base_mut().set_text(new_coins.to_string().into());
+        let new_coins = self.coins + 1.;        // Find how many coins to change to 
+        self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text 
 
         // Update coin counter 
         self.coins = new_coins;
@@ -49,17 +50,23 @@ impl CoinCounter {
 
 
     /// Setter method for the text
-    pub fn set_text(&mut self, text: String){
-        let text_g = GString::from(text);
-        self.base_mut().set_text(text_g); 
+    /// 
+    /// Args:
+    ///     text (String): The text to set the label to
+    fn set_text(&mut self, text: String){
+        let text_g = GString::from(text);   // Change the string to a GString for godot
+        self.base_mut().set_text(text_g);            // set label text 
     }
 
-    /// Removes coins from this Coin Counter 
-    fn remove_coins(&mut self, num_coins: f64)-> bool{
-        if self.coins - num_coins < 0.0 {
+    /// Removes coins from this Coin Counter, returns false if we cannot carry this out 
+    pub fn remove_coin(&mut self)-> bool{
+        let new_coins = self.coins - 1.;
+
+        if new_coins < 0.0 {    // If we dont have enough coins 
             false
         } else {
-            self.coins -= num_coins;
+            self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+            self.coins = new_coins;
             true
         }
     }

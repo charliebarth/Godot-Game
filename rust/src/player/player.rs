@@ -3,14 +3,17 @@ use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::ProjectSettings;
 use godot::classes::TextureProgressBar;
+use godot::classes::Label;
 use godot::prelude::*;
+
+use crate::coin_counter::CoinCounter;
 
 use super::input_manager::InputManager;
 use super::player_states::idle::Idle;
 use super::traits::player_state::PlayerState;
 
-const MAX_HEALTH: u8 = 100;
-const MIN_HEALTH: u8 = 0;
+const MAX_HEALTH: f64 = 100.;
+const MIN_HEALTH: f64 = 0.;
 pub const MAX_RUN_SPEED: f32 = 140.0;
 
 #[derive(GodotClass)]
@@ -19,7 +22,7 @@ pub struct Player {
     base: Base<CharacterBody2D>,
     direction: f32,
     gravity: f64,
-    health: u8,
+    health: f64,
     delta: f64,
     current_state: Box<dyn PlayerState>,
     previous_state: Box<dyn PlayerState>,
@@ -38,7 +41,7 @@ impl ICharacterBody2D for Player {
             current_state: Box::new(Idle),
             previous_state: Box::new(Idle),
             direction: 1.0,
-            health: 100,
+            health: 100.,
             delta: 0.0,
             gravity,
             anim_finished: false,
@@ -97,7 +100,7 @@ impl Player {
         self.delta
     }
 
-    pub fn get_health(&self) -> u8 {
+    pub fn get_health(&self) -> f64 {
         self.health
     }
 
@@ -113,31 +116,73 @@ impl Player {
         }
     }
 
-    pub fn adjust_health(&mut self, health: i8) {
+    pub fn adjust_health(&mut self, health: f64) {
         // Adjust health positively or negatively
-        let new_health = if health < 0 {
+        let new_health: f64 = if health < 0. {
             // Subtract health, but ensure we handle underflow
-            self.health.wrapping_sub(-health as u8) // `-health` converts to positive
+            if self.health < -health {
+                MIN_HEALTH
+            } else {
+                self.health + health
+            }
         } else {
             // Add health, but ensure no overflow
-            self.health.saturating_add(health as u8)
+            if self.health + health > MAX_HEALTH {
+                MAX_HEALTH
+            } else {
+                self.health + health
+            }
         };
 
         // Clamp health between MIN_HEALTH and MAX_HEALTH
         self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
+
+        // Find the health bar then change the health value 
         let children: Array<Gd<Node>> = self.base.to_gd().get_children();
         for i in 0..children.len() {
             let child : Gd<Node> = children.get(i).expect("");
             
             if child.get_name().to_string() == "HealthBar" {
-                if let health_bar = child.cast::<TextureProgressBar>() {
-                    // Set the health value 
-                    //health_bar.set_value(self.health); // TODO needs to be a f64 **
-                }
-
+                let mut health_bar = child.cast::<TextureProgressBar>();
+                // Set the health value 
+                health_bar.set_value(self.health); 
+    
             }
-            
-        
+        }
+    }
+
+    /// Adjusts the coins in this players coin_counter positively or negatively. 
+    ///
+    /// Args:
+    ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
+    pub fn adjust_coins(&mut self, pos_neg: i8) {
+        // Get all the children of the player 
+        let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
+        for i in 0..children.len() { 
+            // Go through the children and find the `Coin_Counter_Panel`
+            let child : Gd<Node> = children.get(i).expect("");
+            if child.get_name().to_string() == "Coin_Counter_Panel" {
+                // Get all the children of the Coin_Counter_Panel
+                let children_counter: Array<Gd<Node>> = child.get_children();
+                for j in 0..children_counter.len() {
+                    // Go through the Coin_Counter_Panel to find `CoinCounter`
+                    let child_counter : Gd<Node> = children_counter.get(j).expect("");
+                    if child_counter.get_name().to_string() == "CoinCounter" {
+
+                        // Cast the child to CoinCounter and call `add_coin` or `remove_coin`
+                        if let Ok(mut coin_label) = 
+                                                        child_counter.try_cast::<CoinCounter>() {
+                            if pos_neg == -1 {  // Dereference and call the method
+                                coin_label.bind_mut().remove_coin(); 
+                            } else {
+                                coin_label.bind_mut().add_coin(); 
+                            }
+                        } else {
+                            godot_print!("Failed to cast node to CoinCounter");
+                        }
+                    }
+                }
+            }
         }
     }
 

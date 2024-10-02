@@ -775,8 +775,8 @@ offset_top = -200.0
 offset_right = -325.0
 offset_bottom = -173.0
 
-[node name="Panel" parent="." instance=ExtResource("22_l2cmc")]
-offset_left = -315.0
+[node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
+offset_left = -317.0
 offset_top = -196.0
-offset_right = -282.0
+offset_right = -284.0
 offset_bottom = -180.0
