@@ -42,14 +42,20 @@ mod player {
     }
 }
 
-pub mod coin;
 pub mod coin_counter;
 pub mod metal_object;
 pub mod player_manager;
 
-pub mod metal_reserve_bar_manager;
+mod items {
+    pub mod coin;
+    pub mod metal_vial;
+}
 
-pub mod metal_bar;
+mod ui {
+    pub mod coin_counter;
+    pub mod metal_bar;
+    pub mod metal_reserve_bar_manager;
+}
 
 struct MyExtension;
 
