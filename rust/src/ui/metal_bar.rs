@@ -37,13 +37,25 @@ impl ITextureProgressBar for MetalBar {
     /// Sets the Metals value to 0.0 at the start of the round 
     fn ready(&mut self){
         self.base_mut().set_value(0.0);
-        // do i need to set textures?
     }
 
 
 }
 
 impl MetalBar {
+
+    pub fn set_texture(&mut self, path: &str) {
+        
+    }
+
+    pub fn set_name(&mut self, name: &str) {
+        let name_g = GString::from(name);   // Change the string to a GString for godot
+        self.base_mut().set_name(name_g);
+    }
+
+    pub fn hide(&mut self){
+        self.base_mut().hide();
+    }
 
     /// Getter method for the current number of reserves
     pub fn get_reserves(&mut self) -> f64 {
