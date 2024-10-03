@@ -8,10 +8,9 @@
 
 use godot::prelude::*;
 use godot::classes::{IVBoxContainer, VBoxContainer};  // Import Node and VBoxContainer
-pub use crate::metal_bar::MetalBar;
+pub use crate::ui::metal_bar::MetalBar;
 
 use std::collections::HashMap;
-
 
 const MAX_BARS_ON_SCREEN: u8 = 4;
 
@@ -36,12 +35,16 @@ impl IVBoxContainer for  MetalReserveBarManager {
 
     fn ready(&mut self) { 
         // Create Metals that are auto added to VBox based on the keybound metals 
-
+        
     }
 
 }
 
 impl MetalReserveBarManager{
+
+    pub fn add_metals(&mut self){
+        godot_print!("METALS ADDED")
+    }
 
     pub fn add_remove(&mut self, unbind: Gd<MetalBar>, _bind: String){
         self.base_mut().remove_child(unbind);

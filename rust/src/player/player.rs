@@ -6,7 +6,8 @@ use godot::classes::TextureProgressBar;
 use godot::classes::Label;
 use godot::prelude::*;
 
-use crate::coin_counter::CoinCounter;
+use crate::ui::coin_counter::CoinCounter;
+use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::input_manager::InputManager;
 use super::player_states::idle::Idle;
@@ -181,6 +182,24 @@ impl Player {
                             godot_print!("Failed to cast node to CoinCounter");
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /// Adjusts the metals in this players metal bar manager positively.
+    pub fn adjust_metals(&mut self) {
+        // Get all the children of the player 
+        let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
+        for i in 0..children.len() { 
+            // Go through the children and find the `metal_reserver_bar_manager`
+            let child : Gd<Node> = children.get(i).expect("");
+            if child.get_name().to_string() == "MetalReserveBarManager" {
+                if let Ok(mut metal_manager) = 
+                                        child.try_cast::<MetalReserveBarManager>() {
+                    metal_manager.bind_mut().add_metals();
+                } else {
+                    godot_print!("Failed to cast node to CoinCounter");
                 }
             }
         }

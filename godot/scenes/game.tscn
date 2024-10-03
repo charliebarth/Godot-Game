@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=4 uid="uid://vpakk8ov0chg"]
+[gd_scene load_steps=21 format=4 uid="uid://vpakk8ov0chg"]
 
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="1_md1an"]
 [ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="2_y6khy"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://byhuhw43cb8fg" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props Shadow.png" id="6_by3gr"]
 [ext_resource type="PackedScene" uid="uid://gjuprjol1d4y" path="res://scenes/player.tscn" id="8_pk2xw"]
 [ext_resource type="PackedScene" uid="uid://6eewvmcnjobm" path="res://scenes/coin.tscn" id="9_wan7r"]
+[ext_resource type="PackedScene" uid="uid://cdk7m3yxd0fm0" path="res://scenes/metal_vial.tscn" id="10_gqx0f"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w5xli"]
 texture = ExtResource("1_md1an")
@@ -4647,4 +4648,8 @@ tile_set = SubResource("TileSet_p58od")
 [node name="Coin" parent="." instance=ExtResource("9_wan7r")]
 position = Vector2(42, 363)
 
+[node name="MetalVial" parent="." instance=ExtResource("10_gqx0f")]
+position = Vector2(-49, 360)
+
 [node name="Player" parent="." instance=ExtResource("8_pk2xw")]
+position = Vector2(-2, -321)
