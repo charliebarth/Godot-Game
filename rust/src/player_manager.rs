@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use godot::{
     classes::{
         viewport::DefaultCanvasItemTextureFilter, HBoxContainer, InputEvent, InputMap, Marker2D,
@@ -40,21 +42,25 @@ impl INode2D for PlayerManager {
         {
             let mut player = self.player_scene.instantiate_as::<Player>();
             let mut root = self.base().get_parent().unwrap();
-            let spawn_position = self.select_spawn_point(device);
-
-            player.bind_mut().set_device_id(device);
-            player.set_position(spawn_position);
 
             self.split_screen();
 
-            if self.players.is_empty() {
+            self.players.push(device);
+            let player_id = self
+                .players
+                .iter()
+                .position(|&x| x == device)
+                .expect("Player missing") as i32;
+            let spawn_position = self.select_spawn_point(player_id);
+            player.bind_mut().set_device_id(device);
+            player.set_position(spawn_position);
+
+            if self.players.len() == 1 {
                 let camera = root.get_node_as::<Camera2D>("OverviewCamera");
                 root.remove_child(camera);
             }
 
-            self.assign_player_to_subviewport(player, device);
-
-            self.players.push(device);
+            self.assign_player_to_subviewport(player, player_id);
         }
     }
 }
@@ -71,7 +77,10 @@ impl PlayerManager {
             _ => "SpawnOne",
         };
 
-        let spawn_point = level.get_node_as::<Marker2D>(format!("MapOne/{}", spawn_point_name));
+        let spawn_point = level.get_node_as::<Marker2D>(format!(
+            "SplitScreenOne/PlayerOneContainer/PlayerOneViewport/MapOne/{}",
+            spawn_point_name
+        ));
 
         spawn_point.get_position()
     }
@@ -153,6 +162,7 @@ impl PlayerManager {
         p2_container.set_name("PlayerTwoContainer".into());
         p2_viewport.set_name("PlayerTwoViewport".into());
         p2_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
+        p2_viewport.set_world_2d(p1_viewport.get_world_2d());
 
         p2_container.set_size(Vector2::new(960.0, 1080.0));
         p2_viewport.set_size(Vector2i::new(960, 1080));
@@ -186,6 +196,7 @@ impl PlayerManager {
         p3_container.set_name("PlayerThreeContainer".into());
         p3_viewport.set_name("PlayerThreeViewport".into());
         p3_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
+        p3_viewport.set_world_2d(p2_viewport.get_world_2d());
 
         split_screen_two.set_size(Vector2::new(1920.0, 540.0));
         p3_container.set_size(Vector2::new(1920.0, 540.0));
@@ -212,6 +223,7 @@ impl PlayerManager {
         p4_container.set_name("PlayerFourContainer".into());
         p4_viewport.set_name("PlayerFourViewport".into());
         p4_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
+        p4_viewport.set_world_2d(p3_viewport.get_world_2d());
 
         p4_container.set_size(Vector2::new(960.0, 540.0));
         p4_viewport.set_size(Vector2i::new(960, 540));
