@@ -48,7 +48,7 @@ impl INode2D for InputManager {
         }
 
         // Expire events after a certain number of frames (e.g., 60 frames)
-        self.player_events.retain(|_, timer| *timer < 3);
+        self.player_events.retain(|_, timer| *timer < 10);
     }
 }
 
