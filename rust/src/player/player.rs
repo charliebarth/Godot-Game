@@ -33,6 +33,7 @@ pub struct Player {
     anim_finished: bool,
     run_speed: f32,
     jump_force: f32,
+    device_id: i32,
 }
 
 #[godot_api]
@@ -53,6 +54,7 @@ impl ICharacterBody2D for Player {
             anim_finished: false,
             run_speed: DEFAULT_RUN_SPEED,
             jump_force: DEFAULT_JUMP_FORCE,
+            device_id: 0,
         }
     }
 
@@ -196,8 +198,8 @@ impl Player {
     /// Returns 1 when the move right button is pressed, -1 when the move left button is pressed, and 0 if neither is pressed
     // TODO: Rename
     pub fn get_horizontal_movement(&mut self) -> f32 {
-        let move_left = StringName::from("move_left");
-        let move_right = StringName::from("move_right");
+        let move_left = StringName::from(format!("move_left{}", self.device_id));
+        let move_right = StringName::from(format!("move_right{}", self.device_id));
         Input::singleton().get_axis(move_left, move_right)
     }
 
@@ -323,6 +325,7 @@ impl Player {
     /// # Arguments
     /// * `device_id` - The device ID to set
     pub fn set_device_id(&mut self, device_id: i32) {
+        self.device_id = device_id;
         let mut input_manager_unbound = self.get_input_manager();
         input_manager_unbound.bind_mut().set_device_id(device_id);
     }
