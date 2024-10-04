@@ -745,6 +745,7 @@ radius = 7.0
 height = 44.0
 
 [node name="Player" type="Player"]
+z_index = 1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -2)
