@@ -17,14 +17,14 @@ impl PlayerState for Jump {
         let mut base = player.base_mut();
 
         let jump_force = base.get_velocity().y + -jump_force;
-        let jump_vel = Vector2::new(base.get_velocity().x, base.get_velocity().y + jump_force);
+        let jump_vel = Vector2::new(base.get_velocity().x, jump_force);
         base.set_velocity(jump_vel);
     }
 
     fn update(&self, player: &mut Player) {
         if player.is_anim_finished() {
             player.set_state(Box::new(Fall))
-        } else if player.base_mut().is_on_floor() {
+        } else if player.base().is_on_floor() {
             player.set_state(Box::new(Land))
         } else {
             self.run(player);
@@ -36,7 +36,7 @@ impl PlayerState for Jump {
     }
 
     fn as_str(&self, player: &mut Player) -> &str {
-        let y_vel = player.base_mut().get_velocity().y;
+        let y_vel = player.base().get_velocity().y;
         if y_vel > -10.0 {
             "jump_fall"
         } else {
