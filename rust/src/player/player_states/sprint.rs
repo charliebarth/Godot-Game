@@ -19,7 +19,7 @@ impl PlayerState for Sprint {
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
-        if horizontal_dir == 0.0 {
+        if horizontal_dir.signum() != player.get_dir().signum() || horizontal_dir == 0.0 {
             player.set_state(Box::new(Idle));
         } else if input_manager.fetch_player_event(PlayerEvents::Jump)
             && player.base().is_on_floor()
