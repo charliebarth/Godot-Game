@@ -41,4 +41,13 @@ impl PlayerEvents {
             _ => None,
         }
     }
+
+    pub fn timeout(&self) -> u32 {
+        match self {
+            PlayerEvents::Jump => 10,
+            PlayerEvents::Crouch => 10,
+            PlayerEvents::Roll => 10,
+            PlayerEvents::Sprint => 10,
+        }
+    }
 }
