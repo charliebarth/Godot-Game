@@ -1,6 +1,6 @@
-use crate::player::{player::Player, traits::player_state::PlayerState};
-
-use super::crouch::Crouch;
+use crate::player::{
+    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+};
 
 #[derive(Clone)]
 pub struct CrouchStart;
@@ -10,7 +10,7 @@ impl PlayerState for CrouchStart {
 
     fn update(&self, player: &mut Player) {
         if player.is_anim_finished() {
-            player.set_state(Box::new(Crouch));
+            player.set_state(PlayerStates::Crouch);
         }
     }
 

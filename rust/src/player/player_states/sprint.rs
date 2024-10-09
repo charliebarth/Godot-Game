@@ -1,10 +1,9 @@
 use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
+    enums::player_events::PlayerEvents, enums::player_states::PlayerStates, player::Player,
+    traits::player_state::PlayerState,
 };
-
-use super::{crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, slide::Slide};
 
 #[derive(Clone)]
 pub struct Sprint;
@@ -20,20 +19,20 @@ impl PlayerState for Sprint {
         let mut input_manager = input_manager_unbound.bind_mut();
 
         if horizontal_dir.signum() != player.get_dir().signum() || horizontal_dir == 0.0 {
-            player.set_state(Box::new(Idle));
+            player.set_state(PlayerStates::Idle);
         } else if input_manager.fetch_player_event(PlayerEvents::Jump)
             && player.base().is_on_floor()
         {
-            player.set_state(Box::new(Jump));
+            player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
-            player.set_state(Box::new(Fall));
+            player.set_state(PlayerStates::Fall);
         // If player attempts to crouch while sprinting they slide into a crouch
         } else if input_manager.fetch_player_event(PlayerEvents::Crouch) {
-            player.set_state(Box::new(Slide));
-            player.set_previous_state(Box::new(CrouchStart));
+            player.set_state(PlayerStates::Slide);
+            player.set_previous_state(PlayerStates::CrouchStart);
         // If player attempts to roll while sprinting they slide instead
         } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
-            player.set_state(Box::new(Slide));
+            player.set_state(PlayerStates::Slide);
         } else {
             self.run(player);
         }

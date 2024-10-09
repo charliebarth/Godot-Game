@@ -1,10 +1,9 @@
 use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::player_events::PlayerEvents, player::Player, traits::player_state::PlayerState,
+    enums::player_events::PlayerEvents, enums::player_states::PlayerStates, player::Player,
+    traits::player_state::PlayerState,
 };
-
-use super::{fall::Fall, idle::Idle, jump::Jump, run::Run};
 
 #[derive(Clone)]
 pub struct Land;
@@ -18,13 +17,13 @@ impl PlayerState for Land {
         let mut input_manager = input_manager_unbound.bind_mut();
 
         if input_manager.fetch_player_event(PlayerEvents::Jump) && player.base().is_on_floor() {
-            player.set_state(Box::new(Jump));
+            player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
-            player.set_state(Box::new(Fall));
+            player.set_state(PlayerStates::Fall);
         } else if horizontal_dir != 0.0 {
-            player.set_state(Box::new(Run));
+            player.set_state(PlayerStates::Run);
         } else {
-            player.set_state(Box::new(Idle));
+            player.set_state(PlayerStates::Idle);
         }
     }
 

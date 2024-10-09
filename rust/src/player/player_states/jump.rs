@@ -1,8 +1,8 @@
 use godot::{builtin::Vector2, obj::WithBaseField};
 
-use crate::player::{player::Player, traits::player_state::PlayerState};
-
-use super::{fall::Fall, land::Land};
+use crate::player::{
+    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+};
 
 // TODO: Allow the player to flip direction in the first couple of frames of the jump
 // TODO: Only reduce the backwards momentum if the signum of the horizontal velocity is opposite.
@@ -22,10 +22,18 @@ impl PlayerState for Jump {
     }
 
     fn update(&self, player: &mut Player) {
+        let next_state: PlayerStates;
+
         if player.is_anim_finished() {
-            player.set_state(Box::new(Fall))
+            next_state = PlayerStates::Fall;
         } else if player.base().is_on_floor() {
-            player.set_state(Box::new(Land))
+            next_state = PlayerStates::Land;
+        } else {
+            next_state = PlayerStates::Jump;
+        }
+
+        if next_state != PlayerStates::Jump {
+            self.exit(player, next_state);
         } else {
             self.run(player);
         }
@@ -58,5 +66,9 @@ impl Jump {
         } else {
             player.apply_horizontal_velocity(horizontal_dir, player.get_run_speed());
         }
+    }
+
+    fn exit(&self, player: &mut Player, next_state: PlayerStates) {
+        player.set_state(next_state);
     }
 }

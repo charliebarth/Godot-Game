@@ -1,16 +1,18 @@
 use godot::obj::WithBaseField;
 
-use crate::player::{player::Player, player_states::land::Land, traits::player_state::PlayerState};
+use crate::player::{
+    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+};
 
 #[derive(Clone)]
 pub struct Fall;
 
 impl PlayerState for Fall {
-    fn enter(&self, _player: &mut Player) {}
+    fn enter(&self, player: &mut Player) {}
 
     fn update(&self, player: &mut Player) {
         if player.base().is_on_floor() {
-            player.set_state(Box::new(Land));
+            player.set_state(PlayerStates::Land);
         } else {
             self.run(player);
         }

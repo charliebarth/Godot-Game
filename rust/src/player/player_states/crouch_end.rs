@@ -1,6 +1,6 @@
-use crate::player::{player::Player, traits::player_state::PlayerState};
-
-use super::idle::Idle;
+use crate::player::{
+    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+};
 
 #[derive(Clone)]
 pub struct CrouchEnd;
@@ -10,7 +10,7 @@ impl PlayerState for CrouchEnd {
 
     fn update(&self, player: &mut Player) {
         if player.is_anim_finished() {
-            player.set_state(Box::new(Idle));
+            player.set_state(PlayerStates::Idle);
         }
     }
 

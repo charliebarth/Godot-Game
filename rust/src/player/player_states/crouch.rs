@@ -1,12 +1,9 @@
 use godot::obj::WithBaseField;
 
 use crate::player::enums::player_events::PlayerEvents;
-use crate::player::{player::Player, traits::player_state::PlayerState};
-
-use super::crouch_end::CrouchEnd;
-use super::fall::Fall;
-use super::roll::Roll;
-use super::run::Run;
+use crate::player::{
+    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+};
 
 const CROUCH_SPEED: f32 = 75.0;
 
@@ -21,17 +18,17 @@ impl PlayerState for Crouch {
         let mut input_manager = input_manager_unbound.bind_mut();
 
         if input_manager.fetch_player_event(PlayerEvents::Crouch) {
-            player.set_state(Box::new(CrouchEnd));
+            player.set_state(PlayerStates::CrouchEnd);
         } else if !player.base().is_on_floor() {
-            player.set_state(Box::new(Fall));
+            player.set_state(PlayerStates::Fall);
         } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             if player.get_horizontal_movement() != 0.0 {
-                player.set_state(Box::new(Roll));
+                player.set_state(PlayerStates::Roll);
             } else {
-                player.set_state(Box::new(CrouchEnd));
+                player.set_state(PlayerStates::CrouchEnd);
             }
         } else if input_manager.fetch_player_event(PlayerEvents::Sprint) {
-            player.set_state(Box::new(Run));
+            player.set_state(PlayerStates::Run);
         } else {
             self.run(player);
         }
