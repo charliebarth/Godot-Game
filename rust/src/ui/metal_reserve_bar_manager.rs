@@ -7,7 +7,7 @@
 /// Version : 09/22/2024
 
 use godot::prelude::*;
-use godot::classes::{IVBoxContainer, VBoxContainer, TextureProgressBar};  // Import Node and VBoxContainer
+use godot::classes::{ITextureProgressBar, IVBoxContainer, TextureProgressBar, VBoxContainer};  // Import Node and VBoxContainer
 pub use crate::ui::metal_bar::MetalBar;
 
 use std::collections::HashMap;
@@ -38,7 +38,13 @@ impl IVBoxContainer for  MetalReserveBarManager {
         // Create Metals that are auto added to VBox based on the keybound metals 
         for i in 0..TOTAL_BARS {
             let mut bar = MetalBar::new_alloc();
+            bar.set_visible(true);
+            godot_print!("BAR {} WITH SIZE {:?}", i, bar.get_size());
+
             self.base_mut().add_child(bar);
+
+            
+            godot_print!("BARS CREATED")
         }
         self.setup_metals();
     }
@@ -50,18 +56,23 @@ impl MetalReserveBarManager{
     fn setup_metals(&mut self) {
         // Get all the children of the player 
         let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
+        let paths: [&str; 9] = ["iron", "steel", "pewter", "tin", "bronze", "copper", "duralumin", "nicrosil", "chromium"];
+
         for i in 0..children.len() {
+
             let child : Gd<Node> = children.get(i).expect("");
             if let Ok(mut bar) = child.try_cast::<MetalBar>() {
                     let mut bar_mut = bar.bind_mut();
-                    bar_mut.set_name("Iron");
-                    bar_mut.set_texture(""); 
-                    bar_mut.hide();
+                    bar_mut.set_name(paths[i]);
+                    bar_mut.set_texture(paths[i]);
+                    
+                    godot_print!("SETUP")
                 } else {
                     godot_print!("Failed to cast node to MetalBar");
                 }
     
         }
+        godot_print!("BARS SETUP")
     }
 
     pub fn add_metals(&mut self){

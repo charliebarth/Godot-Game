@@ -1,9 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://b2cab082bt2gh"]
-
-[ext_resource type="PackedScene" uid="uid://rkporad0ail1" path="res://scenes/metal_bar.tscn" id="1_cbnqj"]
-[ext_resource type="Texture2D" uid="uid://rv5ggi1o5533" path="res://assets/HealthMetalBars/metal_bar_prog.png" id="2_xcijk"]
-[ext_resource type="Texture2D" uid="uid://0nchavw40n32" path="res://assets/HealthMetalBars/metal_bar_prog_green.png" id="3_lidnm"]
-[ext_resource type="Texture2D" uid="uid://lo6uvw6eymoi" path="res://assets/HealthMetalBars/metal_bar_prog_purple.png" id="4_blyk0"]
+[gd_scene format=3 uid="uid://b2cab082bt2gh"]
 
 [node name="MetalReserveBarManager" type="MetalReserveBarManager"]
 offset_left = -40.0
@@ -11,18 +6,3 @@ offset_top = -36.0
 offset_right = 23.0
 offset_bottom = 5.0
 theme_override_constants/separation = -1
-
-[node name="MetalBar" parent="." instance=ExtResource("1_cbnqj")]
-layout_mode = 2
-
-[node name="MetalBar2" parent="." instance=ExtResource("1_cbnqj")]
-layout_mode = 2
-texture_progress = ExtResource("2_xcijk")
-
-[node name="MetalBar3" parent="." instance=ExtResource("1_cbnqj")]
-layout_mode = 2
-texture_progress = ExtResource("3_lidnm")
-
-[node name="MetalBar4" parent="." instance=ExtResource("1_cbnqj")]
-layout_mode = 2
-texture_progress = ExtResource("4_blyk0")

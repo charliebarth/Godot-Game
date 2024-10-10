@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lo6uvw6eymoi"
-path="res://.godot/imported/metal_bar_prog_purple.png-13d365b76fe821977f4a3af61a52e379.ctex"
+uid="uid://cnumbx5p6gm6r"
+path="res://.godot/imported/metal_bar_prog_pewter.png-758db3417f3d6a165f93414659a74c4d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/HealthMetalBars/metal_bar_prog_purple.png"
-dest_files=["res://.godot/imported/metal_bar_prog_purple.png-13d365b76fe821977f4a3af61a52e379.ctex"]
+source_file="res://assets/HealthMetalBars/metal_bar_prog_pewter.png"
+dest_files=["res://.godot/imported/metal_bar_prog_pewter.png-758db3417f3d6a165f93414659a74c4d.ctex"]
 
 [params]
 
