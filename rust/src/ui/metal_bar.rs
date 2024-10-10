@@ -36,7 +36,7 @@ impl ITextureProgressBar for MetalBar {
 
     /// Sets the Metals value to 0.0 at the start of the round 
     fn ready(&mut self){
-        self.base_mut().set_value(100.0);
+        self.base_mut().set_value(0.0);
         self.base_mut().set_min(MIN_RESERVE);
         self.base_mut().set_max(MAX_RESERVE);
     }
