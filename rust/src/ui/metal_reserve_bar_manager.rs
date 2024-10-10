@@ -73,6 +73,14 @@ impl MetalReserveBarManager{
     }
 
     pub fn add_metals(&mut self){
+        let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
+        for i in 0..TOTAL_BARS {
+            let child : Gd<Node> = children.get(i.into()).expect("");
+            if let Ok(mut bar) = child.try_cast::<MetalBar>() {
+                let mut bar_mut = bar.bind_mut();
+                bar_mut.adjust_reserves(10.0);
+            }
+        }
         godot_print!("METALS ADDED")
     }
 
