@@ -39,10 +39,7 @@ impl IVBoxContainer for  MetalReserveBarManager {
         for i in 0..TOTAL_BARS {
             let mut bar = MetalBar::new_alloc();
             bar.set_visible(true);
-            godot_print!("BAR {} WITH SIZE {:?}", i, bar.get_size());
-
             self.base_mut().add_child(bar);
-
             
             godot_print!("BARS CREATED")
         }
@@ -56,7 +53,7 @@ impl MetalReserveBarManager{
     fn setup_metals(&mut self) {
         // Get all the children of the player 
         let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
-        let paths: [&str; 9] = ["iron", "steel", "pewter", "tin", "bronze", "copper", "duralumin", "nicrosil", "chromium"];
+        let paths: [&str; 10] = ["iron", "steel", "pewter", "tin", "bronze", "copper", "duralumin", "nicrosil", "chromium", "gold"];
 
         for i in 0..children.len() {
 
