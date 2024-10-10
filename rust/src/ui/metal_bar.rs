@@ -4,7 +4,7 @@
 /// Version : 09/22/2024
 
 use godot::prelude::*;
-use godot::classes::{ITextureProgressBar, TextureProgressBar};
+use godot::classes::{ITextureProgressBar, ResourceLoader, TextureProgressBar, Texture2D};
 
 /// The maximum number of metal reserves a player can have
 const MAX_RESERVE: f64 = 100.0;
@@ -45,11 +45,29 @@ impl ITextureProgressBar for MetalBar {
 impl MetalBar {
 
     pub fn set_texture(&mut self, path: &str) {
-        
+        // Every bar will have the same under texture so we set that first
+        let under_path: &str = "res://assets/HealthMetalBars/HealthBar DARK.png";
+        let texture_under: Gd<Texture2D> = self.load_texture(under_path);
+        self.base_mut().set_under_texture(texture_under);
+
+        // The progress texture is dependent on the type of metal and is passed into this function
+        let path_str: String = "res://assets/HealthMetalBars/metal_bar_prog_".to_string() + path + ".png";
+        let texture_progress: Gd<Texture2D> = self.load_texture(path_str.as_str());
+        self.base_mut().set_progress_texture(texture_progress);
+        self.base_mut().set_texture_progress_offset(Vector2::new(0.0, 1.0));
+    }
+
+    fn load_texture(&mut self, path: &str) -> Gd<Texture2D>{
+        let mut loader: Gd<ResourceLoader> = ResourceLoader::singleton(); 
+
+        let path_g: GString = GString::from(path);   // Change the string to a GString for godot
+        let tex: Option<Gd<Resource>> = loader.load(path.into());
+
+        tex.unwrap().cast::<Texture2D>() 
     }
 
     pub fn set_name(&mut self, name: &str) {
-        let name_g = GString::from(name);   // Change the string to a GString for godot
+        let name_g: GString = GString::from(name);   // Change the string to a GString for godot
         self.base_mut().set_name(name_g);
     }
 
