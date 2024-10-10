@@ -36,7 +36,9 @@ impl ITextureProgressBar for MetalBar {
 
     /// Sets the Metals value to 0.0 at the start of the round 
     fn ready(&mut self){
-        self.base_mut().set_value(0.0);
+        self.base_mut().set_value(100.0);
+        self.base_mut().set_min(MIN_RESERVE);
+        self.base_mut().set_max(MAX_RESERVE);
     }
 
 
@@ -45,16 +47,22 @@ impl ITextureProgressBar for MetalBar {
 impl MetalBar {
 
     pub fn set_texture(&mut self, path: &str) {
+        
         // Every bar will have the same under texture so we set that first
         let under_path: &str = "res://assets/HealthMetalBars/HealthBar DARK.png";
         let texture_under: Gd<Texture2D> = self.load_texture(under_path);
+        godot_print!("Texture: {}", texture_under);
         self.base_mut().set_under_texture(texture_under);
 
         // The progress texture is dependent on the type of metal and is passed into this function
-        let path_str: String = "res://assets/HealthMetalBars/metal_bar_prog_".to_string() + path + ".png";
+        let path_str: String = format!("res://assets/HealthMetalBars/metal_bar_prog_{}.png", path);
+        godot_print!("{}", path_str);
         let texture_progress: Gd<Texture2D> = self.load_texture(path_str.as_str());
+        godot_print!("Texture: {}", texture_progress);
         self.base_mut().set_progress_texture(texture_progress);
         self.base_mut().set_texture_progress_offset(Vector2::new(0.0, 1.0));
+        
+        
     }
 
     fn load_texture(&mut self, path: &str) -> Gd<Texture2D>{
