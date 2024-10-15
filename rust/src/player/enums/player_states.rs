@@ -1,4 +1,14 @@
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+use crate::player::{
+    player::Player,
+    player_states::{
+        crouch::Crouch, crouch_end::CrouchEnd, crouch_start::CrouchStart, fall::Fall, idle::Idle,
+        jump::Jump, land::Land, roll::Roll, run::Run, slide::Slide, slide_crouch::SlideCrouch,
+        sprint::Sprint,
+    },
+    traits::player_state::PlayerState,
+};
+
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 
 /// States that the player can be in
 pub enum PlayerStates {
@@ -13,13 +23,13 @@ pub enum PlayerStates {
     Run,
     Slide,
     Sprint,
-    WallSlide,
+    SlideCrouch,
 }
 
 impl PlayerStates {
     pub fn as_str(&self) -> &str {
         match self {
-            PlayerStates::Crouch => "crouch",
+            PlayerStates::Crouch => "crouch_walk",
             PlayerStates::CrouchEnd => "crouch_end",
             PlayerStates::CrouchStart => "crouch_start",
             PlayerStates::Fall => "fall",
@@ -30,7 +40,41 @@ impl PlayerStates {
             PlayerStates::Run => "run",
             PlayerStates::Slide => "slide",
             PlayerStates::Sprint => "sprint",
-            PlayerStates::WallSlide => "wall_slide",
+            PlayerStates::SlideCrouch => "slide_crouch",
+        }
+    }
+
+    pub fn update_state(self, player: &mut Player) {
+        match self {
+            PlayerStates::Idle => Idle::update(player),
+            PlayerStates::Run => Run::update(player),
+            PlayerStates::Jump => Jump::update(player),
+            PlayerStates::Fall => Fall::update(player),
+            PlayerStates::Land => Land::update(player),
+            PlayerStates::Roll => Roll::update(player),
+            PlayerStates::Crouch => Crouch::update(player),
+            PlayerStates::CrouchEnd => CrouchEnd::update(player),
+            PlayerStates::CrouchStart => CrouchStart::update(player),
+            PlayerStates::Slide => Slide::update(player),
+            PlayerStates::SlideCrouch => SlideCrouch::update(player),
+            PlayerStates::Sprint => Sprint::update(player),
+        }
+    }
+
+    pub fn enter_state(self, player: &mut Player) {
+        match self {
+            PlayerStates::Idle => Idle::enter(player),
+            PlayerStates::Run => Run::enter(player),
+            PlayerStates::Jump => Jump::enter(player),
+            PlayerStates::Fall => Fall::enter(player),
+            PlayerStates::Land => Land::enter(player),
+            PlayerStates::Roll => Roll::enter(player),
+            PlayerStates::Crouch => Crouch::enter(player),
+            PlayerStates::CrouchEnd => CrouchEnd::enter(player),
+            PlayerStates::CrouchStart => CrouchStart::enter(player),
+            PlayerStates::Slide => Slide::enter(player),
+            PlayerStates::SlideCrouch => SlideCrouch::enter(player),
+            PlayerStates::Sprint => Sprint::enter(player),
         }
     }
 }

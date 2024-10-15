@@ -10,6 +10,9 @@ mod player {
     mod enums {
         pub mod metal_events;
         pub mod player_events;
+
+        pub mod player_states;
+        pub mod timeout_events;
     }
 
     mod traits {
@@ -28,7 +31,9 @@ mod player {
         pub mod roll;
         pub mod run;
         pub mod slide;
+        pub mod slide_crouch;
         pub mod sprint;
+        pub mod wall_slide;
     }
 
     mod metals {
