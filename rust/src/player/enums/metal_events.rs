@@ -1,11 +1,11 @@
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 
 pub enum BurnType {
     Burn,
     LowBurn,
 }
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub enum MetalEvents {
     Pewter(BurnType),
 }

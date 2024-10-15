@@ -1,4 +1,4 @@
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 /// This enum is used to determine whether an event registered by the InputManager should be triggered on press or release.
 pub enum TriggerEvents {
     /// The event should be triggered on press.
@@ -18,7 +18,7 @@ impl TriggerEvents {
         }
     }
 }
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 /// This enum defines the valid player events and is used to identify events in the InputManager.
 pub enum PlayerEvents {
     /// The player has jumped.
