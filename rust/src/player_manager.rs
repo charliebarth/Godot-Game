@@ -6,6 +6,15 @@ use godot::{
     prelude::*,
 };
 
+const FULLSCREEN_WIDTH: f32 = 1920.0;
+const FULLSCREEN_HEIGHT: f32 = 1080.0;
+
+const TWO_PLAYER_WIDTH: f32 = 1920.0;
+const TWO_PLAYER_HEIGHT: f32 = 540.0;
+
+const THREE_PLAYER_WIDTH: f32 = 960.0;
+const THREE_PLAYER_HEIGHT: f32 = 540.0;
+
 use crate::player::player::Player;
 #[derive(GodotClass)]
 #[class(base=Node2D)]
@@ -188,9 +197,12 @@ impl PlayerManager {
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
         let mut p1_viewport = p1_container.get_node_as::<SubViewport>("PlayerOneViewport");
 
-        p1_viewport.set_size(Vector2i::new(1920, 1080));
-        p1_container.set_size(Vector2::new(1920.0, 1080.0));
-        split_screen_one.set_size(Vector2::new(1920.0, 1080.0));
+        p1_viewport.set_size(Vector2i::new(
+            FULLSCREEN_WIDTH as i32,
+            FULLSCREEN_HEIGHT as i32,
+        ));
+        p1_container.set_size(Vector2::new(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT));
+        split_screen_one.set_size(Vector2::new(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT));
     }
 
     fn two_player_split_screen(&self, mut root: Gd<Node>) {
@@ -221,9 +233,12 @@ impl PlayerManager {
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
         let mut p1_viewport = p1_container.get_node_as::<SubViewport>("PlayerOneViewport");
 
-        p1_viewport.set_size(Vector2i::new(1920, 540));
-        p1_container.set_size(Vector2::new(1920.0, 540.0));
-        split_screen_one.set_size(Vector2::new(1920.0, 540.0));
+        p1_viewport.set_size(Vector2i::new(
+            TWO_PLAYER_WIDTH as i32,
+            TWO_PLAYER_HEIGHT as i32,
+        ));
+        p1_container.set_size(Vector2::new(TWO_PLAYER_WIDTH, TWO_PLAYER_HEIGHT));
+        split_screen_one.set_size(Vector2::new(TWO_PLAYER_WIDTH, TWO_PLAYER_HEIGHT));
         split_screen_one.set_anchors_preset(LayoutPreset::CENTER_TOP);
 
         let mut split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
@@ -231,9 +246,12 @@ impl PlayerManager {
             split_screen_two.get_node_as::<SubViewportContainer>("PlayerTwoContainer");
         let mut p2_viewport = p2_container.get_node_as::<SubViewport>("PlayerTwoViewport");
 
-        p2_viewport.set_size(Vector2i::new(1920, 540));
-        p2_container.set_size(Vector2::new(1920.0, 540.0));
-        split_screen_two.set_size(Vector2::new(1920.0, 540.0));
+        p2_viewport.set_size(Vector2i::new(
+            TWO_PLAYER_WIDTH as i32,
+            TWO_PLAYER_HEIGHT as i32,
+        ));
+        p2_container.set_size(Vector2::new(TWO_PLAYER_WIDTH, TWO_PLAYER_HEIGHT));
+        split_screen_two.set_size(Vector2::new(TWO_PLAYER_WIDTH, TWO_PLAYER_HEIGHT));
         split_screen_two.set_anchors_preset(LayoutPreset::CENTER_TOP);
     }
 
@@ -262,23 +280,32 @@ impl PlayerManager {
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
         let mut p1_viewport = p1_container.get_node_as::<SubViewport>("PlayerOneViewport");
 
-        p1_viewport.set_size(Vector2i::new(960, 540));
-        p1_container.set_size(Vector2::new(960.0, 540.0));
+        p1_viewport.set_size(Vector2i::new(
+            THREE_PLAYER_WIDTH as i32,
+            THREE_PLAYER_HEIGHT as i32,
+        ));
+        p1_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
 
         let mut p3_container =
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerThreeContainer");
         let mut p3_viewport = p3_container.get_node_as::<SubViewport>("PlayerThreeViewport");
 
-        p3_viewport.set_size(Vector2i::new(960, 540));
-        p3_container.set_size(Vector2::new(960.0, 540.0));
+        p3_viewport.set_size(Vector2i::new(
+            THREE_PLAYER_WIDTH as i32,
+            THREE_PLAYER_HEIGHT as i32,
+        ));
+        p3_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
 
         let split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
         let mut p2_container =
             split_screen_two.get_node_as::<SubViewportContainer>("PlayerTwoContainer");
         let mut p2_viewport = p2_container.get_node_as::<SubViewport>("PlayerTwoViewport");
 
-        p2_viewport.set_size(Vector2i::new(960, 540));
-        p2_container.set_size(Vector2::new(960.0, 540.0));
+        p2_viewport.set_size(Vector2i::new(
+            THREE_PLAYER_WIDTH as i32,
+            THREE_PLAYER_HEIGHT as i32,
+        ));
+        p2_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
     }
 
     fn four_player_split_screen(&self, root: Gd<Node>) {
