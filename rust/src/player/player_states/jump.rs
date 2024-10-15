@@ -1,4 +1,4 @@
-use godot::{builtin::Vector2, obj::WithBaseField};
+use godot::{builtin::Vector2, global::godot_print, obj::WithBaseField};
 
 use crate::player::{
     enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
@@ -8,20 +8,24 @@ use crate::player::{
 // TODO: Only reduce the backwards momentum if the signum of the horizontal velocity is opposite.
 // If the players momentum is in the same direction or zero, then don't reduce it.
 
-#[derive(Clone)]
+const JUMP_GRAVITY: f64 = 980.0;
+
+#[derive(Clone, Copy)]
 pub struct Jump;
 
 impl PlayerState for Jump {
-    fn enter(&self, player: &mut Player) {
+    fn enter(player: &mut Player) {
+        player.set_gravity(JUMP_GRAVITY);
+
         let jump_force = player.get_jump_force();
         let mut base = player.base_mut();
 
-        let jump_force = base.get_velocity().y + -jump_force;
-        let jump_vel = Vector2::new(base.get_velocity().x, jump_force);
+        // let jump_force = base.get_velocity().y + -jump_force;
+        let jump_vel = Vector2::new(base.get_velocity().x, -jump_force);
         base.set_velocity(jump_vel);
     }
 
-    fn update(&self, player: &mut Player) {
+    fn update(player: &mut Player) {
         let next_state: PlayerStates;
 
         if player.is_anim_finished() {
@@ -33,42 +37,30 @@ impl PlayerState for Jump {
         }
 
         if next_state != PlayerStates::Jump {
-            self.exit(player, next_state);
+            Jump::exit(player, next_state);
         } else {
-            self.run(player);
-        }
-    }
-
-    fn clone(&self) -> Box<dyn PlayerState> {
-        Box::new(Jump)
-    }
-
-    fn as_str(&self, player: &mut Player) -> &str {
-        let y_vel = player.base().get_velocity().y;
-        if y_vel > -10.0 {
-            "jump_fall"
-        } else {
-            "jump"
+            Jump::run(player);
         }
     }
 }
 
 impl Jump {
-    fn run(&self, player: &mut Player) {
+    fn run(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
 
         if horizontal_dir == 0.0 {
             return;
         }
 
+        let run_speed = player.get_run_speed();
         if horizontal_dir.signum() != player.get_dir().signum() {
-            player.apply_horizontal_velocity(horizontal_dir, player.get_run_speed() / 2.0);
+            player.apply_horizontal_velocity(horizontal_dir, run_speed / 2.0);
         } else {
-            player.apply_horizontal_velocity(horizontal_dir, player.get_run_speed());
+            player.apply_horizontal_velocity(horizontal_dir, run_speed);
         }
     }
 
-    fn exit(&self, player: &mut Player, next_state: PlayerStates) {
+    fn exit(player: &mut Player, next_state: PlayerStates) {
         player.set_state(next_state);
     }
 }

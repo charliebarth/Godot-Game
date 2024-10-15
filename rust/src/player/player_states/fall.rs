@@ -1,34 +1,42 @@
 use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+    enums::{
+        player_events::PlayerEvents, player_states::PlayerStates, timeout_events::TimeoutEvents,
+    },
+    player::Player,
+    traits::player_state::PlayerState,
 };
 
-#[derive(Clone)]
+const FALL_GRAVITY: f64 = 1500.0;
+
+#[derive(Clone, Copy)]
 pub struct Fall;
 
 impl PlayerState for Fall {
-    fn enter(&self, player: &mut Player) {}
+    fn enter(player: &mut Player) {
+        player.set_gravity(FALL_GRAVITY);
 
-    fn update(&self, player: &mut Player) {
-        if player.base().is_on_floor() {
-            player.set_state(PlayerStates::Land);
-        } else {
-            self.run(player);
+        if player.get_previous_state() != PlayerStates::Jump {
+            player.add_timeout_event(TimeoutEvents::CoyoteTime);
         }
     }
 
-    fn clone(&self) -> Box<dyn PlayerState> {
-        Box::new(Fall)
-    }
-
-    fn as_str(&self, _player: &mut Player) -> &str {
-        "fall"
+    fn update(player: &mut Player) {
+        let mut input_manager_unbound = player.get_input_manager();
+        let mut input_manager = input_manager_unbound.bind_mut();
+        if player.base().is_on_floor() {
+            player.set_state(PlayerStates::Land);
+        } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
+            player.set_state(PlayerStates::Jump);
+        } else {
+            Fall::run(player);
+        }
     }
 }
 
 impl Fall {
-    fn run(&self, player: &mut Player) {
+    fn run(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
 
         if horizontal_dir == 0.0 {
