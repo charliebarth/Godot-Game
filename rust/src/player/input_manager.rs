@@ -87,8 +87,7 @@ impl InputManager {
     fn process_metal_events(&mut self, metal_event: MetalEvents, event: Gd<InputEvent>) {
         if event.is_pressed() {
             // When pressed, always insert the burn variant
-            self.metal_events
-                .insert(metal_event.clone(), Instant::now());
+            self.metal_events.insert(metal_event, Instant::now());
         } else if event.is_released() && self.metal_events.contains_key(&metal_event) {
             if let Some(press_time) = self.metal_events.get(&metal_event) {
                 let duration = press_time.elapsed();
@@ -116,13 +115,12 @@ impl InputManager {
 
     fn process_player_events(&mut self, player_event: PlayerEvents, event: Gd<InputEvent>) {
         if event.is_pressed() {
-            let trigger_event = TriggerEvents::trigger_for_player_event(player_event.clone());
+            let trigger_event = TriggerEvents::trigger_for_player_event(player_event);
 
             if trigger_event == TriggerEvents::OnPress {
-                self.player_events.insert(player_event.clone(), 0);
+                self.player_events.insert(player_event, 0);
             } else if trigger_event == TriggerEvents::OnRelease {
-                self.button_press_times
-                    .insert(player_event.clone(), Instant::now());
+                self.button_press_times.insert(player_event, Instant::now());
             }
         } else if event.is_released() {
             if let Some(press_time) = self.button_press_times.get(&player_event) {
@@ -136,7 +134,7 @@ impl InputManager {
                     }
                 }
 
-                self.player_events.insert(player_event.clone(), 0);
+                self.player_events.insert(player_event, 0);
                 self.button_press_times.remove(&player_event);
             }
         }
