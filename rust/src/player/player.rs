@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+use std::time::Duration;
+use std::time::Instant;
+
 use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
@@ -5,11 +9,11 @@ use godot::classes::ProjectSettings;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
+use super::enums::player_states::PlayerStates;
+use super::enums::timeout_events::TimeoutEvents;
 use super::input_manager::InputManager;
 use super::metal_manager::MetalManager;
 use super::metal_reserve_bar_manager::MetalReserveBarManager;
-use super::player_states::idle::Idle;
-use super::traits::player_state::PlayerState;
 
 const MAX_HEALTH: f64 = 100.0;
 const MIN_HEALTH: f64 = 0.0;
@@ -28,12 +32,13 @@ pub struct Player {
     gravity: f64,
     health: f64,
     delta: f64,
-    current_state: Box<dyn PlayerState>,
-    previous_state: Box<dyn PlayerState>,
+    current_state: PlayerStates,
+    previous_state: PlayerStates,
     anim_finished: bool,
     run_speed: f32,
     jump_force: f32,
     device_id: i32,
+    timeout_events: HashMap<TimeoutEvents, (Instant, Duration)>,
 }
 
 #[godot_api]
@@ -45,16 +50,17 @@ impl ICharacterBody2D for Player {
 
         Self {
             base,
-            current_state: Box::new(Idle),
-            previous_state: Box::new(Idle),
             direction: 1.0,
             health: MAX_HEALTH,
             delta: 0.0,
             gravity,
+            current_state: PlayerStates::Jump,
+            previous_state: PlayerStates::Fall,
             anim_finished: false,
             run_speed: DEFAULT_RUN_SPEED,
             jump_force: DEFAULT_JUMP_FORCE,
             device_id: 0,
+            timeout_events: HashMap::new(),
         }
     }
 
@@ -66,7 +72,7 @@ impl ICharacterBody2D for Player {
             .assign_starting_metals("last_player_standing");
 
         // Start the player in the idle state
-        self.set_state(Box::new(Idle));
+        self.set_state(PlayerStates::Idle);
 
         // Set the health bar to the player's health
         self.get_health_bar().set_value(self.get_health());
@@ -102,10 +108,10 @@ impl ICharacterBody2D for Player {
         // Update all metals held by the player
         self.get_metal_manager().bind_mut().update(self);
 
-        // Update the current state of the player
-        let current_state = self.get_current_state();
-        current_state.update(self);
-        self.update_animation();
+        self.current_state.update_state(self);
+        self.set_animation_direction(&mut sprite);
+
+        self.expire_timeout_events();
 
         // Make the player move and slide based on their velocity
         self.base_mut().move_and_slide();
@@ -119,18 +125,13 @@ impl Player {
     ///
     /// # Arguments
     /// * `new_state` - The new state to set the player to
-    pub fn set_state(&mut self, new_state: Box<dyn PlayerState>) {
-        self.previous_state = self.get_current_state();
-        self.current_state = new_state;
-        self.get_current_state().enter(self);
-    }
+    pub fn set_state(&mut self, new_state: PlayerStates) {
+        self.update_animation(new_state.as_str().into());
 
-    /// Get the current state of the player
-    ///
-    /// # Returns
-    /// * `Box<dyn PlayerState>` - The current state of the player
-    pub fn get_current_state(&self) -> Box<dyn PlayerState> {
-        self.current_state.clone()
+        self.previous_state = self.current_state;
+        self.current_state = new_state;
+
+        self.current_state.enter_state(self);
     }
 
     /// Set the delta time of the player
@@ -231,23 +232,28 @@ impl Player {
         self.gravity
     }
 
+    /// Set the gravity of the player
+    ///
+    /// # Arguments
+    /// * `gravity` - The gravity to set
+    pub fn set_gravity(&mut self, gravity: f64) {
+        self.gravity = gravity;
+    }
+
     /// Update the animation of the player
     /// This method sets the animation of the player based on the current state of the player
     /// It also sets the animation direction based on the direction the player is facing
     ///
     /// If animation from the current state is not the one being played, the animation is changed and the animation finished flag is reset
     /// The animation is then played
-    fn update_animation(&mut self) {
+    fn update_animation(&mut self, animation_name: StringName) {
         let mut sprite = self.get_sprite();
 
         self.set_animation_direction(&mut sprite);
 
-        let animation_name = StringName::from(self.get_current_state().as_str(self));
-        if sprite.get_animation() != animation_name {
-            self.anim_finished = false;
-            sprite.set_animation(animation_name.into());
-            sprite.play();
-        }
+        self.anim_finished = false;
+        sprite.set_animation(animation_name);
+        sprite.play();
     }
 
     /// Set the animation direction of the player
@@ -275,17 +281,9 @@ impl Player {
     /// Get the previous state of the player
     ///
     /// # Returns
-    /// * `Box<dyn PlayerState>` - The previous state of the player
-    pub fn get_previous_state(&self) -> Box<dyn PlayerState> {
-        self.previous_state.clone()
-    }
-
-    /// Set the previous state of the player
-    ///
-    /// # Arguments
-    /// * `state` - The state to set the previous state to
-    pub fn set_previous_state(&mut self, state: Box<dyn PlayerState>) {
-        self.previous_state = state;
+    /// * `PlayerStates` - The previous state of the player
+    pub fn get_previous_state(&self) -> PlayerStates {
+        self.previous_state
     }
 
     /// Get the run speed of the player
@@ -328,6 +326,45 @@ impl Player {
         self.device_id = device_id;
         let mut input_manager_unbound = self.get_input_manager();
         input_manager_unbound.bind_mut().set_device_id(device_id);
+    }
+
+    /// Add a timeout event to the player
+    /// This method adds a timeout event to the player and sets the duration of the event using the event's get_duration method
+    /// The event is then inserted into the timeout_events HashMap with the current time as the start time
+    ///
+    /// # Arguments
+    /// * `event` - The event to add
+    pub fn add_timeout_event(&mut self, event: TimeoutEvents) {
+        let duration = event.get_duration();
+        self.timeout_events
+            .insert(event, (Instant::now(), duration));
+    }
+
+    /// Check if the player is able to jump
+    /// This method checks if the player is on the floor or if they are within the coyote time window
+    /// If either condition is met, the player is able to jump and the method returns true
+    /// Otherwise, the player is not able to jump and the method returns false
+    ///
+    /// # Returns
+    /// * `bool` - True if the player is able to jump, false otherwise
+    pub fn jump_available(&self) -> bool {
+        if self.base().is_on_floor() {
+            return true;
+        }
+
+        if let Some(_) = self.timeout_events.get(&TimeoutEvents::CoyoteTime) {
+            return true;
+        }
+
+        false
+    }
+
+    /// Check if any timeout events have expired and remove them from the timeout_events HashMap
+    fn expire_timeout_events(&mut self) {
+        self.timeout_events.retain(|_event, time_tuple| {
+            let time_elapsed = Instant::now().duration_since(time_tuple.0);
+            time_elapsed <= time_tuple.1
+        });
     }
 }
 
