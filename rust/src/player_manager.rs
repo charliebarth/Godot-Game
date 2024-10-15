@@ -167,8 +167,12 @@ impl PlayerManager {
         match self.players.len() {
             0 => self.one_player_split_screen(root),
             1 => self.two_player_split_screen(root),
-            2 => self.three_player_split_screen(root),
-            3 => self.four_player_split_screen(root),
+            2 => {
+                self.three_player_split_screen(&root);
+                self.four_player_split_screen(&root);
+                self.add_fourth_viewport_camera(&root);
+            }
+            3 => self.remove_fourth_viewport_camera(root),
             _ => {}
         }
     }
@@ -255,7 +259,7 @@ impl PlayerManager {
         split_screen_two.set_anchors_preset(LayoutPreset::CENTER_TOP);
     }
 
-    fn three_player_split_screen(&self, root: Gd<Node>) {
+    fn three_player_split_screen(&self, root: &Gd<Node>) {
         let mut split_screen_one = root.get_node_as::<HBoxContainer>("SplitScreenOne");
         let p1_viewport =
             split_screen_one.get_node_as::<SubViewport>("PlayerOneContainer/PlayerOneViewport");
@@ -274,7 +278,7 @@ impl PlayerManager {
         self.assign_three_player_screen_sizes(root);
     }
 
-    fn assign_three_player_screen_sizes(&self, root: Gd<Node>) {
+    fn assign_three_player_screen_sizes(&self, root: &Gd<Node>) {
         let split_screen_one = root.get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
@@ -308,7 +312,7 @@ impl PlayerManager {
         p2_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
     }
 
-    fn four_player_split_screen(&self, root: Gd<Node>) {
+    fn four_player_split_screen(&self, root: &Gd<Node>) {
         let mut split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
         let p2_viewport =
             split_screen_two.get_node_as::<SubViewport>("PlayerTwoContainer/PlayerTwoViewport");
@@ -327,7 +331,7 @@ impl PlayerManager {
         self.assign_four_player_screen_sizes(root);
     }
 
-    fn assign_four_player_screen_sizes(&self, root: Gd<Node>) {
+    fn assign_four_player_screen_sizes(&self, root: &Gd<Node>) {
         let mut split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
         let mut p4_container =
             split_screen_two.get_node_as::<SubViewportContainer>("PlayerFourContainer");
@@ -344,5 +348,26 @@ impl PlayerManager {
         let p1_viewport =
             root.get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
         level.reparent(p1_viewport);
+    }
+
+    fn remove_fourth_viewport_camera(&self, root: Gd<Node>) {
+        let mut overview_container = root
+            .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
+        let camera = overview_container.get_node_as::<Camera2D>("/OverviewCamera");
+
+        overview_container.remove_child(camera);
+    }
+
+    /// This will add a camera that provides an overview of the entire level.
+    fn add_fourth_viewport_camera(&self, root: &Gd<Node>) {
+        let mut camera = Camera2D::new_alloc();
+        camera.set_name("OverviewCamera".into());
+        camera.set_position(Vector2::new(20.0, -225.0));
+        camera.set_zoom(Vector2::new(0.37, 0.37));
+
+        let mut overview_container = root
+            .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
+
+        overview_container.add_child(camera);
     }
 }
