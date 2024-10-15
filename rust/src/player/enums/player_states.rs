@@ -40,7 +40,7 @@ impl PlayerStates {
             PlayerStates::Run => "run",
             PlayerStates::Slide => "slide",
             PlayerStates::Sprint => "run",
-            PlayerStates::SlideCrouch => "slide_crouch",
+            PlayerStates::SlideCrouch => "slide",
         }
     }
 
