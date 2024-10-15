@@ -5,18 +5,18 @@ use crate::player::{
     traits::player_state::PlayerState,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Land;
 
 impl PlayerState for Land {
-    fn enter(&self, _player: &mut Player) {}
+    fn enter(_player: &mut Player) {}
 
-    fn update(&self, player: &mut Player) {
+    fn update(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
-        if input_manager.fetch_player_event(PlayerEvents::Jump) && player.base().is_on_floor() {
+        if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
             player.set_state(PlayerStates::Fall);
@@ -25,13 +25,5 @@ impl PlayerState for Land {
         } else {
             player.set_state(PlayerStates::Idle);
         }
-    }
-
-    fn clone(&self) -> Box<dyn PlayerState> {
-        Box::new(Land)
-    }
-
-    fn as_str(&self, _player: &mut Player) -> &str {
-        "land"
     }
 }
