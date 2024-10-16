@@ -10,21 +10,18 @@ use godot::prelude::*;
 use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};  // Import Node and VBoxContainer
 pub use crate::ui::metal_bar::MetalBar;
 
-use std::collections::HashMap;
-
 // The maximum number of bars to display on a players screen at a time 
 const MAX_BARS_ON_SCREEN: u8 = 4;
 // Change this to account for how many we currently support
 const TOTAL_BARS: u8 = 10;   
 // Represents the order of supported metals (simply reorder these based on implementation)
-const PATHS: [&str; 10] = ["iron", "steel", "pewter", "tin", "bronze", "copper", "duralumin", "nicrosil", "chromium", "gold"];
+const PATHS: [&str; 10] = ["iron", "steel", "pewter", "tin", "bronze", "copper", "duralumin", 
+                            "nicrosil", "chromium", "gold"];
 
 #[derive(GodotClass)]
 #[class(base=VBoxContainer)]
 pub struct MetalReserveBarManager {
-    base: Base<VBoxContainer>,
-    /// data structure (like a list) where metals not on screen will be stored 
-    unused_metals: HashMap<String, Gd<MetalBar>>,      
+    base: Base<VBoxContainer>,  
 }
 
 /// Methods that belong to MetalReserveBarManager
@@ -34,7 +31,6 @@ impl IVBoxContainer for  MetalReserveBarManager {
     fn init(base: Base<VBoxContainer>) -> Self {
         Self {
             base,
-            unused_metals: HashMap::new(),
         }
     }       
 
@@ -42,7 +38,7 @@ impl IVBoxContainer for  MetalReserveBarManager {
     fn ready(&mut self) { 
         // Create Metals that are auto added to VBox based on the keybound metals 
         for i in 0..TOTAL_BARS {
-            let mut bar = MetalBar::new_alloc();
+            let mut bar: Gd<MetalBar> = MetalBar::new_alloc();
             bar.set_visible(true);
             self.base_mut().add_child(bar);
             
@@ -55,14 +51,16 @@ impl IVBoxContainer for  MetalReserveBarManager {
 }
 
 impl MetalReserveBarManager{
-    fn setup_keybinds(&mut self) {
-        let mut input_map = InputMap::singleton();
-        let inputs = input_map.get_actions();
 
-        let length = inputs.len();
+    /// Sets the metals currently on screen based on the keybindings set 
+    fn setup_keybinds(&mut self) {
+        let mut input_map: Gd<InputMap> = InputMap::singleton();
+        let inputs: Array<StringName> = input_map.get_actions();
+
+        let length: usize = inputs.len();
         for i in (0..length).rev() {
-            let input = inputs.get(i).unwrap();
-            let input_str = input.to_string();
+            let input: StringName = inputs.get(i).unwrap();
+            let input_str: String = input.to_string();
 
             if PATHS.contains(&input_str.as_str())  {
                 godot_print!("{}", input_str);
@@ -77,6 +75,12 @@ impl MetalReserveBarManager{
         }
     }
 
+    /// Given the name of a metal, gets the metal bar associated with it
+    /// 
+    /// Args: 
+    ///     name (&str): the name of the metal bar to get 
+    /// 
+    /// Returns: the metal bar or None if none exists 
     pub fn get_metal_bar(&mut self, name: &str) -> Option<Gd<MetalBar>> {
         let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
         
