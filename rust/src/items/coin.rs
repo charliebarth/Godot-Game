@@ -8,6 +8,7 @@ use godot::classes::{Area2D, IArea2D};
 
 use crate::player::player::Player;
 
+const SPEED: f64= 25.0;
 
 /// Represents a coin 
 #[derive(GodotClass)]
@@ -24,6 +25,16 @@ impl IArea2D for Coin {
         Self {
             base,
         }
+    }
+
+    // TODO Unfinished 
+    fn physics_process(&mut self, delta: f64) {
+        let transform: Transform2D = self.base_mut().get_global_transform();
+        let position: Vector2 = self.base_mut().get_position();
+
+
+        // let new_pos: Vector2 = idk maybe tranform.x * speed 
+        // self.base_mut().set_position(position + new_pos);
     }
 }
 
