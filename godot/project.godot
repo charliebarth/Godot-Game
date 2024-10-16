@@ -55,6 +55,50 @@ sprint={
 "events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":7,"pressure":0.0,"pressed":true,"script":null)
 ]
 }
+iron={
+"deadzone": 0.5,
+"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":10,"pressure":0.0,"pressed":false,"script":null)
+]
+}
+steel={
+"deadzone": 0.5,
+"events": [Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":5,"axis_value":1.0,"script":null)
+]
+}
+tin={
+"deadzone": 0.5,
+"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":3,"pressure":0.0,"pressed":false,"script":null)
+]
+}
+pewter={
+"deadzone": 0.5,
+"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":9,"pressure":0.0,"pressed":false,"script":null)
+]
+}
+bronze={
+"deadzone": 0.5,
+"events": []
+}
+copper={
+"deadzone": 0.5,
+"events": []
+}
+duralumin={
+"deadzone": 0.5,
+"events": []
+}
+nicrosil={
+"deadzone": 0.5,
+"events": []
+}
+chromium={
+"deadzone": 0.5,
+"events": []
+}
+gold={
+"deadzone": 0.5,
+"events": []
+}
 
 [rendering]
 

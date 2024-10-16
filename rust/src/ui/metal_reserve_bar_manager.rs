@@ -7,7 +7,7 @@
 /// Version : 10/10/2024
 
 use godot::prelude::*;
-use godot::classes::{IVBoxContainer, VBoxContainer};  // Import Node and VBoxContainer
+use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};  // Import Node and VBoxContainer
 pub use crate::ui::metal_bar::MetalBar;
 
 use std::collections::HashMap;
@@ -49,11 +49,49 @@ impl IVBoxContainer for  MetalReserveBarManager {
             godot_print!("BARS CREATED")
         }
         self.setup_metals();
+        self.setup_keybinds();
     }
 
 }
 
 impl MetalReserveBarManager{
+    fn setup_keybinds(&mut self) {
+        let mut input_map = InputMap::singleton();
+        let inputs = input_map.get_actions();
+
+        let length = inputs.len();
+        for i in (0..length).rev() {
+            let input = inputs.get(i).unwrap();
+            let input_str = input.to_string();
+
+            if PATHS.contains(&input_str.as_str())  {
+                godot_print!("{}", input_str);
+                let events: Array<Gd<godot::classes::InputEvent>> = input_map.action_get_events(
+                                                                StringName::from(input_str));
+                
+                if events.len() == 0 {
+                    let bar: Option<Gd<MetalBar>> = self.get_metal_bar(input.to_string().as_str());
+                    bar.unwrap().hide();
+                }
+            }
+        }
+    }
+
+    pub fn get_metal_bar(&mut self, name: &str) -> Option<Gd<MetalBar>> {
+        let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
+        
+        for i in 0..children.len() {
+            let child : Gd<Node> = children.get(i).expect("");
+
+            if let Ok(bar) = child.try_cast::<MetalBar>() {
+                if bar.get_name() == StringName::from(name) {
+                    return Some(bar);
+                }
+            }
+        }
+
+        return None;
+    }
 
     /// Sets the name and texture of every Metal Bar 
     fn setup_metals(&mut self) {
