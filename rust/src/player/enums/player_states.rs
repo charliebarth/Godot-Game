@@ -32,7 +32,7 @@ impl PlayerStates {
             PlayerStates::Crouch => "crouch_walk",
             PlayerStates::CrouchEnd => "crouch_end",
             PlayerStates::CrouchStart => "crouch_start",
-            PlayerStates::Fall => "fall",
+            PlayerStates::Fall => "jump_fall",
             PlayerStates::Idle => "idle",
             PlayerStates::Jump => "jump",
             PlayerStates::Land => "land",
