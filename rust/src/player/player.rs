@@ -5,6 +5,7 @@ use std::time::Instant;
 use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
+use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
@@ -38,7 +39,14 @@ pub struct Player {
     run_speed: f32,
     jump_force: f32,
     device_id: i32,
+    player_id: i32,
     timeout_events: HashMap<TimeoutEvents, (Instant, Duration)>,
+    sprite: Option<Gd<AnimatedSprite2D>>,
+    input_manager: Option<Gd<InputManager>>,
+    metal_manager: Option<Gd<MetalManager>>,
+    metal_reserve_bar_manager: Option<Gd<MetalReserveBarManager>>,
+    health_bar: Option<Gd<TextureProgressBar>>,
+    point_light: Option<Gd<PointLight2D>>,
 }
 
 #[godot_api]
@@ -60,7 +68,14 @@ impl ICharacterBody2D for Player {
             run_speed: DEFAULT_RUN_SPEED,
             jump_force: DEFAULT_JUMP_FORCE,
             device_id: 0,
+            player_id: 0,
             timeout_events: HashMap::new(),
+            sprite: None,
+            input_manager: None,
+            metal_manager: None,
+            metal_reserve_bar_manager: None,
+            health_bar: None,
+            point_light: None,
         }
     }
 
@@ -82,12 +97,6 @@ impl ICharacterBody2D for Player {
         self.set_delta(delta);
 
         let mut base_vel = self.base_mut().get_velocity();
-        let sprite = self.get_sprite();
-
-        // Check if the player's sprite is currently playing an animation
-        if !sprite.is_playing() {
-            self.set_anim_finished();
-        }
 
         // Apply gravity to the player if they are not on the floor
         if !self.base().is_on_floor() {
@@ -98,18 +107,14 @@ impl ICharacterBody2D for Player {
 
         self.base_mut().set_velocity(base_vel);
 
-        // Reset the speed scale of the player's sprite to avoid old animation speeds from affecting the new animation
-        // Also reset the run and jump force of the player to their default values
-        let mut sprite: Gd<AnimatedSprite2D> = self.get_sprite();
-        sprite.set_speed_scale(1.0);
-        self.set_run_speed(DEFAULT_RUN_SPEED);
-        self.set_jump_force(DEFAULT_JUMP_FORCE);
+        // Reset the player to their default values such as animation speed, run speed, and jump force
+        self.reset_player();
 
         // Update all metals held by the player
         self.get_metal_manager().bind_mut().update(self);
 
         self.current_state.update_state(self);
-        self.set_animation_direction(&mut sprite);
+        self.set_animation_direction();
 
         self.expire_timeout_events();
 
@@ -118,6 +123,7 @@ impl ICharacterBody2D for Player {
     }
 }
 
+#[godot_api]
 impl Player {
     /// Set the current state of the player and trigger the enter method of the new state
     /// This method also sets the previous state of the player to the current state
@@ -211,6 +217,7 @@ impl Player {
         base.set_velocity(base_vel);
     }
 
+    #[func]
     /// Set the animation finished flag to true
     pub fn set_anim_finished(&mut self) {
         self.anim_finished = true;
@@ -247,10 +254,9 @@ impl Player {
     /// If animation from the current state is not the one being played, the animation is changed and the animation finished flag is reset
     /// The animation is then played
     fn update_animation(&mut self, animation_name: StringName) {
+        self.set_animation_direction();
+
         let mut sprite = self.get_sprite();
-
-        self.set_animation_direction(&mut sprite);
-
         self.anim_finished = false;
         sprite.set_animation(animation_name);
         sprite.play();
@@ -262,7 +268,8 @@ impl Player {
     ///
     /// # Arguments
     /// * `sprite` - The sprite to set the animation direction of
-    fn set_animation_direction(&mut self, sprite: &mut Gd<AnimatedSprite2D>) {
+    fn set_animation_direction(&mut self) {
+        let mut sprite = self.get_sprite();
         let mut scale = sprite.get_scale();
         let mut pos = sprite.get_position();
 
@@ -366,6 +373,108 @@ impl Player {
             time_elapsed <= time_tuple.1
         });
     }
+
+    pub fn add_player_visibilty_layer(&mut self, player_id: i32) {
+        let mut new_sprite = self.get_sprite().clone();
+        let player_id = player_id * 2;
+
+        new_sprite.set_name(format!("VisLayer{player_id}").into());
+        new_sprite.set_light_mask(player_id);
+        new_sprite.set_visibility_layer(player_id as u32);
+
+        godot_print!("Child nodes are now: {:?}", self.base().get_children());
+    }
+
+    /// Set the player ID of the player
+    /// This ID is assigned to the player when they join the game and is set by the PlayerManager
+    ///
+    /// # Arguments
+    /// * `player_id` - The player ID to set
+    pub fn set_player_id(&mut self, player_id: i32) {
+        self.player_id = player_id;
+    }
+
+    #[func]
+    /// Get the player ID of the player
+    /// This ID will be the same as the player number in the game so if this player was the first player to join, their ID would be 1
+    ///
+    /// # Returns
+    /// * `i32` - The player ID of the player
+    pub fn get_player_id(&self) -> i32 {
+        self.player_id
+    }
+
+    /// Reset the player to their default values
+    /// This method resets the speed scale of the player's sprite to 1.0
+    /// It also resets the run and jump force of the player to their default values
+    fn reset_player(&mut self) {
+        let mut sprite: Gd<AnimatedSprite2D> = self.get_sprite();
+        sprite.set_speed_scale(1.0);
+        self.set_run_speed(DEFAULT_RUN_SPEED);
+        self.set_jump_force(DEFAULT_JUMP_FORCE);
+    }
+
+    #[func]
+    /// Set the sprite of the player
+    /// This will be called once by the ready method of the sprite node
+    ///
+    /// # Arguments
+    /// * `sprite` - The sprite to set
+    pub fn set_sprite(&mut self, sprite: Gd<AnimatedSprite2D>) {
+        self.sprite = Some(sprite);
+    }
+
+    #[func]
+    /// Set the input manager of the player
+    /// This will be called once by the ready method of the input manager node
+    ///
+    /// # Arguments
+    /// * `input_manager` - The input manager to set
+    pub fn set_input_manager(&mut self, input_manager: Gd<InputManager>) {
+        self.input_manager = Some(input_manager);
+    }
+
+    #[func]
+    /// Set the metal manager of the player
+    /// This will be called once by the ready method of the metal manager node
+    ///
+    /// # Arguments
+    /// * `metal_manager` - The metal manager to set
+    pub fn set_metal_manager(&mut self, metal_manager: Gd<MetalManager>) {
+        self.metal_manager = Some(metal_manager);
+    }
+
+    #[func]
+    /// Set the metal reserve bar manager of the player
+    /// This will be called once by the ready method of the metal reserve bar manager node
+    /// # Arguments
+    /// * `metal_reserve_bar_manager` - The metal reserve bar manager to set
+    pub fn set_metal_reserve_bar_manager(
+        &mut self,
+        metal_reserve_bar_manager: Gd<MetalReserveBarManager>,
+    ) {
+        self.metal_reserve_bar_manager = Some(metal_reserve_bar_manager);
+    }
+
+    #[func]
+    /// Set the health bar of the player
+    /// This will be called once by the ready method of the health bar node
+    ///
+    /// # Arguments
+    /// * `health_bar` - The health bar to set
+    pub fn set_health_bar(&mut self, health_bar: Gd<TextureProgressBar>) {
+        self.health_bar = Some(health_bar);
+    }
+
+    #[func]
+    /// Set the point light of the player
+    /// This will be called once by the ready method of the point light node
+    ///
+    /// # Arguments
+    /// * `point_light` - The point light to set
+    pub fn set_point_light(&mut self, point_light: Gd<PointLight2D>) {
+        self.point_light = Some(point_light);
+    }
 }
 
 /// Getters for nodes
@@ -375,7 +484,10 @@ impl Player {
     /// # Returns
     /// * `InputManager` - The InputManager node
     pub fn get_input_manager(&self) -> Gd<InputManager> {
-        self.base().get_node_as::<InputManager>("InputManager")
+        self.input_manager
+            .as_ref()
+            .expect("InputManager node not found")
+            .clone()
     }
 
     /// Getter for the MetalManager node
@@ -383,7 +495,10 @@ impl Player {
     /// # Returns
     /// * `MetalManager` - The MetalManager node
     pub fn get_metal_manager(&self) -> Gd<MetalManager> {
-        self.base().get_node_as::<MetalManager>("MetalManager")
+        self.metal_manager
+            .as_ref()
+            .expect("MetalManager node not found")
+            .clone()
     }
 
     /// Getter for the AnimatedSprite2D node
@@ -391,8 +506,10 @@ impl Player {
     /// # Returns
     /// * `AnimatedSprite2D` - The AnimatedSprite2D node
     pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
-        self.base()
-            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
+        self.sprite
+            .as_ref()
+            .expect("OwnerVis node not found")
+            .clone()
     }
 
     /// Getter for the MetalReserveBarManager node
@@ -400,8 +517,10 @@ impl Player {
     /// # Returns
     /// * `MetalReserveBarManager` - The MetalReserveBarManager node
     pub fn get_metal_reserve_bar_manager(&self) -> Gd<MetalReserveBarManager> {
-        self.base()
-            .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager")
+        self.metal_reserve_bar_manager
+            .as_ref()
+            .expect("MetalReserveBarManager node not found")
+            .clone()
     }
 
     /// Getter for the HealthBar node
@@ -409,6 +528,20 @@ impl Player {
     /// # Returns
     /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
     pub fn get_health_bar(&self) -> Gd<TextureProgressBar> {
-        self.base().get_node_as::<TextureProgressBar>("HealthBar")
+        self.health_bar
+            .as_ref()
+            .expect("HealthBar node not found")
+            .clone()
+    }
+
+    /// Getter for the PointLight2D node
+    ///
+    /// # Returns
+    /// * `PointLight2D` - The PointLight2D node
+    pub fn get_point_light(&self) -> Gd<PointLight2D> {
+        self.point_light
+            .as_ref()
+            .expect("PointLight2D node not found")
+            .clone()
     }
 }
