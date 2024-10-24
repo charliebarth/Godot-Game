@@ -42,7 +42,6 @@ mod player {
     }
 }
 
-pub mod coin_counter;
 pub mod metal_object;
 pub mod player_manager;
 
@@ -52,10 +51,13 @@ mod items {
 }
 
 mod ui {
+    pub mod allomantic_line;
     pub mod coin_counter;
     pub mod metal_bar;
     pub mod metal_reserve_bar_manager;
 }
+
+pub mod traits;
 
 struct MyExtension;
 
