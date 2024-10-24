@@ -37,7 +37,10 @@ mod ui {
     pub mod metal_reserve_bar_manager;
     pub mod coin_counter;
     pub mod metal_bar;
+    pub mod allomantic_line;
 }
+
+pub mod traits;
 
 struct MyExtension;
 

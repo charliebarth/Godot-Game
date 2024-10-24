@@ -7,6 +7,7 @@ use godot::prelude::*;
 use godot::classes::{Area2D, IArea2D};
 
 use crate::player::player::Player;
+use crate::traits::MetalObject;
 
 const SPEED: f64= 25.0;
 
@@ -57,5 +58,12 @@ impl Coin {
         } else {
             godot_print!("Something other than player entered the coin.");
         }            
+    }
+}
+
+/// Implement the MetalObject trait for Coin
+impl MetalObject for Coin {
+    fn is_metal(&self) -> bool {
+        true  // A coin is made of metal
     }
 }
