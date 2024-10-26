@@ -47,15 +47,17 @@ impl INode2D for PlayerManager {
             && !self.players.contains(&device)
             && input_map.event_is_action(event.clone(), register_button)
         {
+            self.players.push(device);
+            let player_id = self.players.len();
+
             let mut player = self.player_scene.instantiate_as::<Player>();
-            player.set_name(format!("Player{}", self.players.len() + 1).into());
+            player.bind_mut().set_player_id(player_id as i32);
+            player.set_name(format!("Player{}", player_id).into());
 
             let mut root = self.base().get_parent().unwrap();
 
             self.split_screen();
 
-            self.players.push(device);
-            let player_id = self.players.len();
             let spawn_position = self.select_spawn_point(player_id);
 
             player.bind_mut().set_device_id(device);
@@ -120,6 +122,8 @@ impl PlayerManager {
             _ => return,
         }
 
+        subviewport
+            .set_canvas_cull_mask(1 << player_id as u32 * 2 | 1 | 1 << player_id as u32 * 2 - 1); // player_id * 2, player_id * 2 + 1, and layer 1
         subviewport.add_child(player);
     }
 
@@ -165,14 +169,14 @@ impl PlayerManager {
         let root = self.base().get_parent().unwrap();
 
         match self.players.len() {
-            0 => self.one_player_split_screen(root),
-            1 => self.two_player_split_screen(root),
-            2 => {
+            1 => self.one_player_split_screen(root),
+            2 => self.two_player_split_screen(root),
+            3 => {
                 self.three_player_split_screen(&root);
                 self.four_player_split_screen(&root);
                 self.add_fourth_viewport_camera(&root);
             }
-            3 => self.remove_fourth_viewport_camera(root),
+            4 => self.remove_fourth_viewport_camera(root),
             _ => {}
         }
     }
@@ -353,7 +357,7 @@ impl PlayerManager {
     fn remove_fourth_viewport_camera(&self, root: Gd<Node>) {
         let mut overview_container = root
             .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
-        let camera = overview_container.get_node_as::<Camera2D>("/OverviewCamera");
+        let camera = overview_container.get_node_as::<Camera2D>("OverviewCamera");
 
         overview_container.remove_child(camera);
     }
@@ -368,6 +372,7 @@ impl PlayerManager {
         let mut overview_container = root
             .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
 
+        overview_container.set_canvas_cull_mask(1);
         overview_container.add_child(camera);
     }
 }

@@ -1,10 +1,11 @@
-[gd_scene load_steps=116 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=124 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
 [ext_resource type="Texture2D" uid="uid://di0fd86mwnv37" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallClimb.png" id="1_28re0"]
 [ext_resource type="Texture2D" uid="uid://delk3457diwxa" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Idle.png" id="1_gvuvu"]
 [ext_resource type="Texture2D" uid="uid://cy4tb3oa0pno2" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchAll.png" id="1_p0x36"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_pp08i"]
 [ext_resource type="Texture2D" uid="uid://bnr6wnrrwmu4a" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Dash.png" id="1_u53jl"]
 [ext_resource type="Texture2D" uid="uid://vjob0b0xbcr4" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Hit.png" id="3_1byn1"]
 [ext_resource type="Texture2D" uid="uid://dyv8a3f625jct" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Jump.png" id="3_6sfda"]
@@ -21,9 +22,16 @@
 [ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="18_wsmie"]
 [ext_resource type="PackedScene" uid="uid://b2cab082bt2gh" path="res://scenes/metal_reserve_bars.tscn" id="20_elmgo"]
 [ext_resource type="Script" path="res://scripts/animated_sprite_2d.gd" id="20_h83s5"]
+[ext_resource type="Script" path="res://scripts/player_2_vis.gd" id="21_hfc5u"]
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="22_33rpo"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
+[ext_resource type="Script" path="res://scripts/coin_counter.gd" id="25_fri41"]
+[ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
+[ext_resource type="Script" path="res://scripts/health_bar.gd" id="28_v0cjd"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
+light_mode = 2
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mkisa"]
 atlas = ExtResource("1_28re0")
@@ -745,10 +753,22 @@ animations = [{
 radius = 7.0
 height = 44.0
 
+[sub_resource type="Gradient" id="Gradient_ay3dg"]
+offsets = PackedFloat32Array(0.577922, 0.675325, 0.792208, 0.902597, 0.980519, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.88563, 0.88563, 0.88563, 0.88563, 0.748387, 0.748387, 0.748387, 0.748387, 0.661402, 0.661402, 0.661402, 0.661402, 0.6, 0.6, 0.6, 0.6, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dokqc"]
+gradient = SubResource("Gradient_ay3dg")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.821101, 0.119266)
+
 [node name="Player" type="Player"]
 z_index = 1
+script = ExtResource("1_pp08i")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="OwnerVis" type="AnimatedSprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_o2ssi")
 position = Vector2(1, -2)
 scale = Vector2(1.3, 1.3)
 sprite_frames = SubResource("SpriteFrames_pintf")
@@ -756,6 +776,36 @@ animation = &"fall"
 frame = 1
 frame_progress = 0.48611
 script = ExtResource("20_h83s5")
+
+[node name="Player1Vis" type="AnimatedSprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_o2ssi")
+position = Vector2(1, -2)
+scale = Vector2(1.3, 1.3)
+sprite_frames = SubResource("SpriteFrames_pintf")
+animation = &"fall"
+frame = 1
+frame_progress = 0.48611
+script = ExtResource("21_hfc5u")
+
+[node name="Player2Vis" type="AnimatedSprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_o2ssi")
+position = Vector2(1, -2)
+scale = Vector2(1.3, 1.3)
+sprite_frames = SubResource("SpriteFrames_pintf")
+animation = &"fall"
+frame = 1
+frame_progress = 0.48611
+script = ExtResource("21_hfc5u")
+
+[node name="Player3Vis" type="AnimatedSprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_o2ssi")
+position = Vector2(1, -2)
+scale = Vector2(1.3, 1.3)
+sprite_frames = SubResource("SpriteFrames_pintf")
+animation = &"fall"
+frame = 1
+frame_progress = 0.48611
+script = ExtResource("21_hfc5u")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-5, 28)
@@ -780,8 +830,10 @@ offset_left = -379.0
 offset_top = -220.0
 offset_right = -346.0
 offset_bottom = -204.0
+script = ExtResource("25_fri41")
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
+z_index = 20
 offset_left = -466.0
 offset_top = -224.0
 offset_right = -381.0
@@ -789,5 +841,19 @@ offset_bottom = -184.0
 texture_under = ExtResource("22_33rpo")
 texture_progress = ExtResource("23_0ycqf")
 texture_progress_offset = Vector2(20, 7)
+script = ExtResource("28_v0cjd")
 
-[connection signal="animation_finished" from="AnimatedSprite2D" to="AnimatedSprite2D" method="_on_animation_finished"]
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(-3.00005, 31.2972)
+scale = Vector2(11.6875, 9.95104)
+blend_mode = 2
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_dokqc")
+script = ExtResource("26_f1f48")
+
+[connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
+[connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
+[connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
+[connection signal="animation_finished" from="Player2Vis" to="Player2Vis" method="_on_animation_finished"]
+[connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
+[connection signal="tree_entered" from="InputManager" to="InputManager" method="_on_tree_entered"]

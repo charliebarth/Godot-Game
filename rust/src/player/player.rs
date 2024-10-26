@@ -483,7 +483,11 @@ impl Player {
     ///
     /// # Returns
     /// * `InputManager` - The InputManager node
-    pub fn get_input_manager(&self) -> Gd<InputManager> {
+    pub fn get_input_manager(&mut self) -> Gd<InputManager> {
+        if self.input_manager.is_none() {
+            self.input_manager = Some(self.base().get_node_as::<InputManager>("InputManager"));
+        }
+
         self.input_manager
             .as_ref()
             .expect("InputManager node not found")
@@ -494,7 +498,11 @@ impl Player {
     ///
     /// # Returns
     /// * `MetalManager` - The MetalManager node
-    pub fn get_metal_manager(&self) -> Gd<MetalManager> {
+    pub fn get_metal_manager(&mut self) -> Gd<MetalManager> {
+        if self.metal_manager.is_none() {
+            self.metal_manager = Some(self.base().get_node_as::<MetalManager>("MetalManager"));
+        }
+
         self.metal_manager
             .as_ref()
             .expect("MetalManager node not found")
@@ -505,7 +513,11 @@ impl Player {
     ///
     /// # Returns
     /// * `AnimatedSprite2D` - The AnimatedSprite2D node
-    pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
+    pub fn get_sprite(&mut self) -> Gd<AnimatedSprite2D> {
+        if self.sprite.is_none() {
+            self.sprite = Some(self.base().get_node_as::<AnimatedSprite2D>("OwnerVis"));
+        }
+
         self.sprite
             .as_ref()
             .expect("OwnerVis node not found")
@@ -516,7 +528,14 @@ impl Player {
     ///
     /// # Returns
     /// * `MetalReserveBarManager` - The MetalReserveBarManager node
-    pub fn get_metal_reserve_bar_manager(&self) -> Gd<MetalReserveBarManager> {
+    pub fn get_metal_reserve_bar_manager(&mut self) -> Gd<MetalReserveBarManager> {
+        if self.metal_reserve_bar_manager.is_none() {
+            self.metal_reserve_bar_manager = Some(
+                self.base()
+                    .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager"),
+            );
+        }
+
         self.metal_reserve_bar_manager
             .as_ref()
             .expect("MetalReserveBarManager node not found")
@@ -527,7 +546,11 @@ impl Player {
     ///
     /// # Returns
     /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
-    pub fn get_health_bar(&self) -> Gd<TextureProgressBar> {
+    pub fn get_health_bar(&mut self) -> Gd<TextureProgressBar> {
+        if self.health_bar.is_none() {
+            self.health_bar = Some(self.base().get_node_as::<TextureProgressBar>("HealthBar"));
+        }
+
         self.health_bar
             .as_ref()
             .expect("HealthBar node not found")
@@ -538,7 +561,11 @@ impl Player {
     ///
     /// # Returns
     /// * `PointLight2D` - The PointLight2D node
-    pub fn get_point_light(&self) -> Gd<PointLight2D> {
+    pub fn get_point_light(&mut self) -> Gd<PointLight2D> {
+        if self.point_light.is_none() {
+            self.point_light = Some(self.base().get_node_as::<PointLight2D>("PointLight2D"));
+        }
+
         self.point_light
             .as_ref()
             .expect("PointLight2D node not found")

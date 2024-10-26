@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvcip3fny5dtd"]
+
+[ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="1_1ak7c"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_3m4e1"]
+light_mode = 2
+
+[node name="Enemy" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+light_mask = 2
+visibility_layer = 2
+material = SubResource("CanvasItemMaterial_3m4e1")
+texture = ExtResource("1_1ak7c")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+light_mask = 4
+visibility_layer = 4
+material = SubResource("CanvasItemMaterial_3m4e1")
+texture = ExtResource("1_1ak7c")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+light_mask = 8
+visibility_layer = 8
+material = SubResource("CanvasItemMaterial_3m4e1")
+texture = ExtResource("1_1ak7c")
+
+[node name="Sprite2D4" type="Sprite2D" parent="."]
+light_mask = 16
+visibility_layer = 16
+material = SubResource("CanvasItemMaterial_3m4e1")
+texture = ExtResource("1_1ak7c")
