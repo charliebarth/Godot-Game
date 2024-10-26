@@ -53,11 +53,9 @@ impl Jump {
         }
 
         let run_speed = player.get_run_speed();
-        if horizontal_dir.signum() != player.get_dir().signum() {
-            player.apply_horizontal_velocity(horizontal_dir, run_speed / 2.0);
-        } else {
-            player.apply_horizontal_velocity(horizontal_dir, run_speed);
-        }
+
+        player.set_dir(horizontal_dir);
+        player.apply_horizontal_velocity(horizontal_dir, run_speed);
     }
 
     fn exit(player: &mut Player, next_state: PlayerStates) {
