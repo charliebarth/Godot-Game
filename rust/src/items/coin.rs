@@ -1,4 +1,5 @@
-use godot::classes::{Area2D, IArea2D};
+use godot::obj::bounds::MemManual;
+use godot::obj::NewAlloc;
 /// Represents a coin.
 ///
 /// Author : Trinity Pittman
@@ -52,12 +53,26 @@ impl Coin {
         } else {
             godot_print!("Something other than player entered the coin.");
         }
+        let mut coin = Coin::new_alloc();
+    }
+
+    pub fn is_metal(&self) -> bool {
+        true // A coin is made of metal
+    }
+
+    fn new_alloc2() -> Gd<Self> {
+        Coin::new_alloc()
     }
 }
 
-/// Implement the MetalObject trait for Coin
-impl MetalObject for Coin {
-    fn is_metal(&self) -> bool {
-        true // A coin is made of metal
-    }
-}
+// Implement the MetalObject trait for Coin
+// impl MetalObject for Coin {
+//     fn is_metal(&self) -> bool {
+//         true  // A coin is made of metal
+//     }
+
+//     fn new_alloc2() -> Gd<Self> {
+//         Coin::new_alloc()
+
+//     }
+// }

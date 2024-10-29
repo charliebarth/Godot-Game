@@ -33,15 +33,7 @@ impl ILine2D for AllomanticLine {
         }
     }
 
-    fn draw(&mut self){
-        if let (Some(metal), Some(player)) = 
-                    (self.metal.as_ref(), self.player.as_ref()) {
-            let start = metal.get_global_position();
-            let end = player.get_global_position();
-            self.base_mut().add_point(start);
-            self.base_mut().add_point(end);
-        }
-    }
+    
 
     fn ready(&mut self){
     }
@@ -49,6 +41,11 @@ impl ILine2D for AllomanticLine {
 
 impl AllomanticLine {
 
-
+    pub fn draw(&mut self, metal: Gd<Area2D>, player: Gd<CharacterBody2D>){
+        let start = metal.get_global_position();
+        let end = player.get_global_position();
+        self.base_mut().add_point(start);
+        self.base_mut().add_point(end);
+    }
 
 }
