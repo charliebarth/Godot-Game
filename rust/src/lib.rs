@@ -52,6 +52,7 @@ mod items {
 
 mod ui {
     pub mod allomantic_line;
+    pub mod allomantic_range;
     pub mod coin_counter;
     pub mod metal_bar;
     pub mod metal_reserve_bar_manager;

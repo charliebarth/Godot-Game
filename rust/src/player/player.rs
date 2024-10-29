@@ -4,6 +4,7 @@ use std::time::Duration;
 use std::time::Instant;
 
 use godot::classes::AnimatedSprite2D;
+use godot::classes::Area2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
