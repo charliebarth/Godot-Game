@@ -55,4 +55,8 @@ impl MetalObject for MetalVial {
     fn is_metal(&self) -> bool {
         true // Metal vials are made of metal
     }
+
+    fn new_alloc2() -> Gd<Self> {
+        MetalVial::new_alloc()
+    }
 }
