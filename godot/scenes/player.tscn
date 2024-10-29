@@ -1,4 +1,4 @@
-[gd_scene load_steps=114 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=115 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -743,6 +743,9 @@ animations = [{
 radius = 7.0
 height = 44.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_fwaiq"]
+radius = 231.019
+
 [node name="Player" type="Player"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -780,3 +783,11 @@ offset_left = -317.0
 offset_top = -196.0
 offset_right = -284.0
 offset_bottom = -180.0
+
+[node name="AllomanticRange" type="AllomanticRange" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AllomanticRange"]
+position = Vector2(-3, 26)
+shape = SubResource("CircleShape2D_fwaiq")
+
+[connection signal="area_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]

@@ -38,6 +38,7 @@ mod ui {
     pub mod coin_counter;
     pub mod metal_bar;
     pub mod allomantic_line;
+    pub mod allomantic_range;
 }
 
 pub mod traits;
