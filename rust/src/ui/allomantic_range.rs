@@ -55,20 +55,16 @@ impl AllomanticRange {
             if metal_object.bind().is_metal() {
                 godot_print!("IS METAL: {}", body_name);
                 let mut line: Gd<AllomanticLine> = AllomanticLine::new_alloc();
-                line.bind_mut().draw(metal_potential, parent);
+                line.bind_mut().initialize_fields(metal_potential, parent);
+                line.set_position(Vector2::new(0.0,0.0));
+                // line.bind_mut().draw();
                 line.set_visible(true);
+                line.bind_mut().setup();
                 self.base_mut().add_child(line);
-            
+                
             }
         } else {
             godot_print!("Something other than a metal object entered the allomantic range.");
         }
-    
-        // if body.has_method(StringName::from("is_metal")) {
-        //     godot_print!("IS METAL")
-            
-        // } else {
-        //     godot_print!("Something other than a metal object entered the allomantic range.");
-        // }
     }       
 }
