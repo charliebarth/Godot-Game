@@ -47,6 +47,7 @@ pub struct Player {
     metal_reserve_bar_manager: Option<Gd<MetalReserveBarManager>>,
     health_bar: Option<Gd<TextureProgressBar>>,
     point_light: Option<Gd<PointLight2D>>,
+    player_vis: Vec<Gd<AnimatedSprite2D>>,
 }
 
 #[godot_api]
@@ -76,6 +77,7 @@ impl ICharacterBody2D for Player {
             metal_reserve_bar_manager: None,
             health_bar: None,
             point_light: None,
+            player_vis: Vec::new(),
         }
     }
 
@@ -258,8 +260,13 @@ impl Player {
 
         let mut sprite = self.get_sprite();
         self.anim_finished = false;
-        sprite.set_animation(animation_name);
+        sprite.set_animation(animation_name.clone());
         sprite.play();
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_animation(animation_name.clone());
+            player_vis.play();
+        }
     }
 
     /// Set the animation direction of the player
@@ -283,6 +290,20 @@ impl Player {
 
         sprite.set_scale(scale);
         sprite.set_position(pos);
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_scale(scale);
+            player_vis.set_position(pos);
+        }
+    }
+
+    pub fn set_animation_speed(&mut self, speed: f32) {
+        let mut sprite = self.get_sprite();
+        sprite.set_speed_scale(speed);
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_speed_scale(speed);
+        }
     }
 
     /// Get the previous state of the player
@@ -374,17 +395,6 @@ impl Player {
         });
     }
 
-    pub fn add_player_visibilty_layer(&mut self, player_id: i32) {
-        let mut new_sprite = self.get_sprite().clone();
-        let player_id = player_id * 2;
-
-        new_sprite.set_name(format!("VisLayer{player_id}").into());
-        new_sprite.set_light_mask(player_id);
-        new_sprite.set_visibility_layer(player_id as u32);
-
-        godot_print!("Child nodes are now: {:?}", self.base().get_children());
-    }
-
     /// Set the player ID of the player
     /// This ID is assigned to the player when they join the game and is set by the PlayerManager
     ///
@@ -412,6 +422,10 @@ impl Player {
         sprite.set_speed_scale(1.0);
         self.set_run_speed(DEFAULT_RUN_SPEED);
         self.set_jump_force(DEFAULT_JUMP_FORCE);
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_speed_scale(1.0);
+        }
     }
 
     #[func]
@@ -516,6 +530,14 @@ impl Player {
     pub fn get_sprite(&mut self) -> Gd<AnimatedSprite2D> {
         if self.sprite.is_none() {
             self.sprite = Some(self.base().get_node_as::<AnimatedSprite2D>("OwnerVis"));
+
+            let player_vis_one = self.base().get_node_as::<AnimatedSprite2D>("Player1Vis");
+            let player_vis_two = self.base().get_node_as::<AnimatedSprite2D>("Player2Vis");
+            let player_vis_three = self.base().get_node_as::<AnimatedSprite2D>("Player3Vis");
+
+            self.player_vis.push(player_vis_one);
+            self.player_vis.push(player_vis_two);
+            self.player_vis.push(player_vis_three);
         }
 
         self.sprite

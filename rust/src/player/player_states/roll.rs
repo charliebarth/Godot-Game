@@ -5,7 +5,7 @@ pub struct Roll;
 
 impl PlayerState for Roll {
     fn enter(player: &mut Player) {
-        player.get_sprite().set_speed_scale(1.0);
+        player.set_animation_speed(1.0);
     }
 
     fn update(player: &mut Player) {

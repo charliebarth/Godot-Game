@@ -54,6 +54,6 @@ impl Run {
             horizontal_dir.abs()
         };
 
-        player.get_sprite().set_speed_scale(animation_speed);
+        player.set_animation_speed(animation_speed);
     }
 }

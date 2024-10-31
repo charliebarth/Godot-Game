@@ -42,6 +42,6 @@ impl Sprint {
         let speed = player.get_run_speed() * 1.3;
         player.apply_horizontal_velocity(dir, speed);
 
-        player.get_sprite().set_speed_scale(1.3);
+        player.set_animation_speed(1.3);
     }
 }
