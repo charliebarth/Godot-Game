@@ -1,9 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=5 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
-polygon = PackedVector2Array(-568, -18, -467, -17, -468, -9, -567, -8)
+polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qc8gb"]
+polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -723, 189, -745, 162, -748, -335)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
+polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 2389, 187, 2384, -75, 450, -78, 451, 1)
 
 [node name="MapOne" type="Node2D"]
 light_mask = 3
@@ -27,5 +33,18 @@ modulate = Color(1, 1, 1, 0)
 position = Vector2(742, -137)
 occluder = SubResource("OccluderPolygon2D_pcbnu")
 
+[node name="LightOccluder2D3" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(309, -136)
+occluder = SubResource("OccluderPolygon2D_pcbnu")
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_qc8gb")
+
+[node name="LightOccluder2D4" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_4rjuc")
+
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0.47788, 0.47788, 0.47788, 1)
+color = Color(0.703808, 0.703808, 0.703808, 1)
