@@ -1,4 +1,4 @@
-use std::borrow::BorrowMut;
+use std::borrow::{Borrow, BorrowMut};
 
 /// Represents an Allomantic Line.
 /// 
@@ -8,8 +8,6 @@ use std::borrow::BorrowMut;
 use godot::prelude::*;
 use godot::classes::{CharacterBody2D, Area2D, ILine2D, Line2D};
 
-use crate::traits::MetalObject;
-
 const OFFSET: Vector2 = Vector2::new(400.0, -320.0);
 
 /// Struct that represents an Allomantic Line
@@ -17,7 +15,6 @@ const OFFSET: Vector2 = Vector2::new(400.0, -320.0);
 #[class(base=Line2D)]
 pub struct AllomanticLine {
     base: Base<Line2D>,
-    line: Option<Gd<Line2D>>,
     metal: Option<Gd<Area2D>>, // the metal has to have the MetalObject trait
     player: Option<Gd<CharacterBody2D>>,
     strength: f64,
@@ -32,29 +29,29 @@ impl ILine2D for AllomanticLine {
 
         Self {
             base,
-            line: None,
             metal: None,
             player: None,
             strength: 1.0,
         }
     }
 
-    fn process(&mut self, delta: f64) {
+    fn physics_process(&mut self, delta: f64) {
         // Get the player position
         let player_pos = self.player.as_mut().unwrap().get_position() + OFFSET;
 
         // Get the metal position 
-        let target_position = self.metal.as_mut().unwrap().get_position() + OFFSET;
+        let target_pos = self.metal.as_mut().unwrap().get_position() + OFFSET;
+
 
         // Update the line's points
-        self.line.as_mut().unwrap().set_points((&[player_pos, target_position]).into());
+        // self.base_mut().draw_line(player_pos, target_pos, Color::from_rgb(173.,216.,230.));
+        self.base_mut().set_points((&[player_pos, target_pos]).into());
         // self.line.as_mut().unwrap().draw_line(player_pos, target_position);
         
     }
 
-    
-
     fn ready(&mut self){
+        self.base_mut().set_physics_process(true);
     }
 }
 
@@ -68,8 +65,11 @@ impl AllomanticLine {
     pub fn setup(&mut self){
         let start = self.metal.as_mut().unwrap().get_position();
         let end = self.player.as_mut().unwrap().get_position();
-        self.base_mut().add_point(start + OFFSET);
-        self.base_mut().add_point(end + OFFSET);
+
+        // self.base_mut().draw_line(start, end, Color::from_rgb(173.,216.,230.));
+
+        // self.base_mut().add_point(start + OFFSET);
+        // self.base_mut().add_point(end + OFFSET);
     }
 
 }

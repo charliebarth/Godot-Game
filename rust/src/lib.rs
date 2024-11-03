@@ -41,8 +41,6 @@ mod ui {
     pub mod allomantic_range;
 }
 
-pub mod traits;
-
 struct MyExtension;
 
 #[gdextension]

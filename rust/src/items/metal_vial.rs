@@ -7,7 +7,6 @@ use godot::prelude::*;
 use godot::classes::{Area2D, IArea2D};
 
 use crate::player::player::Player;
-use crate::traits::MetalObject;
 
 
 /// Represents a Metal Vial  
@@ -48,15 +47,9 @@ impl MetalVial {
             godot_print!("Something other than player entered the coin.");
         }            
     }
-}
 
-
-impl MetalObject for MetalVial {
+    #[func]
     fn is_metal(&self) -> bool {
         true // Metal vials are made of metal
-    }
-
-    fn new_alloc2() -> Gd<Self> {
-        MetalVial::new_alloc()
     }
 }
