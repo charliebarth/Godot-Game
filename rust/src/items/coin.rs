@@ -7,7 +7,6 @@ use godot::obj::NewAlloc;
 use godot::prelude::*;
 
 use crate::player::player::Player;
-use crate::traits::MetalObject;
 
 const SPEED: f64 = 25.0;
 
@@ -56,23 +55,8 @@ impl Coin {
         let mut coin = Coin::new_alloc();
     }
 
+    #[func]
     pub fn is_metal(&self) -> bool {
         true // A coin is made of metal
     }
-
-    fn new_alloc2() -> Gd<Self> {
-        Coin::new_alloc()
-    }
 }
-
-// Implement the MetalObject trait for Coin
-// impl MetalObject for Coin {
-//     fn is_metal(&self) -> bool {
-//         true  // A coin is made of metal
-//     }
-
-//     fn new_alloc2() -> Gd<Self> {
-//         Coin::new_alloc()
-
-//     }
-// }

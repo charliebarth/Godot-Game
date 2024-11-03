@@ -58,8 +58,6 @@ mod ui {
     pub mod metal_reserve_bar_manager;
 }
 
-pub mod traits;
-
 struct MyExtension;
 
 #[gdextension]
