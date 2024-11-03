@@ -46,7 +46,7 @@ impl Fall {
         let speed = if horizontal_dir.signum() == player.get_dir().signum() {
             player.get_run_speed()
         } else {
-            player.get_run_speed() / 2.0
+            player.get_run_speed()
         };
 
         player.set_dir(horizontal_dir);
