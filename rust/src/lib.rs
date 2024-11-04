@@ -8,9 +8,9 @@ mod player {
     pub mod player;
 
     mod enums {
+        pub mod force;
         pub mod metal_events;
         pub mod player_events;
-
         pub mod player_states;
         pub mod timeout_events;
     }
