@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
 
@@ -10,6 +11,7 @@ use godot::classes::ProjectSettings;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
+use super::enums::force::Force;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
 use super::input_manager::InputManager;
@@ -18,10 +20,10 @@ use super::metal_reserve_bar_manager::MetalReserveBarManager;
 
 const MAX_HEALTH: f64 = 100.0;
 const MIN_HEALTH: f64 = 0.0;
-const DEFAULT_RUN_SPEED: f32 = 200.0;
+const DEFAULT_RUN_SPEED: f32 = 250.0;
 const DEFAULT_JUMP_FORCE: f32 = 450.0;
-const MAX_RUN_SPEED: f32 = 300.0;
-const MIN_RUN_SPEED: f32 = 100.0;
+const MAX_RUN_SPEED: f32 = 400.0;
+const MIN_RUN_SPEED: f32 = 0.0;
 const MAX_JUMP_FORCE: f32 = 550.0;
 const MIN_JUMP_FORCE: f32 = 300.0;
 
@@ -48,6 +50,8 @@ pub struct Player {
     health_bar: Option<Gd<TextureProgressBar>>,
     point_light: Option<Gd<PointLight2D>>,
     player_vis: Vec<Gd<AnimatedSprite2D>>,
+    /// A queue of forces to be applied to the player
+    forces: VecDeque<Force>,
 }
 
 #[godot_api]
@@ -78,6 +82,7 @@ impl ICharacterBody2D for Player {
             health_bar: None,
             point_light: None,
             player_vis: Vec::new(),
+            forces: VecDeque::new(),
         }
     }
 
@@ -98,16 +103,13 @@ impl ICharacterBody2D for Player {
     fn physics_process(&mut self, delta: f64) {
         self.set_delta(delta);
 
-        let mut base_vel = self.base_mut().get_velocity();
+        self.add_force(Force::Gravity {
+            acceleration: self.gravity,
+        });
 
-        // Apply gravity to the player if they are not on the floor
-        if !self.base().is_on_floor() {
-            base_vel.y += (self.gravity * self.delta) as f32;
-        } else {
-            base_vel.y = 0.0;
+        if self.base().is_on_floor() {
+            self.add_force(Force::NormalForce { magnitude: -1.0 });
         }
-
-        self.base_mut().set_velocity(base_vel);
 
         // Reset the player to their default values such as animation speed, run speed, and jump force
         self.reset_player();
@@ -121,6 +123,7 @@ impl ICharacterBody2D for Player {
         self.expire_timeout_events();
 
         // Make the player move and slide based on their velocity
+        self.apply_forces();
         self.base_mut().move_and_slide();
     }
 }
@@ -488,6 +491,70 @@ impl Player {
     /// * `point_light` - The point light to set
     pub fn set_point_light(&mut self, point_light: Gd<PointLight2D>) {
         self.point_light = Some(point_light);
+    }
+
+    pub fn add_force(&mut self, force: Force) {
+        self.forces.push_back(force);
+    }
+
+    fn apply_forces(&mut self) {
+        let len_forces = self.forces.len();
+        for _ in 0..len_forces {
+            let force = self.forces.pop_front().unwrap();
+            self.apply_force(force);
+        }
+    }
+
+    fn apply_force(&mut self, force: Force) {
+        let mut base_velocity = self.base().get_velocity();
+
+        match force {
+            Force::Gravity { acceleration } => {
+                base_velocity.y += (acceleration * self.delta) as f32;
+            }
+            Force::NormalForce { magnitude } => {
+                base_velocity.y += (self.gravity * magnitude * self.delta) as f32;
+            }
+            Force::Jump { velocity } => {
+                base_velocity.y = velocity;
+            }
+            Force::Run { acceleration } => {
+                let max_run_speed = self.get_max_run_speed();
+                if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
+                    base_velocity.x += acceleration * self.delta as f32;
+                } else if acceleration == 0.0 {
+                    base_velocity.x = 0.0;
+                }
+
+                base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+                godot_print!("Base velocity: {}", base_velocity.x);
+                godot_print!("Max run speed: {}", max_run_speed);
+            }
+            Force::AirRun { acceleration } => {
+                // TODO: Add max horizontal speed while in the air
+                // Maybe do this by adding air resistance
+                base_velocity.x += acceleration * self.delta as f32;
+            }
+        }
+
+        self.base_mut().set_velocity(base_velocity);
+    }
+
+    /// A sliding upper limit for the player's run speed
+    /// This is changed based on how far the joystick is pressed
+    ///
+    /// # Returns
+    /// * `f32` - The current maximum run speed of the player
+    pub fn get_max_run_speed(&self) -> f32 {
+        self.run_speed
+    }
+
+    /// The permanent minimum run speed of the player
+    ///
+    /// # Returns
+    /// * `f32` - The minimum run speed of the player
+    pub fn get_min_run_speed(&self) -> f32 {
+        MIN_RUN_SPEED
     }
 }
 

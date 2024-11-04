@@ -1,9 +1,13 @@
-use godot::obj::WithBaseField;
+use godot::{global::godot_print, obj::WithBaseField};
 
 use crate::player::{
-    enums::player_events::PlayerEvents, enums::player_states::PlayerStates, player::Player,
+    enums::{force::Force, player_events::PlayerEvents, player_states::PlayerStates},
+    player::Player,
     traits::player_state::PlayerState,
 };
+
+// TODO: Put this somewhere else
+const MAX_RUN_SPEED: f32 = 1000.0;
 
 #[derive(Clone, Copy)]
 pub struct Run;
@@ -17,19 +21,24 @@ impl PlayerState for Run {
         let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
+        let mut next_state: PlayerStates = PlayerStates::Run;
 
         if horizontal_dir == 0.0 {
-            player.set_state(PlayerStates::Idle);
+            next_state = PlayerStates::Idle;
         } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
-            player.set_state(PlayerStates::Jump);
+            next_state = PlayerStates::Jump;
         } else if !player.base().is_on_floor() {
-            player.set_state(PlayerStates::Fall);
+            next_state = PlayerStates::Fall;
         } else if input_manager.fetch_player_event(PlayerEvents::Crouch) {
-            player.set_state(PlayerStates::CrouchStart);
+            next_state = PlayerStates::CrouchStart;
         } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
-            player.set_state(PlayerStates::Roll);
+            next_state = PlayerStates::Roll;
         } else if input_manager.fetch_player_event(PlayerEvents::Sprint) {
-            player.set_state(PlayerStates::Sprint);
+            next_state = PlayerStates::Sprint;
+        }
+
+        if next_state != PlayerStates::Run {
+            Run::exit(player, next_state);
         } else {
             Run::run(player);
         }
@@ -38,22 +47,40 @@ impl PlayerState for Run {
 
 impl Run {
     fn run(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
+        let run_strength = player.get_horizontal_movement();
 
-        if horizontal_dir == 0.0 {
-            return;
+        if run_strength.signum() != player.get_dir().signum() {
+            player.add_force(Force::Run { acceleration: 0.0 });
         }
+        player.set_dir(run_strength);
 
-        let speed = player.get_run_speed();
-        player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, speed);
+        let scaled_speed = player.get_min_run_speed()
+            + run_strength.abs() * (player.get_max_run_speed() - player.get_min_run_speed());
 
-        let animation_speed = if horizontal_dir.abs() < 0.3 {
-            0.3
+        player.set_run_speed(scaled_speed);
+
+        // This is the acceleration of the player
+        // Make this a constant or field of the player
+        let speed = 900.0;
+        player.add_force(Force::Run {
+            acceleration: run_strength * speed,
+        });
+
+        // TODO: Chagne this to be based on the actual speed of the player
+        let animation_speed = if run_strength.abs() < 0.25 {
+            0.25
         } else {
-            horizontal_dir.abs()
+            run_strength.abs()
         };
 
         player.set_animation_speed(animation_speed);
+    }
+
+    fn exit(player: &mut Player, next_state: PlayerStates) {
+        if next_state == PlayerStates::Idle {
+            player.add_force(Force::Run { acceleration: 0.0 });
+        }
+
+        player.set_state(next_state);
     }
 }

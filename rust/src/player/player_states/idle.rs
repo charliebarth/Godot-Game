@@ -1,7 +1,8 @@
 use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::player_events::PlayerEvents, enums::player_states::PlayerStates, player::Player,
+    enums::{player_events::PlayerEvents, player_states::PlayerStates},
+    player::Player,
     traits::player_state::PlayerState,
 };
 
@@ -9,9 +10,7 @@ use crate::player::{
 pub struct Idle;
 
 impl PlayerState for Idle {
-    fn enter(player: &mut Player) {
-        player.apply_horizontal_velocity(1.0, 0.0);
-    }
+    fn enter(_player: &mut Player) {}
 
     fn update(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
