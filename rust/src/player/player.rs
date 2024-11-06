@@ -317,10 +317,11 @@ impl Player {
         self.previous_state
     }
 
-    /// Get the run speed of the player
+    /// A sliding upper limit for the player's run speed
+    /// This is changed based on how far the joystick is pressed
     ///
     /// # Returns
-    /// * `f32` - The run speed of the player
+    /// * `f32` - The current maximum run speed of the player
     pub fn get_run_speed(&self) -> f32 {
         self.run_speed
     }
@@ -519,7 +520,7 @@ impl Player {
                 base_velocity.y = velocity;
             }
             Force::Run { acceleration } => {
-                let max_run_speed = self.get_max_run_speed();
+                let max_run_speed = self.get_run_speed();
                 if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
                     base_velocity.x += acceleration * self.delta as f32;
                 } else if acceleration == 0.0 {
@@ -527,26 +528,27 @@ impl Player {
                 }
 
                 base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
-                godot_print!("Base velocity: {}", base_velocity.x);
-                godot_print!("Max run speed: {}", max_run_speed);
             }
             Force::AirRun { acceleration } => {
-                // TODO: Add max horizontal speed while in the air
-                // Maybe do this by adding air resistance
-                base_velocity.x += acceleration * self.delta as f32;
+                let max_run_speed = self.get_run_speed();
+                if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
+                    base_velocity.x += acceleration * self.delta as f32;
+                } else if acceleration == 0.0 {
+                    base_velocity.x = 0.0;
+                }
+
+                base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+            }
+            Force::Stop {
+                horizontal,
+                vertical,
+            } => {
+                base_velocity.x = if horizontal { 0.0 } else { base_velocity.x };
+                base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
             }
         }
 
         self.base_mut().set_velocity(base_velocity);
-    }
-
-    /// A sliding upper limit for the player's run speed
-    /// This is changed based on how far the joystick is pressed
-    ///
-    /// # Returns
-    /// * `f32` - The current maximum run speed of the player
-    pub fn get_max_run_speed(&self) -> f32 {
-        self.run_speed
     }
 
     /// The permanent minimum run speed of the player

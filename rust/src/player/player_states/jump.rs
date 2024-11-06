@@ -1,7 +1,9 @@
-use godot::{builtin::Vector2, global::godot_print, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
+    enums::{force::Force, player_states::PlayerStates},
+    player::Player,
+    traits::player_state::PlayerState,
 };
 
 // TODO: Allow the player to flip direction in the first couple of frames of the jump
@@ -18,11 +20,9 @@ impl PlayerState for Jump {
         player.set_gravity(JUMP_GRAVITY);
 
         let jump_force = player.get_jump_force();
-        let mut base = player.base_mut();
-
-        // let jump_force = base.get_velocity().y + -jump_force;
-        let jump_vel = Vector2::new(base.get_velocity().x, -jump_force);
-        base.set_velocity(jump_vel);
+        player.add_force(Force::Jump {
+            velocity: -jump_force,
+        });
     }
 
     fn update(player: &mut Player) {
@@ -46,16 +46,28 @@ impl PlayerState for Jump {
 
 impl Jump {
     fn run(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
+        let run_strength = player.get_horizontal_movement();
 
-        if horizontal_dir == 0.0 {
+        if run_strength == 0.0 {
             return;
         }
 
-        let run_speed = player.get_run_speed();
+        if run_strength.signum() != player.get_dir().signum() {
+            player.add_force(Force::AirRun { acceleration: 0.0 });
+        }
+        player.set_dir(run_strength);
 
-        player.set_dir(horizontal_dir);
-        player.apply_horizontal_velocity(horizontal_dir, run_speed);
+        let scaled_speed = player.get_min_run_speed()
+            + run_strength.abs() * (player.get_run_speed() - player.get_min_run_speed());
+
+        player.set_run_speed(scaled_speed);
+
+        // This is the acceleration of the player
+        // Make this a constant or field of the player
+        let speed = 900.0;
+        player.add_force(Force::AirRun {
+            acceleration: run_strength * speed,
+        });
     }
 
     fn exit(player: &mut Player, next_state: PlayerStates) {
