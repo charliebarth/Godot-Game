@@ -1,13 +1,10 @@
-use godot::{global::godot_print, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
 use crate::player::{
     enums::{force::Force, player_events::PlayerEvents, player_states::PlayerStates},
     player::Player,
     traits::player_state::PlayerState,
 };
-
-// TODO: Put this somewhere else
-const MAX_RUN_SPEED: f32 = 1000.0;
 
 #[derive(Clone, Copy)]
 pub struct Run;
@@ -55,7 +52,7 @@ impl Run {
         player.set_dir(run_strength);
 
         let scaled_speed = player.get_min_run_speed()
-            + run_strength.abs() * (player.get_max_run_speed() - player.get_min_run_speed());
+            + run_strength.abs() * (player.get_run_speed() - player.get_min_run_speed());
 
         player.set_run_speed(scaled_speed);
 
@@ -77,10 +74,6 @@ impl Run {
     }
 
     fn exit(player: &mut Player, next_state: PlayerStates) {
-        if next_state == PlayerStates::Idle {
-            player.add_force(Force::Run { acceleration: 0.0 });
-        }
-
         player.set_state(next_state);
     }
 }
