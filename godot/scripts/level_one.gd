@@ -20,5 +20,3 @@ func _ready() -> void:
 				self.add_child(duplicate)
 				
 				layer += 2
-	
-	print(self.get_children())
