@@ -12,4 +12,6 @@ pub enum Force {
     Run { acceleration: f32 },
     /// Horizontal force applied when the player is in the air
     AirRun { acceleration: f32 },
+    /// Stop all movement of the player based on the boolean values
+    Stop { horizontal: bool, vertical: bool },
 }
