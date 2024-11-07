@@ -546,6 +546,13 @@ impl Player {
                 base_velocity.x = if horizontal { 0.0 } else { base_velocity.x };
                 base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
             }
+            Force::SteelPush {
+                acceleration_x,
+                acceleration_y,
+            } => {
+                base_velocity.x += acceleration_x * self.delta as f32;
+                base_velocity.y += acceleration_y * self.delta as f32;
+            }
         }
 
         self.base_mut().set_velocity(base_velocity);

@@ -14,4 +14,8 @@ pub enum Force {
     AirRun { acceleration: f32 },
     /// Stop all movement of the player based on the boolean values
     Stop { horizontal: bool, vertical: bool },
+    SteelPush {
+        acceleration_x: f32,
+        acceleration_y: f32,
+    },
 }

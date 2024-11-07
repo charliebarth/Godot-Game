@@ -1,4 +1,8 @@
-use super::{metals::pewter::Pewter, player::Player, traits::metal::Metal};
+use super::{
+    metals::{pewter::Pewter, steel::Steel},
+    player::Player,
+    traits::metal::Metal,
+};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
@@ -29,6 +33,8 @@ impl MetalManager {
     fn last_player_standing(&mut self) {
         self.metals
             .push(Box::new(Pewter::new(100.0, 100.0, 0.05, 0.01)));
+        self.metals
+            .push(Box::new(Steel::new(100.0, 100.0, 0.05, 0.01)));
     }
 
     pub fn update(&mut self, player: &mut Player) {

@@ -8,6 +8,7 @@ pub enum BurnType {
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub enum MetalEvents {
     Pewter(BurnType),
+    Steel(BurnType),
 }
 
 impl MetalEvents {
@@ -24,6 +25,7 @@ impl MetalEvents {
     pub fn from_string(button: &str) -> Option<MetalEvents> {
         match button {
             "pewter" => Some(MetalEvents::Pewter(BurnType::Burn)),
+            "steel" => Some(MetalEvents::Steel(BurnType::Burn)),
             _ => None,
         }
     }
@@ -32,6 +34,7 @@ impl MetalEvents {
     pub fn get_burn_type(&self) -> BurnType {
         match self {
             MetalEvents::Pewter(burn_type) => burn_type.clone(),
+            MetalEvents::Steel(burn_type) => burn_type.clone(),
         }
     }
 
@@ -40,6 +43,8 @@ impl MetalEvents {
         match self {
             MetalEvents::Pewter(BurnType::Burn) => MetalEvents::Pewter(BurnType::LowBurn),
             MetalEvents::Pewter(BurnType::LowBurn) => MetalEvents::Pewter(BurnType::LowBurn),
+            MetalEvents::Steel(BurnType::Burn) => MetalEvents::Steel(BurnType::LowBurn),
+            MetalEvents::Steel(BurnType::LowBurn) => MetalEvents::Steel(BurnType::LowBurn),
         }
     }
 }
