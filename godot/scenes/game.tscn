@@ -12531,13 +12531,3 @@ tile_map_data = PackedByteArray("AADA/9D/AAA4AC0AAADB/8//AAA5ACwAAADB/9D/AAA5AC0
 tile_set = SubResource("TileSet_q05ao")
 
 [node name="Player" parent="." instance=ExtResource("11_fyd3u")]
-_import_path = NodePath("")
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-script = null
