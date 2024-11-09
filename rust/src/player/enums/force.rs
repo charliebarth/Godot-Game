@@ -15,7 +15,7 @@ pub enum Force {
     /// Stop all movement of the player based on the boolean values
     Stop { horizontal: bool, vertical: bool },
     SteelPush {
-        acceleration_x: f32,
-        acceleration_y: f32,
+        x_acceleration: f32,
+        y_acceleration: f32,
     },
 }

@@ -26,21 +26,35 @@ impl Steel {
 
 impl Metal for Steel {
     fn burn(&mut self, player: &mut Player) {
+        // TODO: If not on the floor set the state to fall (push would interupt a jump)
         self.current_reserve -= self.burn_rate;
-        // TODO: Push
-        let max_acceleration = 4000.0;
-        player.add_force(Force::SteelPush {
-            acceleration_x: max_acceleration / 2.0,
-            acceleration_y: -(max_acceleration / 1.8),
-        });
-        let position = player.base().get_global_position();
-        let health_bar = player.get_health_bar().get_global_position();
-        godot_print!("Y: {}", position.y as f64 - health_bar.y as f64);
+        // TODO: Make constant
+        let max_acceleration: f32 = 6000.0;
+
+        let player_position = player.base().get_global_position();
+        let metal_position = player.get_metal_object_position(0);
+
+        // TODO: Remove
+        if metal_position.x == 0.0 && metal_position.y == 0.0 {
+            return;
+        }
+
+        if !player.base().is_on_floor() {
+            player.add_force(Force::NormalForce { magnitude: -1.0 });
+        }
+
         let angle = atan2(
-            position.y as f64 - health_bar.y as f64,
-            position.x as f64 - health_bar.x as f64,
+            player_position.y as f64 - metal_position.y as f64,
+            player_position.x as f64 - metal_position.x as f64,
         );
-        godot_print!("Angle: {}", angle.to_degrees());
+
+        let x_acceleration: f32 = max_acceleration * (angle.cos() as f32);
+        let y_acceleration: f32 = max_acceleration * (angle.sin() as f32);
+
+        player.add_force(Force::SteelPush {
+            x_acceleration,
+            y_acceleration,
+        });
     }
 
     fn low_burn(&mut self, player: &mut Player) {

@@ -10,12 +10,7 @@ use crate::player::{
 pub struct Idle;
 
 impl PlayerState for Idle {
-    fn enter(player: &mut Player) {
-        player.add_force(Force::Stop {
-            horizontal: true,
-            vertical: false, // TODO: This should also maybe be true
-        });
-    }
+    fn enter(_player: &mut Player) {}
 
     fn update(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
@@ -32,6 +27,11 @@ impl PlayerState for Idle {
             player.set_state(PlayerStates::CrouchStart);
         } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             player.set_state(PlayerStates::CrouchStart);
+        } else {
+            player.add_force(Force::Stop {
+                horizontal: true,
+                vertical: false, // TODO: This should also maybe be true
+            });
         }
     }
 }

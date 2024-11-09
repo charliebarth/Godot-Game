@@ -11,6 +11,8 @@ use godot::classes::ProjectSettings;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
+use crate::metal_object::MetalObject;
+
 use super::enums::force::Force;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
@@ -52,6 +54,7 @@ pub struct Player {
     player_vis: Vec<Gd<AnimatedSprite2D>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
+    metal_objects: Vec<Gd<MetalObject>>,
 }
 
 #[godot_api]
@@ -83,6 +86,7 @@ impl ICharacterBody2D for Player {
             point_light: None,
             player_vis: Vec::new(),
             forces: VecDeque::new(),
+            metal_objects: Vec::new(),
         }
     }
 
@@ -547,11 +551,27 @@ impl Player {
                 base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
             }
             Force::SteelPush {
-                acceleration_x,
-                acceleration_y,
+                x_acceleration,
+                y_acceleration,
             } => {
-                base_velocity.x += acceleration_x * self.delta as f32;
-                base_velocity.y += acceleration_y * self.delta as f32;
+                let max_acceleration: f32 = 1000.0;
+                let total_acceleration = x_acceleration.abs() + y_acceleration.abs();
+
+                let x_of_total = x_acceleration.abs() / total_acceleration;
+                let y_of_total = y_acceleration.abs() / total_acceleration;
+
+                base_velocity.x += x_acceleration * self.delta as f32;
+                base_velocity.y += y_acceleration * self.delta as f32;
+
+                base_velocity.x = base_velocity.x.clamp(
+                    -(max_acceleration * x_of_total),
+                    max_acceleration * x_of_total,
+                );
+
+                base_velocity.y = base_velocity.y.clamp(
+                    -(max_acceleration * y_of_total),
+                    max_acceleration * y_of_total,
+                );
             }
         }
 
@@ -564,6 +584,28 @@ impl Player {
     /// * `f32` - The minimum run speed of the player
     pub fn get_min_run_speed(&self) -> f32 {
         MIN_RUN_SPEED
+    }
+
+    #[func]
+    fn add_metal_object(&mut self, metal: Gd<MetalObject>) {
+        godot_print!("object added");
+        self.metal_objects.push(metal);
+    }
+
+    #[func]
+    fn remove_metal_object(&mut self, metal: Gd<MetalObject>) {
+        if let Some(pos) = self.metal_objects.iter().position(|x| *x == metal) {
+            self.metal_objects.remove(pos);
+            godot_print!("removed object")
+        }
+    }
+
+    pub fn get_metal_object_position(&mut self, index: usize) -> Vector2 {
+        if let Some(metal) = self.metal_objects.get(index) {
+            return metal.get_global_position();
+        }
+
+        Vector2::new(0.0, 0.0)
     }
 }
 

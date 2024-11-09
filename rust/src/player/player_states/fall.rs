@@ -30,6 +30,7 @@ impl PlayerState for Fall {
         } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
         } else {
+            // TODO: else if not steel pushing or iron pulling
             Fall::run(player);
         }
     }
