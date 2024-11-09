@@ -44,6 +44,7 @@ mod player {
 
 pub mod coin;
 pub mod coin_counter;
+pub mod metal_object;
 pub mod player_manager;
 
 struct MyExtension;
