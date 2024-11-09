@@ -1,4 +1,4 @@
-[gd_scene load_steps=124 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=125 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -763,6 +763,9 @@ fill = 2
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.821101, 0.119266)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_indkr"]
+size = Vector2(958, 540)
+
 [node name="Player" type="Player"]
 z_index = 1
 script = ExtResource("1_pp08i")
@@ -849,9 +852,17 @@ shadow_enabled = true
 texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")
 
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-5, 29)
+shape = SubResource("RectangleShape2D_indkr")
+
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player2Vis" to="Player2Vis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
 [connection signal="tree_entered" from="InputManager" to="InputManager" method="_on_tree_entered"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
