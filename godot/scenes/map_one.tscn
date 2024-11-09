@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=6 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
+[ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
 polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
@@ -48,3 +49,6 @@ occluder = SubResource("OccluderPolygon2D_4rjuc")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.703808, 0.703808, 0.703808, 1)
+
+[node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(437, -16)
