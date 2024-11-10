@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmvk1bpdhdf6c"]
+[gd_scene load_steps=3 format=3 uid="uid://bmvk1bpdhdf6c"]
+
+[ext_resource type="Texture2D" uid="uid://cjofih2mbdsil" path="res://icon.svg" id="1_6iq1f"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_r6htq"]
 
@@ -6,3 +8,8 @@
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_r6htq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(5.96046e-08, -2.98023e-08)
+scale = Vector2(0.160156, 0.160156)
+texture = ExtResource("1_6iq1f")

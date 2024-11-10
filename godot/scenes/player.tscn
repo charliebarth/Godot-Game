@@ -1,4 +1,4 @@
-[gd_scene load_steps=125 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=126 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -29,6 +29,7 @@
 [ext_resource type="Script" path="res://scripts/coin_counter.gd" id="25_fri41"]
 [ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="Script" path="res://scripts/health_bar.gd" id="28_v0cjd"]
+[ext_resource type="Script" path="res://scripts/metal_line.gd" id="30_plq0b"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
 light_mode = 2
@@ -857,6 +858,11 @@ script = ExtResource("26_f1f48")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(-5, 29)
 shape = SubResource("RectangleShape2D_indkr")
+
+[node name="MetalLine" type="Node2D" parent="."]
+z_index = -1
+position = Vector2(-5, 18)
+script = ExtResource("30_plq0b")
 
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]

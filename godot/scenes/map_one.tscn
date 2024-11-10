@@ -51,4 +51,14 @@ occluder = SubResource("OccluderPolygon2D_4rjuc")
 color = Color(0.703808, 0.703808, 0.703808, 1)
 
 [node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(437, -16)
+z_index = 1
+position = Vector2(-369, -19)
+
+[node name="MetalObject2" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(-128, -301)
+
+[node name="MetalObject3" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(211, -167)
+
+[node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(-16, -112)

@@ -52,6 +52,7 @@ pub struct Player {
     health_bar: Option<Gd<TextureProgressBar>>,
     point_light: Option<Gd<PointLight2D>>,
     player_vis: Vec<Gd<AnimatedSprite2D>>,
+    metal_line: Option<Gd<Node2D>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     metal_objects: Vec<Gd<MetalObject>>,
@@ -85,6 +86,7 @@ impl ICharacterBody2D for Player {
             health_bar: None,
             point_light: None,
             player_vis: Vec::new(),
+            metal_line: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
         }
@@ -129,6 +131,10 @@ impl ICharacterBody2D for Player {
         // Make the player move and slide based on their velocity
         self.apply_forces();
         self.base_mut().move_and_slide();
+    }
+
+    fn process(&mut self, _delta: f64) {
+        self.get_metal_line().queue_redraw();
     }
 }
 
@@ -588,7 +594,6 @@ impl Player {
 
     #[func]
     fn add_metal_object(&mut self, metal: Gd<MetalObject>) {
-        godot_print!("object added");
         self.metal_objects.push(metal);
     }
 
@@ -596,7 +601,6 @@ impl Player {
     fn remove_metal_object(&mut self, metal: Gd<MetalObject>) {
         if let Some(pos) = self.metal_objects.iter().position(|x| *x == metal) {
             self.metal_objects.remove(pos);
-            godot_print!("removed object")
         }
     }
 
@@ -606,6 +610,18 @@ impl Player {
         }
 
         Vector2::new(0.0, 0.0)
+    }
+
+    #[func]
+    pub fn get_line_points(&mut self) -> Vec<Vector2> {
+        let mut points: Vec<Vector2> = Vec::new();
+
+        for metal in self.metal_objects.iter() {
+            points.push(metal.get_global_position());
+        }
+
+        // object position should be something close to -369, -19
+        points
     }
 }
 
@@ -709,6 +725,17 @@ impl Player {
         self.point_light
             .as_ref()
             .expect("PointLight2D node not found")
+            .clone()
+    }
+
+    pub fn get_metal_line(&mut self) -> Gd<Node2D> {
+        if self.metal_line.is_none() {
+            self.metal_line = Some(self.base().get_node_as::<Node2D>("MetalLine"));
+        }
+
+        self.metal_line
+            .as_ref()
+            .expect("MetalLine node not found")
             .clone()
     }
 }
