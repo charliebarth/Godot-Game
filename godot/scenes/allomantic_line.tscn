@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://on5nj657th2y"]
+
+[node name="AllomanticLine" type="AllomanticLine"]
+points = PackedVector2Array(1181, 327)
+
+[connection signal="draw" from="." to="." method="draw"]
