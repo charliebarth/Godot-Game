@@ -54,6 +54,8 @@ impl AllomanticRange {
             let mut line: Gd<AllomanticLine> = AllomanticLine::new_alloc();
                 line.set_visible(true);
                 line.bind_mut().initialize_fields(metal_potential, parent);
+                // line.set_modulate(Color { r: (1.5), g: (1.5), b: (1.5), a: (1.) });
+                line.set_self_modulate(Color { r: (1.5), g: (1.5), b: (1.5), a: (1.) });
                 // line.set_position(Vector2::new(0.0,0.0));
                 // line.bind_mut().draw();
     
