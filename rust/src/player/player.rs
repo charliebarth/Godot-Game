@@ -584,8 +584,6 @@ impl Player {
                     -(max_acceleration * y_of_total),
                     max_acceleration * y_of_total,
                 );
-
-                godot_print!("X: {}, Y: {}", base_velocity.x, base_velocity.y);
             }
         }
 
