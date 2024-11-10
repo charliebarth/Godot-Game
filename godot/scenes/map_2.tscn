@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://dybexb8rpvfsq"]
+[gd_scene load_steps=30 format=4 uid="uid://dybexb8rpvfsq"]
 
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="1_j0cuv"]
 [ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="2_sjk4e"]
@@ -6,8 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://v04hdqv0u4p0" path="res://assets/Maps/dungeon/Textures/TX Tileable - Dungeon Wall.png" id="4_iu852"]
 [ext_resource type="Texture2D" uid="uid://cgvajfsxvqd3s" path="res://assets/Maps/dungeon/Textures/TX Dungeon Wall Deco.png" id="4_xvb1n"]
 [ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="6_p8bf3"]
-[ext_resource type="Shader" path="res://scenes/map_2.gdshader" id="7_fa1tc"]
 [ext_resource type="Texture2D" uid="uid://g32m6yrrsecs" path="res://assets/Maps/dungeon/Textures/FX/TX FX Flame.png" id="7_rqie0"]
+[ext_resource type="PackedScene" uid="uid://cuffpiqdswvvo" path="res://scenes/torch_light.tscn" id="9_tmjhd"]
+[ext_resource type="PackedScene" uid="uid://tnernkxjfar4" path="res://scenes/candle_light.tscn" id="10_1vryo"]
+[ext_resource type="Texture2D" uid="uid://crtpjdqbhvedv" path="res://assets/Maps/dungeon/Textures/FX/TX FX Light Shaft.png" id="10_fag4h"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6qe5g"]
 texture = ExtResource("1_j0cuv")
@@ -8400,7 +8402,6 @@ texture = ExtResource("6_p8bf3")
 sources/0 = SubResource("TileSetAtlasSource_txkp8")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kbdy1"]
-shader = ExtResource("7_fa1tc")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpghy"]
 texture = ExtResource("7_rqie0")
@@ -8513,6 +8514,346 @@ texture = ExtResource("7_rqie0")
 [sub_resource type="TileSet" id="TileSet_la2sg"]
 sources/0 = SubResource("TileSetAtlasSource_qpghy")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_btf25"]
+texture = ExtResource("10_fag4h")
+4:1/0 = 0
+5:1/0 = 0
+10:1/0 = 0
+11:1/0 = 0
+22:1/0 = 0
+23:1/0 = 0
+28:1/0 = 0
+29:1/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+9:2/0 = 0
+10:2/0 = 0
+11:2/0 = 0
+12:2/0 = 0
+16:2/0 = 0
+17:2/0 = 0
+18:2/0 = 0
+21:2/0 = 0
+22:2/0 = 0
+23:2/0 = 0
+24:2/0 = 0
+27:2/0 = 0
+28:2/0 = 0
+29:2/0 = 0
+33:2/0 = 0
+34:2/0 = 0
+35:2/0 = 0
+36:2/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+9:3/0 = 0
+10:3/0 = 0
+11:3/0 = 0
+12:3/0 = 0
+15:3/0 = 0
+16:3/0 = 0
+17:3/0 = 0
+18:3/0 = 0
+21:3/0 = 0
+22:3/0 = 0
+23:3/0 = 0
+24:3/0 = 0
+27:3/0 = 0
+28:3/0 = 0
+29:3/0 = 0
+30:3/0 = 0
+33:3/0 = 0
+34:3/0 = 0
+35:3/0 = 0
+36:3/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+9:4/0 = 0
+10:4/0 = 0
+11:4/0 = 0
+12:4/0 = 0
+15:4/0 = 0
+16:4/0 = 0
+17:4/0 = 0
+18:4/0 = 0
+21:4/0 = 0
+22:4/0 = 0
+23:4/0 = 0
+24:4/0 = 0
+27:4/0 = 0
+28:4/0 = 0
+29:4/0 = 0
+30:4/0 = 0
+33:4/0 = 0
+34:4/0 = 0
+35:4/0 = 0
+36:4/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+16:5/0 = 0
+17:5/0 = 0
+22:5/0 = 0
+23:5/0 = 0
+28:5/0 = 0
+29:5/0 = 0
+6:10/0 = 0
+7:10/0 = 0
+8:10/0 = 0
+9:10/0 = 0
+39:10/0 = 0
+40:10/0 = 0
+41:10/0 = 0
+42:10/0 = 0
+5:11/0 = 0
+6:11/0 = 0
+7:11/0 = 0
+8:11/0 = 0
+9:11/0 = 0
+10:11/0 = 0
+11:11/0 = 0
+12:11/0 = 0
+13:11/0 = 0
+25:11/0 = 0
+26:11/0 = 0
+38:11/0 = 0
+39:11/0 = 0
+40:11/0 = 0
+41:11/0 = 0
+42:11/0 = 0
+43:11/0 = 0
+4:12/0 = 0
+5:12/0 = 0
+6:12/0 = 0
+7:12/0 = 0
+8:12/0 = 0
+9:12/0 = 0
+10:12/0 = 0
+11:12/0 = 0
+12:12/0 = 0
+13:12/0 = 0
+22:12/0 = 0
+23:12/0 = 0
+24:12/0 = 0
+25:12/0 = 0
+26:12/0 = 0
+27:12/0 = 0
+37:12/0 = 0
+38:12/0 = 0
+39:12/0 = 0
+40:12/0 = 0
+41:12/0 = 0
+42:12/0 = 0
+43:12/0 = 0
+44:12/0 = 0
+3:13/0 = 0
+4:13/0 = 0
+5:13/0 = 0
+6:13/0 = 0
+7:13/0 = 0
+8:13/0 = 0
+9:13/0 = 0
+10:13/0 = 0
+11:13/0 = 0
+12:13/0 = 0
+13:13/0 = 0
+21:13/0 = 0
+22:13/0 = 0
+23:13/0 = 0
+24:13/0 = 0
+25:13/0 = 0
+26:13/0 = 0
+27:13/0 = 0
+28:13/0 = 0
+37:13/0 = 0
+38:13/0 = 0
+39:13/0 = 0
+40:13/0 = 0
+41:13/0 = 0
+42:13/0 = 0
+43:13/0 = 0
+44:13/0 = 0
+45:13/0 = 0
+3:14/0 = 0
+4:14/0 = 0
+5:14/0 = 0
+6:14/0 = 0
+7:14/0 = 0
+8:14/0 = 0
+9:14/0 = 0
+10:14/0 = 0
+11:14/0 = 0
+12:14/0 = 0
+13:14/0 = 0
+20:14/0 = 0
+21:14/0 = 0
+22:14/0 = 0
+23:14/0 = 0
+24:14/0 = 0
+25:14/0 = 0
+26:14/0 = 0
+27:14/0 = 0
+28:14/0 = 0
+29:14/0 = 0
+36:14/0 = 0
+37:14/0 = 0
+38:14/0 = 0
+39:14/0 = 0
+40:14/0 = 0
+41:14/0 = 0
+42:14/0 = 0
+43:14/0 = 0
+44:14/0 = 0
+45:14/0 = 0
+3:15/0 = 0
+4:15/0 = 0
+5:15/0 = 0
+6:15/0 = 0
+7:15/0 = 0
+8:15/0 = 0
+9:15/0 = 0
+10:15/0 = 0
+11:15/0 = 0
+12:15/0 = 0
+13:15/0 = 0
+21:15/0 = 0
+22:15/0 = 0
+23:15/0 = 0
+24:15/0 = 0
+25:15/0 = 0
+26:15/0 = 0
+27:15/0 = 0
+28:15/0 = 0
+29:15/0 = 0
+36:15/0 = 0
+37:15/0 = 0
+38:15/0 = 0
+39:15/0 = 0
+40:15/0 = 0
+41:15/0 = 0
+42:15/0 = 0
+43:15/0 = 0
+44:15/0 = 0
+45:15/0 = 0
+4:16/0 = 0
+5:16/0 = 0
+6:16/0 = 0
+7:16/0 = 0
+8:16/0 = 0
+9:16/0 = 0
+10:16/0 = 0
+11:16/0 = 0
+12:16/0 = 0
+13:16/0 = 0
+21:16/0 = 0
+22:16/0 = 0
+23:16/0 = 0
+24:16/0 = 0
+25:16/0 = 0
+26:16/0 = 0
+27:16/0 = 0
+28:16/0 = 0
+29:16/0 = 0
+36:16/0 = 0
+37:16/0 = 0
+38:16/0 = 0
+39:16/0 = 0
+40:16/0 = 0
+41:16/0 = 0
+42:16/0 = 0
+43:16/0 = 0
+44:16/0 = 0
+45:16/0 = 0
+4:17/0 = 0
+5:17/0 = 0
+6:17/0 = 0
+7:17/0 = 0
+8:17/0 = 0
+9:17/0 = 0
+10:17/0 = 0
+11:17/0 = 0
+12:17/0 = 0
+22:17/0 = 0
+23:17/0 = 0
+24:17/0 = 0
+25:17/0 = 0
+26:17/0 = 0
+27:17/0 = 0
+28:17/0 = 0
+29:17/0 = 0
+36:17/0 = 0
+37:17/0 = 0
+38:17/0 = 0
+39:17/0 = 0
+40:17/0 = 0
+41:17/0 = 0
+42:17/0 = 0
+43:17/0 = 0
+44:17/0 = 0
+45:17/0 = 0
+5:18/0 = 0
+6:18/0 = 0
+7:18/0 = 0
+8:18/0 = 0
+9:18/0 = 0
+10:18/0 = 0
+11:18/0 = 0
+12:18/0 = 0
+37:18/0 = 0
+38:18/0 = 0
+39:18/0 = 0
+40:18/0 = 0
+41:18/0 = 0
+42:18/0 = 0
+43:18/0 = 0
+44:18/0 = 0
+6:19/0 = 0
+7:19/0 = 0
+9:19/0 = 0
+10:19/0 = 0
+11:19/0 = 0
+12:19/0 = 0
+38:19/0 = 0
+39:19/0 = 0
+40:19/0 = 0
+41:19/0 = 0
+42:19/0 = 0
+43:19/0 = 0
+44:19/0 = 0
+4:24/0 = 0
+5:24/0 = 0
+3:25/0 = 0
+4:25/0 = 0
+5:25/0 = 0
+6:25/0 = 0
+7:25/0 = 0
+2:26/0 = 0
+3:26/0 = 0
+4:26/0 = 0
+5:26/0 = 0
+6:26/0 = 0
+7:26/0 = 0
+4:27/0 = 0
+5:27/0 = 0
+4:53/0 = 0
+4:54/0 = 0
+5:54/0 = 0
+6:56/0 = 0
+7:56/0 = 0
+6:57/0 = 0
+7:57/0 = 0
+6:59/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_wa3v1"]
+sources/0 = SubResource("TileSetAtlasSource_btf25")
+
 [node name="Map2" type="Node2D"]
 
 [node name="Map" type="TileMapLayer" parent="."]
@@ -8546,10 +8887,133 @@ position = Vector2(0, -4)
 tile_map_data = PackedByteArray("AADd/xMAAAAeAAIAAADe/xMAAAAfAAIAAADf/xMAAAAgAAIAAADg/xMAAAAhAAIAAAC+/xMAAAAmAAUAAAC//xMAAAAnAAUAAADJ/xIAAAAmAAIAAADJ/xMAAAAmAAMAAADq/xMAAAAoAAUAAADr/xMAAAApAAUAAADz/xMAAAAlAAMAAAD2/xMAAAApAAMAAAAKABMAAAAnAAMAAAALABMAAAAnAAMAAAAXABMAAAAhAAIAAAA=")
 tile_set = SubResource("TileSet_2p175")
 
-[node name="FX" type="TileMapLayer" parent="."]
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-235, -639)
+
+[node name="FX" type="Node" parent="."]
+
+[node name="Flames" type="TileMapLayer" parent="FX"]
 material = SubResource("ShaderMaterial_kbdy1")
-tile_map_data = PackedByteArray("AAC9/w4AAAAEAAkAAAC+/w4AAAAFAAkAAAC+/w8AAAAFAAoAAAA=")
 tile_set = SubResource("TileSet_la2sg")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-965, 256)
+[node name="torch_light1" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-1057, 244)
+
+[node name="torch_light2" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-881, 244)
+
+[node name="torch_light3" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-673, 244)
+
+[node name="torch_light4" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-529, 244)
+
+[node name="torch_light5" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-337, 244)
+
+[node name="torch_light6" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-177, 244)
+
+[node name="torch_light7" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(-17, 244)
+
+[node name="torch_light8" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(191, 244)
+
+[node name="torch_light9" parent="FX/Flames" instance=ExtResource("9_tmjhd")]
+position = Vector2(351, 244)
+
+[node name="candle_light1" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-1083, 308)
+
+[node name="candle_light2" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-1072, 309)
+
+[node name="candle_light3" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-1063, 311)
+
+[node name="candle_light4" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-843, 308)
+
+[node name="candle_light5" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-832, 309)
+
+[node name="candle_light6" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-823, 311)
+
+[node name="candle_light7" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-683, 308)
+
+[node name="candle_light8" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-672, 309)
+
+[node name="candle_light9" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-663, 311)
+
+[node name="candle_light10" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-553, 305)
+
+[node name="candle_light11" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-541, 303)
+
+[node name="candle_light12" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-530, 309)
+
+[node name="candle_light13" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-517, 308)
+
+[node name="candle_light14" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-506, 310)
+
+[node name="candle_light15" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-380, 308)
+
+[node name="candle_light16" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-368, 309)
+
+[node name="candle_light17" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-359, 311)
+
+[node name="candle_light18" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-187, 308)
+
+[node name="candle_light19" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(336, 309)
+
+[node name="candle_light20" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(345, 311)
+
+[node name="candle_light30" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(374, 310)
+
+[node name="candle_light21" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(325, 308)
+
+[node name="candle_light22" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(217, 312)
+
+[node name="candle_light23" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(208, 309)
+
+[node name="candle_light24" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(196, 308)
+
+[node name="candle_light25" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-7, 311)
+
+[node name="candle_light26" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-16, 309)
+
+[node name="candle_light27" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-27, 308)
+
+[node name="candle_light28" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-167, 311)
+
+[node name="candle_light29" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+position = Vector2(-176, 309)
+
+[node name="OutsideLight" type="TileMapLayer" parent="FX"]
+self_modulate = Color(0.67451, 0.937255, 1, 1)
+tile_map_data = PackedByteArray("AADH/9L/AAAPAAMAAADH/9P/AAAPAAQAAADI/9H/AAAQAAIAAADI/9L/AAAQAAMAAADI/9P/AAAQAAQAAADI/9T/AAAQAAUAAADJ/9H/AAARAAIAAADJ/9L/AAARAAMAAADJ/9P/AAARAAQAAADJ/9T/AAARAAUAAADK/9H/AAASAAIAAADK/9L/AAASAAMAAADK/9P/AAASAAQAAADY/9H/AAASAAIAAADj/9L/AAAVAAIAAADj/9P/AAAVAAMAAADj/9T/AAAVAAQAAADk/9H/AAAWAAEAAADk/9L/AAAWAAIAAADk/9P/AAAWAAMAAADk/9T/AAAWAAQAAADk/9X/AAAWAAUAAADl/9H/AAAXAAEAAADl/9L/AAAXAAIAAADl/9P/AAAXAAMAAADl/9T/AAAXAAQAAADl/9X/AAAXAAUAAADm/9L/AAAYAAIAAADm/9P/AAAYAAMAAADm/9T/AAAYAAQAAADx/9L/AAAbAAIAAADx/9P/AAAbAAMAAADx/9T/AAAbAAQAAADy/9H/AAAcAAEAAADy/9L/AAAcAAIAAADy/9P/AAAcAAMAAADy/9T/AAAcAAQAAADy/9X/AAAcAAUAAADz/9H/AAAdAAEAAADz/9L/AAAdAAIAAADz/9P/AAAdAAMAAADz/9T/AAAdAAQAAADz/9X/AAAdAAUAAAD0/9P/AAAeAAMAAAD0/9T/AAAeAAQAAAD//9L/AAAbAAIAAAD//9P/AAAbAAMAAAD//9T/AAAbAAQAAAAAANH/AAAcAAEAAAAAANL/AAAcAAIAAAAAANP/AAAcAAMAAAAAANT/AAAcAAQAAAAAANX/AAAcAAUAAAABANH/AAAdAAEAAAABANL/AAAdAAIAAAABANP/AAAdAAMAAAABANT/AAAdAAQAAAABANX/AAAdAAUAAAACANP/AAAeAAMAAAACANT/AAAeAAQAAAAbANL/AAAVAAIAAAAbANP/AAAVAAMAAAAbANT/AAAVAAQAAAAcANH/AAAWAAEAAAAcANL/AAAWAAIAAAAcANP/AAAWAAMAAAAcANT/AAAWAAQAAAAcANX/AAAWAAUAAAAdANH/AAAXAAEAAAAdANL/AAAXAAIAAAAdANP/AAAXAAMAAAAdANT/AAAXAAQAAAAdANX/AAAXAAUAAAAeANL/AAAYAAIAAAAeANP/AAAYAAMAAAAeANT/AAAYAAQAAAApANL/AAAbAAIAAAApANP/AAAbAAMAAAApANT/AAAbAAQAAAAqANH/AAAcAAEAAAAqANL/AAAcAAIAAAAqANP/AAAcAAMAAAAqANT/AAAcAAQAAAAqANX/AAAcAAUAAAArANH/AAAdAAEAAAArANL/AAAdAAIAAAArANP/AAAdAAMAAAArANT/AAAdAAQAAAArANX/AAAdAAUAAAAsANP/AAAeAAMAAAAsANT/AAAeAAQAAAANANL/AAAbAAIAAAANANP/AAAbAAMAAAANANT/AAAbAAQAAAAOANH/AAAcAAEAAAAOANL/AAAcAAIAAAAOANP/AAAcAAMAAAAOANT/AAAcAAQAAAAOANX/AAAcAAUAAAAPANH/AAAdAAEAAAAPANL/AAAdAAIAAAAPANP/AAAdAAMAAAAPANT/AAAdAAQAAAAPANX/AAAdAAUAAAAQANP/AAAeAAMAAAAQANT/AAAeAAQAAADO/9L/AAAJAAIAAADO/9P/AAAJAAMAAADO/9T/AAAJAAQAAADP/9H/AAAKAAEAAADP/9L/AAAKAAIAAADP/9P/AAAKAAMAAADP/9T/AAAKAAQAAADQ/9H/AAALAAEAAADQ/9L/AAALAAIAAADQ/9P/AAALAAMAAADQ/9T/AAALAAQAAADR/9L/AAAMAAIAAADR/9P/AAAMAAMAAADR/9T/AAAMAAQAAADc/9L/AAAhAAIAAADc/9P/AAAhAAMAAADc/9T/AAAhAAQAAADd/9L/AAAiAAIAAADd/9P/AAAiAAMAAADd/9T/AAAiAAQAAADe/9L/AAAjAAIAAADe/9P/AAAjAAMAAADe/9T/AAAjAAQAAADf/9L/AAAkAAIAAADf/9P/AAAkAAMAAADf/9T/AAAkAAQAAADq/9L/AAAhAAIAAADt/9L/AAAkAAIAAAAUANL/AAAhAAIAAAAUANP/AAAhAAMAAAAUANT/AAAhAAQAAAAVANL/AAAiAAIAAAAVANP/AAAiAAMAAAAVANT/AAAiAAQAAAAWANL/AAAjAAIAAAAWANP/AAAjAAMAAAAWANT/AAAjAAQAAAAXANL/AAAkAAIAAAAXANP/AAAkAAMAAAAXANT/AAAkAAQAAAAiANL/AAAhAAIAAAAiANP/AAAhAAMAAAAiANT/AAAhAAQAAAAjANL/AAAiAAIAAAAjANP/AAAiAAMAAAAjANT/AAAiAAQAAAAkANL/AAAjAAIAAAAkANP/AAAjAAMAAAAkANT/AAAjAAQAAAAlANL/AAAkAAIAAAAlANP/AAAkAAMAAAAlANT/AAAkAAQAAADq/9P/AAAhAAMAAADq/9T/AAAhAAQAAADr/9L/AAAiAAIAAADr/9P/AAAiAAMAAADr/9T/AAAiAAQAAADs/9L/AAAjAAIAAADs/9P/AAAjAAMAAADs/9T/AAAjAAQAAADt/9P/AAAkAAMAAADt/9T/AAAkAAQAAADV/9L/AAAVAAIAAADV/9P/AAAVAAMAAADV/9T/AAAVAAQAAADW/9H/AAAWAAEAAADW/9L/AAAWAAIAAADW/9P/AAAWAAMAAADW/9T/AAAWAAQAAADW/9X/AAAWAAUAAADX/9H/AAAXAAEAAADX/9L/AAAXAAIAAADX/9P/AAAXAAMAAADX/9T/AAAXAAQAAADX/9X/AAAXAAUAAADY/9L/AAAYAAIAAADY/9P/AAAYAAMAAADY/9T/AAAYAAQAAAD4/9L/AAAJAAIAAAD4/9P/AAAJAAMAAAD4/9T/AAAJAAQAAAD5/9H/AAAKAAEAAAD5/9L/AAAKAAIAAAD5/9P/AAAKAAMAAAD5/9T/AAAKAAQAAAD6/9H/AAALAAEAAAD6/9L/AAALAAIAAAD6/9P/AAALAAMAAAD6/9T/AAALAAQAAAD7/9L/AAAMAAIAAAD7/9P/AAAMAAMAAAD7/9T/AAAMAAQAAAAGANL/AAAJAAIAAAAGANP/AAAJAAMAAAAGANT/AAAJAAQAAAAHANH/AAAKAAEAAAAHANL/AAAKAAIAAAAHANP/AAAKAAMAAAAHANT/AAAKAAQAAAAIANH/AAALAAEAAAAIANL/AAALAAIAAAAIANP/AAALAAMAAAAIANT/AAALAAQAAAAJANL/AAAMAAIAAAAJANP/AAAMAAMAAAAJANT/AAAMAAQAAAAwANL/AAAJAAIAAAAwANP/AAAJAAMAAAAwANT/AAAJAAQAAAAxANH/AAAKAAEAAAAxANL/AAAKAAIAAAAxANP/AAAKAAMAAAAxANT/AAAKAAQAAAAyANH/AAALAAEAAAAyANL/AAALAAIAAAAyANP/AAALAAMAAAAyANT/AAALAAQAAAAzANL/AAAMAAIAAAAzANP/AAAMAAMAAAAzANT/AAAMAAQAAAA=")
+tile_set = SubResource("TileSet_wa3v1")
