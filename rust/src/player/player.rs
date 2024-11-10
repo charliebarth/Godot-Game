@@ -17,6 +17,7 @@ use super::enums::force::Force;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
 use super::input_manager::InputManager;
+use super::metal_line::MetalLine;
 use super::metal_manager::MetalManager;
 use super::metal_reserve_bar_manager::MetalReserveBarManager;
 
@@ -52,10 +53,13 @@ pub struct Player {
     health_bar: Option<Gd<TextureProgressBar>>,
     point_light: Option<Gd<PointLight2D>>,
     player_vis: Vec<Gd<AnimatedSprite2D>>,
-    metal_line: Option<Gd<Node2D>>,
+    metal_line: Option<Gd<MetalLine>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     metal_objects: Vec<Gd<MetalObject>>,
+    /// The mass of the player in kilograms
+    mass: f32,
+    is_steel_burning: bool,
 }
 
 #[godot_api]
@@ -89,6 +93,8 @@ impl ICharacterBody2D for Player {
             metal_line: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
+            mass: 70.0,
+            is_steel_burning: false,
         }
     }
 
@@ -132,10 +138,6 @@ impl ICharacterBody2D for Player {
         self.apply_forces();
         self.base_mut().move_and_slide();
     }
-
-    fn process(&mut self, _delta: f64) {
-        self.get_metal_line().queue_redraw();
-    }
 }
 
 #[godot_api]
@@ -147,6 +149,10 @@ impl Player {
     /// # Arguments
     /// * `new_state` - The new state to set the player to
     pub fn set_state(&mut self, new_state: PlayerStates) {
+        if self.current_state == new_state {
+            return;
+        }
+
         self.update_animation(new_state.as_str().into());
 
         self.previous_state = self.current_state;
@@ -578,6 +584,8 @@ impl Player {
                     -(max_acceleration * y_of_total),
                     max_acceleration * y_of_total,
                 );
+
+                godot_print!("X: {}, Y: {}", base_velocity.x, base_velocity.y);
             }
         }
 
@@ -604,23 +612,20 @@ impl Player {
         }
     }
 
-    pub fn get_metal_object_position(&mut self, index: usize) -> Vector2 {
-        if let Some(metal) = self.metal_objects.get(index) {
-            return metal.get_global_position();
-        }
-
-        Vector2::new(0.0, 0.0)
+    pub fn get_metal_objects(&self) -> &Vec<Gd<MetalObject>> {
+        &self.metal_objects
     }
 
-    #[func]
-    pub fn get_line_points(&mut self) -> Vec<Vector2> {
-        let mut points: Vec<Vector2> = Vec::new();
+    pub fn get_mass(&self) -> f32 {
+        self.mass
+    }
 
-        for metal in self.metal_objects.iter() {
-            points.push(metal.get_global_position());
-        }
+    pub fn get_is_steel_burning(&self) -> bool {
+        self.is_steel_burning
+    }
 
-        points
+    pub fn set_is_steel_burning(&mut self, is_steel_burning: bool) {
+        self.is_steel_burning = is_steel_burning;
     }
 }
 
@@ -727,9 +732,9 @@ impl Player {
             .clone()
     }
 
-    pub fn get_metal_line(&mut self) -> Gd<Node2D> {
+    pub fn get_metal_line(&mut self) -> Gd<MetalLine> {
         if self.metal_line.is_none() {
-            self.metal_line = Some(self.base().get_node_as::<Node2D>("MetalLine"));
+            self.metal_line = Some(self.base().get_node_as::<MetalLine>("MetalLine"));
         }
 
         self.metal_line

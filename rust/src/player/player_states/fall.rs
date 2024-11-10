@@ -23,14 +23,18 @@ impl PlayerState for Fall {
     }
 
     fn update(player: &mut Player) {
+        if player.get_is_steel_burning() {
+            return;
+        }
+
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
+
         if player.base().is_on_floor() {
             player.set_state(PlayerStates::Land);
         } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
         } else {
-            // TODO: else if not steel pushing or iron pulling
             Fall::run(player);
         }
     }
