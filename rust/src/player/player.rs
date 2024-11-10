@@ -620,7 +620,6 @@ impl Player {
             points.push(metal.get_global_position());
         }
 
-        // object position should be something close to -369, -19
         points
     }
 }
