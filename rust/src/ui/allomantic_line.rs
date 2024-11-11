@@ -1,14 +1,12 @@
-use std::borrow::{Borrow, BorrowMut};
-
 /// Represents an Allomantic Line.
 /// 
 /// Author : Trinity Pittman
 /// Version : 10/24/2024
 
 use godot::prelude::*;
-use godot::classes::{Area2D, CharacterBody2D, ILine2D, Line2D, Shader, ShaderMaterial};
+use godot::classes::{Area2D, CharacterBody2D, ILine2D, Line2D};
 
-const OFFSET: Vector2 = Vector2::new(400.0, -320.0);
+const OFFSET: Vector2 = Vector2::new(0., 10.0);
 
 /// Struct that represents an Allomantic Line
 #[derive(GodotClass)]
@@ -17,7 +15,7 @@ pub struct AllomanticLine {
     base: Base<Line2D>,
     metal: Option<Gd<Area2D>>, // the metal has to have the MetalObject trait
     player: Option<Gd<CharacterBody2D>>,
-    strength: f64,
+    strength: f32,
 }
 
 
@@ -30,7 +28,7 @@ impl ILine2D for AllomanticLine {
             base,
             metal: None,
             player: None,
-            strength: 100.0,
+            strength: 1.,
         }
     }
 
@@ -54,7 +52,7 @@ impl AllomanticLine {
             let end = player.get_global_position();
 
             let start_local = self.base_mut().to_local(start);
-            let end_local = self.base_mut().to_local(end);
+            let end_local = self.base_mut().to_local(end) + OFFSET;
 
             // godot_print!("Drawing line from {:?} to {:?}", start_local, end_local);
 
@@ -64,7 +62,8 @@ impl AllomanticLine {
             self.base_mut().add_point(end_local);
 
             // Optionally set the color and line width
-            self.base_mut().set_default_color(Color::from_rgb(173.0, 216.0, 230.0));
+            let blue = 0.8 * self.strength;
+            self.base_mut().set_default_color(Color::from_rgb(0.2, 0.4, blue).with_alpha(1.0));
             self.base_mut().set_width(2.0);  
         }
         
@@ -77,8 +76,7 @@ impl AllomanticLine {
 
     }
 
-
-    #[func]
+    #[export_name = "get_metal"]
     pub fn get_metal(&self) -> Option<Gd<Area2D>> {
         self.metal.clone()
     }

@@ -879,6 +879,7 @@ position = Vector2(-3, 26)
 shape = SubResource("CircleShape2D_fwaiq")
 
 [connection signal="area_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]
+[connection signal="area_exited" from="AllomanticRange" to="AllomanticRange" method="exit_range"]
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
