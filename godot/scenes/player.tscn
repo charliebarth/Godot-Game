@@ -791,3 +791,4 @@ position = Vector2(-3, 26)
 shape = SubResource("CircleShape2D_fwaiq")
 
 [connection signal="area_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]
+[connection signal="area_exited" from="AllomanticRange" to="AllomanticRange" method="exit_range"]
