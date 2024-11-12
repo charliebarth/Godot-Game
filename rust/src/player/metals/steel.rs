@@ -1,5 +1,4 @@
-use godot::builtin::{Color, Vector2};
-use godot::global::{atan2, godot_print};
+use godot::builtin::Color;
 use godot::obj::WithBaseField;
 
 use crate::player::enums::force::Force;
@@ -14,6 +13,8 @@ pub struct Steel {
     burn_rate: f64,
     low_burn_rate: f64,
     was_low_burn: bool,
+    /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
+    push: f32,
 }
 
 impl Steel {
@@ -24,6 +25,7 @@ impl Steel {
             burn_rate,
             low_burn_rate,
             was_low_burn: false,
+            push: 0.0,
         }
     }
 }
@@ -41,30 +43,21 @@ impl Metal for Steel {
         // TODO: Make constant
         let max_acceleration: f32 = 6000.0;
 
-        let player_position = player.base().get_global_position();
-        let metal_position = Vector2::new(0.0, 0.0);
-
-        // TODO: Remove
-        if metal_position.x == 0.0 && metal_position.y == 0.0 {
-            return;
-        }
+        let metal_position = player.get_nearest_metal_object();
 
         if !player.base().is_on_floor() {
             player.add_force(Force::NormalForce { magnitude: -1.0 });
         }
 
-        let angle = atan2(
-            player_position.y as f64 - metal_position.y as f64,
-            player_position.x as f64 - metal_position.x as f64,
-        );
+        if let Some(angle) = metal_position {
+            let x_acceleration: f32 = max_acceleration * (angle.cos() as f32) * self.push;
+            let y_acceleration: f32 = max_acceleration * (angle.sin() as f32) * self.push;
 
-        let x_acceleration: f32 = max_acceleration * (angle.cos() as f32);
-        let y_acceleration: f32 = max_acceleration * (angle.sin() as f32);
-
-        player.add_force(Force::SteelPush {
-            x_acceleration,
-            y_acceleration,
-        });
+            player.add_force(Force::SteelPush {
+                x_acceleration,
+                y_acceleration,
+            });
+        }
     }
 
     fn low_burn(&mut self, player: &mut Player) {
@@ -95,19 +88,25 @@ impl Metal for Steel {
         let mut godot_input_manager = player.get_input_manager();
         let mut input_manager = godot_input_manager.bind_mut();
 
-        if self.current_reserve <= 0.0 {
-            return;
+        if input_manager.fetch_metal_event(MetalEvents::Steel(BurnType::Burn)) {
+            self.push = -1.0;
+        } else if input_manager.fetch_metal_event(MetalEvents::Iron(BurnType::Burn)) {
+            self.push = 1.0;
+        } else {
+            self.push = 0.0;
         }
 
         // Burning is an actual steel push
-        if input_manager.fetch_metal_event(MetalEvents::Steel(BurnType::Burn)) {
+        if self.current_reserve > 0.0 && self.push != 0.0 {
             self.burn(player);
         } else {
             player.set_is_steel_burning(false);
         }
 
         // Low burning shows the allomantic lines
-        if input_manager.fetch_metal_event(MetalEvents::Steel(BurnType::LowBurn)) {
+        if self.current_reserve > 0.0
+            && input_manager.fetch_metal_event(MetalEvents::SteelLowBurn(BurnType::LowBurn))
+        {
             self.low_burn(player);
         } else if self.was_low_burn {
             self.was_low_burn = false;

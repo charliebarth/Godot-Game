@@ -8,6 +8,7 @@ use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
+use godot::classes::Sprite2D;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
@@ -54,6 +55,7 @@ pub struct Player {
     point_light: Option<Gd<PointLight2D>>,
     player_vis: Vec<Gd<AnimatedSprite2D>>,
     metal_line: Option<Gd<MetalLine>>,
+    line_selector: Option<Gd<Sprite2D>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     metal_objects: Vec<Gd<MetalObject>>,
@@ -91,6 +93,7 @@ impl ICharacterBody2D for Player {
             point_light: None,
             player_vis: Vec::new(),
             metal_line: None,
+            line_selector: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             mass: 70.0,
@@ -376,6 +379,10 @@ impl Player {
         input_manager_unbound.bind_mut().set_device_id(device_id);
     }
 
+    pub fn get_device_id(&self) -> i32 {
+        self.device_id
+    }
+
     /// Add a timeout event to the player
     /// This method adds a timeout event to the player and sets the duration of the event using the event's get_duration method
     /// The event is then inserted into the timeout_events HashMap with the current time as the start time
@@ -625,6 +632,40 @@ impl Player {
     pub fn set_is_steel_burning(&mut self, is_steel_burning: bool) {
         self.is_steel_burning = is_steel_burning;
     }
+
+    /// Get the angle of the metal object closest to the angle of the LineSelector if the angle is within the range of the LineSelector
+    pub fn get_nearest_metal_object(&mut self) -> Option<f64> {
+        let mut nearest_metal_object: Option<f64> = None;
+        let max_angle: f64 = 5.0_f64.to_radians(); // Define max angle difference in radians
+
+        let line_selector_position = self.get_line_selector().get_global_position();
+        let player_position = self.base().get_global_position();
+
+        // Calculate angle of the line selector relative to the player
+        let line_selector_angle = (line_selector_position.y as f64 - player_position.y as f64)
+            .atan2(line_selector_position.x as f64 - player_position.x as f64);
+
+        let mut current_shortest_angle_diff: f64 = f64::MAX;
+        for metal_object in self.get_metal_objects().iter() {
+            let metal_object_position = metal_object.get_global_position();
+
+            // Calculate angle of the metal object relative to the player
+            let metal_object_angle = (metal_object_position.y as f64 - player_position.y as f64)
+                .atan2(metal_object_position.x as f64 - player_position.x as f64);
+
+            // Calculate wrapped angle difference
+            let angle_diff = ((metal_object_angle - line_selector_angle + std::f64::consts::PI)
+                % (2.0 * std::f64::consts::PI))
+                - std::f64::consts::PI;
+
+            if angle_diff.abs() < max_angle && angle_diff.abs() < current_shortest_angle_diff {
+                current_shortest_angle_diff = angle_diff.abs();
+                nearest_metal_object = Some(metal_object_angle);
+            }
+        }
+
+        nearest_metal_object
+    }
 }
 
 /// Getters for nodes
@@ -738,6 +779,17 @@ impl Player {
         self.metal_line
             .as_ref()
             .expect("MetalLine node not found")
+            .clone()
+    }
+
+    pub fn get_line_selector(&mut self) -> Gd<Sprite2D> {
+        if self.line_selector.is_none() {
+            self.line_selector = Some(self.base().get_node_as::<Sprite2D>("LineSelector"));
+        }
+
+        self.line_selector
+            .as_ref()
+            .expect("LineSelector node not found")
             .clone()
     }
 }

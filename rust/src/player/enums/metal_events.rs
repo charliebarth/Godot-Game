@@ -9,6 +9,8 @@ pub enum BurnType {
 pub enum MetalEvents {
     Pewter(BurnType),
     Steel(BurnType),
+    Iron(BurnType),
+    SteelLowBurn(BurnType),
 }
 
 impl MetalEvents {
@@ -26,6 +28,8 @@ impl MetalEvents {
         match button {
             "pewter" => Some(MetalEvents::Pewter(BurnType::Burn)),
             "steel" => Some(MetalEvents::Steel(BurnType::Burn)),
+            "iron" => Some(MetalEvents::Iron(BurnType::Burn)),
+            "steel_lowburn" => Some(MetalEvents::SteelLowBurn(BurnType::Burn)),
             _ => None,
         }
     }
@@ -35,6 +39,8 @@ impl MetalEvents {
         match self {
             MetalEvents::Pewter(burn_type) => burn_type.clone(),
             MetalEvents::Steel(burn_type) => burn_type.clone(),
+            MetalEvents::Iron(burn_type) => burn_type.clone(),
+            MetalEvents::SteelLowBurn(burn_type) => burn_type.clone(),
         }
     }
 
@@ -45,6 +51,14 @@ impl MetalEvents {
             MetalEvents::Pewter(BurnType::LowBurn) => MetalEvents::Pewter(BurnType::LowBurn),
             MetalEvents::Steel(BurnType::Burn) => MetalEvents::Steel(BurnType::LowBurn),
             MetalEvents::Steel(BurnType::LowBurn) => MetalEvents::Steel(BurnType::LowBurn),
+            MetalEvents::Iron(BurnType::Burn) => MetalEvents::Iron(BurnType::LowBurn),
+            MetalEvents::Iron(BurnType::LowBurn) => MetalEvents::Iron(BurnType::LowBurn),
+            MetalEvents::SteelLowBurn(BurnType::Burn) => {
+                MetalEvents::SteelLowBurn(BurnType::LowBurn)
+            }
+            MetalEvents::SteelLowBurn(BurnType::LowBurn) => {
+                MetalEvents::SteelLowBurn(BurnType::LowBurn)
+            }
         }
     }
 }
