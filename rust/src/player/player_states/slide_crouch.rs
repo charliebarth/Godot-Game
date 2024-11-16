@@ -3,14 +3,14 @@ use crate::player::{
 };
 
 #[derive(Clone, Copy)]
-pub struct CrouchEnd;
+pub struct SlideCrouch;
 
-impl PlayerState for CrouchEnd {
+impl PlayerState for SlideCrouch {
     fn enter(_player: &mut Player) {}
 
     fn update(player: &mut Player) {
         if player.is_anim_finished() {
-            player.set_state(PlayerStates::Idle);
+            player.set_state(PlayerStates::Crouch);
         }
     }
 }

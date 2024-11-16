@@ -1,65 +1,76 @@
-use godot::{builtin::Vector2, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
 use crate::player::{
-    player::{Player, MAX_RUN_SPEED},
+    enums::{force::Force, player_states::PlayerStates},
+    player::Player,
     traits::player_state::PlayerState,
 };
 
-use super::{fall::Fall, land::Land};
+// TODO: Allow the player to flip direction in the first couple of frames of the jump
+// TODO: Only reduce the backwards momentum if the signum of the horizontal velocity is opposite.
+// If the players momentum is in the same direction or zero, then don't reduce it.
 
-const MAX_JUMP_HEIGHT: f32 = 575.0;
+const JUMP_GRAVITY: f64 = 980.0;
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Jump;
 
 impl PlayerState for Jump {
-    fn enter(&self, player: &mut Player) {
-        let mut base = player.base_mut();
-        if !base.is_on_floor() {
-            return;
-        }
+    fn enter(player: &mut Player) {
+        player.set_gravity(JUMP_GRAVITY);
 
-        let jump_force = base.get_velocity().y + -MAX_JUMP_HEIGHT;
-        let jump_vel = Vector2::new(base.get_velocity().x, base.get_velocity().y + jump_force);
-        base.set_velocity(jump_vel);
+        let jump_force = player.get_jump_force();
+        player.add_force(Force::Jump {
+            velocity: -jump_force,
+        });
     }
 
-    fn update(&self, player: &mut Player) {
+    fn update(player: &mut Player) {
+        let next_state: PlayerStates;
+
         if player.is_anim_finished() {
-            player.set_state(Box::new(Fall))
-        } else if player.base_mut().is_on_floor() {
-            player.set_state(Box::new(Land))
+            next_state = PlayerStates::Fall;
+        } else if player.base().is_on_floor() {
+            next_state = PlayerStates::Land;
         } else {
-            self.run(player);
+            next_state = PlayerStates::Jump;
         }
-    }
 
-    fn clone(&self) -> Box<dyn PlayerState> {
-        Box::new(Jump)
-    }
-
-    fn as_str(&self, player: &mut Player) -> &str {
-        let y_vel = player.base_mut().get_velocity().y;
-        if y_vel > -10.0 {
-            "jump_fall"
+        if next_state != PlayerStates::Jump {
+            Jump::exit(player, next_state);
         } else {
-            "jump"
+            Jump::run(player);
         }
     }
 }
 
 impl Jump {
-    fn run(&self, player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
+    fn run(player: &mut Player) {
+        let run_strength = player.get_horizontal_movement();
 
-        if horizontal_dir == 0.0 {
+        if run_strength == 0.0 {
             return;
         }
 
-        if horizontal_dir.signum() != player.get_dir().signum() {
-            player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED / 2.0);
-        } else {
-            player.apply_horizontal_velocity(horizontal_dir, MAX_RUN_SPEED);
+        if run_strength.signum() != player.get_dir().signum() {
+            player.add_force(Force::AirRun { acceleration: 0.0 });
         }
+        player.set_dir(run_strength);
+
+        let scaled_speed = player.get_min_run_speed()
+            + run_strength.abs() * (player.get_run_speed() - player.get_min_run_speed());
+
+        player.set_run_speed(scaled_speed);
+
+        // This is the acceleration of the player
+        // Make this a constant or field of the player
+        let speed = 900.0;
+        player.add_force(Force::AirRun {
+            acceleration: run_strength * speed,
+        });
+    }
+
+    fn exit(player: &mut Player, next_state: PlayerStates) {
+        player.set_state(next_state);
     }
 }

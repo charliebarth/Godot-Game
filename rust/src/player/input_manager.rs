@@ -3,14 +3,17 @@ use godot::{classes::InputEvent, prelude::*};
 use std::collections::HashMap;
 use std::time::Instant;
 
-use super::enums::player_events::PlayerEvents;
+use super::enums::metal_events::MetalEvents;
+use super::enums::player_events::{PlayerEvents, TriggerEvents};
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct InputManager {
     base: Base<Node2D>,
-    button_press_times: HashMap<String, Instant>,
-    events: HashMap<PlayerEvents, u32>,
+    button_press_times: HashMap<PlayerEvents, Instant>,
+    player_events: HashMap<PlayerEvents, u32>,
+    metal_events: HashMap<MetalEvents, Instant>,
+    device_id: i32,
 }
 
 #[godot_api]
@@ -19,51 +22,40 @@ impl INode2D for InputManager {
         Self {
             base,
             button_press_times: HashMap::new(),
-            events: HashMap::new(),
+            player_events: HashMap::new(),
+            metal_events: HashMap::new(),
+            device_id: -1,
         }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
-        let button_name = self.event_to_input_name(event.clone());
-
-        if event.is_pressed() {
-            self.button_press_times
-                .insert(button_name.clone(), Instant::now());
+        if self.device_id == -1 || event.get_device() != self.device_id {
+            return;
         }
 
-        if event.is_released() {
-            if let Some(press_time) = self.button_press_times.get(&button_name) {
-                if button_name == "b_button" {
-                    let duration = press_time.elapsed();
-                    godot_print!("duration: {}", duration.as_millis());
+        let button_name = self.event_to_input_name(event.clone());
 
-                    if duration < std::time::Duration::from_millis(250) {
-                        self.events.insert(PlayerEvents::Roll, 0);
-                    } else {
-                        self.events.insert(PlayerEvents::Crouch, 0);
-                    }
-                } else if let Some(event) = PlayerEvents::from_string(&button_name) {
-                    self.events.insert(event, 0);
-                }
-
-                self.button_press_times.remove(&button_name);
-            }
+        if let Some(player_event) = PlayerEvents::from_string(&button_name) {
+            self.process_player_events(player_event, event);
+        } else if let Some(metal_event) = MetalEvents::from_string(&button_name) {
+            self.process_metal_events(metal_event, event);
         }
     }
 
     fn physics_process(&mut self, _delta: f64) {
-        for timer in self.events.values_mut() {
+        for timer in self.player_events.values_mut() {
             *timer += 1;
         }
 
         // Expire events after a certain number of frames (e.g., 60 frames)
-        self.events.retain(|_, timer| *timer < 3);
+        self.player_events
+            .retain(|event, timer| *timer < event.timeout());
     }
 }
 
 impl InputManager {
-    pub fn fetch_event(&mut self, event: PlayerEvents) -> bool {
-        if let Some(_) = self.events.remove(&event) {
+    pub fn fetch_player_event(&mut self, event: PlayerEvents) -> bool {
+        if let Some(_) = self.player_events.remove(&event) {
             true
         } else {
             false
@@ -81,7 +73,7 @@ impl InputManager {
 
             // Skip inputs that start with "ui_"
             if input_str.starts_with("ui_") {
-                continue;
+                break;
             }
 
             if input_map.event_is_action(event.clone(), input.clone()) {
@@ -90,5 +82,73 @@ impl InputManager {
         }
 
         "".to_string()
+    }
+
+    fn process_metal_events(&mut self, metal_event: MetalEvents, event: Gd<InputEvent>) {
+        if event.is_pressed() {
+            // When pressed, always insert the burn variant
+            self.metal_events.insert(metal_event, Instant::now());
+        } else if event.is_released() && self.metal_events.contains_key(&metal_event) {
+            if let Some(press_time) = self.metal_events.get(&metal_event) {
+                let duration = press_time.elapsed();
+
+                if duration <= std::time::Duration::from_millis(250) {
+                    // the burn type will always be burn because the from_string method only returns burn and that is what is passed into this function
+                    // if low burn is already toggled on then when it is tapped again it should be toggled off and thus removed from the map
+                    // if low burn is not toggled on then it should be toggled on and added to the map thus we need to replace the burn event with the low burn event
+                    if !self
+                        .metal_events
+                        .contains_key(&metal_event.get_low_burn_variant())
+                    {
+                        self.metal_events
+                            .insert(metal_event.get_low_burn_variant(), Instant::now());
+                    } else {
+                        self.metal_events
+                            .remove(&metal_event.get_low_burn_variant());
+                    }
+                }
+            }
+
+            self.metal_events.remove(&metal_event);
+        }
+    }
+
+    fn process_player_events(&mut self, player_event: PlayerEvents, event: Gd<InputEvent>) {
+        if event.is_pressed() {
+            let trigger_event = TriggerEvents::trigger_for_player_event(player_event);
+
+            if trigger_event == TriggerEvents::OnPress {
+                self.player_events.insert(player_event, 0);
+            } else if trigger_event == TriggerEvents::OnRelease {
+                self.button_press_times.insert(player_event, Instant::now());
+            }
+        } else if event.is_released() {
+            if let Some(press_time) = self.button_press_times.get(&player_event) {
+                let mut player_event = player_event;
+
+                if player_event == PlayerEvents::Roll {
+                    let duration = press_time.elapsed();
+
+                    if duration > std::time::Duration::from_millis(250) {
+                        player_event = PlayerEvents::Crouch;
+                    }
+                }
+
+                self.player_events.insert(player_event, 0);
+                self.button_press_times.remove(&player_event);
+            }
+        }
+    }
+
+    pub fn fetch_metal_event(&mut self, metal_event: MetalEvents) -> bool {
+        if let Some(_) = self.metal_events.get(&metal_event) {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn set_device_id(&mut self, device_id: i32) {
+        self.device_id = device_id;
     }
 }

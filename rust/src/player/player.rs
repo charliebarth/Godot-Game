@@ -1,16 +1,35 @@
+use std::collections::HashMap;
+use std::collections::VecDeque;
+use std::time::Duration;
+use std::time::Instant;
+
 use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
+use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
+use godot::classes::Sprite2D;
+use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
-use super::input_manager::InputManager;
-use super::player_states::idle::Idle;
-use super::traits::player_state::PlayerState;
+use crate::metal_object::MetalObject;
 
-const MAX_HEALTH: u8 = 100;
-const MIN_HEALTH: u8 = 0;
-pub const MAX_RUN_SPEED: f32 = 140.0;
+use super::enums::force::Force;
+use super::enums::player_states::PlayerStates;
+use super::enums::timeout_events::TimeoutEvents;
+use super::input_manager::InputManager;
+use super::metal_line::MetalLine;
+use super::metal_manager::MetalManager;
+use super::metal_reserve_bar_manager::MetalReserveBarManager;
+
+const MAX_HEALTH: f64 = 100.0;
+const MIN_HEALTH: f64 = 0.0;
+const DEFAULT_RUN_SPEED: f32 = 250.0;
+const DEFAULT_JUMP_FORCE: f32 = 450.0;
+const MAX_RUN_SPEED: f32 = 400.0;
+const MIN_RUN_SPEED: f32 = 0.0;
+const MAX_JUMP_FORCE: f32 = 550.0;
+const MIN_JUMP_FORCE: f32 = 300.0;
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
@@ -18,11 +37,31 @@ pub struct Player {
     base: Base<CharacterBody2D>,
     direction: f32,
     gravity: f64,
-    health: u8,
+    health: f64,
     delta: f64,
-    current_state: Box<dyn PlayerState>,
-    previous_state: Box<dyn PlayerState>,
+    current_state: PlayerStates,
+    previous_state: PlayerStates,
     anim_finished: bool,
+    run_speed: f32,
+    jump_force: f32,
+    device_id: i32,
+    player_id: i32,
+    timeout_events: HashMap<TimeoutEvents, (Instant, Duration)>,
+    sprite: Option<Gd<AnimatedSprite2D>>,
+    input_manager: Option<Gd<InputManager>>,
+    metal_manager: Option<Gd<MetalManager>>,
+    metal_reserve_bar_manager: Option<Gd<MetalReserveBarManager>>,
+    health_bar: Option<Gd<TextureProgressBar>>,
+    point_light: Option<Gd<PointLight2D>>,
+    player_vis: Vec<Gd<AnimatedSprite2D>>,
+    metal_line: Option<Gd<MetalLine>>,
+    line_selector: Option<Gd<Sprite2D>>,
+    /// A queue of forces to be applied to the player
+    forces: VecDeque<Force>,
+    metal_objects: Vec<Gd<MetalObject>>,
+    /// The mass of the player in kilograms
+    mass: f32,
+    is_steel_burning: bool,
 }
 
 #[godot_api]
@@ -34,76 +73,135 @@ impl ICharacterBody2D for Player {
 
         Self {
             base,
-            current_state: Box::new(Idle),
-            previous_state: Box::new(Idle),
             direction: 1.0,
-            health: 100,
+            health: MAX_HEALTH,
             delta: 0.0,
             gravity,
+            current_state: PlayerStates::Jump,
+            previous_state: PlayerStates::Fall,
             anim_finished: false,
+            run_speed: DEFAULT_RUN_SPEED,
+            jump_force: DEFAULT_JUMP_FORCE,
+            device_id: 0,
+            player_id: 0,
+            timeout_events: HashMap::new(),
+            sprite: None,
+            input_manager: None,
+            metal_manager: None,
+            metal_reserve_bar_manager: None,
+            health_bar: None,
+            point_light: None,
+            player_vis: Vec::new(),
+            metal_line: None,
+            line_selector: None,
+            forces: VecDeque::new(),
+            metal_objects: Vec::new(),
+            mass: 70.0,
+            is_steel_burning: false,
         }
     }
 
     fn ready(&mut self) {
-        self.set_state(Box::new(Idle));
+        // Assign starting metals to the player based on the game mode
+        // TODO: Change this so that a dynamic game mode can be selected
+        self.get_metal_manager()
+            .bind_mut()
+            .assign_starting_metals("last_player_standing");
+
+        // Start the player in the idle state
+        self.set_state(PlayerStates::Idle);
+
+        // Set the health bar to the player's health
+        self.get_health_bar().set_value(self.get_health());
     }
 
     fn physics_process(&mut self, delta: f64) {
         self.set_delta(delta);
 
-        let mut base_vel = self.base_mut().get_velocity();
+        self.add_force(Force::Gravity {
+            acceleration: self.gravity,
+        });
 
-        let sprite = self.get_sprite();
-
-        if !sprite.is_playing() {
-            self.set_anim_finished();
+        if self.base().is_on_floor() {
+            self.add_force(Force::NormalForce { magnitude: -1.0 });
         }
 
-        if !self.base().is_on_floor() {
-            base_vel.y += (self.gravity * self.delta) as f32;
-        } else {
-            base_vel.y = 0.0;
-        }
+        // Reset the player to their default values such as animation speed, run speed, and jump force
+        self.reset_player();
 
-        self.base_mut().set_velocity(base_vel);
+        // Update all metals held by the player
+        self.get_metal_manager().bind_mut().update(self);
 
-        let mut sprite: Gd<AnimatedSprite2D> = self.get_sprite();
-        sprite.set_speed_scale(1.0);
+        self.current_state.update_state(self);
+        self.set_animation_direction();
 
-        self.get_current_state().update(self);
-        self.update_animation();
+        self.expire_timeout_events();
 
+        // Make the player move and slide based on their velocity
+        self.apply_forces();
         self.base_mut().move_and_slide();
     }
 }
 
+#[godot_api]
 impl Player {
-    pub fn set_state(&mut self, new_state: Box<dyn PlayerState>) {
-        self.previous_state = self.get_current_state();
+    /// Set the current state of the player and trigger the enter method of the new state
+    /// This method also sets the previous state of the player to the current state
+    /// The enter method of the new state is triggered to allow for any initial and/orone-time logic to be executed
+    ///
+    /// # Arguments
+    /// * `new_state` - The new state to set the player to
+    pub fn set_state(&mut self, new_state: PlayerStates) {
+        if self.current_state == new_state {
+            return;
+        }
+
+        self.update_animation(new_state.as_str().into());
+
+        self.previous_state = self.current_state;
         self.current_state = new_state;
-        self.get_current_state().enter(self);
+
+        self.current_state.enter_state(self);
     }
 
-    pub fn get_current_state(&self) -> Box<dyn PlayerState> {
-        self.current_state.clone()
-    }
-
+    /// Set the delta time of the player
+    ///
+    /// # Arguments
+    /// * `delta` - The delta time to set
     fn set_delta(&mut self, delta: f64) {
         self.delta = delta;
     }
 
+    /// Get the delta time of the player
+    ///
+    /// # Returns
+    /// * `f64` - The delta time of the player
     pub fn get_delta(&self) -> f64 {
         self.delta
     }
 
-    pub fn get_health(&self) -> u8 {
+    /// Get the health of the player
+    ///
+    /// # Returns
+    /// * `f64` - The health of the player
+    pub fn get_health(&self) -> f64 {
         self.health
     }
 
+    /// Get the direction the player is facing
+    ///
+    /// # Returns
+    /// * `f32` - The direction the player is facing
     pub fn get_dir(&self) -> f32 {
         self.direction
     }
 
+    /// Set the direction the player is facing
+    /// All values less than 0 are set to -1.0 or facing left
+    /// All values greater than 0 are set to 1.0 or facing right
+    ///
+    /// # Arguments
+    /// * `direction` - The direction to set the player to
     pub fn set_dir(&mut self, direction: f32) {
         if direction < 0.0 {
             self.direction = -1.0;
@@ -112,26 +210,27 @@ impl Player {
         }
     }
 
-    pub fn adjust_health(&mut self, health: i8) {
-        // Adjust health positively or negatively
-        let new_health = if health < 0 {
-            // Subtract health, but ensure we handle underflow
-            self.health.wrapping_sub(-health as u8) // `-health` converts to positive
-        } else {
-            // Add health, but ensure no overflow
-            self.health.saturating_add(health as u8)
-        };
+    /// Adjust the health of the player
+    ///
+    /// # Arguments
+    /// * `adjustment` - The amount to adjust the health by
+    pub fn adjust_health(&mut self, adjustment: f64) {
+        // Adjust health by the specified amount
+        self.health += adjustment;
 
         // Clamp health between MIN_HEALTH and MAX_HEALTH
-        self.health = new_health.clamp(MIN_HEALTH, MAX_HEALTH);
+        self.health = self.health.clamp(MIN_HEALTH, MAX_HEALTH);
+
+        // Update the health bar of the player
+        self.get_health_bar().set_value(self.get_health());
     }
 
     /// Represents the direction the player is trying to move
     /// Returns 1 when the move right button is pressed, -1 when the move left button is pressed, and 0 if neither is pressed
     // TODO: Rename
     pub fn get_horizontal_movement(&mut self) -> f32 {
-        let move_left = StringName::from("move_left");
-        let move_right = StringName::from("move_right");
+        let move_left = StringName::from(format!("move_left{}", self.device_id));
+        let move_right = StringName::from(format!("move_right{}", self.device_id));
         Input::singleton().get_axis(move_left, move_right)
     }
 
@@ -142,32 +241,64 @@ impl Player {
         base.set_velocity(base_vel);
     }
 
+    #[func]
+    /// Set the animation finished flag to true
     pub fn set_anim_finished(&mut self) {
         self.anim_finished = true;
     }
 
+    /// Check if the player's animation is finished
+    ///
+    /// # Returns
+    /// * `bool` - True if the animation is finished, false otherwise
     pub fn is_anim_finished(&self) -> bool {
         self.anim_finished
     }
 
+    /// Get the gravity of the player
+    ///
+    /// # Returns
+    /// * `f64` - The gravity of the player
     pub fn get_gravity(&self) -> f64 {
         self.gravity
     }
 
-    fn update_animation(&mut self) {
+    /// Set the gravity of the player
+    ///
+    /// # Arguments
+    /// * `gravity` - The gravity to set
+    pub fn set_gravity(&mut self, gravity: f64) {
+        self.gravity = gravity;
+    }
+
+    /// Update the animation of the player
+    /// This method sets the animation of the player based on the current state of the player
+    /// It also sets the animation direction based on the direction the player is facing
+    ///
+    /// If animation from the current state is not the one being played, the animation is changed and the animation finished flag is reset
+    /// The animation is then played
+    fn update_animation(&mut self, animation_name: StringName) {
+        self.set_animation_direction();
+
         let mut sprite = self.get_sprite();
+        self.anim_finished = false;
+        sprite.set_animation(animation_name.clone());
+        sprite.play();
 
-        self.set_animation_direction(&mut sprite);
-
-        let animation_name = StringName::from(self.get_current_state().as_str(self));
-        if sprite.get_animation() != animation_name {
-            self.anim_finished = false;
-            sprite.set_animation(animation_name.into());
-            sprite.play();
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_animation(animation_name.clone());
+            player_vis.play();
         }
     }
 
-    fn set_animation_direction(&mut self, sprite: &mut Gd<AnimatedSprite2D>) {
+    /// Set the animation direction of the player
+    /// This method sets the direction of the player's sprite based on the direction the player is facing
+    /// This also changes the position of the sprite to ensure it is centered in the player's hitbox
+    ///
+    /// # Arguments
+    /// * `sprite` - The sprite to set the animation direction of
+    fn set_animation_direction(&mut self) {
+        let mut sprite = self.get_sprite();
         let mut scale = sprite.get_scale();
         let mut pos = sprite.get_position();
 
@@ -181,22 +312,484 @@ impl Player {
 
         sprite.set_scale(scale);
         sprite.set_position(pos);
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_scale(scale);
+            player_vis.set_position(pos);
+        }
     }
 
-    pub fn get_sprite(&self) -> Gd<AnimatedSprite2D> {
-        self.base()
-            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D")
+    pub fn set_animation_speed(&mut self, speed: f32) {
+        let mut sprite = self.get_sprite();
+        sprite.set_speed_scale(speed);
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_speed_scale(speed);
+        }
     }
 
-    pub fn get_previous_state(&self) -> Box<dyn PlayerState> {
-        self.previous_state.clone()
+    /// Get the previous state of the player
+    ///
+    /// # Returns
+    /// * `PlayerStates` - The previous state of the player
+    pub fn get_previous_state(&self) -> PlayerStates {
+        self.previous_state
     }
 
-    pub fn set_previous_state(&mut self, state: Box<dyn PlayerState>) {
-        self.previous_state = state;
+    /// A sliding upper limit for the player's run speed
+    /// This is changed based on how far the joystick is pressed
+    ///
+    /// # Returns
+    /// * `f32` - The current maximum run speed of the player
+    pub fn get_run_speed(&self) -> f32 {
+        self.run_speed
     }
 
-    pub fn get_input_manager(&self) -> Gd<InputManager> {
-        self.base().get_node_as::<InputManager>("InputManager")
+    /// Get the jump force of the player
+    ///
+    /// # Returns
+    /// * `f32` - The jump force of the player
+    pub fn get_jump_force(&self) -> f32 {
+        self.jump_force
+    }
+
+    /// Set the run speed of the player
+    ///
+    /// # Arguments
+    /// * `speed` - The speed to set the player to
+    pub fn set_run_speed(&mut self, speed: f32) {
+        self.run_speed = speed.clamp(MIN_RUN_SPEED, MAX_RUN_SPEED);
+    }
+
+    /// Set the jump force of the player
+    ///
+    /// # Arguments
+    /// * `force` - The force to set the player to
+    pub fn set_jump_force(&mut self, force: f32) {
+        self.jump_force = force.clamp(MIN_JUMP_FORCE, MAX_JUMP_FORCE);
+    }
+
+    /// Set the device ID of the player
+    ///
+    /// # Arguments
+    /// * `device_id` - The device ID to set
+    pub fn set_device_id(&mut self, device_id: i32) {
+        self.device_id = device_id;
+        let mut input_manager_unbound = self.get_input_manager();
+        input_manager_unbound.bind_mut().set_device_id(device_id);
+    }
+
+    pub fn get_device_id(&self) -> i32 {
+        self.device_id
+    }
+
+    /// Add a timeout event to the player
+    /// This method adds a timeout event to the player and sets the duration of the event using the event's get_duration method
+    /// The event is then inserted into the timeout_events HashMap with the current time as the start time
+    ///
+    /// # Arguments
+    /// * `event` - The event to add
+    pub fn add_timeout_event(&mut self, event: TimeoutEvents) {
+        let duration = event.get_duration();
+        self.timeout_events
+            .insert(event, (Instant::now(), duration));
+    }
+
+    /// Check if the player is able to jump
+    /// This method checks if the player is on the floor or if they are within the coyote time window
+    /// If either condition is met, the player is able to jump and the method returns true
+    /// Otherwise, the player is not able to jump and the method returns false
+    ///
+    /// # Returns
+    /// * `bool` - True if the player is able to jump, false otherwise
+    pub fn jump_available(&self) -> bool {
+        if self.base().is_on_floor() {
+            return true;
+        }
+
+        if let Some(_) = self.timeout_events.get(&TimeoutEvents::CoyoteTime) {
+            return true;
+        }
+
+        false
+    }
+
+    /// Check if any timeout events have expired and remove them from the timeout_events HashMap
+    fn expire_timeout_events(&mut self) {
+        self.timeout_events.retain(|_event, time_tuple| {
+            let time_elapsed = Instant::now().duration_since(time_tuple.0);
+            time_elapsed <= time_tuple.1
+        });
+    }
+
+    /// Set the player ID of the player
+    /// This ID is assigned to the player when they join the game and is set by the PlayerManager
+    ///
+    /// # Arguments
+    /// * `player_id` - The player ID to set
+    pub fn set_player_id(&mut self, player_id: i32) {
+        self.player_id = player_id;
+    }
+
+    #[func]
+    /// Get the player ID of the player
+    /// This ID will be the same as the player number in the game so if this player was the first player to join, their ID would be 1
+    ///
+    /// # Returns
+    /// * `i32` - The player ID of the player
+    pub fn get_player_id(&self) -> i32 {
+        self.player_id
+    }
+
+    /// Reset the player to their default values
+    /// This method resets the speed scale of the player's sprite to 1.0
+    /// It also resets the run and jump force of the player to their default values
+    fn reset_player(&mut self) {
+        let mut sprite: Gd<AnimatedSprite2D> = self.get_sprite();
+        sprite.set_speed_scale(1.0);
+        self.set_run_speed(DEFAULT_RUN_SPEED);
+        self.set_jump_force(DEFAULT_JUMP_FORCE);
+
+        for player_vis in self.player_vis.iter_mut() {
+            player_vis.set_speed_scale(1.0);
+        }
+    }
+
+    #[func]
+    /// Set the sprite of the player
+    /// This will be called once by the ready method of the sprite node
+    ///
+    /// # Arguments
+    /// * `sprite` - The sprite to set
+    pub fn set_sprite(&mut self, sprite: Gd<AnimatedSprite2D>) {
+        self.sprite = Some(sprite);
+    }
+
+    #[func]
+    /// Set the input manager of the player
+    /// This will be called once by the ready method of the input manager node
+    ///
+    /// # Arguments
+    /// * `input_manager` - The input manager to set
+    pub fn set_input_manager(&mut self, input_manager: Gd<InputManager>) {
+        self.input_manager = Some(input_manager);
+    }
+
+    #[func]
+    /// Set the metal manager of the player
+    /// This will be called once by the ready method of the metal manager node
+    ///
+    /// # Arguments
+    /// * `metal_manager` - The metal manager to set
+    pub fn set_metal_manager(&mut self, metal_manager: Gd<MetalManager>) {
+        self.metal_manager = Some(metal_manager);
+    }
+
+    #[func]
+    /// Set the metal reserve bar manager of the player
+    /// This will be called once by the ready method of the metal reserve bar manager node
+    /// # Arguments
+    /// * `metal_reserve_bar_manager` - The metal reserve bar manager to set
+    pub fn set_metal_reserve_bar_manager(
+        &mut self,
+        metal_reserve_bar_manager: Gd<MetalReserveBarManager>,
+    ) {
+        self.metal_reserve_bar_manager = Some(metal_reserve_bar_manager);
+    }
+
+    #[func]
+    /// Set the health bar of the player
+    /// This will be called once by the ready method of the health bar node
+    ///
+    /// # Arguments
+    /// * `health_bar` - The health bar to set
+    pub fn set_health_bar(&mut self, health_bar: Gd<TextureProgressBar>) {
+        self.health_bar = Some(health_bar);
+    }
+
+    #[func]
+    /// Set the point light of the player
+    /// This will be called once by the ready method of the point light node
+    ///
+    /// # Arguments
+    /// * `point_light` - The point light to set
+    pub fn set_point_light(&mut self, point_light: Gd<PointLight2D>) {
+        self.point_light = Some(point_light);
+    }
+
+    pub fn add_force(&mut self, force: Force) {
+        self.forces.push_back(force);
+    }
+
+    fn apply_forces(&mut self) {
+        let len_forces = self.forces.len();
+        for _ in 0..len_forces {
+            let force = self.forces.pop_front().unwrap();
+            self.apply_force(force);
+        }
+    }
+
+    fn apply_force(&mut self, force: Force) {
+        let mut base_velocity = self.base().get_velocity();
+
+        match force {
+            Force::Gravity { acceleration } => {
+                base_velocity.y += (acceleration * self.delta) as f32;
+            }
+            Force::NormalForce { magnitude } => {
+                base_velocity.y += (self.gravity * magnitude * self.delta) as f32;
+            }
+            Force::Jump { velocity } => {
+                base_velocity.y = velocity;
+            }
+            Force::Run { acceleration } => {
+                let max_run_speed = self.get_run_speed();
+                if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
+                    base_velocity.x += acceleration * self.delta as f32;
+                } else if acceleration == 0.0 {
+                    base_velocity.x = 0.0;
+                }
+
+                base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+            }
+            Force::AirRun { acceleration } => {
+                let max_run_speed = self.get_run_speed();
+                if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
+                    base_velocity.x += acceleration * self.delta as f32;
+                } else if acceleration == 0.0 {
+                    base_velocity.x = 0.0;
+                }
+
+                base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+            }
+            Force::Stop {
+                horizontal,
+                vertical,
+            } => {
+                base_velocity.x = if horizontal { 0.0 } else { base_velocity.x };
+                base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
+            }
+            Force::SteelPush {
+                x_acceleration,
+                y_acceleration,
+            } => {
+                let max_acceleration: f32 = 1000.0;
+                let total_acceleration = x_acceleration.abs() + y_acceleration.abs();
+
+                let x_of_total = x_acceleration.abs() / total_acceleration;
+                let y_of_total = y_acceleration.abs() / total_acceleration;
+
+                base_velocity.x += x_acceleration * self.delta as f32;
+                base_velocity.y += y_acceleration * self.delta as f32;
+
+                base_velocity.x = base_velocity.x.clamp(
+                    -(max_acceleration * x_of_total),
+                    max_acceleration * x_of_total,
+                );
+
+                base_velocity.y = base_velocity.y.clamp(
+                    -(max_acceleration * y_of_total),
+                    max_acceleration * y_of_total,
+                );
+            }
+        }
+
+        self.base_mut().set_velocity(base_velocity);
+    }
+
+    /// The permanent minimum run speed of the player
+    ///
+    /// # Returns
+    /// * `f32` - The minimum run speed of the player
+    pub fn get_min_run_speed(&self) -> f32 {
+        MIN_RUN_SPEED
+    }
+
+    #[func]
+    fn add_metal_object(&mut self, metal: Gd<MetalObject>) {
+        self.metal_objects.push(metal);
+    }
+
+    #[func]
+    fn remove_metal_object(&mut self, metal: Gd<MetalObject>) {
+        if let Some(pos) = self.metal_objects.iter().position(|x| *x == metal) {
+            self.metal_objects.remove(pos);
+        }
+    }
+
+    pub fn get_metal_objects(&self) -> &Vec<Gd<MetalObject>> {
+        &self.metal_objects
+    }
+
+    pub fn get_mass(&self) -> f32 {
+        self.mass
+    }
+
+    pub fn get_is_steel_burning(&self) -> bool {
+        self.is_steel_burning
+    }
+
+    pub fn set_is_steel_burning(&mut self, is_steel_burning: bool) {
+        self.is_steel_burning = is_steel_burning;
+    }
+
+    /// Get the angle of the metal object closest to the angle of the LineSelector if the angle is within the range of the LineSelector
+    pub fn get_nearest_metal_object(&mut self) -> Option<f64> {
+        let mut nearest_metal_object: Option<f64> = None;
+        let max_angle: f64 = 5.0_f64.to_radians(); // Define max angle difference in radians
+
+        let line_selector_position = self.get_line_selector().get_global_position();
+        let player_position = self.base().get_global_position();
+
+        // Calculate angle of the line selector relative to the player
+        let line_selector_angle = (line_selector_position.y as f64 - player_position.y as f64)
+            .atan2(line_selector_position.x as f64 - player_position.x as f64);
+
+        let mut current_shortest_angle_diff: f64 = f64::MAX;
+        for metal_object in self.get_metal_objects().iter() {
+            let metal_object_position = metal_object.get_global_position();
+
+            // Calculate angle of the metal object relative to the player
+            let metal_object_angle = (metal_object_position.y as f64 - player_position.y as f64)
+                .atan2(metal_object_position.x as f64 - player_position.x as f64);
+
+            // Calculate wrapped angle difference
+            let angle_diff = ((metal_object_angle - line_selector_angle + std::f64::consts::PI)
+                % (2.0 * std::f64::consts::PI))
+                - std::f64::consts::PI;
+
+            if angle_diff.abs() < max_angle && angle_diff.abs() < current_shortest_angle_diff {
+                current_shortest_angle_diff = angle_diff.abs();
+                nearest_metal_object = Some(metal_object_angle);
+            }
+        }
+
+        nearest_metal_object
+    }
+}
+
+/// Getters for nodes
+impl Player {
+    /// Getter for the InputManager node
+    ///
+    /// # Returns
+    /// * `InputManager` - The InputManager node
+    pub fn get_input_manager(&mut self) -> Gd<InputManager> {
+        if self.input_manager.is_none() {
+            self.input_manager = Some(self.base().get_node_as::<InputManager>("InputManager"));
+        }
+
+        self.input_manager
+            .as_ref()
+            .expect("InputManager node not found")
+            .clone()
+    }
+
+    /// Getter for the MetalManager node
+    ///
+    /// # Returns
+    /// * `MetalManager` - The MetalManager node
+    pub fn get_metal_manager(&mut self) -> Gd<MetalManager> {
+        if self.metal_manager.is_none() {
+            self.metal_manager = Some(self.base().get_node_as::<MetalManager>("MetalManager"));
+        }
+
+        self.metal_manager
+            .as_ref()
+            .expect("MetalManager node not found")
+            .clone()
+    }
+
+    /// Getter for the AnimatedSprite2D node
+    ///
+    /// # Returns
+    /// * `AnimatedSprite2D` - The AnimatedSprite2D node
+    pub fn get_sprite(&mut self) -> Gd<AnimatedSprite2D> {
+        if self.sprite.is_none() {
+            self.sprite = Some(self.base().get_node_as::<AnimatedSprite2D>("OwnerVis"));
+
+            let player_vis_one = self.base().get_node_as::<AnimatedSprite2D>("Player1Vis");
+            let player_vis_two = self.base().get_node_as::<AnimatedSprite2D>("Player2Vis");
+            let player_vis_three = self.base().get_node_as::<AnimatedSprite2D>("Player3Vis");
+
+            self.player_vis.push(player_vis_one);
+            self.player_vis.push(player_vis_two);
+            self.player_vis.push(player_vis_three);
+        }
+
+        self.sprite
+            .as_ref()
+            .expect("OwnerVis node not found")
+            .clone()
+    }
+
+    /// Getter for the MetalReserveBarManager node
+    ///
+    /// # Returns
+    /// * `MetalReserveBarManager` - The MetalReserveBarManager node
+    pub fn get_metal_reserve_bar_manager(&mut self) -> Gd<MetalReserveBarManager> {
+        if self.metal_reserve_bar_manager.is_none() {
+            self.metal_reserve_bar_manager = Some(
+                self.base()
+                    .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager"),
+            );
+        }
+
+        self.metal_reserve_bar_manager
+            .as_ref()
+            .expect("MetalReserveBarManager node not found")
+            .clone()
+    }
+
+    /// Getter for the HealthBar node
+    ///
+    /// # Returns
+    /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
+    pub fn get_health_bar(&mut self) -> Gd<TextureProgressBar> {
+        if self.health_bar.is_none() {
+            self.health_bar = Some(self.base().get_node_as::<TextureProgressBar>("HealthBar"));
+        }
+
+        self.health_bar
+            .as_ref()
+            .expect("HealthBar node not found")
+            .clone()
+    }
+
+    /// Getter for the PointLight2D node
+    ///
+    /// # Returns
+    /// * `PointLight2D` - The PointLight2D node
+    pub fn get_point_light(&mut self) -> Gd<PointLight2D> {
+        if self.point_light.is_none() {
+            self.point_light = Some(self.base().get_node_as::<PointLight2D>("PointLight2D"));
+        }
+
+        self.point_light
+            .as_ref()
+            .expect("PointLight2D node not found")
+            .clone()
+    }
+
+    pub fn get_metal_line(&mut self) -> Gd<MetalLine> {
+        if self.metal_line.is_none() {
+            self.metal_line = Some(self.base().get_node_as::<MetalLine>("MetalLine"));
+        }
+
+        self.metal_line
+            .as_ref()
+            .expect("MetalLine node not found")
+            .clone()
+    }
+
+    pub fn get_line_selector(&mut self) -> Gd<Sprite2D> {
+        if self.line_selector.is_none() {
+            self.line_selector = Some(self.base().get_node_as::<Sprite2D>("LineSelector"));
+        }
+
+        self.line_selector
+            .as_ref()
+            .expect("LineSelector node not found")
+            .clone()
     }
 }

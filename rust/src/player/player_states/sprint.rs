@@ -1,59 +1,47 @@
-use godot::{builtin::StringName, classes::Input, obj::WithBaseField};
+use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::player_events::PlayerEvents,
-    player::{Player, MAX_RUN_SPEED},
+    enums::player_events::PlayerEvents, enums::player_states::PlayerStates, player::Player,
     traits::player_state::PlayerState,
 };
 
-use super::{crouch_start::CrouchStart, fall::Fall, idle::Idle, jump::Jump, slide::Slide};
-
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Sprint;
 
 impl PlayerState for Sprint {
-    fn enter(&self, player: &mut Player) {
-        self.run(player);
+    fn enter(player: &mut Player) {
+        Sprint::run(player);
     }
 
-    fn update(&self, player: &mut Player) {
+    fn update(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
-        if horizontal_dir == 0.0 {
-            player.set_state(Box::new(Idle));
-        } else if Input::singleton().is_action_just_pressed(StringName::from("jump"))
-            && player.base().is_on_floor()
-        {
-            player.set_state(Box::new(Jump));
+        if horizontal_dir.signum() != player.get_dir().signum() || horizontal_dir == 0.0 {
+            player.set_state(PlayerStates::Idle);
+        } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
+            player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
-            player.set_state(Box::new(Fall));
+            player.set_state(PlayerStates::Fall);
         // If player attempts to crouch while sprinting they slide into a crouch
-        } else if input_manager.fetch_event(PlayerEvents::Crouch) {
-            player.set_state(Box::new(Slide));
-            player.set_previous_state(Box::new(CrouchStart));
+        } else if input_manager.fetch_player_event(PlayerEvents::Crouch) {
+            player.set_state(PlayerStates::SlideCrouch);
         // If player attempts to roll while sprinting they slide instead
-        } else if input_manager.fetch_event(PlayerEvents::Roll) {
-            player.set_state(Box::new(Slide));
+        } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
+            player.set_state(PlayerStates::Slide);
         } else {
-            self.run(player);
+            Sprint::run(player);
         }
-    }
-
-    fn clone(&self) -> Box<dyn PlayerState> {
-        Box::new(Sprint)
-    }
-
-    fn as_str(&self, _player: &mut Player) -> &str {
-        "run"
     }
 }
 
 impl Sprint {
-    fn run(&self, player: &mut Player) {
-        player.apply_horizontal_velocity(player.get_dir(), MAX_RUN_SPEED * 1.3);
+    fn run(player: &mut Player) {
+        let dir = player.get_dir();
+        let speed = player.get_run_speed() * 1.3;
+        player.apply_horizontal_velocity(dir, speed);
 
-        player.get_sprite().set_speed_scale(1.3);
+        player.set_animation_speed(1.3);
     }
 }

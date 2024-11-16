@@ -3,13 +3,21 @@ use godot::prelude::*;
 mod player {
 
     pub mod input_manager;
+    pub mod metal_line;
+    pub mod metal_manager;
+    pub mod metal_reserve_bar_manager;
     pub mod player;
 
     mod enums {
+        pub mod force;
+        pub mod metal_events;
         pub mod player_events;
+        pub mod player_states;
+        pub mod timeout_events;
     }
 
     mod traits {
+        pub mod metal;
         pub mod player_state;
     }
 
@@ -24,17 +32,20 @@ mod player {
         pub mod roll;
         pub mod run;
         pub mod slide;
+        pub mod slide_crouch;
         pub mod sprint;
+    }
+
+    mod metals {
+        pub mod pewter;
+        pub mod steel;
     }
 }
 
-pub mod metal_reserve_bar_manager;
-
-pub mod metal_bar;
-
 pub mod coin;
-
 pub mod coin_counter;
+pub mod metal_object;
+pub mod player_manager;
 
 struct MyExtension;
 

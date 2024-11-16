@@ -1,0 +1,64 @@
+[gd_scene load_steps=6 format=3 uid="uid://tafp53a34qcc"]
+
+[ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
+[ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
+polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qc8gb"]
+polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -723, 189, -745, 162, -748, -335)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
+polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 2389, 187, 2384, -75, 450, -78, 451, 1)
+
+[node name="MapOne" type="Node2D"]
+light_mask = 3
+
+[node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
+
+[node name="SpawnOne" type="Marker2D" parent="."]
+position = Vector2(961, -149)
+
+[node name="SpawnTwo" type="Marker2D" parent="."]
+position = Vector2(-990, -386)
+
+[node name="SpawnThree" type="Marker2D" parent="."]
+position = Vector2(-10, 295)
+
+[node name="SpawnFour" type="Marker2D" parent="."]
+position = Vector2(-2, -843)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(742, -137)
+occluder = SubResource("OccluderPolygon2D_pcbnu")
+
+[node name="LightOccluder2D3" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(309, -136)
+occluder = SubResource("OccluderPolygon2D_pcbnu")
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_qc8gb")
+
+[node name="LightOccluder2D4" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_4rjuc")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.703808, 0.703808, 0.703808, 1)
+
+[node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
+z_index = 1
+position = Vector2(-369, -19)
+
+[node name="MetalObject2" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(-128, -301)
+
+[node name="MetalObject3" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(211, -167)
+
+[node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
+position = Vector2(-16, -112)
