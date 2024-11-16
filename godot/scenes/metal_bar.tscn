@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://rkporad0ail1"]
+
+[ext_resource type="Texture2D" uid="uid://bxbtg5c7ijdpw" path="res://assets/HealthMetalBars/HealthBar DARK.png" id="1_vc84x"]
+
+[node name="MetalBar" type="MetalBar"]
+offset_left = -8.0
+offset_top = -2.0
+offset_right = 55.0
+offset_bottom = 9.0
+value = 100.0
+texture_under = ExtResource("1_vc84x")
+texture_progress_offset = Vector2(0, 1)

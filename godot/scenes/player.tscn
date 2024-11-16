@@ -758,6 +758,8 @@ height = 44.0
 [sub_resource type="Gradient" id="Gradient_ay3dg"]
 offsets = PackedFloat32Array(0)
 colors = PackedColorArray(1, 1, 1, 1)
+[sub_resource type="CircleShape2D" id="CircleShape2D_fwaiq"]
+radius = 231.019
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_dokqc"]
 gradient = SubResource("Gradient_ay3dg")
@@ -828,11 +830,11 @@ offset_bottom = -161.0
 
 [node name="MetalManager" type="MetalManager" parent="."]
 
-[node name="Panel" parent="." instance=ExtResource("22_l2cmc")]
-offset_left = -379.0
-offset_top = -220.0
-offset_right = -346.0
-offset_bottom = -204.0
+[node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
+offset_left = -317.0
+offset_top = -196.0
+offset_right = -284.0
+offset_bottom = -180.0
 script = ExtResource("25_fri41")
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
@@ -870,11 +872,18 @@ scale = Vector2(0.0664062, 0.0664062)
 texture = ExtResource("30_o8iik")
 script = ExtResource("31_hw5a7")
 
+[node name="AllomanticRange" type="AllomanticRange" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AllomanticRange"]
+position = Vector2(-3, 26)
+shape = SubResource("CircleShape2D_fwaiq")
+
+[connection signal="area_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]
+[connection signal="area_exited" from="AllomanticRange" to="AllomanticRange" method="exit_range"]
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player2Vis" to="Player2Vis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
-[connection signal="tree_entered" from="InputManager" to="InputManager" method="_on_tree_entered"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

@@ -51,9 +51,13 @@ radius = 7.07107
 [node name="Coin" type="Coin"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.5, -0.5)
+scale = Vector2(1.0625, 1.0625)
 sprite_frames = SubResource("SpriteFrames_8dn5o")
 autoplay = "default"
 frame_progress = 0.988928
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_jhmiw")
+
+[connection signal="body_entered" from="." to="." method="coin_pickup"]

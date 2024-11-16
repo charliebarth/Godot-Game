@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0nchavw40n32"
-path="res://.godot/imported/metal_bar_prog_green.png-7bcadf312da8fca582d00cbcb621054a.ctex"
+uid="uid://ob7gxq2wsmvl"
+path="res://.godot/imported/star_01.png-93dff05cbc2146569720bb8ffcf906a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/HealthMetalBars/metal_bar_prog_green.png"
-dest_files=["res://.godot/imported/metal_bar_prog_green.png-7bcadf312da8fca582d00cbcb621054a.ctex"]
+source_file="res://assets/Items/star_01.png"
+dest_files=["res://.godot/imported/star_01.png-93dff05cbc2146569720bb8ffcf906a8.ctex"]
 
 [params]
 
