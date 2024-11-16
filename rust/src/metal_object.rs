@@ -21,7 +21,7 @@ impl IRigidBody2D for MetalObject {
 #[godot_api]
 impl MetalObject {
     #[func]
-    fn is_metal(&self) -> bool {
+    pub fn is_metal(&self) -> bool {
         true
     }
 }

@@ -2,7 +2,10 @@
 ///
 /// Author : Trinity Pittman
 /// Version : 10/02/2024
-use godot::prelude::*;
+use godot::{
+    classes::{ILabel, Label},
+    prelude::*,
+};
 
 // The amount of coins a player starts with
 const STARTING_COIN_COUNT: f64 = 10.0;

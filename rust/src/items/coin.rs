@@ -1,5 +1,4 @@
-use godot::obj::bounds::MemManual;
-use godot::obj::NewAlloc;
+use godot::classes::{Area2D, IArea2D};
 /// Represents a coin.
 ///
 /// Author : Trinity Pittman

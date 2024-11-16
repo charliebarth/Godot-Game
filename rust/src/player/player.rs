@@ -4,7 +4,6 @@ use std::time::Duration;
 use std::time::Instant;
 
 use godot::classes::AnimatedSprite2D;
-use godot::classes::Area2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
@@ -14,6 +13,7 @@ use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
 use crate::metal_object::MetalObject;
+use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::enums::force::Force;
 use super::enums::player_states::PlayerStates;
@@ -21,7 +21,6 @@ use super::enums::timeout_events::TimeoutEvents;
 use super::input_manager::InputManager;
 use super::metal_line::MetalLine;
 use super::metal_manager::MetalManager;
-use super::metal_reserve_bar_manager::MetalReserveBarManager;
 use crate::ui::coin_counter::CoinCounter;
 
 const MAX_HEALTH: f64 = 100.0;

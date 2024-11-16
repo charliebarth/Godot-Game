@@ -119,8 +119,8 @@ impl Metal for Steel {
             metal_line.queue_redraw();
         }
 
-        let mut metal_reserve_bar_manager_godot = player.get_metal_reserve_bar_manager();
-        let mut metal_reserve_bar_manager = metal_reserve_bar_manager_godot.bind_mut();
-        metal_reserve_bar_manager.adjust_bar_amount("steel", self.current_reserve);
+        // let mut metal_reserve_bar_manager_godot = player.get_metal_reserve_bar_manager();
+        // let mut metal_reserve_bar_manager = metal_reserve_bar_manager_godot.bind_mut();
+        // metal_reserve_bar_manager.adjust_bar_amount("steel", self.current_reserve);
     }
 }
