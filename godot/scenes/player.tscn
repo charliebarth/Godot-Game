@@ -864,6 +864,7 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_indkr")
 
 [node name="MetalLine" type="MetalLine" parent="."]
+modulate = Color(1.5, 1.5, 1.5, 1)
 z_index = -1
 position = Vector2(0, -9)
 

@@ -231,6 +231,8 @@ impl Player {
     /// Args:
     ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
     pub fn adjust_coins(&mut self, pos_neg: i8) {
+        
+
         // Get all the children of the player
         let children: Array<Gd<Node>> = self.base.to_gd().get_children();
         for i in 0..children.len() {
@@ -260,21 +262,27 @@ impl Player {
         }
     }
 
-    /// Adjusts the metals in this players metal bar manager positively.
-    pub fn adjust_metals(&mut self) {
-        // Get all the children of the player
-        let children: Array<Gd<Node>> = self.base.to_gd().get_children();
-        for i in 0..children.len() {
-            // Go through the children and find the `metal_reserver_bar_manager`
-            let child: Gd<Node> = children.get(i).expect("");
-            if child.get_name().to_string() == "MetalReserveBarManager" {
-                if let Ok(mut metal_manager) = child.try_cast::<MetalReserveBarManager>() {
-                    metal_manager.bind_mut().add_metals();
-                } else {
-                    godot_print!("Failed to cast node to CoinCounter");
-                }
-            }
-        }
+    /// Adjusts specific metals in this players metal bar manager to some amount.
+    /// 
+    /// Args
+    ///     metals (Vec<StringName>): the metals to effect
+    ///     amt (f64): the new amount to se the metals to 
+    pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
+        self.get_metal_reserve_bar_manager().bind_mut().add_metals(&metals, amt);
+
+        // // Get all the children of the player
+        // let children: Array<Gd<Node>> = self.base.to_gd().get_children();
+        // for i in 0..children.len() {
+        //     // Go through the children and find the `metal_reserver_bar_manager`
+        //     let child: Gd<Node> = children.get(i).expect("");
+        //     if child.get_name().to_string() == "MetalReserveBarManager" {
+        //         if let Ok(mut metal_manager) = child.try_cast::<MetalReserveBarManager>() {
+        //             metal_manager.bind_mut().add_metals(&increase, amt);
+        //         } else {
+        //             godot_print!("Failed to cast node to CoinCounter");
+        //         }
+        //     }
+        // }
     }
 
     /// Represents the direction the player is trying to move
