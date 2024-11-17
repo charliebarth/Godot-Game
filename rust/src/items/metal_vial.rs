@@ -41,7 +41,7 @@ impl MetalVial {
         godot_print!("Metal entered by {body_name}");    // Prints who picked up the coin
         
         if let Ok(mut player) = body.try_cast::<Player>() {
-            player.bind_mut().adjust_metals(); // Dereference and call the method
+            // player.bind_mut().adjust_metals(); // Dereference and call the method
             self.base_mut().queue_free();     // Remove the vial from the scene 
         } else {
             godot_print!("Something other than player entered the coin.");
