@@ -6,6 +6,7 @@ use std::time::Instant;
 use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
+use godot::classes::Label;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
@@ -53,6 +54,7 @@ pub struct Player {
     metal_manager: Option<Gd<MetalManager>>,
     metal_reserve_bar_manager: Option<Gd<MetalReserveBarManager>>,
     health_bar: Option<Gd<TextureProgressBar>>,
+    coin_counter: Option<Gd<CoinCounter>>,
     point_light: Option<Gd<PointLight2D>>,
     player_vis: Vec<Gd<AnimatedSprite2D>>,
     metal_line: Option<Gd<MetalLine>>,
@@ -91,6 +93,7 @@ impl ICharacterBody2D for Player {
             metal_manager: None,
             metal_reserve_bar_manager: None,
             health_bar: None,
+            coin_counter: None,
             point_light: None,
             player_vis: Vec::new(),
             metal_line: None,
@@ -231,35 +234,42 @@ impl Player {
     /// Args:
     ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
     pub fn adjust_coins(&mut self, pos_neg: i8) {
+
+        if pos_neg == -1 {
+            // Dereference and call the method
+            self.get_coin_counter().bind_mut().remove_coin();
+        } else {
+            self.get_coin_counter().bind_mut().add_coin();
+        }
         
 
-        // Get all the children of the player
-        let children: Array<Gd<Node>> = self.base.to_gd().get_children();
-        for i in 0..children.len() {
-            // Go through the children and find the `Coin_Counter_Panel`
-            let child: Gd<Node> = children.get(i).expect("");
-            if child.get_name().to_string() == "Coin_Counter_Panel" {
-                // Get all the children of the Coin_Counter_Panel
-                let children_counter: Array<Gd<Node>> = child.get_children();
-                for j in 0..children_counter.len() {
-                    // Go through the Coin_Counter_Panel to find `CoinCounter`
-                    let child_counter: Gd<Node> = children_counter.get(j).expect("");
-                    if child_counter.get_name().to_string() == "CoinCounter" {
-                        // Cast the child to CoinCounter and call `add_coin` or `remove_coin`
-                        if let Ok(mut coin_label) = child_counter.try_cast::<CoinCounter>() {
-                            if pos_neg == -1 {
-                                // Dereference and call the method
-                                coin_label.bind_mut().remove_coin();
-                            } else {
-                                coin_label.bind_mut().add_coin();
-                            }
-                        } else {
-                            godot_print!("Failed to cast node to CoinCounter");
-                        }
-                    }
-                }
-            }
-        }
+        // // Get all the children of the player
+        // let children: Array<Gd<Node>> = self.base.to_gd().get_children();
+        // for i in 0..children.len() {
+        //     // Go through the children and find the `Coin_Counter_Panel`
+        //     let child: Gd<Node> = children.get(i).expect("");
+        //     if child.get_name().to_string() == "Coin_Counter_Panel" {
+        //         // Get all the children of the Coin_Counter_Panel
+        //         let children_counter: Array<Gd<Node>> = child.get_children();
+        //         for j in 0..children_counter.len() {
+        //             // Go through the Coin_Counter_Panel to find `CoinCounter`
+        //             let child_counter: Gd<Node> = children_counter.get(j).expect("");
+        //             if child_counter.get_name().to_string() == "CoinCounter" {
+        //                 // Cast the child to CoinCounter and call `add_coin` or `remove_coin`
+        //                 if let Ok(mut coin_label) = child_counter.try_cast::<CoinCounter>() {
+        //                     if pos_neg == -1 {
+        //                         // Dereference and call the method
+        //                         coin_label.bind_mut().remove_coin();
+        //                     } else {
+        //                         coin_label.bind_mut().add_coin();
+        //                     }
+        //                 } else {
+        //                     godot_print!("Failed to cast node to CoinCounter");
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     /// Adjusts specific metals in this players metal bar manager to some amount.
@@ -567,6 +577,10 @@ impl Player {
         self.health_bar = Some(health_bar);
     }
 
+    pub fn set_coin_counter(&mut self, coin_counter: Gd<CoinCounter>) {
+        self.coin_counter = Some(coin_counter);
+    }
+
     #[func]
     /// Set the point light of the player
     /// This will be called once by the ready method of the point light node
@@ -813,6 +827,18 @@ impl Player {
         self.health_bar
             .as_ref()
             .expect("HealthBar node not found")
+            .clone()
+    }
+
+    pub fn get_coin_counter(&mut self) -> Gd<CoinCounter> {
+        if self.coin_counter.is_none() {
+            self.coin_counter = Some(self.base()
+                .get_node_as::<CoinCounter>("CoinCounter"));
+        }
+        // TODO check the path is correct 
+        self.coin_counter
+            .as_ref()
+            .expect("Could not find CoinCounter")
             .clone()
     }
 
