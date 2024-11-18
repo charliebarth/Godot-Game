@@ -35,6 +35,7 @@ impl ILabel for CoinCounter {
     }
 }
 
+#[godot_api]
 impl CoinCounter {
     /// Increments the number of coins
     pub fn add_coin(&mut self) {
