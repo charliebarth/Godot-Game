@@ -1,7 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=11 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
+[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
+shader = ExtResource("1_y7bd1")
+shader_parameter/density = 0.25
+shader_parameter/speed = Vector2(0.02, 0.01)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
 polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
@@ -12,8 +18,25 @@ polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -7
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
 polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 2389, 187, 2384, -75, 450, -78, 451, 1)
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
+frequency = 0.0045
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_u576d"]
+width = 1920
+height = 1080
+seamless = true
+seamless_blend_skirt = 0.75
+noise = SubResource("FastNoiseLite_ikvr1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_18wl2"]
+shader = ExtResource("1_y7bd1")
+shader_parameter/density = 0.6
+shader_parameter/speed = Vector2(0.002, 0.001)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_u576d")
+
 [node name="MapOne" type="Node2D"]
 light_mask = 3
+material = SubResource("ShaderMaterial_iw8d6")
 
 [node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
 
@@ -62,3 +85,12 @@ position = Vector2(211, -167)
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
 position = Vector2(-16, -112)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = 20
+material = SubResource("ShaderMaterial_18wl2")
+offset_left = -2288.0
+offset_top = -1425.0
+offset_right = 2381.0
+offset_bottom = 852.0
+color = Color(0.724643, 0.724643, 0.724642, 1)
