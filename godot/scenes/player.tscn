@@ -1,4 +1,4 @@
-[gd_scene load_steps=137 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=138 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -37,6 +37,7 @@
 [ext_resource type="Texture2D" uid="uid://dfrnpntq6dkd1" path="res://assets/Character/dust2.png" id="35_g71my"]
 [ext_resource type="Texture2D" uid="uid://cbvmhuwjhgvna" path="res://assets/Character/dust3.png" id="36_mr11a"]
 [ext_resource type="Texture2D" uid="uid://c01csxdo1tsg7" path="res://assets/Character/dust4.png" id="37_u8au1"]
+[ext_resource type="Script" path="res://scripts/dust.gd" id="38_1uxd6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mkisa"]
 atlas = ExtResource("1_28re0")
@@ -790,12 +791,12 @@ animations = [{
 "texture": ExtResource("37_u8au1")
 }],
 "loop": false,
-"name": &"default",
+"name": &"dust",
 "speed": 12.0
 }]
 
-[sub_resource type="Animation" id="Animation_me2kx"]
-resource_name = "start"
+[sub_resource type="Animation" id="Animation_dw7p4"]
+resource_name = "dust"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -809,7 +810,7 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_qq5go"]
+[sub_resource type="Animation" id="Animation_gvpho"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -824,10 +825,10 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_8pg6n"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ffg0s"]
 _data = {
-"RESET": SubResource("Animation_qq5go"),
-"start": SubResource("Animation_me2kx")
+"RESET": SubResource("Animation_gvpho"),
+"dust": SubResource("Animation_dw7p4")
 }
 
 [node name="Player" type="Player"]
@@ -942,12 +943,19 @@ offset_bottom = -233.0
 script = ExtResource("32_sw38e")
 
 [node name="Dust" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, 16)
+light_mask = 4
+visibility_layer = 4
+z_index = 10
+position = Vector2(-1, 10)
+scale = Vector2(1.71875, 1.71875)
 sprite_frames = SubResource("SpriteFrames_iwcc7")
+animation = &"dust"
+frame_progress = 0.979399
+script = ExtResource("38_1uxd6")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Dust"]
 libraries = {
-"": SubResource("AnimationLibrary_8pg6n")
+"": SubResource("AnimationLibrary_ffg0s")
 }
 
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
@@ -957,3 +965,5 @@ libraries = {
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
+[connection signal="animation_finished" from="Dust" to="Dust" method="_on_animation_finished"]
+[connection signal="visibility_changed" from="Dust" to="Dust" method="_on_visibility_changed"]
