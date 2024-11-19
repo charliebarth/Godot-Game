@@ -3,6 +3,13 @@ extends Sprite2D
 # Variable for setting the lerp speed
 var lerp_speed = 10.0
 
+func _ready() -> void:
+	var player: Player = self.get_parent() as Player
+	var layer_num = (player.get_player_id() * 2)
+	
+	self.visibility_layer = 1 << layer_num
+	self.light_mask = 1 << layer_num | 1
+
 func _process(delta):
 	var radius = 65
 	# Get the joystick direction

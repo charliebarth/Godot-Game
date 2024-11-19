@@ -31,6 +31,7 @@
 [ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="Script" path="res://scripts/health_bar.gd" id="28_v0cjd"]
 [ext_resource type="Texture2D" uid="uid://cjofih2mbdsil" path="res://icon.svg" id="30_o8iik"]
+[ext_resource type="Script" path="res://scripts/metal_line.gd" id="30_weuyd"]
 [ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
 [ext_resource type="Script" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
 [ext_resource type="Script" path="res://scripts/fps_counter.gd" id="32_sw38e"]
@@ -904,6 +905,7 @@ shape = SubResource("RectangleShape2D_indkr")
 self_modulate = Color(0, 0.6, 2.1, 1)
 z_index = -1
 position = Vector2(0, -9)
+script = ExtResource("30_weuyd")
 
 [node name="LineSelector" type="Sprite2D" parent="."]
 position = Vector2(80, 6)
