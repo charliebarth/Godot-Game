@@ -849,7 +849,7 @@ script = ExtResource("28_v0cjd")
 [node name="PointLight2D" type="PointLight2D" parent="."]
 position = Vector2(-4, 12)
 scale = Vector2(44.4023, 22.6347)
-energy = 0.15
+energy = 0.1
 shadow_enabled = true
 shadow_filter = 2
 texture = SubResource("GradientTexture2D_dokqc")
@@ -862,6 +862,7 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_indkr")
 
 [node name="MetalLine" type="MetalLine" parent="."]
+self_modulate = Color(0, 0.6, 2.1, 1)
 z_index = -1
 position = Vector2(0, -9)
 

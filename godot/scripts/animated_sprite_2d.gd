@@ -5,7 +5,7 @@ func _ready() -> void:
 	var layer_num = (player.get_player_id() * 2)
 	
 	self.visibility_layer = 1 << layer_num
-	self.light_mask = 1 << layer_num
+	self.light_mask = 1 << layer_num | 1
 
 func _on_animation_finished() -> void:
 	if self.animation == "jump_fall":

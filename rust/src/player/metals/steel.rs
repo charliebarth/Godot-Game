@@ -72,7 +72,7 @@ impl Metal for Steel {
         //let player_mass = player.get_mass();
 
         for metal_object in metal_objects.iter() {
-            let color = Color::from_rgba(0.117647, 0.564706, 1.0, 0.7);
+            let color = Color::from_rgba(0.0, 0.6, 2.3, 1.0);
             let metal_object_position = metal_object.get_global_position();
             //let metal_object_mass = metal_object.get_mass();
 

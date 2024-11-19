@@ -185,6 +185,7 @@ impl PlayerManager {
         let mut split_screen_one = HBoxContainer::new_alloc();
         let mut p1_container = SubViewportContainer::new_alloc();
         let mut p1_viewport = SubViewport::new_alloc();
+        p1_viewport.set_use_hdr_2d(true);
 
         split_screen_one.set_name("SplitScreenOne".into());
         p1_container.set_name("PlayerOneContainer".into());
