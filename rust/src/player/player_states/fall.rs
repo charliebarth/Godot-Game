@@ -32,7 +32,7 @@ impl PlayerState for Fall {
 
         if player.base().is_on_floor() {
             player.set_state(PlayerStates::Land);
-        } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
+        } else if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
         } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
             player.set_state(PlayerStates::Attack);

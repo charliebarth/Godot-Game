@@ -13,6 +13,7 @@ pub struct InputManager {
     button_press_times: HashMap<PlayerEvents, Instant>,
     player_events: HashMap<PlayerEvents, u32>,
     metal_events: HashMap<MetalEvents, Instant>,
+    button_released: HashMap<String, bool>,
     device_id: i32,
 }
 
@@ -24,6 +25,7 @@ impl INode2D for InputManager {
             button_press_times: HashMap::new(),
             player_events: HashMap::new(),
             metal_events: HashMap::new(),
+            button_released: HashMap::new(),
             device_id: -1,
         }
     }
@@ -35,8 +37,12 @@ impl INode2D for InputManager {
 
         let button_name = self.event_to_input_name(event.clone());
 
+        if !self.button_released.contains_key(&button_name) {
+            self.button_released.insert(button_name.clone(), true);
+        }
+
         if let Some(player_event) = PlayerEvents::from_string(&button_name) {
-            self.process_player_events(player_event, event);
+            self.process_player_events(player_event, event, button_name);
         } else if let Some(metal_event) = MetalEvents::from_string(&button_name) {
             self.process_metal_events(metal_event, event);
         }
@@ -54,12 +60,30 @@ impl INode2D for InputManager {
 }
 
 impl InputManager {
+    /// Fetching the events checks if the event is in the hashmap and if it is it removes it and returns true otherwise it returns false.
+    ///
+    /// Arguments:
+    /// * `event` - The event to fetch
+    ///
+    /// Returns:
+    /// * `bool` - True if the event was in the hashmap and removed, false otherwise
     pub fn fetch_player_event(&mut self, event: PlayerEvents) -> bool {
         if let Some(_) = self.player_events.remove(&event) {
             true
         } else {
             false
         }
+    }
+
+    /// Checks if the event is in the hashmap but does not remove it.
+    ///
+    /// Arguments:
+    /// * `event` - The event to check for
+    ///
+    /// Returns:
+    /// * `bool` - True if the event is in the hashmap, false otherwise
+    pub fn check_for_player_event(&self, event: PlayerEvents) -> bool {
+        self.player_events.contains_key(&event)
     }
 
     fn event_to_input_name(&self, event: Gd<InputEvent>) -> String {
@@ -113,30 +137,21 @@ impl InputManager {
         }
     }
 
-    fn process_player_events(&mut self, player_event: PlayerEvents, event: Gd<InputEvent>) {
-        if event.is_pressed() {
-            let trigger_event = TriggerEvents::trigger_for_player_event(player_event);
-
-            if trigger_event == TriggerEvents::OnPress {
-                self.player_events.insert(player_event, 0);
-            } else if trigger_event == TriggerEvents::OnRelease {
-                self.button_press_times.insert(player_event, Instant::now());
-            }
+    fn process_player_events(
+        &mut self,
+        player_event: PlayerEvents,
+        event: Gd<InputEvent>,
+        button_name: String,
+    ) {
+        if event.is_pressed()
+            && !self.player_events.contains_key(&player_event)
+            && *self.button_released.get(&button_name).unwrap()
+        {
+            self.button_released.insert(button_name, false);
+            self.player_events.insert(player_event, 0);
         } else if event.is_released() {
-            if let Some(press_time) = self.button_press_times.get(&player_event) {
-                let mut player_event = player_event;
-
-                if player_event == PlayerEvents::Roll {
-                    let duration = press_time.elapsed();
-
-                    if duration > std::time::Duration::from_millis(250) {
-                        player_event = PlayerEvents::Crouch;
-                    }
-                }
-
-                self.player_events.insert(player_event, 0);
-                self.button_press_times.remove(&player_event);
-            }
+            self.button_released.insert(button_name, true);
+            self.player_events.remove(&player_event);
         }
     }
 

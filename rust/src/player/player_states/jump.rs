@@ -1,7 +1,7 @@
 use godot::obj::WithBaseField;
 
 use crate::player::{
-    enums::{force::Force, player_states::PlayerStates},
+    enums::{force::Force, player_events::PlayerEvents, player_states::PlayerStates},
     player::Player,
     traits::player_state::PlayerState,
 };
@@ -19,9 +19,9 @@ impl PlayerState for Jump {
     fn enter(player: &mut Player) {
         player.set_gravity(JUMP_GRAVITY);
 
-        let jump_force = player.get_jump_force();
+        let jump_force = player.get_jump_force() * 0.5;
         player.add_force(Force::Jump {
-            velocity: -jump_force,
+            acceleration: -jump_force,
         });
     }
 
@@ -45,6 +45,7 @@ impl PlayerState for Jump {
             Jump::exit(player, next_state);
         } else {
             Jump::run(player);
+            Jump::jump(player);
         }
     }
 }
@@ -77,5 +78,19 @@ impl Jump {
 
     fn exit(player: &mut Player, next_state: PlayerStates) {
         player.set_state(next_state);
+    }
+
+    fn jump(player: &mut Player) {
+        let input_manager = player.get_input_manager();
+        let bound_input_manager = input_manager.bind();
+
+        if !bound_input_manager.check_for_player_event(PlayerEvents::Jump) {
+            return;
+        }
+
+        let jump_force = player.get_jump_force() * 0.065;
+        player.add_force(Force::Jump {
+            acceleration: -jump_force,
+        });
     }
 }
