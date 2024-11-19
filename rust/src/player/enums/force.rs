@@ -2,20 +2,33 @@
 pub enum Force {
     /// Gravity
     /// This force is always applied to the player but will be countered by the normal force when the player is on the floor
-    Gravity { acceleration: f64 },
+    Gravity {
+        acceleration: f64,
+    },
     /// Jump force applied when the player jumps
-    Jump { velocity: f32 },
+    Jump {
+        velocity: f32,
+    },
     /// Normal force applied when the player is on the floor
     /// The normal force is a force that is proportional to gravity and counteracts it's effect
-    NormalForce { magnitude: f64 },
+    NormalForce {
+        magnitude: f64,
+    },
     /// Run force applied when the player is on the floor
-    Run { acceleration: f32 },
+    Run {
+        acceleration: f32,
+    },
     /// Horizontal force applied when the player is in the air
-    AirRun { acceleration: f32 },
+    AirRun {
+        acceleration: f32,
+    },
     /// Stop all movement of the player based on the boolean values
-    Stop { horizontal: bool, vertical: bool },
+    Stop {
+        horizontal: bool,
+        vertical: bool,
+    },
     SteelPush {
-        x_acceleration: f32,
-        y_acceleration: f32,
+        x_velocity: f32,
+        y_velocity: f32,
     },
 }

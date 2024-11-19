@@ -32,7 +32,13 @@ impl Steel {
 
 impl Metal for Steel {
     fn burn(&mut self, player: &mut Player) {
-        if player.get_metal_objects().is_empty() {
+        if !self.was_low_burn {
+            return;
+        }
+
+        let metal_position = player.get_nearest_metal_object();
+
+        if metal_position.is_none() {
             return;
         }
 
@@ -41,21 +47,19 @@ impl Metal for Steel {
         // TODO: If not on the floor set the state to fall (push would interupt a jump)
         self.current_reserve -= self.burn_rate;
         // TODO: Make constant
-        let max_acceleration: f32 = 6000.0;
-
-        let metal_position = player.get_nearest_metal_object();
+        let max_acceleration: f32 = 700.0;
 
         if !player.base().is_on_floor() {
             player.add_force(Force::NormalForce { magnitude: -1.0 });
         }
 
         if let Some(angle) = metal_position {
-            let x_acceleration: f32 = max_acceleration * (angle.cos() as f32) * self.push;
-            let y_acceleration: f32 = max_acceleration * (angle.sin() as f32) * self.push;
+            let x_velocity: f32 = max_acceleration * (angle.cos() as f32) * self.push;
+            let y_velocity: f32 = max_acceleration * (angle.sin() as f32) * self.push;
 
             player.add_force(Force::SteelPush {
-                x_acceleration,
-                y_acceleration,
+                x_velocity,
+                y_velocity,
             });
         }
     }
