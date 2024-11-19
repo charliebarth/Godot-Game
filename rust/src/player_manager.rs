@@ -221,6 +221,7 @@ impl PlayerManager {
         let mut split_screen_two = HBoxContainer::new_alloc();
         let mut p2_container = SubViewportContainer::new_alloc();
         let mut p2_viewport = SubViewport::new_alloc();
+        p2_viewport.set_use_hdr_2d(true);
 
         split_screen_two.set_name("SplitScreenTwo".into());
         p2_container.set_name("PlayerTwoContainer".into());
@@ -271,6 +272,7 @@ impl PlayerManager {
 
         let mut p3_container = SubViewportContainer::new_alloc();
         let mut p3_viewport = SubViewport::new_alloc();
+        p3_viewport.set_use_hdr_2d(true);
 
         p3_container.set_name("PlayerThreeContainer".into());
         p3_viewport.set_name("PlayerThreeViewport".into());
@@ -324,6 +326,7 @@ impl PlayerManager {
 
         let mut p4_container = SubViewportContainer::new_alloc();
         let mut p4_viewport = SubViewport::new_alloc();
+        p4_viewport.set_use_hdr_2d(true);
 
         p4_container.set_name("PlayerFourContainer".into());
         p4_viewport.set_name("PlayerFourViewport".into());
