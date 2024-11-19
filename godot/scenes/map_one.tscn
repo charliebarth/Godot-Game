@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=13 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -18,6 +18,9 @@ polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -7
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
 polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 2389, 187, 2384, -75, 450, -78, 451, 1)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xjc83"]
+polygon = PackedVector2Array(-1024, -112, -675, -112, -677, -83, -1022, -82, -1025, -108)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
 frequency = 0.0045
@@ -70,6 +73,11 @@ occluder = SubResource("OccluderPolygon2D_qc8gb")
 [node name="LightOccluder2D4" type="LightOccluder2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_4rjuc")
+
+[node name="LightOccluder2D5" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(850, -175)
+occluder = SubResource("OccluderPolygon2D_xjc83")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.703808, 0.703808, 0.703808, 1)
