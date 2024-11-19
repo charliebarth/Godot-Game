@@ -5,7 +5,7 @@ use std::collections::HashMap;
 /// to add and remove bars from the on screen Vbox by name. 
 /// 
 /// Author : Trinity Pittman
-/// Version : 11/17/2024
+/// Version : 11/18/2024
 
 use godot::prelude::*;
 use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};  // Import Node and VBoxContainer
@@ -43,20 +43,32 @@ impl IVBoxContainer for  MetalReserveBarManager {
     /// Creates and sets up the bars inside the Metal Reserve Bar Manager 
     fn ready(&mut self) { 
         // Create Metals that are auto added to VBox based on the keybound metals 
-        for i in 0..TOTAL_BARS {
-            let index = i as usize;
-            let mut bar: Gd<MetalBar> = MetalBar::new_alloc();
-            bar.hide();     // Default hidden
-            self.base_mut().add_child(bar.clone());     // Add to VBox
+        for i in 0..TOTAL_BARS+1 {
+            let index = i as usize;            
 
+            // Get the name of the metal bar we are creating 
             if let Some(&metal_name_temp) = PATHS.get(index) {
                 let metal_name = StringName::from(metal_name_temp);
-                bar.set_name(metal_name.clone().to_string().into()); // Set name
-                self.get_metal_bar(metal_name.clone()).bind_mut().set_texture(PATHS[index]);
-                self.get_bars().insert(metal_name, bar); // Add to HashMap
+                                
+                // Set name of godot object 
+                self.get_metal_bar(metal_name.clone())
+                        .set_name(metal_name.clone().to_string().into()); 
+
+                // Add the bar to VBox
+                let metal = self.get_metal_bar(metal_name.clone());
+                self.base_mut()
+                        .add_child(metal);    
+
+                // Set the texture of the bar
+                self.get_metal_bar(metal_name.clone()).bind_mut()
+                        .set_texture(PATHS[index]); 
+
+                // Default hidden
+                self.get_metal_bar(metal_name)
+                        .hide();     
             }
             
-            godot_print!("BARS CREATED")
+            godot_print!("ALL BARS CREATED")
         }
 
         self.setup_keybinds();
@@ -75,17 +87,17 @@ impl MetalReserveBarManager{
         for i in (0..length).rev() {
             let input: StringName = inputs.get(i).unwrap();
 
+            // If the name of the keybind is one of the metals..
             if PATHS.contains(&input.to_string().as_str())  {
                 godot_print!("{}", input);
                 let events: Array<Gd<godot::classes::InputEvent>> = 
-                                                input_map.action_get_events(input.clone());
+                    input_map.action_get_events(input.clone());
                 
                 let mut max = 0;
                 // If something is keybound to the event and not reached max metals, show the bar
                 if events.len() > 0 && max != MAX_BARS_ON_SCREEN{    
-                    let mut bar: Gd<MetalBar> = self.get_metal_bar(input);
-                    bar.show();
-                    max = max + 1;
+                    self.get_metal_bar(input).show();
+                    max = max + 1; // Keeps track of how many are on screen 
                 }
             }
         }
@@ -98,29 +110,29 @@ impl MetalReserveBarManager{
     /// 
     /// Returns: the metal bar or None if none exists 
     pub fn get_metal_bar(&mut self, name: StringName) -> Gd<MetalBar> {
-        self.get_bars().get(&name).expect("Bar not found").clone()
-        
+        if let Some(bar) = self.get_bars().get(&name){
+            bar.clone()
+        } else {
+            godot_print!("METAL BAR NOT FOUND creating {}", name);
 
-        // let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
-        
-        // for i in 0..children.len() {
-        //     let child : Gd<Node> = children.get(i).expect("");
+            // Create new bar 
+            let bar = MetalBar::new_alloc();
 
-        //     if let Ok(bar) = child.try_cast::<MetalBar>() {
-        //         if bar.get_name() == name {
-        //             return Some(bar);
-        //         }
-        //     }
-        // }
-
-        // return None;
+            // Add the bar to the hashmap 
+            self.get_bars()
+                    .insert(name, bar.clone()); 
+            bar
+        }
     }
 
-    fn get_bars(&mut self) -> HashMap<StringName, Gd<MetalBar>> {
+    /// Gets the HashMap of metal bars, if it doesn't exist, create it
+    /// 
+    /// Returns: HashMap of MetalBars and their name (StringName)
+    fn get_bars(&mut self) -> &mut HashMap<StringName, Gd<MetalBar>> {
         if self.bars.is_none() {
             self.bars = Some(HashMap::new());
         }
-        self.bars.as_ref().expect("bars not found").clone()
+        self.bars.as_mut().unwrap()
     }
 
     /// Adds metals to all the bars contained within the metal reserve bar manager 
@@ -129,23 +141,12 @@ impl MetalReserveBarManager{
             // Get the specific bar 
             let mut bar = self.get_metal_bar(StringName::from(PATHS[i as usize]));
             if metals.contains(&bar.get_name()){ // If its one of the metals
-                bar.bind_mut().adjust_reserves(amt);    // add metals
+                // add metal reserves 
+                bar.bind_mut()
+                        .adjust_reserves(amt);    
                 godot_print!("METALS ADDED to {}", bar.get_name())
             }
         }
-
-        // let children: Array<Gd<Node>> = self.base.to_gd().get_children(); 
-        // for i in 0..TOTAL_BARS {
-        //     let child : Gd<Node> = children.get(i.into()).expect("");
-        //     if let Ok(mut bar) = child.try_cast::<MetalBar>() {
-        //         let mut bar_mut = bar.bind_mut();
-        //         if increase.contains(&bar_mut.get_name()){
-        //             bar_mut.adjust_reserves(amt);
-        //             godot_print!("METALS ADDED to {}", bar_mut.get_name())
-        //         }
-        //     }
-        // }
-        
     }
 
     // Adds and removes a metal bar from displaying on the screen 

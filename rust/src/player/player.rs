@@ -234,42 +234,12 @@ impl Player {
     /// Args:
     ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
     pub fn adjust_coins(&mut self, pos_neg: i8) {
-
         if pos_neg == -1 {
             // Dereference and call the method
             self.get_coin_counter().bind_mut().remove_coin();
         } else {
             self.get_coin_counter().bind_mut().add_coin();
         }
-        
-
-        // // Get all the children of the player
-        // let children: Array<Gd<Node>> = self.base.to_gd().get_children();
-        // for i in 0..children.len() {
-        //     // Go through the children and find the `Coin_Counter_Panel`
-        //     let child: Gd<Node> = children.get(i).expect("");
-        //     if child.get_name().to_string() == "Coin_Counter_Panel" {
-        //         // Get all the children of the Coin_Counter_Panel
-        //         let children_counter: Array<Gd<Node>> = child.get_children();
-        //         for j in 0..children_counter.len() {
-        //             // Go through the Coin_Counter_Panel to find `CoinCounter`
-        //             let child_counter: Gd<Node> = children_counter.get(j).expect("");
-        //             if child_counter.get_name().to_string() == "CoinCounter" {
-        //                 // Cast the child to CoinCounter and call `add_coin` or `remove_coin`
-        //                 if let Ok(mut coin_label) = child_counter.try_cast::<CoinCounter>() {
-        //                     if pos_neg == -1 {
-        //                         // Dereference and call the method
-        //                         coin_label.bind_mut().remove_coin();
-        //                     } else {
-        //                         coin_label.bind_mut().add_coin();
-        //                     }
-        //                 } else {
-        //                     godot_print!("Failed to cast node to CoinCounter");
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     }
 
     /// Adjusts specific metals in this players metal bar manager to some amount.
@@ -279,20 +249,6 @@ impl Player {
     ///     amt (f64): the new amount to se the metals to 
     pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
         self.get_metal_reserve_bar_manager().bind_mut().add_metals(&metals, amt);
-
-        // // Get all the children of the player
-        // let children: Array<Gd<Node>> = self.base.to_gd().get_children();
-        // for i in 0..children.len() {
-        //     // Go through the children and find the `metal_reserver_bar_manager`
-        //     let child: Gd<Node> = children.get(i).expect("");
-        //     if child.get_name().to_string() == "MetalReserveBarManager" {
-        //         if let Ok(mut metal_manager) = child.try_cast::<MetalReserveBarManager>() {
-        //             metal_manager.bind_mut().add_metals(&increase, amt);
-        //         } else {
-        //             godot_print!("Failed to cast node to CoinCounter");
-        //         }
-        //     }
-        // }
     }
 
     /// Represents the direction the player is trying to move
@@ -577,6 +533,10 @@ impl Player {
         self.health_bar = Some(health_bar);
     }
 
+    /// Set the coin counter of the player 
+    /// 
+    /// # Arguments 
+    /// * `coin_counter` - The coin counter to set 
     pub fn set_coin_counter(&mut self, coin_counter: Gd<CoinCounter>) {
         self.coin_counter = Some(coin_counter);
     }
@@ -830,12 +790,15 @@ impl Player {
             .clone()
     }
 
+    /// Getter for CoinCounter node 
+    /// 
+    /// # Returns
+    /// *  `CoinCounter` - The CoinCounter node used to show player coins. 
     pub fn get_coin_counter(&mut self) -> Gd<CoinCounter> {
         if self.coin_counter.is_none() {
             self.coin_counter = Some(self.base()
-                .get_node_as::<CoinCounter>("CoinCounter"));
+                .get_node_as::<CoinCounter>("Coin_Counter_Panel/CoinCounter"));
         }
-        // TODO check the path is correct 
         self.coin_counter
             .as_ref()
             .expect("Could not find CoinCounter")
