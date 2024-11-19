@@ -625,27 +625,11 @@ impl Player {
                 base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
             }
             Force::SteelPush {
-                x_acceleration,
-                y_acceleration,
+                x_velocity,
+                y_velocity,
             } => {
-                let max_acceleration: f32 = 1000.0;
-                let total_acceleration = x_acceleration.abs() + y_acceleration.abs();
-
-                let x_of_total = x_acceleration.abs() / total_acceleration;
-                let y_of_total = y_acceleration.abs() / total_acceleration;
-
-                base_velocity.x += x_acceleration * self.delta as f32;
-                base_velocity.y += y_acceleration * self.delta as f32;
-
-                base_velocity.x = base_velocity.x.clamp(
-                    -(max_acceleration * x_of_total),
-                    max_acceleration * x_of_total,
-                );
-
-                base_velocity.y = base_velocity.y.clamp(
-                    -(max_acceleration * y_of_total),
-                    max_acceleration * y_of_total,
-                );
+                base_velocity.x = x_velocity;
+                base_velocity.y = y_velocity;
             }
         }
 
