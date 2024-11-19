@@ -7,7 +7,7 @@ pub enum Force {
     },
     /// Jump force applied when the player jumps
     Jump {
-        velocity: f32,
+        acceleration: f32,
     },
     /// Normal force applied when the player is on the floor
     /// The normal force is a force that is proportional to gravity and counteracts it's effect

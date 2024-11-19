@@ -591,8 +591,8 @@ impl Player {
             Force::NormalForce { magnitude } => {
                 base_velocity.y += (self.gravity * magnitude * self.delta) as f32;
             }
-            Force::Jump { velocity } => {
-                base_velocity.y = velocity;
+            Force::Jump { acceleration } => {
+                base_velocity.y += acceleration;
             }
             Force::Run { acceleration } => {
                 let max_run_speed = self.get_run_speed();

@@ -20,7 +20,9 @@ impl PlayerState for Sprint {
 
         if horizontal_dir.signum() != player.get_dir().signum() || horizontal_dir == 0.0 {
             player.set_state(PlayerStates::Idle);
-        } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
+        } else if input_manager.check_for_player_event(PlayerEvents::Jump)
+            && player.jump_available()
+        {
             player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
             player.set_state(PlayerStates::Fall);

@@ -22,7 +22,7 @@ impl PlayerState for Run {
 
         if horizontal_dir == 0.0 {
             next_state = PlayerStates::Idle;
-        } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
+        } else if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
             next_state = PlayerStates::Jump;
         } else if !player.base().is_on_floor() {
             next_state = PlayerStates::Fall;
