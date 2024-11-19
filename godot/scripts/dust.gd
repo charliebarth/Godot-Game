@@ -10,7 +10,6 @@ func _ready() -> void:
 
 func _on_visibility_changed() -> void:
 	if self.visible:
-		print("hello")
 		var dust_player = self.get_child(0) as AnimationPlayer
 		self.play("dust")
 		dust_player.play("dust")
