@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=12 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
+[ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
@@ -86,11 +87,29 @@ position = Vector2(211, -167)
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
 position = Vector2(-16, -112)
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Fog" type="ColorRect" parent="."]
 z_index = 20
 material = SubResource("ShaderMaterial_18wl2")
 offset_left = -2288.0
 offset_top = -1425.0
 offset_right = 2381.0
 offset_bottom = 852.0
-color = Color(0.724643, 0.724643, 0.724642, 1)
+color = Color(0.725, 0.725, 0.725, 0.535)
+
+[node name="Torch" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(850, -175)
+
+[node name="Torch2" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(224, -95)
+
+[node name="Torch3" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(-209, -89)
+
+[node name="Torch4" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(-476, -409)
+
+[node name="Torch5" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(-945, -402)
+
+[node name="Torch6" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(308, -410)
