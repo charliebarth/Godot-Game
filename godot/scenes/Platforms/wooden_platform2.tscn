@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dowm3lcngx6fx"]
+
+[ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="1_fm4mj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5l6jh"]
+size = Vector2(118, 10)
+
+[node name="wooden_platform2" type="StaticBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_fm4mj")
+region_enabled = true
+region_rect = Rect2(381, 871, 123, 17)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_5l6jh")
