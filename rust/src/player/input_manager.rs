@@ -112,17 +112,13 @@ impl InputManager {
         event: Gd<InputEvent>,
         button_name: String,
     ) {
-        godot_print!("Metal Event: {:#?}", metal_event);
         if event.is_pressed() {
             if self.player_events.contains_key(&PlayerEvents::LowBurn) {
-                godot_print!("Attempting to low burn");
                 if let Some(low_burn_variant) = MetalEvents::get_low_burn_variant(metal_event) {
                     if self.metal_events.contains_key(&low_burn_variant) {
-                        godot_print!("Removed LowBurn");
                         self.button_released.insert(button_name, true);
                         self.metal_events.remove(&low_burn_variant);
                     } else {
-                        godot_print!("Added LowBurn");
                         self.button_released.insert(button_name, false);
                         self.metal_events.insert(low_burn_variant, Instant::now());
                     }
