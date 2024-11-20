@@ -1,7 +1,6 @@
 use godot::classes::InputMap;
 use godot::{classes::InputEvent, prelude::*};
-use std::collections::HashMap;
-use std::time::Instant;
+use std::collections::{HashMap, HashSet};
 
 use super::enums::metal_events::MetalEvents;
 use super::enums::player_events::PlayerEvents;
@@ -11,7 +10,7 @@ use super::enums::player_events::PlayerEvents;
 pub struct InputManager {
     base: Base<Node2D>,
     player_events: HashMap<PlayerEvents, i8>,
-    metal_events: HashMap<MetalEvents, Instant>,
+    metal_events: HashSet<MetalEvents>,
     button_released: HashMap<String, bool>,
     device_id: i32,
 }
@@ -22,7 +21,7 @@ impl INode2D for InputManager {
         Self {
             base,
             player_events: HashMap::new(),
-            metal_events: HashMap::new(),
+            metal_events: HashSet::new(),
             button_released: HashMap::new(),
             device_id: -1,
         }
@@ -115,17 +114,17 @@ impl InputManager {
         if event.is_pressed() {
             if self.player_events.contains_key(&PlayerEvents::LowBurn) {
                 if let Some(low_burn_variant) = MetalEvents::get_low_burn_variant(metal_event) {
-                    if self.metal_events.contains_key(&low_burn_variant) {
+                    if self.metal_events.contains(&low_burn_variant) {
                         self.button_released.insert(button_name, true);
                         self.metal_events.remove(&low_burn_variant);
                     } else {
                         self.button_released.insert(button_name, false);
-                        self.metal_events.insert(low_burn_variant, Instant::now());
+                        self.metal_events.insert(low_burn_variant);
                     }
                 }
             } else {
                 self.button_released.insert(button_name, false);
-                self.metal_events.insert(metal_event, Instant::now());
+                self.metal_events.insert(metal_event);
             }
         } else if event.is_released() {
             self.button_released.insert(button_name, true);
