@@ -15,7 +15,6 @@ pub struct Land;
 
 impl PlayerState for Land {
     fn enter(player: &mut Player) {
-        // TODO: Only play when landing force is greater than some amount
         let mut dust = player.base().get_node_as::<AnimatedSprite2D>("Dust");
         dust.set_visible(true);
     }

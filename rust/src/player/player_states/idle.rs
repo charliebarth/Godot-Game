@@ -30,7 +30,7 @@ impl PlayerState for Idle {
         } else {
             player.add_force(Force::Stop {
                 horizontal: true,
-                vertical: false, // TODO: This should also maybe be true
+                vertical: false,
             });
         }
     }
