@@ -28,9 +28,9 @@ const MAX_HEALTH: f64 = 100.0;
 const MIN_HEALTH: f64 = 0.0;
 const DEFAULT_RUN_SPEED: f32 = 250.0;
 const DEFAULT_JUMP_FORCE: f32 = 450.0;
-const MAX_RUN_SPEED: f32 = 400.0;
+const MAX_RUN_SPEED: f32 = 600.0;
 const MIN_RUN_SPEED: f32 = 0.0;
-const MAX_JUMP_FORCE: f32 = 550.0;
+const MAX_JUMP_FORCE: f32 = 700.0;
 const MIN_JUMP_FORCE: f32 = 300.0;
 
 #[derive(GodotClass)]
