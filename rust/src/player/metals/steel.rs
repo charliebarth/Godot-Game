@@ -2,7 +2,7 @@ use godot::builtin::Color;
 use godot::obj::WithBaseField;
 
 use crate::player::enums::force::Force;
-use crate::player::enums::metal_events::{BurnType, MetalEvents};
+use crate::player::enums::metal_events::MetalEvents;
 use crate::player::enums::player_states::PlayerStates;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
@@ -94,9 +94,9 @@ impl Metal for Steel {
         let mut input_manager = godot_input_manager.bind_mut();
         self.show_particles = false;
 
-        if input_manager.fetch_metal_event(MetalEvents::Steel(BurnType::Burn)) {
+        if input_manager.fetch_metal_event(MetalEvents::Steel) {
             self.push = -1.0;
-        } else if input_manager.fetch_metal_event(MetalEvents::Iron(BurnType::Burn)) {
+        } else if input_manager.fetch_metal_event(MetalEvents::Iron) {
             self.push = 1.0;
         } else {
             self.push = 0.0;
@@ -105,14 +105,12 @@ impl Metal for Steel {
         // Burning is an actual steel push
         if self.current_reserve > 0.0 && self.push != 0.0 {
             self.burn(player);
-            self.show_particles = true;
         } else {
             player.set_is_steel_burning(false);
         }
 
         // Low burning shows the allomantic lines
-        if self.current_reserve > 0.0
-            && input_manager.fetch_metal_event(MetalEvents::SteelLowBurn(BurnType::LowBurn))
+        if self.current_reserve > 0.0 && input_manager.fetch_metal_event(MetalEvents::SteelLowBurn)
         {
             self.low_burn(player);
             self.show_particles = true;

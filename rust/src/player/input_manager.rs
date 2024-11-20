@@ -4,14 +4,13 @@ use std::collections::HashMap;
 use std::time::Instant;
 
 use super::enums::metal_events::MetalEvents;
-use super::enums::player_events::{PlayerEvents, TriggerEvents};
+use super::enums::player_events::PlayerEvents;
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct InputManager {
     base: Base<Node2D>,
-    button_press_times: HashMap<PlayerEvents, Instant>,
-    player_events: HashMap<PlayerEvents, u32>,
+    player_events: HashMap<PlayerEvents, i8>,
     metal_events: HashMap<MetalEvents, Instant>,
     button_released: HashMap<String, bool>,
     device_id: i32,
@@ -22,7 +21,6 @@ impl INode2D for InputManager {
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
-            button_press_times: HashMap::new(),
             player_events: HashMap::new(),
             metal_events: HashMap::new(),
             button_released: HashMap::new(),
@@ -44,7 +42,7 @@ impl INode2D for InputManager {
         if let Some(player_event) = PlayerEvents::from_string(&button_name) {
             self.process_player_events(player_event, event, button_name);
         } else if let Some(metal_event) = MetalEvents::from_string(&button_name) {
-            self.process_metal_events(metal_event, event);
+            self.process_metal_events(metal_event, event, button_name);
         }
     }
 
@@ -55,7 +53,7 @@ impl INode2D for InputManager {
 
         // Expire events after a certain number of frames (e.g., 60 frames)
         self.player_events
-            .retain(|event, timer| *timer < event.timeout());
+            .retain(|event, timer| event.timeout() == -1 || *timer < event.timeout());
     }
 }
 
@@ -108,31 +106,33 @@ impl InputManager {
         "".to_string()
     }
 
-    fn process_metal_events(&mut self, metal_event: MetalEvents, event: Gd<InputEvent>) {
+    fn process_metal_events(
+        &mut self,
+        metal_event: MetalEvents,
+        event: Gd<InputEvent>,
+        button_name: String,
+    ) {
+        godot_print!("Metal Event: {:#?}", metal_event);
         if event.is_pressed() {
-            // When pressed, always insert the burn variant
-            self.metal_events.insert(metal_event, Instant::now());
-        } else if event.is_released() && self.metal_events.contains_key(&metal_event) {
-            if let Some(press_time) = self.metal_events.get(&metal_event) {
-                let duration = press_time.elapsed();
-
-                if duration <= std::time::Duration::from_millis(250) {
-                    // the burn type will always be burn because the from_string method only returns burn and that is what is passed into this function
-                    // if low burn is already toggled on then when it is tapped again it should be toggled off and thus removed from the map
-                    // if low burn is not toggled on then it should be toggled on and added to the map thus we need to replace the burn event with the low burn event
-                    if !self
-                        .metal_events
-                        .contains_key(&metal_event.get_low_burn_variant())
-                    {
-                        self.metal_events
-                            .insert(metal_event.get_low_burn_variant(), Instant::now());
+            if self.player_events.contains_key(&PlayerEvents::LowBurn) {
+                godot_print!("Attempting to low burn");
+                if let Some(low_burn_variant) = MetalEvents::get_low_burn_variant(metal_event) {
+                    if self.metal_events.contains_key(&low_burn_variant) {
+                        godot_print!("Removed LowBurn");
+                        self.button_released.insert(button_name, true);
+                        self.metal_events.remove(&low_burn_variant);
                     } else {
-                        self.metal_events
-                            .remove(&metal_event.get_low_burn_variant());
+                        godot_print!("Added LowBurn");
+                        self.button_released.insert(button_name, false);
+                        self.metal_events.insert(low_burn_variant, Instant::now());
                     }
                 }
+            } else {
+                self.button_released.insert(button_name, false);
+                self.metal_events.insert(metal_event, Instant::now());
             }
-
+        } else if event.is_released() {
+            self.button_released.insert(button_name, true);
             self.metal_events.remove(&metal_event);
         }
     }

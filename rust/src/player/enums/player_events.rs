@@ -15,6 +15,7 @@ impl TriggerEvents {
             PlayerEvents::Crouch => TriggerEvents::OnRelease,
             PlayerEvents::Roll => TriggerEvents::OnRelease,
             PlayerEvents::Sprint => TriggerEvents::OnPress,
+            PlayerEvents::LowBurn => TriggerEvents::OnPress,
         }
     }
 }
@@ -29,6 +30,9 @@ pub enum PlayerEvents {
     Roll,
     /// The player has sprinted.
     Sprint,
+    /// This is a modifier key on the controller.
+    /// If button is held/the event is registered and a metal event is triggered, the metal event will be triggered with the LowBurn variant.
+    LowBurn,
 }
 
 impl PlayerEvents {
@@ -38,16 +42,20 @@ impl PlayerEvents {
             "jump" => Some(PlayerEvents::Jump),
             "sprint" => Some(PlayerEvents::Sprint),
             "roll" => Some(PlayerEvents::Roll),
+            "low_burn" => Some(PlayerEvents::LowBurn),
             _ => None,
         }
     }
 
-    pub fn timeout(&self) -> u32 {
+    /// This determines the number of frames a player event should be held in a vec of registered events before expiring and being removed.
+    /// -1 means the event should persist until the button is released
+    pub fn timeout(&self) -> i8 {
         match self {
             PlayerEvents::Jump => 12,
             PlayerEvents::Crouch => 10,
             PlayerEvents::Roll => 10,
             PlayerEvents::Sprint => 10,
+            PlayerEvents::LowBurn => -1,
         }
     }
 }
