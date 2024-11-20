@@ -1,4 +1,4 @@
-[gd_scene load_steps=138 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=148 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -795,21 +795,6 @@ animations = [{
 "speed": 12.0
 }]
 
-[sub_resource type="Animation" id="Animation_dw7p4"]
-resource_name = "dust"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-}
-
 [sub_resource type="Animation" id="Animation_gvpho"]
 length = 0.001
 tracks/0/type = "value"
@@ -825,11 +810,93 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_dw7p4"]
+resource_name = "dust"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ffg0s"]
 _data = {
 "RESET": SubResource("Animation_gvpho"),
 "dust": SubResource("Animation_dw7p4")
 }
+
+[sub_resource type="Curve" id="Curve_c3eya"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_vmj7c"]
+curve = SubResource("Curve_c3eya")
+
+[sub_resource type="Curve" id="Curve_v7y1h"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ji3np"]
+curve = SubResource("Curve_v7y1h")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jhvi2"]
+lifetime_randomness = 0.2
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 35.0
+emission_ring_radius = 35.0
+emission_ring_inner_radius = 20.0
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 3.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_ji3np")
+color = Color(0.642206, 0.193112, 0.066075, 0.843)
+alpha_curve = SubResource("CurveTexture_vmj7c")
+turbulence_enabled = true
+
+[sub_resource type="Curve" id="Curve_cjn1i"]
+_data = [Vector2(0.004, 0), 0.0, 0.0, 0, 0, Vector2(0.496, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qr3x8"]
+curve = SubResource("Curve_cjn1i")
+
+[sub_resource type="Curve" id="Curve_ho4ri"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.496, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_44wpg"]
+curve = SubResource("Curve_ho4ri")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8cf5s"]
+lifetime_randomness = 0.2
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 35.0
+emission_ring_radius = 35.0
+emission_ring_inner_radius = 20.0
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 3.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_44wpg")
+color = Color(0, 0.450234, 0.725694, 1)
+alpha_curve = SubResource("CurveTexture_qr3x8")
+hue_variation_min = -0.02
+hue_variation_max = 0.02
+turbulence_enabled = true
+turbulence_noise_strength = 6.85
 
 [node name="Player" type="Player"]
 z_index = 1
@@ -957,6 +1024,24 @@ script = ExtResource("38_1uxd6")
 libraries = {
 "": SubResource("AnimationLibrary_ffg0s")
 }
+
+[node name="PewterParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(12, 1, 1, 1)
+show_behind_parent = true
+position = Vector2(0, -3)
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_jhvi2")
+lifetime = 2.0
+
+[node name="SteelParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(1, 1, 17, 1)
+show_behind_parent = true
+position = Vector2(0, 3)
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+lifetime = 2.0
 
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]

@@ -5,6 +5,7 @@ use std::time::Instant;
 
 use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
+use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
@@ -57,6 +58,8 @@ pub struct Player {
     player_vis: Vec<Gd<AnimatedSprite2D>>,
     metal_line: Option<Gd<MetalLine>>,
     line_selector: Option<Gd<Sprite2D>>,
+    pewter_particles: Option<Gd<GpuParticles2D>>,
+    steel_particles: Option<Gd<GpuParticles2D>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     metal_objects: Vec<Gd<MetalObject>>,
@@ -95,6 +98,8 @@ impl ICharacterBody2D for Player {
             player_vis: Vec::new(),
             metal_line: None,
             line_selector: None,
+            pewter_particles: None,
+            steel_particles: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             mass: 70.0,
@@ -826,6 +831,30 @@ impl Player {
         self.line_selector
             .as_ref()
             .expect("LineSelector node not found")
+            .clone()
+    }
+
+    pub fn get_pewter_particles(&mut self) -> Gd<GpuParticles2D> {
+        if self.pewter_particles.is_none() {
+            self.pewter_particles =
+                Some(self.base().get_node_as::<GpuParticles2D>("PewterParticles"));
+        }
+
+        self.pewter_particles
+            .as_ref()
+            .expect("PewterParticles node not found")
+            .clone()
+    }
+
+    pub fn get_steel_particles(&mut self) -> Gd<GpuParticles2D> {
+        if self.steel_particles.is_none() {
+            self.steel_particles =
+                Some(self.base().get_node_as::<GpuParticles2D>("SteelParticles"));
+        }
+
+        self.steel_particles
+            .as_ref()
+            .expect("SteelParticles node not found")
             .clone()
     }
 }
