@@ -1,4 +1,4 @@
-use crate::player::enums::metal_events::{BurnType, MetalEvents};
+use crate::player::enums::metal_events::MetalEvents;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
@@ -25,13 +25,13 @@ impl Pewter {
 impl Metal for Pewter {
     fn burn(&mut self, player: &mut Player) {
         self.current_reserve -= self.burn_rate;
-        player.set_run_speed(player.get_run_speed() * 1.5);
+        player.set_run_speed(player.get_run_speed() * 2.0);
         player.set_jump_force(player.get_jump_force() * 1.5);
     }
 
     fn low_burn(&mut self, player: &mut Player) {
         self.current_reserve -= self.low_burn_rate;
-        player.set_run_speed(player.get_run_speed() * 1.2);
+        player.set_run_speed(player.get_run_speed() * 1.5);
         player.set_jump_force(player.get_jump_force() * 1.2);
     }
 
@@ -45,9 +45,9 @@ impl Metal for Pewter {
 
         self.show_particles = true;
 
-        if input_manager.fetch_metal_event(MetalEvents::Pewter(BurnType::Burn)) {
+        if input_manager.fetch_metal_event(MetalEvents::Pewter) {
             self.burn(player);
-        } else if input_manager.fetch_metal_event(MetalEvents::Pewter(BurnType::LowBurn)) {
+        } else if input_manager.fetch_metal_event(MetalEvents::PewterLowBurn) {
             self.low_burn(player);
         } else {
             self.show_particles = false;
