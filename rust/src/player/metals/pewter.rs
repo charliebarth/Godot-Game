@@ -7,6 +7,7 @@ pub struct Pewter {
     current_reserve: f64,
     burn_rate: f64,
     low_burn_rate: f64,
+    show_particles: bool,
 }
 
 impl Pewter {
@@ -16,6 +17,7 @@ impl Pewter {
             current_reserve,
             burn_rate,
             low_burn_rate,
+            show_particles: false,
         }
     }
 }
@@ -41,12 +43,19 @@ impl Metal for Pewter {
             return;
         }
 
+        self.show_particles = true;
+
         if input_manager.fetch_metal_event(MetalEvents::Pewter(BurnType::Burn)) {
             self.burn(player);
         } else if input_manager.fetch_metal_event(MetalEvents::Pewter(BurnType::LowBurn)) {
             self.low_burn(player);
+        } else {
+            self.show_particles = false;
         }
 
+        player
+            .get_pewter_particles()
+            .set_visible(self.show_particles);
         // let mut metal_reserve_bar_manager_godot = player.get_metal_reserve_bar_manager();
         // let mut metal_reserve_bar_manager = metal_reserve_bar_manager_godot.bind_mut();
         // metal_reserve_bar_manager.adjust_bar_amount("pewter", self.current_reserve);

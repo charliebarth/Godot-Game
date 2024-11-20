@@ -15,6 +15,7 @@ pub struct Steel {
     was_low_burn: bool,
     /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
     push: f32,
+    show_particles: bool,
 }
 
 impl Steel {
@@ -26,6 +27,7 @@ impl Steel {
             low_burn_rate,
             was_low_burn: false,
             push: 0.0,
+            show_particles: false,
         }
     }
 }
@@ -91,6 +93,7 @@ impl Metal for Steel {
     fn update(&mut self, player: &mut Player) {
         let mut godot_input_manager = player.get_input_manager();
         let mut input_manager = godot_input_manager.bind_mut();
+        self.show_particles = false;
 
         if input_manager.fetch_metal_event(MetalEvents::Steel(BurnType::Burn)) {
             self.push = -1.0;
@@ -103,6 +106,7 @@ impl Metal for Steel {
         // Burning is an actual steel push
         if self.current_reserve > 0.0 && self.push != 0.0 {
             self.burn(player);
+            self.show_particles = true;
         } else {
             player.set_is_steel_burning(false);
         }
@@ -112,6 +116,7 @@ impl Metal for Steel {
             && input_manager.fetch_metal_event(MetalEvents::SteelLowBurn(BurnType::LowBurn))
         {
             self.low_burn(player);
+            self.show_particles = true;
         } else if self.was_low_burn {
             self.was_low_burn = false;
 
@@ -123,6 +128,9 @@ impl Metal for Steel {
             metal_line.queue_redraw();
         }
 
+        player
+            .get_steel_particles()
+            .set_visible(self.show_particles);
         // let mut metal_reserve_bar_manager_godot = player.get_metal_reserve_bar_manager();
         // let mut metal_reserve_bar_manager = metal_reserve_bar_manager_godot.bind_mut();
         // metal_reserve_bar_manager.adjust_bar_amount("steel", self.current_reserve);
