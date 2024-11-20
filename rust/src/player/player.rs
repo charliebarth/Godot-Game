@@ -718,6 +718,29 @@ impl Player {
 
         nearest_metal_object
     }
+    
+    /// Inflict damage to the player and update the health bar
+    /// 
+    /// # Arguments
+    /// * `damage` - The amount of damage to inflict
+    pub fn inflict_damage(&mut self, damage: f64) {
+        if self.health - damage > MIN_HEALTH {
+            self.adjust_health(-damage);
+        } else {
+            // Player has died
+        }
+    }
+    
+    #[func]
+    /// Deal damage to another player and update their health bar
+    /// 
+    /// # Arguments
+    /// * `player` - The player to deal damage to
+    /// * `damage` - The amount of damage to deal
+    pub fn deal_damage(&mut self, mut player: Gd<Player>, damage: f64) {
+        player.bind_mut().inflict_damage(damage);
+    }
+    
 }
 
 /// Getters for nodes
