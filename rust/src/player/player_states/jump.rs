@@ -5,10 +5,6 @@ use crate::player::{
     player::Player,
     traits::player_state::PlayerState,
 };
-use crate::player::enums::player_events::PlayerEvents;
-// TODO: Allow the player to flip direction in the first couple of frames of the jump
-// TODO: Only reduce the backwards momentum if the signum of the horizontal velocity is opposite.
-// If the players momentum is in the same direction or zero, then don't reduce it.
 
 const JUMP_GRAVITY: f64 = 980.0;
 
@@ -36,8 +32,7 @@ impl PlayerState for Jump {
             next_state = PlayerStates::Land;
         } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
             next_state = PlayerStates::Attack;
-        }
-        else {
+        } else {
             next_state = PlayerStates::Jump;
         }
 

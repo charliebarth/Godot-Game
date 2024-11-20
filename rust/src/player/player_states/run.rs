@@ -22,7 +22,9 @@ impl PlayerState for Run {
 
         if horizontal_dir == 0.0 {
             next_state = PlayerStates::Idle;
-        } else if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
+        } else if input_manager.check_for_player_event(PlayerEvents::Jump)
+            && player.jump_available()
+        {
             next_state = PlayerStates::Jump;
         } else if !player.base().is_on_floor() {
             next_state = PlayerStates::Fall;
@@ -65,7 +67,6 @@ impl Run {
             acceleration: run_strength * speed,
         });
 
-        // TODO: Chagne this to be based on the actual speed of the player
         let animation_speed = if run_strength.abs() < 0.25 {
             0.25
         } else {

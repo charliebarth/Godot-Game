@@ -46,7 +46,6 @@ impl Metal for Steel {
 
         player.set_is_steel_burning(true);
         player.set_state(PlayerStates::Fall);
-        // TODO: If not on the floor set the state to fall (push would interupt a jump)
         self.current_reserve -= self.burn_rate;
         // TODO: Make constant
         let max_acceleration: f32 = 700.0;
