@@ -1,4 +1,4 @@
-[gd_scene load_steps=128 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=129 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -771,7 +771,19 @@ size = Vector2(958, 540)
 [sub_resource type="CircleShape2D" id="CircleShape2D_fwaiq"]
 radius = 231.019
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fcwur"]
+size = Vector2(24.5, 39)
+
 [node name="Player" type="Player"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
 z_index = 1
 script = ExtResource("1_pp08i")
 
@@ -822,14 +834,44 @@ position = Vector2(0, 1)
 zoom = Vector2(2, 2)
 
 [node name="InputManager" type="InputManager" parent="."]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
 offset_left = -468.0
 offset_top = -241.0
 offset_right = -405.0
 offset_bottom = -200.0
+script = null
 
 [node name="MetalManager" type="MetalManager" parent="."]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
 offset_left = -385.0
@@ -864,8 +906,18 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_indkr")
 
 [node name="MetalLine" type="MetalLine" parent="."]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
 z_index = -1
 position = Vector2(0, -9)
+script = null
 
 [node name="LineSelector" type="Sprite2D" parent="."]
 position = Vector2(80, 6)
@@ -874,10 +926,26 @@ texture = ExtResource("30_o8iik")
 script = ExtResource("31_hw5a7")
 
 [node name="AllomanticRange" type="AllomanticRange" parent="."]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AllomanticRange"]
 position = Vector2(0, 5)
 shape = SubResource("CircleShape2D_fwaiq")
+
+[node name="MeleeAttack" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeAttack"]
+position = Vector2(19.75, -1)
+shape = SubResource("RectangleShape2D_fcwur")
 
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
@@ -886,5 +954,3 @@ shape = SubResource("CircleShape2D_fwaiq")
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
-[connection signal="body_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]
-[connection signal="body_exited" from="AllomanticRange" to="AllomanticRange" method="exit_range"]
