@@ -10,6 +10,7 @@ use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
+use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
@@ -17,6 +18,7 @@ use crate::metal_object::MetalObject;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::enums::force::Force;
+use super::enums::player_events::PlayerEvents;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
 use super::input_manager::InputManager;
@@ -122,6 +124,18 @@ impl ICharacterBody2D for Player {
     }
 
     fn physics_process(&mut self, delta: f64) {
+        if self.health <= 0.0 {
+            self.die();
+        }
+
+        if self
+            .get_input_manager()
+            .bind_mut()
+            .check_for_player_event(PlayerEvents::Die)
+        {
+            self.adjust_health(-100.0);
+        }
+
         self.set_delta(delta);
 
         self.add_force(Force::Gravity {
@@ -151,6 +165,24 @@ impl ICharacterBody2D for Player {
 
 #[godot_api]
 impl Player {
+    fn die(&mut self) {
+        let mut camera = Camera2D::new_alloc();
+        camera.set_name("OverviewCamera".into());
+        camera.set_position(Vector2::new(20.0, -225.0));
+        camera.set_zoom(Vector2::new(0.37, 0.37));
+
+        //overview_container.set_canvas_cull_mask(1);
+        let mut parent_viewport = self
+            .base()
+            .get_parent()
+            .unwrap()
+            .try_cast::<SubViewport>()
+            .unwrap();
+
+        parent_viewport.set_canvas_cull_mask(1);
+        parent_viewport.add_child(camera);
+        self.base_mut().queue_free();
+    }
     /// Set the current state of the player and trigger the enter method of the new state
     /// This method also sets the previous state of the player to the current state
     /// The enter method of the new state is triggered to allow for any initial and/orone-time logic to be executed

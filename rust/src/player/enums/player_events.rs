@@ -16,6 +16,7 @@ impl TriggerEvents {
             PlayerEvents::Roll => TriggerEvents::OnRelease,
             PlayerEvents::Sprint => TriggerEvents::OnPress,
             PlayerEvents::LowBurn => TriggerEvents::OnPress,
+            PlayerEvents::Die => TriggerEvents::OnPress,
         }
     }
 }
@@ -33,6 +34,7 @@ pub enum PlayerEvents {
     /// This is a modifier key on the controller.
     /// If button is held/the event is registered and a metal event is triggered, the metal event will be triggered with the LowBurn variant.
     LowBurn,
+    Die,
 }
 
 impl PlayerEvents {
@@ -43,6 +45,7 @@ impl PlayerEvents {
             "sprint" => Some(PlayerEvents::Sprint),
             "roll" => Some(PlayerEvents::Roll),
             "low_burn" => Some(PlayerEvents::LowBurn),
+            "die" => Some(PlayerEvents::Die),
             _ => None,
         }
     }
@@ -56,6 +59,7 @@ impl PlayerEvents {
             PlayerEvents::Roll => 10,
             PlayerEvents::Sprint => 10,
             PlayerEvents::LowBurn => -1,
+            PlayerEvents::Die => 10,
         }
     }
 }
