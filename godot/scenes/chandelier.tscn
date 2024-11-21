@@ -1,0 +1,89 @@
+[gd_scene load_steps=11 format=3 uid="uid://ryehfll5666w"]
+
+[ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="1_18es1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mm8nw"]
+atlas = ExtResource("1_18es1")
+region = Rect2(640, 280, 64, 56)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g0i8p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mm8nw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_ijyp7"]
+offsets = PackedFloat32Array(0, 0.387387, 0.77027)
+colors = PackedColorArray(1, 0.821179, 0.236939, 1, 1, 0.390478, 0, 1, 1, 0, 0.0117647, 0.580392)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_28xaq"]
+gradient = SubResource("Gradient_ijyp7")
+
+[sub_resource type="Curve" id="Curve_8vlde"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_50vpt"]
+curve = SubResource("Curve_8vlde")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lbqb6"]
+particle_flag_disable_z = true
+gravity = Vector3(0, -25, 0)
+scale_min = 2.0
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_50vpt")
+color_ramp = SubResource("GradientTexture1D_28xaq")
+turbulence_enabled = true
+turbulence_noise_strength = 10.0
+
+[sub_resource type="Gradient" id="Gradient_c834n"]
+offsets = PackedFloat32Array(0, 0.837333)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_4on4l"]
+gradient = SubResource("Gradient_c834n")
+fill = 1
+fill_from = Vector2(0.512821, 0.508547)
+fill_to = Vector2(0.944444, 0.136752)
+
+[node name="chandelier" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(39, 3)
+sprite_frames = SubResource("SpriteFrames_g0i8p")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2(20, -4)
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_lbqb6")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
+position = Vector2(30, -2)
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_lbqb6")
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="."]
+position = Vector2(38, -3)
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_lbqb6")
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="."]
+position = Vector2(47, -1)
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_lbqb6")
+
+[node name="GPUParticles2D5" type="GPUParticles2D" parent="."]
+position = Vector2(56, -4)
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_lbqb6")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(38, 5)
+scale = Vector2(5.3833, 5.3833)
+color = Color(0.816138, 0.274432, 9.62615e-08, 1)
+texture = SubResource("GradientTexture2D_4on4l")
