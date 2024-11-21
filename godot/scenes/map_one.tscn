@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=14 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
+[ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
@@ -121,3 +122,6 @@ position = Vector2(-945, -402)
 
 [node name="Torch6" parent="." instance=ExtResource("4_0mjxy")]
 position = Vector2(308, -410)
+
+[node name="camp_fire" parent="." instance=ExtResource("5_hth5s")]
+position = Vector2(1100, -84)
