@@ -33,7 +33,7 @@ impl INode2D for InputManager {
             return;
         }
 
-        let button_name = self.event_to_input_name(event.clone());
+        let button_name = InputManager::event_to_input_name(event.clone());
 
         if let Some(player_event) = PlayerEvents::from_string(&button_name) {
             self.process_player_events(player_event, event);
@@ -62,7 +62,8 @@ impl InputManager {
         }
     }
 
-    fn event_to_input_name(&self, event: Gd<InputEvent>) -> String {
+    // Static method
+    pub fn event_to_input_name(event: Gd<InputEvent>) -> String {
         let mut input_map = InputMap::singleton();
         let inputs = input_map.get_actions();
 
