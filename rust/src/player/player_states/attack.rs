@@ -1,4 +1,4 @@
-use crate::player::{player::Player, traits::player_state::PlayerState};
+/*use crate::player::{player::Player, traits::player_state::PlayerState};
 
 #[derive(Clone, Copy)]
 pub struct Attack;
@@ -8,7 +8,9 @@ impl PlayerState for Attack {
         // Set the animation speed for the melee attack
         player.set_animation_speed(1.0);
         // damage the enemy
-        player.deal_damage();
+        /*if let Some(target_player) = player.get_target_player() {
+            player.deal_damage(target_player, 10.0); // Deal 10 damage to the target player
+        }*/
         
     }
 
@@ -18,4 +20,4 @@ impl PlayerState for Attack {
             player.set_state(previous_state);
         }
     }
-}
+}*/

@@ -63,6 +63,8 @@ pub struct Player {
     /// The mass of the player in kilograms
     mass: f32,
     is_steel_burning: bool,
+    /// If the player is attacking or not
+    is_attacking: bool,
 }
 
 #[godot_api]
@@ -99,6 +101,7 @@ impl ICharacterBody2D for Player {
             metal_objects: Vec::new(),
             mass: 70.0,
             is_steel_burning: false,
+            is_attacking: false,
         }
     }
 
@@ -730,19 +733,32 @@ impl Player {
             // Player has died
         }
     }
-    
-    #[func]
-    /// Deal damage to another player and update their health bar
-    /// 
-    /// # Arguments
-    /// * `player` - The player to deal damage to
-    /// * `damage` - The amount of damage to deal
-    pub fn deal_damage(&mut self, mut player: Gd<Player>, damage: f64) {
-        player.bind_mut().inflict_damage(damage);
-    }
-    
-}
 
+    /// Enable the hitbox of the player when they are attacking
+    ///
+    /// # Arguments
+    /// * `owner` - A reference to the node for the hitbox of the player
+    pub fn enable_hitbox(&mut self, owner: &Node2D) {
+        self.is_attacking = true;
+        // Get the hitbox of the player
+        let hitbox = owner.get_node("Hitbox").expect("Hitbox not found"); // TODO: might need to get the node differently
+        // Enable the hitbox of the player
+        hitbox.set_monitoring(true);
+    }
+
+
+    /// Disable the hitbox of the player when they are not attacking
+    ///
+    /// # Arguments
+    /// * `owner` - A reference to the node for the hitbox of the player
+    pub fn disable_hitbox(&mut self, owner: &Node2D) {
+        self.is_attacking = false;
+        // Get the hitbox of the player
+        let hitbox = owner.get_node("Hitbox").expect("Hitbox not found"); // TODO: might need to get the node differently
+        // Disable the hitbox of the player
+        hitbox.set_monitoring(false);
+    }
+}
 /// Getters for nodes
 impl Player {
     /// Getter for the InputManager node
