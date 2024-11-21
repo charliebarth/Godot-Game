@@ -1,10 +1,11 @@
-use godot::classes::{RigidBody2D, IRigidBody2D};
+use godot::classes::{IRigidBody2D, InputEvent, RigidBody2D};
 /// Represents a coin.
 ///
 /// Author : Trinity Pittman
 /// Version : 10/02/2024
 use godot::prelude::*;
 
+use crate::player::input_manager::InputManager;
 use crate::player::player::Player;
 
 const SPEED: f64 = 25.0;
@@ -16,6 +17,21 @@ pub enum CoinState {
     Thrown,
 }
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
+pub enum CoinEvents {
+    Throw,
+    Drop,
+}
+
+impl CoinEvents {
+    pub fn from_string(button: &str) -> Option<CoinEvents> {
+        match button {
+            "throw" => Some(CoinEvents::Throw),
+            "drop" => Some(CoinEvents::Drop),
+            _ => None,
+        }
+    }
+}
 
 /// Represents a coin
 #[derive(GodotClass)]
@@ -25,6 +41,7 @@ pub struct Coin {
     state: CoinState,
     weight: i32,
 }
+
 
 #[godot_api]
 impl IRigidBody2D for Coin {
@@ -46,9 +63,21 @@ impl IRigidBody2D for Coin {
 
     // TODO Unfinished
     fn physics_process(&mut self, delta: f64) {
-        
+        if self.state == CoinState::PickedUp {
+
+        }
+    }
+
+    fn input(&mut self, event: Gd<InputEvent>) {
+        let button_name = InputManager::event_to_input_name(event.clone());
+
+        if let Some(coin_event) = CoinEvents::from_string(&button_name) {
+            self.process_coin_events(coin_event, event);
+        }
+
     }
 }
+
 
 #[godot_api]
 impl Coin {
@@ -84,11 +113,8 @@ impl Coin {
         if self.state == CoinState::PickedUp {
             self.set_state(CoinState::Thrown);
             
-
-            // Throw it? add velocity? 
+            // this is probably dependent on player direction... 
             self.base_mut().apply_impulse(dir * force);
-
-
         }
     }
 
@@ -102,5 +128,11 @@ impl Coin {
     #[func]
     pub fn is_metal(&self) -> bool {
         true // A coin is made of metal
+    }
+
+    fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>){
+        if event.is_action_pressed(StringName::from("throw")) {
+            self.throw(Vector2::new(0., 0.), Vector2::new(150., -200.));
+        }
     }
 }
