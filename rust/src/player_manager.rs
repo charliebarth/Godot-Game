@@ -17,7 +17,7 @@ const TWO_PLAYER_HEIGHT: f32 = 540.0;
 const THREE_PLAYER_WIDTH: f32 = 960.0;
 const THREE_PLAYER_HEIGHT: f32 = 540.0;
 
-use crate::player::player::Player;
+use crate::{main_menu::MainMenu, player::player::Player};
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct PlayerManager {
@@ -76,6 +76,14 @@ impl INode2D for PlayerManager {
             player.set_name(format!("Player{}", self.current_player_id).into());
             self.players.push(player);
             self.devices.push(device_id);
+
+            let mut main_menu = self
+                .base()
+                .get_parent()
+                .unwrap()
+                .get_node_as::<MainMenu>("Main Menu");
+
+            main_menu.bind_mut().add_player(self.current_player_id);
         }
     }
 }
