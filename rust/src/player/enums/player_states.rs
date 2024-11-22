@@ -3,7 +3,7 @@ use crate::player::{
     player_states::{
         crouch::Crouch, crouch_end::CrouchEnd, crouch_start::CrouchStart, fall::Fall, idle::Idle,
         jump::Jump, land::Land, roll::Roll, run::Run, slide::Slide, slide_crouch::SlideCrouch,
-        sprint::Sprint,
+        sprint::Sprint, attack::Attack,
     },
     traits::player_state::PlayerState,
 };
@@ -24,6 +24,7 @@ pub enum PlayerStates {
     Slide,
     Sprint,
     SlideCrouch,
+    Attack,
 }
 
 impl PlayerStates {
@@ -41,6 +42,7 @@ impl PlayerStates {
             PlayerStates::Slide => "slide",
             PlayerStates::Sprint => "run",
             PlayerStates::SlideCrouch => "slide",
+            PlayerStates::Attack => "attack",
         }
     }
 
@@ -58,6 +60,7 @@ impl PlayerStates {
             PlayerStates::Slide => Slide::update(player),
             PlayerStates::SlideCrouch => SlideCrouch::update(player),
             PlayerStates::Sprint => Sprint::update(player),
+            PlayerStates::Attack => Attack::update(player),
         }
     }
 
@@ -75,6 +78,7 @@ impl PlayerStates {
             PlayerStates::Slide => Slide::enter(player),
             PlayerStates::SlideCrouch => SlideCrouch::enter(player),
             PlayerStates::Sprint => Sprint::enter(player),
+            PlayerStates::Attack => Attack::enter(player),
         }
     }
 }
