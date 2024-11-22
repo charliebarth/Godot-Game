@@ -1,9 +1,9 @@
 extends Control
 
-@onready var map_scene = preload("res://scenes/game.tscn") as PackedScene
-
 func _on_player_pressed() -> void:
-	get_tree().change_scene_to_packed(map_scene)
+	var player_manaegr = get_node("/root/Game/PlayerManager") as PlayerManager
+	player_manaegr.start()
+	get_parent().queue_free()
 
 
 func _on_settings_pressed() -> void:
