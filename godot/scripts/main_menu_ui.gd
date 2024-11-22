@@ -7,8 +7,8 @@ func _on_player_pressed() -> void:
 	if attempt_start:
 		game.start_game()
 	else:
-		pass
-		# Tell the user not enough players
+		var main_menu = get_parent() as MainMenu
+		main_menu.add_notification("Too few players connected")
 
 
 func _on_settings_pressed() -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=4 uid="uid://c1l6h04x8ew74"]
+[gd_scene load_steps=64 format=4 uid="uid://c1l6h04x8ew74"]
 
 [ext_resource type="Shader" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="2_dfsnj"]
@@ -8870,7 +8870,47 @@ shader_parameter/density = 0.6
 shader_parameter/speed = Vector2(0.001, 0.001)
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_u576d")
 
-[node name="Main Menu" type="MainMenu"]
+[sub_resource type="Theme" id="Theme_2phby"]
+default_font_size = 20
+
+[sub_resource type="Animation" id="Animation_crg34"]
+resource_name = "fade_out"
+length = 7.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 5.5, 7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_lb51x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_30skv"]
+_data = {
+"RESET": SubResource("Animation_lb51x"),
+"fade_out": SubResource("Animation_crg34")
+}
+
+[node name="MainMenu" type="MainMenu"]
 
 [node name="Map" type="TileMapLayer" parent="."]
 material = SubResource("ShaderMaterial_ubq02")
@@ -8941,3 +8981,16 @@ offset_left = -42.0
 offset_top = -452.0
 offset_right = -42.0
 offset_bottom = -452.0
+
+[node name="NotificationBox" type="RichTextLabel" parent="."]
+offset_left = -152.0
+offset_top = -498.0
+offset_right = 156.0
+offset_bottom = -458.0
+theme = SubResource("Theme_2phby")
+bbcode_enabled = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="NotificationBox"]
+libraries = {
+"": SubResource("AnimationLibrary_30skv")
+}
