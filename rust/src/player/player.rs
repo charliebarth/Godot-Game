@@ -15,6 +15,7 @@ use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
 use crate::metal_object::MetalObject;
+use crate::player_manager::PlayerManager;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::enums::force::Force;
@@ -182,6 +183,10 @@ impl Player {
         parent_viewport.set_canvas_cull_mask(1);
         parent_viewport.add_child(camera);
         self.base_mut().queue_free();
+        self.base()
+            .get_node_as::<PlayerManager>("/root/Game/PlayerManager")
+            .bind_mut()
+            .remove_player(self.player_id, self.device_id);
     }
     /// Set the current state of the player and trigger the enter method of the new state
     /// This method also sets the previous state of the player to the current state

@@ -1,9 +1,14 @@
 extends Control
 
+@onready var game = get_node("/root/Game") as Game
+
 func _on_player_pressed() -> void:
-	var player_manaegr = get_node("/root/Game/PlayerManager") as PlayerManager
-	player_manaegr.start()
-	get_parent().queue_free()
+	var attempt_start = game.attempt_start()
+	if attempt_start:
+		game.start_game()
+	else:
+		pass
+		# Tell the user not enough players
 
 
 func _on_settings_pressed() -> void:

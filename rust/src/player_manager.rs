@@ -17,7 +17,11 @@ const TWO_PLAYER_HEIGHT: f32 = 540.0;
 const THREE_PLAYER_WIDTH: f32 = 960.0;
 const THREE_PLAYER_HEIGHT: f32 = 540.0;
 
-use crate::{main_menu::MainMenu, player::player::Player};
+use crate::{
+    game::Game,
+    main_menu::{self, MainMenu},
+    player::player::Player,
+};
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct PlayerManager {
@@ -25,12 +29,13 @@ pub struct PlayerManager {
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
     devices: Vec<i32>,
-    player_viewports: HashMap<i32, Gd<SubViewport>>,
     register_button: StringName,
     player_scene: Gd<PackedScene>,
-    map_scene: Gd<PackedScene>,
     current_player_id: i32,
     started: bool,
+    num_alive_players: i32,
+    map: Option<Gd<Node2D>>,
+    game: Option<Gd<Game>>,
 }
 
 #[godot_api]
@@ -40,12 +45,19 @@ impl INode2D for PlayerManager {
             base,
             players: Vec::new(),
             devices: Vec::new(),
-            player_viewports: HashMap::new(),
             register_button: "jump".into(),
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
-            map_scene: load::<PackedScene>("res://scenes/map_one.tscn"),
             current_player_id: 0,
             started: false,
+            num_alive_players: 0,
+            map: None,
+            game: None,
+        }
+    }
+
+    fn process(&mut self, _delta: f64) {
+        if self.started && self.num_alive_players == 1 {
+            self.end_game();
         }
     }
 
@@ -81,18 +93,38 @@ impl INode2D for PlayerManager {
                 .base()
                 .get_parent()
                 .unwrap()
-                .get_node_as::<MainMenu>("Main Menu");
+                .get_node_as::<MainMenu>("MainMenu");
 
             main_menu.bind_mut().add_player(self.current_player_id);
+            self.num_alive_players += 1;
         }
     }
 }
 
 #[godot_api]
 impl PlayerManager {
+    pub fn get_number_of_players(&self) -> i32 {
+        self.players.len() as i32
+    }
+
+    pub fn set_map(&mut self, map: Gd<Node2D>) {
+        self.map = Some(map);
+    }
+
+    fn end_game(&mut self) {
+        self.started = false;
+        for mut child in self.base_mut().get_children().iter_shared() {
+            child.queue_free();
+        }
+
+        self.get_game()
+            .bind_mut()
+            .end_game(1, self.players.len() as i32);
+    }
+
     #[func]
     /// This function should be called when a gamemode is started as it will spawn the players and give them their own viewports.
-    fn start(&mut self) {
+    pub fn start(&mut self) {
         self.started = true;
         let mut players = self.players.clone();
         for player in players.iter_mut() {
@@ -105,6 +137,12 @@ impl PlayerManager {
             let spawn_position = self.select_spawn_point(player_id);
             player.set_position(spawn_position);
         }
+    }
+
+    pub fn remove_player(&mut self, player_id: i32, device_id: i32) {
+        self.num_alive_players -= 1;
+        self.players.remove(player_id as usize - 1);
+        self.devices.retain(|&id| id != device_id);
     }
 
     fn select_spawn_point(&self, player_id: i32) -> Vector2 {
@@ -381,12 +419,17 @@ impl PlayerManager {
         split_screen_two.set_anchors_preset(LayoutPreset::TOP_LEFT);
     }
 
-    fn reparent_level(&self) {
-        let level = self.map_scene.instantiate_as::<Node2D>();
-        let mut p1_viewport = self
-            .base()
-            .get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
-        p1_viewport.add_child(level);
+    fn reparent_level(&mut self) {
+        godot_print!("Reparenting level");
+        if let Some(map) = self.map.take() {
+            let mut p1_viewport = self
+                .base()
+                .get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
+            p1_viewport.add_child(map);
+        } else {
+            godot_error!("Map not found. Unable to start game.");
+            self.base().get_tree().expect("Tree not found").quit();
+        }
     }
 
     fn remove_fourth_viewport_camera(&self) {
@@ -411,5 +454,16 @@ impl PlayerManager {
 
         overview_container.set_canvas_cull_mask(1);
         overview_container.add_child(camera);
+    }
+
+    fn get_game(&mut self) -> Gd<Game> {
+        if self.game.is_none() {
+            self.game = Some(self.base().get_node_as::<Game>("/root/Game"));
+        }
+
+        self.game
+            .as_ref()
+            .expect("MetalLine node not found")
+            .clone()
     }
 }
