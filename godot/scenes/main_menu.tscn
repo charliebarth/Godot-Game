@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=4 uid="uid://c1l6h04x8ew74"]
+[gd_scene load_steps=47 format=4 uid="uid://c1l6h04x8ew74"]
 
 [ext_resource type="Shader" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="2_dfsnj"]
@@ -8716,13 +8716,6 @@ shader_parameter/density = 0.6
 shader_parameter/speed = Vector2(0.001, 0.001)
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_u576d")
 
-[sub_resource type="Environment" id="Environment_55l1u"]
-background_mode = 3
-glow_enabled = true
-glow_intensity = 0.4
-glow_strength = 0.6
-glow_blend_mode = 0
-
 [node name="Main Menu" type="Node2D"]
 
 [node name="Map" type="TileMapLayer" parent="."]
@@ -8752,7 +8745,7 @@ position = Vector2(-14, -368)
 color = Color(0.703808, 0.703808, 0.703808, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-14, -368)
+position = Vector2(0, -368)
 zoom = Vector2(2.4, 2.4)
 
 [node name="Torch" parent="." instance=ExtResource("13_k8rir")]
@@ -8771,10 +8764,7 @@ offset_bottom = 202.0
 color = Color(0.725, 0.725, 0.725, 0.535)
 
 [node name="Main Menu UI" parent="." instance=ExtResource("14_62cor")]
-offset_left = -37.0
-offset_top = -453.0
-offset_right = -37.0
-offset_bottom = -453.0
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_55l1u")
+offset_left = -42.0
+offset_top = -452.0
+offset_right = -42.0
+offset_bottom = -452.0

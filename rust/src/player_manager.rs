@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use godot::{
     classes::{
         control::LayoutPreset, viewport::DefaultCanvasItemTextureFilter, HBoxContainer, InputEvent,
@@ -21,9 +23,13 @@ use crate::player::player::Player;
 pub struct PlayerManager {
     base: Base<Node2D>,
     /// A map of input device IDs to players.
-    players: Vec<i32>,
+    players: Vec<Gd<Player>>,
+    devices: Vec<i32>,
+    player_viewports: HashMap<i32, Gd<SubViewport>>,
     register_button: StringName,
     player_scene: Gd<PackedScene>,
+    map_scene: Gd<PackedScene>,
+    current_player_id: i32,
 }
 
 #[godot_api]
@@ -32,53 +38,64 @@ impl INode2D for PlayerManager {
         Self {
             base,
             players: Vec::new(),
+            devices: Vec::new(),
+            player_viewports: HashMap::new(),
             register_button: "jump".into(),
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
+            map_scene: load::<PackedScene>("res://scenes/map_one.tscn"),
+            current_player_id: 0,
         }
     }
 
+    /// This listens for a specific button press (jump by default)
+    /// When the button is pressed if it is the first time that device has pressed the button
+    /// the device id will be saved and a player will be created and assigned that device id.
+    ///
+    /// Note: This does not spawn players or start the game simply tracks players and their device ids.
+    /// Players can be spawned with the start method.
+    ///
+    /// Arguments:
+    /// * `event` - The input event that triggered this method.
     fn input(&mut self, event: Gd<InputEvent>) {
-        let device = event.get_device();
+        let device_id = event.get_device();
 
         let input_map = InputMap::singleton();
         let register_button = self.register_button.clone();
 
         if event.is_pressed()
-            && !self.players.contains(&device)
+            && !self.devices.contains(&device_id)
             && input_map.event_is_action(event.clone(), register_button)
         {
-            self.players.push(device);
-            let player_id = self.players.len();
-
+            self.current_player_id += 1;
             let mut player = self.player_scene.instantiate_as::<Player>();
-            player.bind_mut().set_player_id(player_id as i32);
-            player.set_name(format!("Player{}", player_id).into());
-
-            let mut root = self.base().get_parent().unwrap();
-
-            self.split_screen();
-
-            let spawn_position = self.select_spawn_point(player_id);
-
-            player.bind_mut().set_device_id(device);
-            player.set_position(spawn_position);
-
-            if self.players.len() == 1 {
-                let camera = root.get_node_as::<Camera2D>("OverviewCamera");
-                root.remove_child(camera);
-            }
-
-            self.assign_player_to_subviewport(player, player_id);
-
-            self.adjust_player_camera_zoom(root);
+            player.bind_mut().set_device_id(device_id);
+            player.bind_mut().set_player_id(self.current_player_id);
+            player.set_name(format!("Player{}", self.current_player_id).into());
+            self.players.push(player);
+            self.devices.push(device_id);
         }
     }
 }
 
+#[godot_api]
 impl PlayerManager {
-    fn select_spawn_point(&self, player_id: usize) -> Vector2 {
-        let level = self.base().get_parent().unwrap();
+    #[func]
+    /// This function should be called when a gamemode is started as it will spawn the players and give them their own viewports.
+    fn start(&mut self) {
+        let mut players = self.players.clone();
+        for player in players.iter_mut() {
+            let player_id = player.bind().get_player_id();
 
+            self.split_screen(player_id);
+            self.assign_player_to_subviewport(player.clone(), player_id);
+            self.adjust_player_camera_zoom(player_id);
+
+            let spawn_position = self.select_spawn_point(player_id);
+            player.set_position(spawn_position);
+        }
+    }
+
+    fn select_spawn_point(&self, player_id: i32) -> Vector2 {
         let spawn_point_name = match player_id {
             1 => "SpawnOne",
             2 => "SpawnTwo",
@@ -87,7 +104,7 @@ impl PlayerManager {
             _ => "SpawnOne",
         };
 
-        let spawn_point = level.get_node_as::<Marker2D>(format!(
+        let spawn_point = self.base().get_node_as::<Marker2D>(format!(
             "SplitScreenOne/PlayerOneContainer/PlayerOneViewport/MapOne/{}",
             spawn_point_name
         ));
@@ -95,27 +112,26 @@ impl PlayerManager {
         spawn_point.get_position()
     }
 
-    fn assign_player_to_subviewport(&self, player: Gd<Player>, player_id: usize) {
-        let root = self.base().get_parent().unwrap();
+    fn assign_player_to_subviewport(&self, player: Gd<Player>, player_id: i32) {
         let mut subviewport: Gd<SubViewport>;
         match player_id {
             1 => {
-                subviewport = root.get_node_as::<SubViewport>(
+                subviewport = self.base().get_node_as::<SubViewport>(
                     "SplitScreenOne/PlayerOneContainer/PlayerOneViewport",
                 );
             }
             2 => {
-                subviewport = root.get_node_as::<SubViewport>(
+                subviewport = self.base().get_node_as::<SubViewport>(
                     "SplitScreenTwo/PlayerTwoContainer/PlayerTwoViewport",
                 );
             }
             3 => {
-                subviewport = root.get_node_as::<SubViewport>(
+                subviewport = self.base().get_node_as::<SubViewport>(
                     "SplitScreenOne/PlayerThreeContainer/PlayerThreeViewport",
                 );
             }
             4 => {
-                subviewport = root.get_node_as::<SubViewport>(
+                subviewport = self.base().get_node_as::<SubViewport>(
                     "SplitScreenTwo/PlayerFourContainer/PlayerFourViewport",
                 );
             }
@@ -127,21 +143,21 @@ impl PlayerManager {
         subviewport.add_child(player);
     }
 
-    fn adjust_player_camera_zoom(&self, root: Gd<Node>) {
-        if self.players.len() == 2 {
-            self.adjust_two_player_camera_zoom(root);
-        } else if self.players.len() == 3 {
-            self.adjust_three_player_camera_zoom(root);
-        } else if self.players.len() == 4 {
-            self.adjust_four_player_camera_zoom(root);
+    fn adjust_player_camera_zoom(&self, player_id: i32) {
+        if player_id == 2 {
+            self.adjust_two_player_camera_zoom();
+        } else if player_id == 3 {
+            self.adjust_three_player_camera_zoom();
+        } else if player_id == 4 {
+            self.adjust_four_player_camera_zoom();
         }
     }
 
-    fn adjust_two_player_camera_zoom(&self, root: Gd<Node>) {
-        let mut camera1 = root.get_node_as::<Camera2D>(
+    fn adjust_two_player_camera_zoom(&self) {
+        let mut camera1 = self.base().get_node_as::<Camera2D>(
             "SplitScreenOne/PlayerOneContainer/PlayerOneViewport/Player1/Camera2D",
         );
-        let mut camera2 = root.get_node_as::<Camera2D>(
+        let mut camera2 = self.base().get_node_as::<Camera2D>(
             "SplitScreenTwo/PlayerTwoContainer/PlayerTwoViewport/Player2/Camera2D",
         );
 
@@ -149,39 +165,37 @@ impl PlayerManager {
         camera2.set_zoom(Vector2::new(1.0, 1.0));
     }
 
-    fn adjust_three_player_camera_zoom(&self, root: Gd<Node>) {
-        let mut camera3 = root.get_node_as::<Camera2D>(
+    fn adjust_three_player_camera_zoom(&self) {
+        let mut camera3 = self.base().get_node_as::<Camera2D>(
             "SplitScreenOne/PlayerThreeContainer/PlayerThreeViewport/Player3/Camera2D",
         );
 
         camera3.set_zoom(Vector2::new(1.0, 1.0));
     }
 
-    fn adjust_four_player_camera_zoom(&self, root: Gd<Node>) {
-        let mut camera4 = root.get_node_as::<Camera2D>(
+    fn adjust_four_player_camera_zoom(&self) {
+        let mut camera4 = self.base().get_node_as::<Camera2D>(
             "SplitScreenTwo/PlayerFourContainer/PlayerFourViewport/Player4/Camera2D",
         );
 
         camera4.set_zoom(Vector2::new(1.0, 1.0));
     }
 
-    fn split_screen(&self) {
-        let root = self.base().get_parent().unwrap();
-
-        match self.players.len() {
-            1 => self.one_player_split_screen(root),
-            2 => self.two_player_split_screen(root),
+    fn split_screen(&mut self, player_id: i32) {
+        match player_id {
+            1 => self.one_player_split_screen(),
+            2 => self.two_player_split_screen(),
             3 => {
-                self.three_player_split_screen(&root);
-                self.four_player_split_screen(&root);
-                self.add_fourth_viewport_camera(&root);
+                self.three_player_split_screen();
+                self.four_player_split_screen();
+                self.add_fourth_viewport_camera();
             }
-            4 => self.remove_fourth_viewport_camera(root),
+            4 => self.remove_fourth_viewport_camera(),
             _ => {}
         }
     }
 
-    fn one_player_split_screen(&self, mut root: Gd<Node>) {
+    fn one_player_split_screen(&mut self) {
         let mut split_screen_one = HBoxContainer::new_alloc();
         let mut p1_container = SubViewportContainer::new_alloc();
         let mut p1_viewport = SubViewport::new_alloc();
@@ -195,14 +209,14 @@ impl PlayerManager {
 
         p1_container.add_child(p1_viewport);
         split_screen_one.add_child(p1_container);
-        root.add_child(split_screen_one);
+        self.base_mut().add_child(split_screen_one);
 
         self.reparent_level();
-        self.assign_one_player_screen_sizes(root);
+        self.assign_one_player_screen_sizes();
     }
 
-    fn assign_one_player_screen_sizes(&self, root: Gd<Node>) {
-        let mut split_screen_one = root.get_node_as::<HBoxContainer>("SplitScreenOne");
+    fn assign_one_player_screen_sizes(&self) {
+        let mut split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
         let mut p1_viewport = p1_container.get_node_as::<SubViewport>("PlayerOneViewport");
@@ -215,9 +229,10 @@ impl PlayerManager {
         split_screen_one.set_size(Vector2::new(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT));
     }
 
-    fn two_player_split_screen(&self, mut root: Gd<Node>) {
-        let p1_viewport =
-            root.get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
+    fn two_player_split_screen(&mut self) {
+        let p1_viewport = self
+            .base()
+            .get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
 
         let mut split_screen_two = HBoxContainer::new_alloc();
         let mut p2_container = SubViewportContainer::new_alloc();
@@ -234,13 +249,13 @@ impl PlayerManager {
 
         p2_container.add_child(p2_viewport);
         split_screen_two.add_child(p2_container);
-        root.add_child(split_screen_two);
+        self.base_mut().add_child(split_screen_two);
 
-        self.assign_two_player_screen_sizes(root);
+        self.assign_two_player_screen_sizes();
     }
 
-    fn assign_two_player_screen_sizes(&self, root: Gd<Node>) {
-        let mut split_screen_one = root.get_node_as::<HBoxContainer>("SplitScreenOne");
+    fn assign_two_player_screen_sizes(&self) {
+        let mut split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
         let mut p1_viewport = p1_container.get_node_as::<SubViewport>("PlayerOneViewport");
@@ -253,7 +268,7 @@ impl PlayerManager {
         split_screen_one.set_size(Vector2::new(TWO_PLAYER_WIDTH, TWO_PLAYER_HEIGHT));
         split_screen_one.set_anchors_preset(LayoutPreset::CENTER_TOP);
 
-        let mut split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
+        let mut split_screen_two = self.base().get_node_as::<HBoxContainer>("SplitScreenTwo");
         let mut p2_container =
             split_screen_two.get_node_as::<SubViewportContainer>("PlayerTwoContainer");
         let mut p2_viewport = p2_container.get_node_as::<SubViewport>("PlayerTwoViewport");
@@ -267,8 +282,8 @@ impl PlayerManager {
         split_screen_two.set_anchors_preset(LayoutPreset::CENTER_TOP);
     }
 
-    fn three_player_split_screen(&self, root: &Gd<Node>) {
-        let mut split_screen_one = root.get_node_as::<HBoxContainer>("SplitScreenOne");
+    fn three_player_split_screen(&mut self) {
+        let mut split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let p1_viewport =
             split_screen_one.get_node_as::<SubViewport>("PlayerOneContainer/PlayerOneViewport");
 
@@ -285,11 +300,11 @@ impl PlayerManager {
         p3_container.add_child(p3_viewport);
         split_screen_one.add_child(p3_container);
 
-        self.assign_three_player_screen_sizes(root);
+        self.assign_three_player_screen_sizes();
     }
 
-    fn assign_three_player_screen_sizes(&self, root: &Gd<Node>) {
-        let split_screen_one = root.get_node_as::<HBoxContainer>("SplitScreenOne");
+    fn assign_three_player_screen_sizes(&self) {
+        let split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
             split_screen_one.get_node_as::<SubViewportContainer>("PlayerOneContainer");
         let mut p1_viewport = p1_container.get_node_as::<SubViewport>("PlayerOneViewport");
@@ -310,7 +325,7 @@ impl PlayerManager {
         ));
         p3_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
 
-        let split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
+        let split_screen_two = self.base().get_node_as::<HBoxContainer>("SplitScreenTwo");
         let mut p2_container =
             split_screen_two.get_node_as::<SubViewportContainer>("PlayerTwoContainer");
         let mut p2_viewport = p2_container.get_node_as::<SubViewport>("PlayerTwoViewport");
@@ -322,8 +337,8 @@ impl PlayerManager {
         p2_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
     }
 
-    fn four_player_split_screen(&self, root: &Gd<Node>) {
-        let mut split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
+    fn four_player_split_screen(&self) {
+        let mut split_screen_two = self.base().get_node_as::<HBoxContainer>("SplitScreenTwo");
         let p2_viewport =
             split_screen_two.get_node_as::<SubViewport>("PlayerTwoContainer/PlayerTwoViewport");
 
@@ -340,11 +355,11 @@ impl PlayerManager {
         p4_container.add_child(p4_viewport);
         split_screen_two.add_child(p4_container);
 
-        self.assign_four_player_screen_sizes(root);
+        self.assign_four_player_screen_sizes();
     }
 
-    fn assign_four_player_screen_sizes(&self, root: &Gd<Node>) {
-        let mut split_screen_two = root.get_node_as::<HBoxContainer>("SplitScreenTwo");
+    fn assign_four_player_screen_sizes(&self) {
+        let mut split_screen_two = self.base().get_node_as::<HBoxContainer>("SplitScreenTwo");
         let mut p4_container =
             split_screen_two.get_node_as::<SubViewportContainer>("PlayerFourContainer");
         let mut p4_viewport = p4_container.get_node_as::<SubViewport>("PlayerFourViewport");
@@ -355,15 +370,16 @@ impl PlayerManager {
     }
 
     fn reparent_level(&self) {
-        let root = self.base().get_parent().unwrap();
-        let mut level = root.get_node_as::<Node2D>("MapOne");
-        let p1_viewport =
-            root.get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
-        level.reparent(p1_viewport);
+        let level = self.map_scene.instantiate_as::<Node2D>();
+        let mut p1_viewport = self
+            .base()
+            .get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
+        p1_viewport.add_child(level);
     }
 
-    fn remove_fourth_viewport_camera(&self, root: Gd<Node>) {
-        let mut overview_container = root
+    fn remove_fourth_viewport_camera(&self) {
+        let mut overview_container = self
+            .base()
             .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
         let camera = overview_container.get_node_as::<Camera2D>("OverviewCamera");
 
@@ -371,13 +387,14 @@ impl PlayerManager {
     }
 
     /// This will add a camera that provides an overview of the entire level.
-    fn add_fourth_viewport_camera(&self, root: &Gd<Node>) {
+    fn add_fourth_viewport_camera(&self) {
         let mut camera = Camera2D::new_alloc();
         camera.set_name("OverviewCamera".into());
         camera.set_position(Vector2::new(20.0, -225.0));
         camera.set_zoom(Vector2::new(0.37, 0.37));
 
-        let mut overview_container = root
+        let mut overview_container = self
+            .base()
             .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
 
         overview_container.set_canvas_cull_mask(1);

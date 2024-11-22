@@ -1,8 +1,8 @@
 [gd_scene load_steps=3 format=3 uid="uid://vpakk8ov0chg"]
 
-[ext_resource type="PackedScene" uid="uid://tafp53a34qcc" path="res://scenes/map_one.tscn" id="1_re8us"]
+[ext_resource type="PackedScene" uid="uid://c1l6h04x8ew74" path="res://scenes/main_menu.tscn" id="1_gw26h"]
 
-[sub_resource type="Environment" id="Environment_ucg1d"]
+[sub_resource type="Environment" id="Environment_h8kyb"]
 background_mode = 3
 glow_enabled = true
 glow_intensity = 0.4
@@ -12,14 +12,10 @@ glow_blend_mode = 0
 [node name="Game" type="Node2D"]
 texture_filter = 1
 
-[node name="MapOne" parent="." instance=ExtResource("1_re8us")]
-position = Vector2(42, 45)
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_h8kyb")
 
 [node name="PlayerManager" type="PlayerManager" parent="."]
 
-[node name="OverviewCamera" type="Camera2D" parent="."]
-position = Vector2(14, -221)
-zoom = Vector2(0.75, 0.75)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_ucg1d")
+[node name="Main Menu" parent="." instance=ExtResource("1_gw26h")]
+position = Vector2(5, 315)
