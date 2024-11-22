@@ -72,7 +72,6 @@ impl Game {
         // First remove the main menu
         let main_menu = self.get_main_menu();
         self.base_mut().remove_child(main_menu);
-        godot_print!("kids: {:#?}", self.base().get_children());
 
         // Next instantiate the map, add it to the tree, and trigger it's camera pan (might make the map auto camera pan on ready/load)
         // Note: Currently defaulting to MapOne

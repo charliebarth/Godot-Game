@@ -117,9 +117,26 @@ impl PlayerManager {
             child.queue_free();
         }
 
+        self.reset_players();
+
         self.get_game()
             .bind_mut()
             .end_game(1, self.players.len() as i32);
+    }
+
+    fn reset_players(&mut self) {
+        self.players.clear();
+        self.current_player_id = 0;
+        for device_id in self.devices.iter() {
+            self.current_player_id += 1;
+            let mut player = self.player_scene.instantiate_as::<Player>();
+            player.bind_mut().set_device_id(device_id.clone());
+            player.bind_mut().set_player_id(self.current_player_id);
+            player.set_name(format!("Player{}", self.current_player_id).into());
+            self.players.push(player);
+        }
+
+        self.num_alive_players = self.players.len() as i32;
     }
 
     #[func]
@@ -139,10 +156,13 @@ impl PlayerManager {
         }
     }
 
-    pub fn remove_player(&mut self, player_id: i32, device_id: i32) {
+    pub fn remove_player(&mut self, player_id: i32) {
         self.num_alive_players -= 1;
         self.players.remove(player_id as usize - 1);
-        self.devices.retain(|&id| id != device_id);
+
+        if self.started && self.num_alive_players == 1 {
+            self.end_game();
+        }
     }
 
     fn select_spawn_point(&self, player_id: i32) -> Vector2 {

@@ -9,7 +9,7 @@ glow_intensity = 0.4
 glow_strength = 0.6
 glow_blend_mode = 0
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Game"]
 texture_filter = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -17,5 +17,5 @@ environment = SubResource("Environment_h8kyb")
 
 [node name="PlayerManager" type="PlayerManager" parent="."]
 
-[node name="Main Menu" parent="." instance=ExtResource("1_gw26h")]
+[node name="MainMenu" parent="." instance=ExtResource("1_gw26h")]
 position = Vector2(5, 315)

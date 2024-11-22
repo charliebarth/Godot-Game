@@ -186,7 +186,7 @@ impl Player {
         self.base()
             .get_node_as::<PlayerManager>("/root/Game/PlayerManager")
             .bind_mut()
-            .remove_player(self.player_id, self.device_id);
+            .remove_player(self.player_id);
     }
     /// Set the current state of the player and trigger the enter method of the new state
     /// This method also sets the previous state of the player to the current state
