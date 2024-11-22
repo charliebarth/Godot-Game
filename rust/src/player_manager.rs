@@ -30,6 +30,7 @@ pub struct PlayerManager {
     player_scene: Gd<PackedScene>,
     map_scene: Gd<PackedScene>,
     current_player_id: i32,
+    started: bool,
 }
 
 #[godot_api]
@@ -44,6 +45,7 @@ impl INode2D for PlayerManager {
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
             map_scene: load::<PackedScene>("res://scenes/map_one.tscn"),
             current_player_id: 0,
+            started: false,
         }
     }
 
@@ -62,7 +64,8 @@ impl INode2D for PlayerManager {
         let input_map = InputMap::singleton();
         let register_button = self.register_button.clone();
 
-        if event.is_pressed()
+        if !self.started
+            && event.is_pressed()
             && !self.devices.contains(&device_id)
             && input_map.event_is_action(event.clone(), register_button)
         {
@@ -82,6 +85,7 @@ impl PlayerManager {
     #[func]
     /// This function should be called when a gamemode is started as it will spawn the players and give them their own viewports.
     fn start(&mut self) {
+        self.started = true;
         let mut players = self.players.clone();
         for player in players.iter_mut() {
             let player_id = player.bind().get_player_id();
