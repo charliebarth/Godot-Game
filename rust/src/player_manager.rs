@@ -36,6 +36,7 @@ pub struct PlayerManager {
     num_alive_players: i32,
     map: Option<Gd<Node2D>>,
     game: Option<Gd<Game>>,
+    winning_player: i32,
 }
 
 #[godot_api]
@@ -52,6 +53,7 @@ impl INode2D for PlayerManager {
             num_alive_players: 0,
             map: None,
             game: None,
+            winning_player: 0,
         }
     }
 
@@ -121,7 +123,7 @@ impl PlayerManager {
 
         self.get_game()
             .bind_mut()
-            .end_game(1, self.players.len() as i32);
+            .end_game(self.winning_player, self.players.len() as i32);
     }
 
     fn reset_players(&mut self) {
@@ -160,7 +162,9 @@ impl PlayerManager {
         self.num_alive_players -= 1;
         self.players.remove(player_id as usize - 1);
 
-        if self.started && self.num_alive_players == 1 {
+        if self.started && self.players.len() == 1 {
+            let player = self.players.get(0).expect("Player not found");
+            self.winning_player = player.bind().get_player_id();
             self.end_game();
         }
     }

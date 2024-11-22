@@ -90,10 +90,13 @@ impl Game {
     }
 
     #[func]
-    pub fn end_game(&mut self, _winner: i32, _num_players: i32) {
+    pub fn end_game(&mut self, winner: i32, _num_players: i32) {
         // Show a winner screen
         // Next add the main menu back
-        let main_menu = self.get_main_menu();
-        self.base_mut().add_child(main_menu);
+        let mut main_menu = self.get_main_menu();
+        self.base_mut().add_child(main_menu.clone());
+        main_menu
+            .bind_mut()
+            .add_notification(format!("Player {} wins!", winner));
     }
 }
