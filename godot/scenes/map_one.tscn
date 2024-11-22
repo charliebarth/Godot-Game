@@ -1,8 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=14 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
-[ext_resource type="Script" path="res://scripts/map_one.gd" id="2_1q0ag"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
 [ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
@@ -43,7 +42,6 @@ shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
 [node name="MapOne" type="Node2D"]
 light_mask = 3
 material = SubResource("ShaderMaterial_iw8d6")
-script = ExtResource("2_1q0ag")
 
 [node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
 
