@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
 
-use godot::classes::AnimatedSprite2D;
+use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
@@ -741,7 +741,7 @@ impl Player {
     pub fn enable_hitbox(&mut self, owner: &Node2D) {
         self.is_attacking = true;
         // Get the hitbox of the player
-        let hitbox = owner.get_node("Hitbox").expect("Hitbox not found"); // TODO: might need to get the node differently
+        let mut hitbox = owner.get_node_as::<Area2D>("Hitbox"); // TODO: might need to get the node differently
         // Enable the hitbox of the player
         hitbox.set_monitoring(true);
     }
@@ -754,7 +754,7 @@ impl Player {
     pub fn disable_hitbox(&mut self, owner: &Node2D) {
         self.is_attacking = false;
         // Get the hitbox of the player
-        let hitbox = owner.get_node("Hitbox").expect("Hitbox not found"); // TODO: might need to get the node differently
+        let mut hitbox = owner.get_node_as::<Area2D>("Hitbox"); // TODO: might need to get the node differently
         // Disable the hitbox of the player
         hitbox.set_monitoring(false);
     }
