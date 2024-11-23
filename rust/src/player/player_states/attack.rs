@@ -1,5 +1,4 @@
 use crate::player::{player::Player, traits::player_state::PlayerState};
-use crate::player::enums::player_events::PlayerEvents;
 
 #[derive(Clone, Copy)]
 pub struct Attack;
@@ -14,15 +13,14 @@ impl PlayerState for Attack {
         // Attack from falling
 
         // Attack from standing
-
     }
 
     fn update(player: &mut Player) {
         if player.is_anim_finished() {
             let previous_state = player.get_previous_state();
+            player.disable_hitbox();
             player.set_state(previous_state);
             // Disable the hitbox of the player when the attack animation is finished
-            player.disable_hitbox();
         }
     }
 }

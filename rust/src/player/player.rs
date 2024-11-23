@@ -3,13 +3,13 @@ use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
 
-use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
 use godot::classes::TextureProgressBar;
+use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::prelude::*;
 
 use crate::metal_object::MetalObject;
@@ -721,9 +721,10 @@ impl Player {
 
         nearest_metal_object
     }
-    
+
+    #[func]
     /// Inflict damage to the player and update the health bar
-    /// 
+    ///
     /// # Arguments
     /// * `damage` - The amount of damage to inflict
     pub fn inflict_damage(&mut self, damage: f64) {
@@ -744,8 +745,8 @@ impl Player {
         let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
         // Enable the hitbox of the player
         hitbox.set_monitoring(true);
+        hitbox.set_collision_layer(1 << 2);
     }
-
 
     /// Disable the hitbox of the player when they are not attacking
     ///
@@ -757,6 +758,7 @@ impl Player {
         let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
         // Disable the hitbox of the player
         hitbox.set_monitoring(false);
+        hitbox.set_collision_layer(1 << 3);
     }
 }
 /// Getters for nodes
