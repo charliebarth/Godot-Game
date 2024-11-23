@@ -17,6 +17,7 @@ use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::prelude::*;
 
 use crate::game::Game;
+use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
@@ -284,22 +285,24 @@ impl Player {
     ///
     /// Args:
     ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
-    pub fn adjust_coins(&mut self, pos_neg: i8) {
+    pub fn adjust_coins(&mut self, pos_neg: i8, coin: &mut Coin) {
         if pos_neg == -1 {
             // Dereference and call the method
             self.get_coin_counter().bind_mut().remove_coin();
         } else {
-            self.get_coin_counter().bind_mut().add_coin();
+            self.get_coin_counter().bind_mut().add_coin(coin);
         }
     }
 
     /// Adjusts specific metals in this players metal bar manager to some amount.
-    /// 
+    ///
     /// Args
     ///     metals (Vec<StringName>): the metals to effect
-    ///     amt (f64): the new amount to se the metals to 
+    ///     amt (f64): the new amount to se the metals to
     pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
-        self.get_metal_reserve_bar_manager().bind_mut().add_metals(&metals, amt);
+        self.get_metal_reserve_bar_manager()
+            .bind_mut()
+            .add_metals(&metals, amt);
     }
 
     /// Represents the direction the player is trying to move
@@ -612,10 +615,10 @@ impl Player {
         self.health_bar = Some(health_bar);
     }
 
-    /// Set the coin counter of the player 
-    /// 
-    /// # Arguments 
-    /// * `coin_counter` - The coin counter to set 
+    /// Set the coin counter of the player
+    ///
+    /// # Arguments
+    /// * `coin_counter` - The coin counter to set
     pub fn set_coin_counter(&mut self, coin_counter: Gd<CoinCounter>) {
         self.coin_counter = Some(coin_counter);
     }
@@ -893,14 +896,16 @@ impl Player {
             .clone()
     }
 
-    /// Getter for CoinCounter node 
-    /// 
+    /// Getter for CoinCounter node
+    ///
     /// # Returns
-    /// *  `CoinCounter` - The CoinCounter node used to show player coins. 
+    /// *  `CoinCounter` - The CoinCounter node used to show player coins.
     pub fn get_coin_counter(&mut self) -> Gd<CoinCounter> {
         if self.coin_counter.is_none() {
-            self.coin_counter = Some(self.base()
-                .get_node_as::<CoinCounter>("Coin_Counter_Panel/CoinCounter"));
+            self.coin_counter = Some(
+                self.base()
+                    .get_node_as::<CoinCounter>("Coin_Counter_Panel/CoinCounter"),
+            );
         }
         self.coin_counter
             .as_ref()
