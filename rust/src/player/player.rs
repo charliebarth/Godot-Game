@@ -738,10 +738,10 @@ impl Player {
     ///
     /// # Arguments
     /// * `owner` - A reference to the node for the hitbox of the player
-    pub fn enable_hitbox(&mut self, owner: &Node2D) {
+    pub fn enable_hitbox(&mut self) {
         self.is_attacking = true;
         // Get the hitbox of the player
-        let mut hitbox = owner.get_node_as::<Area2D>("Hitbox"); // TODO: might need to get the node differently
+        let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
         // Enable the hitbox of the player
         hitbox.set_monitoring(true);
     }
@@ -751,10 +751,10 @@ impl Player {
     ///
     /// # Arguments
     /// * `owner` - A reference to the node for the hitbox of the player
-    pub fn disable_hitbox(&mut self, owner: &Node2D) {
+    pub fn disable_hitbox(&mut self) {
         self.is_attacking = false;
         // Get the hitbox of the player
-        let mut hitbox = owner.get_node_as::<Area2D>("Hitbox"); // TODO: might need to get the node differently
+        let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
         // Disable the hitbox of the player
         hitbox.set_monitoring(false);
     }

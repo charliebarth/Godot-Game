@@ -34,6 +34,8 @@ impl PlayerState for Fall {
             player.set_state(PlayerStates::Land);
         } else if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
+        } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
+            player.set_state(PlayerStates::Attack);
         } else {
             Fall::run(player);
         }

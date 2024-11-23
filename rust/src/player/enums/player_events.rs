@@ -15,6 +15,7 @@ impl TriggerEvents {
             PlayerEvents::Crouch => TriggerEvents::OnRelease,
             PlayerEvents::Roll => TriggerEvents::OnRelease,
             PlayerEvents::Sprint => TriggerEvents::OnPress,
+            PlayerEvents::Attack => TriggerEvents::OnPress,
         }
     }
 }
@@ -29,6 +30,8 @@ pub enum PlayerEvents {
     Roll,
     /// The player has sprinted.
     Sprint,
+    /// The player has attacked.
+    Attack,
 }
 
 impl PlayerEvents {
@@ -38,6 +41,7 @@ impl PlayerEvents {
             "jump" => Some(PlayerEvents::Jump),
             "sprint" => Some(PlayerEvents::Sprint),
             "roll" => Some(PlayerEvents::Roll),
+            "attack" => Some(PlayerEvents::Attack),
             _ => None,
         }
     }
@@ -48,6 +52,7 @@ impl PlayerEvents {
             PlayerEvents::Crouch => 10,
             PlayerEvents::Roll => 10,
             PlayerEvents::Sprint => 10,
+            PlayerEvents::Attack => 10,
         }
     }
 }

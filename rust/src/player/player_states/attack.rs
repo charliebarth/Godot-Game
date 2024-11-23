@@ -1,15 +1,20 @@
 use crate::player::{player::Player, traits::player_state::PlayerState};
+use crate::player::enums::player_events::PlayerEvents;
 
 #[derive(Clone, Copy)]
 pub struct Attack;
 
 impl PlayerState for Attack {
     fn enter(player: &mut Player) {
-        // Set the animation speed for the melee attack TODO: Create an animation for melee attack
-        // player.set_animation_speed(1.0);
         // Enable the hitbox of the player while they are attacking
         player.enable_hitbox();
-        
+
+        // Attack from jump
+
+        // Attack from falling
+
+        // Attack from standing
+
     }
 
     fn update(player: &mut Player) {

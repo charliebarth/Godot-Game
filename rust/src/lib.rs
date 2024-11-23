@@ -33,6 +33,7 @@ mod player {
         pub mod slide;
         pub mod slide_crouch;
         pub mod sprint;
+        pub mod attack;
     }
 
     mod metals {
