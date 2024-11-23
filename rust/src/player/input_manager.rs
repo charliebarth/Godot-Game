@@ -3,6 +3,7 @@ use godot::{classes::InputEvent, prelude::*};
 use std::collections::HashMap;
 use std::time::Instant;
 
+use super::enums::coin_events::CoinEvents;
 use super::enums::metal_events::MetalEvents;
 use super::enums::player_events::{PlayerEvents, TriggerEvents};
 
@@ -39,7 +40,7 @@ impl INode2D for InputManager {
             self.process_player_events(player_event, event);
         } else if let Some(metal_event) = MetalEvents::from_string(&button_name) {
             self.process_metal_events(metal_event, event);
-        }
+        } 
     }
 
     fn physics_process(&mut self, _delta: f64) {
@@ -151,5 +152,16 @@ impl InputManager {
 
     pub fn set_device_id(&mut self, device_id: i32) {
         self.device_id = device_id;
+    }
+
+    fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>){
+        if event.is_action_pressed(StringName::from("throw")) {
+            // Check if player has coins to throw
+
+            // Get a coin 
+
+            // Throw a coin
+            // self.throw(Vector2::new(0., 0.), Vector2::new(150., -200.));
+        }
     }
 }

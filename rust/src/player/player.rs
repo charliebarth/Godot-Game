@@ -13,6 +13,7 @@ use godot::classes::Sprite2D;
 use godot::classes::TextureProgressBar;
 use godot::prelude::*;
 
+use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
@@ -233,12 +234,12 @@ impl Player {
     ///
     /// Args:
     ///     pos_neg (i8): if -1, remove_coin    if +1, add_coin
-    pub fn adjust_coins(&mut self, pos_neg: i8) {
+    pub fn adjust_coins(&mut self, pos_neg: i8, coin:  &mut Coin) {
         if pos_neg == -1 {
             // Dereference and call the method
             self.get_coin_counter().bind_mut().remove_coin();
         } else {
-            self.get_coin_counter().bind_mut().add_coin();
+            self.get_coin_counter().bind_mut().add_coin(coin);
         }
     }
 

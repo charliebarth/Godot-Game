@@ -3,12 +3,14 @@
 /// Author : Trinity Pittman
 /// Version : 10/02/2024
 use godot::{
-    classes::{ILabel, Label},
+    classes::{CharacterBody2D, ILabel, InputEvent, Label},
     prelude::*,
 };
 
+use crate::{items::coin::Coin, player::{enums::coin_events::CoinEvents, input_manager::InputManager}};
+
 // The amount of coins a player starts with
-const STARTING_COIN_COUNT: f64 = 10.0;
+const STARTING_COIN_COUNT: f64 = 0.0;
 
 /// Struct that represents a Coin Counter
 #[derive(GodotClass)]
@@ -17,6 +19,7 @@ pub struct CoinCounter {
     base: Base<Label>,
     /// The amount of coins
     coins: f64,
+    coin_holder: Vec<Gd<Coin>>
 }
 
 #[godot_api]
@@ -26,24 +29,35 @@ impl ILabel for CoinCounter {
         Self {
             base,
             coins: STARTING_COIN_COUNT,
+            coin_holder: Vec::new()
         }
     }
 
     /// Sets the base value of coins to 10 at the start of the round
     fn ready(&mut self) {
-        self.base_mut().set_text("10".into());
+        let coin_cnt = GString::from(format!("{}", self.coins));
+        self.base_mut().set_text(coin_cnt.into());
+    }
+
+    fn input(&mut self, event: Gd<InputEvent>) {
+        let button_name = InputManager::event_to_input_name(event.clone());
+        
+        if let Some(coin_event) = CoinEvents::from_string(&button_name) {
+            self.process_coin_events(coin_event, event);
+        }
     }
 }
 
 #[godot_api]
 impl CoinCounter {
     /// Increments the number of coins
-    pub fn add_coin(&mut self) {
+    pub fn add_coin(&mut self, coin: &mut Coin) {
         let new_coins = self.coins + 1.; // Find how many coins to change to
         self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
 
         // Update coin counter
         self.coins = new_coins;
+        self.coin_holder.push(coin.to_gd());
     }
 
     /// Setter method for the text
@@ -66,6 +80,34 @@ impl CoinCounter {
             self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
             self.coins = new_coins;
             true
+        }
+    }
+
+    fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>){
+        if event.is_action_pressed(StringName::from("throw")) {
+            // Check if player has coins to throw
+            if (self.remove_coin()){
+                // Get a coin 
+                let mut coin = Coin::new_alloc();
+
+                let player: Gd<CharacterBody2D> = self
+                    .base_mut()
+                    .get_owner()
+                    .unwrap()
+                    .get_owner()
+                    .unwrap()
+                    .cast::<CharacterBody2D>();
+                godot_print!("Parent of coincounter: {}", player.get_name());
+
+                let pos = player.get_global_position();
+                
+                let mut coin = self.coin_holder.last_mut().unwrap();
+                coin.set_position(pos);
+
+                // Throw a coin
+                coin.bind_mut().throw(Vector2::new(0., 0.), Vector2::new(150., -200.));
+            }
+            
         }
     }
 }

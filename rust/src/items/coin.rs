@@ -1,3 +1,4 @@
+use godot::classes::rigid_body_2d::FreezeMode;
 use godot::classes::{IRigidBody2D, InputEvent, RigidBody2D};
 /// Represents a coin.
 ///
@@ -7,31 +8,9 @@ use godot::prelude::*;
 
 use crate::player::input_manager::InputManager;
 use crate::player::player::Player;
+use crate::player::enums::coin_events::{CoinState, CoinEvents};
 
 const SPEED: f64 = 25.0;
-
-#[derive(PartialEq)]
-pub enum CoinState {
-    Idle, 
-    PickedUp, 
-    Thrown,
-}
-
-#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
-pub enum CoinEvents {
-    Throw,
-    Drop,
-}
-
-impl CoinEvents {
-    pub fn from_string(button: &str) -> Option<CoinEvents> {
-        match button {
-            "throw" => Some(CoinEvents::Throw),
-            "drop" => Some(CoinEvents::Drop),
-            _ => None,
-        }
-    }
-}
 
 /// Represents a coin
 #[derive(GodotClass)]
@@ -56,6 +35,16 @@ impl IRigidBody2D for Coin {
 
     fn ready(&mut self) {
         godot_print!("Coin at position {}", self.base_mut().get_global_position());
+        self.base_mut().show();
+        // self.base_mut().set_position(Vector2::new(961., -149.));
+        // self.base_mut().set_continuous_collision_detection_mode(RigidBody2D::CcdMode::);
+        // godot_print!("mode: {}", self.base_mut().get_freeze_mode());
+        // self.base_mut().set_freeze_enabled(true);
+        self.base_mut().set_freeze_mode(FreezeMode::KINEMATIC);
+        self.set_state(CoinState::Idle);
+        
+        
+
 
         self.base_mut().set_contact_monitor(true);
         self.base_mut().set_max_contacts_reported(1);
@@ -68,14 +57,6 @@ impl IRigidBody2D for Coin {
         }
     }
 
-    fn input(&mut self, event: Gd<InputEvent>) {
-        let button_name = InputManager::event_to_input_name(event.clone());
-
-        if let Some(coin_event) = CoinEvents::from_string(&button_name) {
-            self.process_coin_events(coin_event, event);
-        }
-
-    }
 }
 
 
@@ -88,20 +69,26 @@ impl Coin {
     ///      body (Gd<Node2D>): the Node that enters this coin
     #[func]
     fn coin_pickup(&mut self, body: Gd<Node2D>) {
-        if self.state == CoinState::Idle {
+        godot_print!("Coin pick-up attempt: Body entered -> {}", body.get_name());  // Debug line
+        // if self.state == CoinState::Idle {
             self.set_state(CoinState::PickedUp);
             let body_name = body.get_name();
             godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
 
+            // let coin = body.cast::<Coin>();
+
             if let Ok(mut player) = body.try_cast::<Player>() {
-                player.bind_mut().adjust_coins(1); // Dereference and call the method
-                self.base_mut().queue_free(); // Remove the coin from the scene
+                player.bind_mut().adjust_coins(1, self); // Dereference and call the method
+                self.base_mut().set_position(Vector2::new(1000000., -1000000.));
+                // self.base_mut().queue_free(); // Remove the coin from the scene
             } else {
                 godot_print!("Something other than player entered the coin.");
             }
             let mut coin = Coin::new_alloc();
-        }
+        // }
     }
+
+
 
     fn set_state(&mut self, state: CoinState) {
         self.state = state;
@@ -125,14 +112,8 @@ impl Coin {
         // change velocity to zero ? 
     }
 
-    #[func]
-    pub fn is_metal(&self) -> bool {
-        true // A coin is made of metal
-    }
-
-    fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>){
-        if event.is_action_pressed(StringName::from("throw")) {
-            self.throw(Vector2::new(0., 0.), Vector2::new(150., -200.));
-        }
-    }
+    // #[func]
+    // pub fn is_metal(&self) -> bool {
+    //     true // A coin is made of metal
+    // }
 }
