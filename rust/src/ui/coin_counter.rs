@@ -10,7 +10,7 @@ use godot::{
 use crate::{items::coin::Coin, player::{enums::coin_events::CoinEvents, input_manager::InputManager}};
 
 // The amount of coins a player starts with
-const STARTING_COIN_COUNT: f64 = 0.0;
+const STARTING_COIN_COUNT: i32 = 0;
 
 /// Struct that represents a Coin Counter
 #[derive(GodotClass)]
@@ -18,7 +18,7 @@ const STARTING_COIN_COUNT: f64 = 0.0;
 pub struct CoinCounter {
     base: Base<Label>,
     /// The amount of coins
-    coins: f64,
+    coins: i32,
     coin_holder: Vec<Gd<Coin>>
 }
 
@@ -37,6 +37,10 @@ impl ILabel for CoinCounter {
     fn ready(&mut self) {
         let coin_cnt = GString::from(format!("{}", self.coins));
         self.base_mut().set_text(coin_cnt.into());
+
+        // for i in 0..STARTING_COIN_COUNT{
+        //     self.coin_holder.push(Coin::new_alloc());
+        // }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
@@ -52,11 +56,18 @@ impl ILabel for CoinCounter {
 impl CoinCounter {
     /// Increments the number of coins
     pub fn add_coin(&mut self, coin: &mut Coin) {
-        let new_coins = self.coins + 1.; // Find how many coins to change to
+        let new_coins = self.coins + 1; // Find how many coins to change to
         self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
 
         // Update coin counter
         self.coins = new_coins;
+
+        let pos = Vector2::new(100000., -100000.);
+        coin.to_gd().set_global_position(pos);
+
+        let real_pos = coin.to_gd().get_global_position();
+        godot_print!("\nREPOSITIONING {} to {} actually {}", coin.to_gd().get_name(), pos, real_pos);
+
         self.coin_holder.insert(self.coin_holder.len(), coin.to_gd());
     }
 
@@ -71,9 +82,9 @@ impl CoinCounter {
 
     /// Removes coins from this Coin Counter, returns false if we cannot carry this out
     pub fn remove_coin(&mut self) -> bool {
-        let new_coins = self.coins - 1.;
+        let new_coins = self.coins - 1;
 
-        if new_coins < 0.0 {
+        if new_coins < 0 {
             // If we dont have enough coins
             false
         } else {
@@ -97,12 +108,14 @@ impl CoinCounter {
                     .get_owner()
                     .unwrap()
                     .cast::<CharacterBody2D>();
-                godot_print!("Parent of coincounter: {}", player.get_name());
+                // godot_print!("Parent of coincounter: {}", player.get_name());
 
-                let pos = player.get_global_position();
+                // let pos = player.get_global_position();
                 
-                let mut coin = self.coin_holder.last_mut().unwrap();
-                coin.set_position(pos);
+                // let mut coin = self.coin_holder.last_mut().unwrap();
+                let length = self.coin_holder.len();
+                let mut coin = self.coin_holder.remove(length-1);
+                // coin.set_global_position(pos);
 
                 // Throw a coin
                 coin.bind_mut().throw();
