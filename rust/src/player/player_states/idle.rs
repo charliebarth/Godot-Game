@@ -17,7 +17,7 @@ impl PlayerState for Idle {
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
-        if input_manager.fetch_player_event(PlayerEvents::Jump) && player.jump_available() {
+        if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
             player.set_state(PlayerStates::Fall);
@@ -32,7 +32,7 @@ impl PlayerState for Idle {
         } else {
             player.add_force(Force::Stop {
                 horizontal: true,
-                vertical: false, // TODO: This should also maybe be true
+                vertical: false,
             });
         }
     }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=135 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=156 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -31,11 +31,15 @@
 [ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="Script" path="res://scripts/health_bar.gd" id="28_v0cjd"]
 [ext_resource type="Texture2D" uid="uid://cjofih2mbdsil" path="res://icon.svg" id="30_o8iik"]
+[ext_resource type="Script" path="res://scripts/metal_line.gd" id="30_weuyd"]
 [ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
 [ext_resource type="Script" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
-light_mode = 2
+[ext_resource type="Script" path="res://scripts/fps_counter.gd" id="32_sw38e"]
+[ext_resource type="Texture2D" uid="uid://df41jj4lm8ber" path="res://assets/Character/dust1.png" id="34_7k2wi"]
+[ext_resource type="Texture2D" uid="uid://dfrnpntq6dkd1" path="res://assets/Character/dust2.png" id="35_g71my"]
+[ext_resource type="Texture2D" uid="uid://cbvmhuwjhgvna" path="res://assets/Character/dust3.png" id="36_mr11a"]
+[ext_resource type="Texture2D" uid="uid://c01csxdo1tsg7" path="res://assets/Character/dust4.png" id="37_u8au1"]
+[ext_resource type="Script" path="res://scripts/dust.gd" id="38_1uxd6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j7yn6"]
 atlas = ExtResource("2_ybdal")
@@ -786,6 +790,9 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
+light_mode = 2
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bajs7"]
 radius = 7.0
 height = 44.0
@@ -809,12 +816,134 @@ size = Vector2(24.5, 39)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jp1u6"]
 size = Vector2(22, 47)
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_iwcc7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("34_7k2wi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_g71my")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_mr11a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_u8au1")
+}],
+"loop": false,
+"name": &"dust",
+"speed": 12.0
+}]
+
+[sub_resource type="Animation" id="Animation_gvpho"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_dw7p4"]
+resource_name = "dust"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ffg0s"]
+_data = {
+"RESET": SubResource("Animation_gvpho"),
+"dust": SubResource("Animation_dw7p4")
+}
+
+[sub_resource type="Curve" id="Curve_c3eya"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_vmj7c"]
+curve = SubResource("Curve_c3eya")
+
+[sub_resource type="Curve" id="Curve_v7y1h"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ji3np"]
+curve = SubResource("Curve_v7y1h")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jhvi2"]
+lifetime_randomness = 0.2
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 35.0
+emission_ring_radius = 35.0
+emission_ring_inner_radius = 20.0
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 3.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_ji3np")
+color = Color(0.642206, 0.193112, 0.066075, 0.843)
+alpha_curve = SubResource("CurveTexture_vmj7c")
+turbulence_enabled = true
+
+[sub_resource type="Curve" id="Curve_cjn1i"]
+_data = [Vector2(0.004, 0), 0.0, 0.0, 0, 0, Vector2(0.496, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qr3x8"]
+curve = SubResource("Curve_cjn1i")
+
+[sub_resource type="Curve" id="Curve_ho4ri"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.496, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_44wpg"]
+curve = SubResource("Curve_ho4ri")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8cf5s"]
+lifetime_randomness = 0.2
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 35.0
+emission_ring_radius = 35.0
+emission_ring_inner_radius = 20.0
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 3.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_44wpg")
+color = Color(0, 0.450234, 0.725694, 1)
+alpha_curve = SubResource("CurveTexture_qr3x8")
+hue_variation_min = -0.02
+hue_variation_max = 0.02
+turbulence_enabled = true
+turbulence_noise_strength = 6.85
+
 [node name="Player" type="Player"]
 z_index = 1
 script = ExtResource("1_pp08i")
 
 [node name="OwnerVis" type="AnimatedSprite2D" parent="."]
-material = SubResource("CanvasItemMaterial_o2ssi")
 position = Vector2(6, -29)
 scale = Vector2(1.3, 1.3)
 sprite_frames = SubResource("SpriteFrames_pintf")
@@ -893,6 +1022,7 @@ position = Vector2(-4, 12)
 scale = Vector2(44.4023, 22.6347)
 energy = 0.1
 shadow_enabled = true
+shadow_filter = 2
 texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")
 
@@ -903,8 +1033,10 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_indkr")
 
 [node name="MetalLine" type="MetalLine" parent="."]
+self_modulate = Color(0, 0.6, 2.1, 1)
 z_index = -1
 position = Vector2(0, -9)
+script = ExtResource("30_weuyd")
 
 [node name="LineSelector" type="Sprite2D" parent="."]
 position = Vector2(80, 6)
@@ -929,6 +1061,47 @@ script = ExtResource("32_lkxkj")
 position = Vector2(-1, -1.5)
 shape = SubResource("RectangleShape2D_jp1u6")
 
+[node name="Label" type="Label" parent="."]
+offset_left = 415.0
+offset_top = -256.0
+offset_right = 460.0
+offset_bottom = -233.0
+script = ExtResource("32_sw38e")
+
+[node name="Dust" type="AnimatedSprite2D" parent="."]
+light_mask = 4
+visibility_layer = 4
+z_index = 10
+position = Vector2(-1, 10)
+scale = Vector2(1.71875, 1.71875)
+sprite_frames = SubResource("SpriteFrames_iwcc7")
+animation = &"dust"
+frame_progress = 0.979399
+script = ExtResource("38_1uxd6")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Dust"]
+libraries = {
+"": SubResource("AnimationLibrary_ffg0s")
+}
+
+[node name="PewterParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(12, 1, 1, 1)
+show_behind_parent = true
+position = Vector2(0, -3)
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_jhvi2")
+lifetime = 2.0
+
+[node name="SteelParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(1, 1, 17, 1)
+show_behind_parent = true
+position = Vector2(0, 3)
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+lifetime = 2.0
+
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
@@ -937,3 +1110,5 @@ shape = SubResource("RectangleShape2D_jp1u6")
 [connection signal="body_entered" from="SteelRange" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="SteelRange" to="." method="_on_area_2d_body_exited"]
 [connection signal="area_entered" from="HurtBox" to="HurtBox" method="_on_area_entered"]
+[connection signal="animation_finished" from="Dust" to="Dust" method="_on_animation_finished"]
+[connection signal="visibility_changed" from="Dust" to="Dust" method="_on_visibility_changed"]

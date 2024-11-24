@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://wuethcq1hdw7"
+path="res://.godot/imported/350757__aerror__campfire.wav-f8230d917e25f5e832d7f610a63917fd.sample"
+
+[deps]
+
+source_file="res://assets/SFX & Music/350757__aerror__campfire.wav"
+dest_files=["res://.godot/imported/350757__aerror__campfire.wav-f8230d917e25f5e832d7f610a63917fd.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=2
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

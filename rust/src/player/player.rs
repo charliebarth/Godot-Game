@@ -4,18 +4,22 @@ use std::time::Duration;
 use std::time::Instant;
 
 use godot::classes::CharacterBody2D;
+use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
+use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::prelude::*;
 
 use crate::metal_object::MetalObject;
+use crate::player_manager::PlayerManager;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::enums::force::Force;
+use super::enums::player_events::PlayerEvents;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
 use super::input_manager::InputManager;
@@ -27,9 +31,9 @@ const MAX_HEALTH: f64 = 100.0;
 const MIN_HEALTH: f64 = 0.0;
 const DEFAULT_RUN_SPEED: f32 = 250.0;
 const DEFAULT_JUMP_FORCE: f32 = 450.0;
-const MAX_RUN_SPEED: f32 = 400.0;
+const MAX_RUN_SPEED: f32 = 600.0;
 const MIN_RUN_SPEED: f32 = 0.0;
-const MAX_JUMP_FORCE: f32 = 550.0;
+const MAX_JUMP_FORCE: f32 = 700.0;
 const MIN_JUMP_FORCE: f32 = 300.0;
 
 #[derive(GodotClass)]
@@ -57,6 +61,8 @@ pub struct Player {
     player_vis: Vec<Gd<AnimatedSprite2D>>,
     metal_line: Option<Gd<MetalLine>>,
     line_selector: Option<Gd<Sprite2D>>,
+    pewter_particles: Option<Gd<GpuParticles2D>>,
+    steel_particles: Option<Gd<GpuParticles2D>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     metal_objects: Vec<Gd<MetalObject>>,
@@ -97,6 +103,8 @@ impl ICharacterBody2D for Player {
             player_vis: Vec::new(),
             metal_line: None,
             line_selector: None,
+            pewter_particles: None,
+            steel_particles: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             mass: 70.0,
@@ -120,6 +128,18 @@ impl ICharacterBody2D for Player {
     }
 
     fn physics_process(&mut self, delta: f64) {
+        if self.health <= 0.0 {
+            self.die();
+        }
+
+        if self
+            .get_input_manager()
+            .bind_mut()
+            .check_for_player_event(PlayerEvents::Die)
+        {
+            self.adjust_health(-100.0);
+        }
+
         self.set_delta(delta);
 
         self.add_force(Force::Gravity {
@@ -149,6 +169,28 @@ impl ICharacterBody2D for Player {
 
 #[godot_api]
 impl Player {
+    fn die(&mut self) {
+        let mut camera = Camera2D::new_alloc();
+        camera.set_name("OverviewCamera".into());
+        camera.set_position(Vector2::new(20.0, -225.0));
+        camera.set_zoom(Vector2::new(0.37, 0.37));
+
+        //overview_container.set_canvas_cull_mask(1);
+        let mut parent_viewport = self
+            .base()
+            .get_parent()
+            .unwrap()
+            .try_cast::<SubViewport>()
+            .unwrap();
+
+        parent_viewport.set_canvas_cull_mask(1);
+        parent_viewport.add_child(camera);
+        self.base_mut().queue_free();
+        self.base()
+            .get_node_as::<PlayerManager>("/root/Game/PlayerManager")
+            .bind_mut()
+            .remove_player(self.player_id);
+    }
     /// Set the current state of the player and trigger the enter method of the new state
     /// This method also sets the previous state of the player to the current state
     /// The enter method of the new state is triggered to allow for any initial and/orone-time logic to be executed
@@ -214,6 +256,7 @@ impl Player {
         }
     }
 
+    #[func]
     /// Adjust the health of the player
     ///
     /// # Arguments
@@ -594,8 +637,8 @@ impl Player {
             Force::NormalForce { magnitude } => {
                 base_velocity.y += (self.gravity * magnitude * self.delta) as f32;
             }
-            Force::Jump { velocity } => {
-                base_velocity.y = velocity;
+            Force::Jump { acceleration } => {
+                base_velocity.y += acceleration;
             }
             Force::Run { acceleration } => {
                 let max_run_speed = self.get_run_speed();
@@ -625,27 +668,11 @@ impl Player {
                 base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
             }
             Force::SteelPush {
-                x_acceleration,
-                y_acceleration,
+                x_velocity,
+                y_velocity,
             } => {
-                let max_acceleration: f32 = 1000.0;
-                let total_acceleration = x_acceleration.abs() + y_acceleration.abs();
-
-                let x_of_total = x_acceleration.abs() / total_acceleration;
-                let y_of_total = y_acceleration.abs() / total_acceleration;
-
-                base_velocity.x += x_acceleration * self.delta as f32;
-                base_velocity.y += y_acceleration * self.delta as f32;
-
-                base_velocity.x = base_velocity.x.clamp(
-                    -(max_acceleration * x_of_total),
-                    max_acceleration * x_of_total,
-                );
-
-                base_velocity.y = base_velocity.y.clamp(
-                    -(max_acceleration * y_of_total),
-                    max_acceleration * y_of_total,
-                );
+                base_velocity.x = x_velocity;
+                base_velocity.y = y_velocity;
             }
         }
 
@@ -720,19 +747,6 @@ impl Player {
         }
 
         nearest_metal_object
-    }
-
-    #[func]
-    /// Inflict damage to the player and update the health bar
-    ///
-    /// # Arguments
-    /// * `damage` - The amount of damage to inflict
-    pub fn inflict_damage(&mut self, damage: f64) {
-        if self.health - damage > MIN_HEALTH {
-            self.adjust_health(-damage);
-        } else {
-            // Player has died
-        }
     }
 
     /// Enable the hitbox of the player when they are attacking
@@ -883,6 +897,30 @@ impl Player {
         self.line_selector
             .as_ref()
             .expect("LineSelector node not found")
+            .clone()
+    }
+
+    pub fn get_pewter_particles(&mut self) -> Gd<GpuParticles2D> {
+        if self.pewter_particles.is_none() {
+            self.pewter_particles =
+                Some(self.base().get_node_as::<GpuParticles2D>("PewterParticles"));
+        }
+
+        self.pewter_particles
+            .as_ref()
+            .expect("PewterParticles node not found")
+            .clone()
+    }
+
+    pub fn get_steel_particles(&mut self) -> Gd<GpuParticles2D> {
+        if self.steel_particles.is_none() {
+            self.steel_particles =
+                Some(self.base().get_node_as::<GpuParticles2D>("SteelParticles"));
+        }
+
+        self.steel_particles
+            .as_ref()
+            .expect("SteelParticles node not found")
             .clone()
     }
 }

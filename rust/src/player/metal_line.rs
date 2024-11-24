@@ -18,8 +18,8 @@ impl INode2D for MetalLine {
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
-            points: Some(PackedVector2Array::new()),
-            colors: Some(PackedColorArray::new()),
+            points: None,
+            colors: None,
             should_show: false,
         }
     }

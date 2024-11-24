@@ -1,7 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=14 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
+[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
+[ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
+[ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
+shader = ExtResource("1_y7bd1")
+shader_parameter/density = 0.25
+shader_parameter/speed = Vector2(0.02, 0.01)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
 polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
@@ -12,8 +20,28 @@ polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -7
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
 polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 2389, 187, 2384, -75, 450, -78, 451, 1)
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xjc83"]
+polygon = PackedVector2Array(-1024, -112, -675, -112, -677, -83, -1022, -82, -1025, -108)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
+frequency = 0.0045
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bql8j"]
+width = 1920
+height = 1080
+seamless = true
+seamless_blend_skirt = 0.75
+noise = SubResource("FastNoiseLite_ikvr1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_18wl2"]
+shader = ExtResource("1_y7bd1")
+shader_parameter/density = 0.6
+shader_parameter/speed = Vector2(0.001, 0.001)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
+
 [node name="MapOne" type="Node2D"]
 light_mask = 3
+material = SubResource("ShaderMaterial_iw8d6")
 
 [node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
 
@@ -47,6 +75,11 @@ occluder = SubResource("OccluderPolygon2D_qc8gb")
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_4rjuc")
 
+[node name="LightOccluder2D5" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(850, -175)
+occluder = SubResource("OccluderPolygon2D_xjc83")
+
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.703808, 0.703808, 0.703808, 1)
 
@@ -62,3 +95,33 @@ position = Vector2(211, -167)
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
 position = Vector2(-16, -112)
+
+[node name="Fog" type="ColorRect" parent="."]
+z_index = 20
+material = SubResource("ShaderMaterial_18wl2")
+offset_left = -2288.0
+offset_top = -1425.0
+offset_right = 2381.0
+offset_bottom = 852.0
+color = Color(0.725, 0.725, 0.725, 0.535)
+
+[node name="Torch" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(850, -175)
+
+[node name="Torch2" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(224, -95)
+
+[node name="Torch3" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(-209, -89)
+
+[node name="Torch4" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(-476, -409)
+
+[node name="Torch5" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(-945, -402)
+
+[node name="Torch6" parent="." instance=ExtResource("4_0mjxy")]
+position = Vector2(308, -410)
+
+[node name="camp_fire" parent="." instance=ExtResource("5_hth5s")]
+position = Vector2(1100, -84)

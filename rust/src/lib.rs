@@ -42,6 +42,8 @@ mod player {
     }
 }
 
+pub mod game;
+pub mod main_menu;
 pub mod metal_object;
 pub mod player_manager;
 
