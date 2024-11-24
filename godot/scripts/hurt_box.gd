@@ -12,4 +12,4 @@ func _on_area_entered(area: Area2D):
 		# Make sure we don't damage ourselves
 		if attacker != parent_player:
 			# Deal damage
-			parent_player.inflict_damage(10.0) 
+			parent_player.adjust_health(-10.0)

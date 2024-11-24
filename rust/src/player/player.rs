@@ -256,6 +256,7 @@ impl Player {
         }
     }
 
+    #[func]
     /// Adjust the health of the player
     ///
     /// # Arguments
@@ -746,19 +747,6 @@ impl Player {
         }
 
         nearest_metal_object
-    }
-
-    #[func]
-    /// Inflict damage to the player and update the health bar
-    ///
-    /// # Arguments
-    /// * `damage` - The amount of damage to inflict
-    pub fn inflict_damage(&mut self, damage: f64) {
-        if self.health - damage > MIN_HEALTH {
-            self.adjust_health(-damage);
-        } else {
-            // Player has died
-        }
     }
 
     /// Enable the hitbox of the player when they are attacking
