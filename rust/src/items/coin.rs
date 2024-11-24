@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use godot::classes::rigid_body_2d::FreezeMode;
 use godot::classes::{CharacterBody2D, IRigidBody2D, InputEvent, RigidBody2D};
 /// Represents a coin.
@@ -36,7 +38,7 @@ impl IRigidBody2D for Coin {
     }
 
     fn ready(&mut self) {
-        godot_print!("Coin at position {}", self.base_mut().get_global_position());
+        godot_print!("{} at position {}", self.base().get_name(), self.base_mut().get_global_position());
         self.base_mut().show();
 
         
@@ -63,11 +65,15 @@ impl Coin {
 
         if self.state == CoinState::Thrown {
             if let Ok(mut player) = body.try_cast::<Player>() {
-                player.bind_mut().adjust_health(-10.);
+                if player.get_name() != self.curr_player.as_ref().unwrap().get_name() {
+                    player.bind_mut().adjust_health(-10.);
+                    self.drop()
+                }
+            } else {
+                self.drop()
             }
-            self.drop()
         } else if self.state == CoinState::Idle {
-            godot_print!("Coin pick-up attempt: Body entered -> {}", body.get_name());  // Debug line
+            godot_print!("\n{} pick-up attempt: Body entered -> {}", self.base().get_name(), body.get_name());  // Debug line
             godot_print!("COIN IN STATE {}", self.state);
             let body_name = body.get_name();
             godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
@@ -77,9 +83,12 @@ impl Coin {
                 godot_print!("COIN IN STATE PICKED UP = {}", self.state);
 
                 player.bind_mut().adjust_coins(1, self); // Dereference and call the method
-                godot_print!("REPOSITIONING");
-                self.base_mut().set_position(Vector2::new(100000., --100000.));
                 
+                // let pos = Vector2::new(100000., -100000.);
+                // self.base_mut().set_global_position(pos);
+
+                // let real_pos = self.base_mut().get_global_position();
+                // godot_print!("REPOSITIONING pickup to {} actually {}", pos, real_pos);
                 self.curr_player = Some(player);
                 // self.base_mut().queue_free(); // Remove the coin from the scene
             } else {
@@ -87,14 +96,6 @@ impl Coin {
             }
         }
     
-    }
-
-
-
-    fn is_wall(&mut self, body: &Gd<Node2D>) -> bool {
-        body.get_name().to_string().contains("duplicate") ||
-        body.get_name().to_string().contains("Map") ||
-        body.get_name().to_string().contains("Platform")
     }
 
 
@@ -106,31 +107,35 @@ impl Coin {
     #[func]
     pub fn throw(&mut self) {
         
-        godot_print!("ATTEMPTING THROWING COIN");
+        godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
         godot_print!("COIN IN STATE {}", self.state);
 
         // If in PickedUp state
         if self.state == CoinState::PickedUp {
             godot_print!("THROWING");
             
-            self.set_state(CoinState::Thrown);
-            
-
             let force;
             let player = self.curr_player.as_mut().unwrap();
-            let pos = player.get_global_position();
+            let mut pos = player.get_global_position();
             // let position = player.to_local(pos);
 
             if (player.bind().get_dir() < 0.) {
-                force = Vector2::new(-300., -400.);
+                force = Vector2::new(-500., -400.);
             } else {
-                force = Vector2::new(300., -400.);
+                force = Vector2::new(500., -400.);
+                pos = pos + Vector2::new(20., 0.);
             }
 
             self.base_mut().set_freeze_enabled(false);
-            self.base_mut().set_position(pos);
+            self.base_mut().set_global_position(pos);
+            let real_pos = self.base_mut().get_global_position();
+
+            godot_print!("REPOSITIONING {} to {} actually {}", self.base().get_name(), pos, real_pos);
+            godot_print!("Applying impulse {}", force);
             // self.base_mut().set_center_of_mass(pos);
             self.base_mut().apply_impulse(force);
+
+            self.set_state(CoinState::Thrown);
         }
     }
 
@@ -140,7 +145,7 @@ impl Coin {
         self.set_state(CoinState::Idle);
         self.base_mut().set_linear_velocity(Vector2::ZERO);
         self.base_mut().set_angular_velocity(0.0);
-        self.base_mut().set_freeze_mode(FreezeMode::STATIC); 
+        self.base_mut().set_freeze_enabled(true); 
 
 
         // change velocity to zero ? 
