@@ -1,7 +1,8 @@
-use godot::obj::WithBaseField;
+use godot::obj::{GdMut, WithBaseField};
 
 use crate::player::{
     enums::{force::Force, player_events::PlayerEvents, player_states::PlayerStates},
+    input_manager::InputManager,
     player::Player,
     traits::player_state::PlayerState,
 };
@@ -40,7 +41,7 @@ impl PlayerState for Jump {
             Jump::exit(player, next_state);
         } else {
             Jump::run(player);
-            Jump::jump(player);
+            Jump::jump(player, input_manager);
         }
     }
 }
@@ -75,11 +76,8 @@ impl Jump {
         player.set_state(next_state);
     }
 
-    fn jump(player: &mut Player) {
-        let input_manager = player.get_input_manager();
-        let bound_input_manager = input_manager.bind();
-
-        if !bound_input_manager.check_for_player_event(PlayerEvents::Jump) {
+    fn jump(player: &mut Player, input_manager: GdMut<'_, InputManager>) {
+        if !input_manager.check_for_player_event(PlayerEvents::Jump) {
             return;
         }
 
