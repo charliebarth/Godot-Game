@@ -3,13 +3,13 @@ use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
 
-use godot::classes::AnimatedSprite2D;
 use godot::classes::CharacterBody2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
 use godot::classes::TextureProgressBar;
+use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::prelude::*;
 
 use crate::metal_object::MetalObject;
@@ -63,6 +63,8 @@ pub struct Player {
     /// The mass of the player in kilograms
     mass: f32,
     is_steel_burning: bool,
+    /// If the player is attacking or not
+    is_attacking: bool,
 }
 
 #[godot_api]
@@ -99,6 +101,7 @@ impl ICharacterBody2D for Player {
             metal_objects: Vec::new(),
             mass: 70.0,
             is_steel_burning: false,
+            is_attacking: false,
         }
     }
 
@@ -718,8 +721,46 @@ impl Player {
 
         nearest_metal_object
     }
-}
 
+    #[func]
+    /// Inflict damage to the player and update the health bar
+    ///
+    /// # Arguments
+    /// * `damage` - The amount of damage to inflict
+    pub fn inflict_damage(&mut self, damage: f64) {
+        if self.health - damage > MIN_HEALTH {
+            self.adjust_health(-damage);
+        } else {
+            // Player has died
+        }
+    }
+
+    /// Enable the hitbox of the player when they are attacking
+    ///
+    /// # Arguments
+    /// * `owner` - A reference to the node for the hitbox of the player
+    pub fn enable_hitbox(&mut self) {
+        self.is_attacking = true;
+        // Get the hitbox of the player
+        let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
+        // Enable the hitbox of the player
+        hitbox.set_monitoring(true);
+        hitbox.set_collision_layer(1 << 2);
+    }
+
+    /// Disable the hitbox of the player when they are not attacking
+    ///
+    /// # Arguments
+    /// * `owner` - A reference to the node for the hitbox of the player
+    pub fn disable_hitbox(&mut self) {
+        self.is_attacking = false;
+        // Get the hitbox of the player
+        let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
+        // Disable the hitbox of the player
+        hitbox.set_monitoring(false);
+        hitbox.set_collision_layer(1 << 3);
+    }
+}
 /// Getters for nodes
 impl Player {
     /// Getter for the InputManager node

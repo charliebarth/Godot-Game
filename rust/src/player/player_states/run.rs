@@ -32,6 +32,8 @@ impl PlayerState for Run {
             next_state = PlayerStates::Roll;
         } else if input_manager.fetch_player_event(PlayerEvents::Sprint) {
             next_state = PlayerStates::Sprint;
+        } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
+            next_state = PlayerStates::Attack;
         }
 
         if next_state != PlayerStates::Run {

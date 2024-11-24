@@ -1,4 +1,4 @@
-[gd_scene load_steps=128 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=136 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cy4tb3oa0pno2" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchAll.png" id="1_p0x36"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_pp08i"]
 [ext_resource type="Texture2D" uid="uid://bnr6wnrrwmu4a" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Dash.png" id="1_u53jl"]
+[ext_resource type="Texture2D" uid="uid://bsawt36r1xwhf" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Attack.png" id="2_ybdal"]
 [ext_resource type="Texture2D" uid="uid://vjob0b0xbcr4" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Hit.png" id="3_1byn1"]
 [ext_resource type="Texture2D" uid="uid://dyv8a3f625jct" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Jump.png" id="3_6sfda"]
 [ext_resource type="Texture2D" uid="uid://bq0s2tg2dm8t8" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Death.png" id="4_euqrw"]
@@ -31,9 +32,26 @@
 [ext_resource type="Script" path="res://scripts/health_bar.gd" id="28_v0cjd"]
 [ext_resource type="Texture2D" uid="uid://cjofih2mbdsil" path="res://icon.svg" id="30_o8iik"]
 [ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
+[ext_resource type="Script" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
 light_mode = 2
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7yn6"]
+atlas = ExtResource("2_ybdal")
+region = Rect2(0, 0, 120, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1uwwb"]
+atlas = ExtResource("2_ybdal")
+region = Rect2(120, 0, 120, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_047k7"]
+atlas = ExtResource("2_ybdal")
+region = Rect2(240, 0, 120, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hfybt"]
+atlas = ExtResource("2_ybdal")
+region = Rect2(360, 0, 120, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mkisa"]
 atlas = ExtResource("1_28re0")
@@ -393,6 +411,23 @@ region = Rect2(240, 0, 120, 80)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_pintf"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j7yn6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1uwwb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_047k7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hfybt")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 11.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mkisa")
@@ -771,6 +806,12 @@ size = Vector2(958, 540)
 [sub_resource type="CircleShape2D" id="CircleShape2D_fwaiq"]
 radius = 231.019
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fcwur"]
+size = Vector2(24.5, 39)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jp1u6"]
+size = Vector2(22, 47)
+
 [node name="Player" type="Player"]
 z_index = 1
 script = ExtResource("1_pp08i")
@@ -824,6 +865,7 @@ zoom = Vector2(2, 2)
 [node name="InputManager" type="InputManager" parent="."]
 
 [node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
+physics_interpolation_mode = 0
 offset_left = -468.0
 offset_top = -241.0
 offset_right = -405.0
@@ -879,6 +921,23 @@ script = ExtResource("31_hw5a7")
 position = Vector2(0, 5)
 shape = SubResource("CircleShape2D_fwaiq")
 
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(19.75, -1)
+shape = SubResource("RectangleShape2D_fcwur")
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("32_lkxkj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(-1, -1.5)
+shape = SubResource("RectangleShape2D_jp1u6")
+
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
 [connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
@@ -886,5 +945,4 @@ shape = SubResource("CircleShape2D_fwaiq")
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
-[connection signal="body_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]
-[connection signal="body_exited" from="AllomanticRange" to="AllomanticRange" method="exit_range"]
+[connection signal="area_entered" from="HurtBox" to="HurtBox" method="_on_area_entered"]

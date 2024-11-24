@@ -27,6 +27,8 @@ impl PlayerState for Idle {
             player.set_state(PlayerStates::CrouchStart);
         } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
             player.set_state(PlayerStates::CrouchStart);
+        } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
+            player.set_state(PlayerStates::Attack);
         } else {
             player.add_force(Force::Stop {
                 horizontal: true,
