@@ -1,5 +1,5 @@
 use godot::classes::rigid_body_2d::FreezeMode;
-use godot::classes::{IRigidBody2D, InputEvent, RigidBody2D};
+use godot::classes::{CharacterBody2D, IRigidBody2D, InputEvent, RigidBody2D};
 /// Represents a coin.
 ///
 /// Author : Trinity Pittman
@@ -19,6 +19,7 @@ pub struct Coin {
     base: Base<RigidBody2D>,
     state: CoinState,
     weight: i32,
+    curr_player: Option<Gd<Player>>
 }
 
 
@@ -30,31 +31,19 @@ impl IRigidBody2D for Coin {
             base,
             state: CoinState::Idle,
             weight: 10,
+            curr_player: None,
         }
     }
 
     fn ready(&mut self) {
         godot_print!("Coin at position {}", self.base_mut().get_global_position());
         self.base_mut().show();
-        // self.base_mut().set_position(Vector2::new(961., -149.));
-        // self.base_mut().set_continuous_collision_detection_mode(RigidBody2D::CcdMode::);
-        // godot_print!("mode: {}", self.base_mut().get_freeze_mode());
-        // self.base_mut().set_freeze_enabled(true);
-        self.base_mut().set_freeze_mode(FreezeMode::KINEMATIC);
-        self.set_state(CoinState::Idle);
         
+        self.base_mut().set_freeze_enabled(true);
+        self.set_state(CoinState::Idle);        
         
-
-
         self.base_mut().set_contact_monitor(true);
         self.base_mut().set_max_contacts_reported(1);
-    }
-
-    // TODO Unfinished
-    fn physics_process(&mut self, delta: f64) {
-        if self.state == CoinState::PickedUp {
-
-        }
     }
 
 }
@@ -69,45 +58,86 @@ impl Coin {
     ///      body (Gd<Node2D>): the Node that enters this coin
     #[func]
     fn coin_pickup(&mut self, body: Gd<Node2D>) {
+        if self.state == CoinState::Thrown && self.is_wall(&body) {
+            godot_print!("Coin collided with: {}", body.get_name());
+            godot_print!("COIN IN STATE {}", self.state);
+            self.drop();
+        }
+
         godot_print!("Coin pick-up attempt: Body entered -> {}", body.get_name());  // Debug line
-        // if self.state == CoinState::Idle {
-            self.set_state(CoinState::PickedUp);
+        godot_print!("COIN IN STATE {}", self.state);
+        if self.state == CoinState::Idle {
             let body_name = body.get_name();
             godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
 
-            // let coin = body.cast::<Coin>();
-
             if let Ok(mut player) = body.try_cast::<Player>() {
+                self.set_state(CoinState::PickedUp);
+                godot_print!("COIN IN STATE PICKED UP = {}", self.state);
+
                 player.bind_mut().adjust_coins(1, self); // Dereference and call the method
                 self.base_mut().set_position(Vector2::new(1000000., -1000000.));
+                
+                self.curr_player = Some(player);
                 // self.base_mut().queue_free(); // Remove the coin from the scene
             } else {
                 godot_print!("Something other than player entered the coin.");
             }
-            let mut coin = Coin::new_alloc();
-        // }
+            
+        }
+    
     }
 
 
 
-    fn set_state(&mut self, state: CoinState) {
-        self.state = state;
+    fn is_wall(&mut self, body: &Gd<Node2D>) -> bool {
+        body.get_name().to_string().contains("duplicate")
     }
+
+
+    fn set_state(&mut self, new_state: CoinState) {
+        self.state = new_state;
+    }
+
 
     #[func]
-    pub fn throw(&mut self, force: Vector2, dir: Vector2) {
+    pub fn throw(&mut self) {
+        
+        godot_print!("ATTEMPTING THROWING COIN");
+        godot_print!("COIN IN STATE {}", self.state);
+
         // If in PickedUp state
         if self.state == CoinState::PickedUp {
+            godot_print!("THROWING");
+            
             self.set_state(CoinState::Thrown);
             
-            // this is probably dependent on player direction... 
-            self.base_mut().apply_impulse(dir * force);
+
+            let force;
+            let player = self.curr_player.as_mut().unwrap();
+            let pos = player.get_global_position();
+            // let position = player.to_local(pos);
+
+            if (player.bind().get_dir() < 0.) {
+                force = Vector2::new(-300., -400.);
+            } else {
+                force = Vector2::new(300., -400.);
+            }
+
+            self.base_mut().set_freeze_enabled(false);
+            // self.base_mut().set_position(pos);
+            // self.base_mut().set_center_of_mass(pos);
+            self.base_mut().apply_impulse(force);
         }
     }
 
     pub fn drop(&mut self) {
         // drop the coin when it hits something 
+        
         self.set_state(CoinState::Idle);
+        self.base_mut().set_linear_velocity(Vector2::ZERO);
+        self.base_mut().set_angular_velocity(0.0);
+        self.base_mut().set_freeze_mode(FreezeMode::STATIC); 
+
 
         // change velocity to zero ? 
     }
