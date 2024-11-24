@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=7 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
+[ext_resource type="PackedScene" uid="uid://6eewvmcnjobm" path="res://scenes/coin.tscn" id="3_ubb7f"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
 polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
@@ -62,3 +63,9 @@ position = Vector2(211, -167)
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
 position = Vector2(-16, -112)
+
+[node name="Coin" parent="." instance=ExtResource("3_ubb7f")]
+position = Vector2(502, -93)
+
+[node name="Coin2" parent="." instance=ExtResource("3_ubb7f")]
+position = Vector2(599, -94)

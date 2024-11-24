@@ -38,6 +38,7 @@ impl IRigidBody2D for Coin {
     fn ready(&mut self) {
         godot_print!("Coin at position {}", self.base_mut().get_global_position());
         self.base_mut().show();
+
         
         self.base_mut().set_freeze_enabled(true);
         self.set_state(CoinState::Idle);        
@@ -58,15 +59,16 @@ impl Coin {
     ///      body (Gd<Node2D>): the Node that enters this coin
     #[func]
     fn coin_pickup(&mut self, body: Gd<Node2D>) {
-        if self.state == CoinState::Thrown && self.is_wall(&body) {
-            godot_print!("Coin collided with: {}", body.get_name());
-            godot_print!("COIN IN STATE {}", self.state);
-            self.drop();
-        }
+        
 
-        godot_print!("Coin pick-up attempt: Body entered -> {}", body.get_name());  // Debug line
-        godot_print!("COIN IN STATE {}", self.state);
-        if self.state == CoinState::Idle {
+        if self.state == CoinState::Thrown {
+            if let Ok(mut player) = body.try_cast::<Player>() {
+                player.bind_mut().adjust_health(-10.);
+            }
+            self.drop()
+        } else if self.state == CoinState::Idle {
+            godot_print!("Coin pick-up attempt: Body entered -> {}", body.get_name());  // Debug line
+            godot_print!("COIN IN STATE {}", self.state);
             let body_name = body.get_name();
             godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
 
@@ -75,14 +77,14 @@ impl Coin {
                 godot_print!("COIN IN STATE PICKED UP = {}", self.state);
 
                 player.bind_mut().adjust_coins(1, self); // Dereference and call the method
-                self.base_mut().set_position(Vector2::new(1000000., -1000000.));
+                godot_print!("REPOSITIONING");
+                self.base_mut().set_position(Vector2::new(100000., --100000.));
                 
                 self.curr_player = Some(player);
                 // self.base_mut().queue_free(); // Remove the coin from the scene
             } else {
                 godot_print!("Something other than player entered the coin.");
             }
-            
         }
     
     }
@@ -90,7 +92,9 @@ impl Coin {
 
 
     fn is_wall(&mut self, body: &Gd<Node2D>) -> bool {
-        body.get_name().to_string().contains("duplicate")
+        body.get_name().to_string().contains("duplicate") ||
+        body.get_name().to_string().contains("Map") ||
+        body.get_name().to_string().contains("Platform")
     }
 
 
@@ -124,7 +128,7 @@ impl Coin {
             }
 
             self.base_mut().set_freeze_enabled(false);
-            // self.base_mut().set_position(pos);
+            self.base_mut().set_position(pos);
             // self.base_mut().set_center_of_mass(pos);
             self.base_mut().apply_impulse(force);
         }
