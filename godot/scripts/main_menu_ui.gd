@@ -3,7 +3,7 @@ extends Control
 @onready var game = get_node("/root/Game") as Game
 
 func _on_player_pressed() -> void:
-	var attempt_start = game.attempt_start()
+	var attempt_start = game.attempt_start(false)
 	if attempt_start:
 		game.start_game()
 	else:

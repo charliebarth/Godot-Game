@@ -57,10 +57,10 @@ impl Game {
     }
 
     #[func]
-    pub fn attempt_start(&mut self) -> bool {
+    pub fn attempt_start(&mut self, test_mode: bool) -> bool {
         let num_players = self.get_player_manager().bind().get_number_of_players();
 
-        if num_players >= 2 {
+        if !test_mode && num_players >= 2 || (test_mode && num_players == 1) {
             return true;
         }
 
