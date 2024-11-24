@@ -57,7 +57,7 @@ impl CoinCounter {
 
         // Update coin counter
         self.coins = new_coins;
-        self.coin_holder.push(coin.to_gd());
+        self.coin_holder.insert(self.coin_holder.len(), coin.to_gd());
     }
 
     /// Setter method for the text
@@ -88,7 +88,7 @@ impl CoinCounter {
             // Check if player has coins to throw
             if (self.remove_coin()){
                 // Get a coin 
-                let mut coin = Coin::new_alloc();
+                // let mut coin = Coin::new_alloc();
 
                 let player: Gd<CharacterBody2D> = self
                     .base_mut()
@@ -105,7 +105,7 @@ impl CoinCounter {
                 coin.set_position(pos);
 
                 // Throw a coin
-                coin.bind_mut().throw(Vector2::new(0., 0.), Vector2::new(150., -200.));
+                coin.bind_mut().throw();
             }
             
         }
