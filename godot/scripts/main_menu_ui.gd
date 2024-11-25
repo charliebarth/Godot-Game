@@ -17,3 +17,12 @@ func _on_settings_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_test_mode_pressed() -> void:
+	var attempt_start = game.attempt_start(true)
+	if attempt_start:
+		game.start_game()
+	else:
+		var main_menu = get_parent() as MainMenu
+		main_menu.add_notification("Incorrect number of players. Only one player allow")

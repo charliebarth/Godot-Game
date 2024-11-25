@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use godot::{
     classes::{
         control::LayoutPreset, viewport::DefaultCanvasItemTextureFilter, HBoxContainer, InputEvent,
@@ -17,11 +15,7 @@ const TWO_PLAYER_HEIGHT: f32 = 540.0;
 const THREE_PLAYER_WIDTH: f32 = 960.0;
 const THREE_PLAYER_HEIGHT: f32 = 540.0;
 
-use crate::{
-    game::Game,
-    main_menu::{self, MainMenu},
-    player::player::Player,
-};
+use crate::{game::Game, main_menu::MainMenu, player::player::Player};
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct PlayerManager {
@@ -54,12 +48,6 @@ impl INode2D for PlayerManager {
             map: None,
             game: None,
             winning_player: 0,
-        }
-    }
-
-    fn process(&mut self, _delta: f64) {
-        if self.started && self.num_alive_players == 1 {
-            self.end_game();
         }
     }
 
