@@ -8984,9 +8984,9 @@ offset_bottom = -468.0
 
 [node name="NotificationBox" type="RichTextLabel" parent="."]
 offset_left = -152.0
-offset_top = -498.0
+offset_top = -541.0
 offset_right = 156.0
-offset_bottom = -458.0
+offset_bottom = -476.0
 theme = SubResource("Theme_2phby")
 bbcode_enabled = true
 
