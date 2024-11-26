@@ -39,18 +39,16 @@ impl Metal for Pewter {
         let mut godot_input_manager = player.get_input_manager();
         let mut input_manager = godot_input_manager.bind_mut();
 
+        self.show_particles = false;
+
         if self.current_reserve <= 0.0 {
-            return;
-        }
-
-        self.show_particles = true;
-
-        if input_manager.fetch_metal_event(MetalEvents::Pewter) {
-            self.burn(player);
-        } else if input_manager.fetch_metal_event(MetalEvents::PewterLowBurn) {
-            self.low_burn(player);
-        } else {
-            self.show_particles = false;
+            if input_manager.fetch_metal_event(MetalEvents::Pewter) {
+                self.show_particles = true;
+                self.burn(player);
+            } else if input_manager.fetch_metal_event(MetalEvents::PewterLowBurn) {
+                self.low_burn(player);
+                self.show_particles = true;
+            }
         }
 
         player
