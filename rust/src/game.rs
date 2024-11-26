@@ -29,7 +29,6 @@ pub struct Game {
     player_scene: Gd<PackedScene>,
     current_player_id: i32,
     started: bool,
-    num_alive_players: i32,
     map: Option<Gd<Node2D>>,
     winning_player: i32,
     maps: HashMap<String, Gd<PackedScene>>,
@@ -47,7 +46,6 @@ impl INode2D for Game {
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
             current_player_id: 0,
             started: false,
-            num_alive_players: 0,
             map: None,
             winning_player: 0,
             maps: HashMap::new(),
@@ -82,29 +80,62 @@ impl INode2D for Game {
 
         let input_map = InputMap::singleton();
         let register_button = self.register_button.clone();
-
-        if !self.started
-            && event.is_pressed()
-            && !self.devices.contains(&device_id)
-            && input_map.event_is_action(event.clone(), register_button)
-        {
-            self.current_player_id += 1;
-            let mut player = self.player_scene.instantiate_as::<Player>();
-            player.bind_mut().set_device_id(device_id);
-            player.bind_mut().set_player_id(self.current_player_id);
-            player.set_name(format!("Player{}", self.current_player_id).into());
-            self.players.push(player);
-            self.devices.push(device_id);
-
-            let mut main_menu = self.get_main_menu();
-            main_menu.bind_mut().add_player(self.current_player_id);
-            self.num_alive_players += 1;
+        let disconnect_button = "roll".into();
+        if !self.started && event.is_pressed() {
+            if !self.devices.contains(&device_id)
+                && input_map.event_is_action(event.clone(), register_button)
+            {
+                self.register_player(device_id);
+            } else if self.devices.contains(&device_id)
+                && input_map.event_is_action(event.clone(), disconnect_button)
+            {
+                self.disconnect_player(device_id);
+            }
         }
     }
 }
 
 #[godot_api]
 impl Game {
+    /// This will register a player to the game.
+    /// Registering a player will create a new player object and assign it the device id and player id.
+    /// Players will be assigned a name when the game starts.
+    ///
+    /// Arguments:
+    /// * `device_id` - The device id of the player to register.
+    fn register_player(&mut self, device_id: i32) {
+        self.devices.push(device_id);
+        self.current_player_id = self.devices.len() as i32;
+
+        let player = self.player_scene.instantiate_as::<Player>();
+        self.players.push(player.clone());
+
+        let mut main_menu = self.get_main_menu();
+        main_menu.bind_mut().add_player(self.current_player_id);
+    }
+
+    /// This will disconnect a player from the game.
+    /// Disconnecting a player will remove them from the game and shift all still connected players up.
+    /// For example if player 2 is disconnected player 3 will become player 2 and player 4 will become player 3.
+    /// The device associated with the disconnected player will be removed from the list of connected devices as well.
+    ///
+    /// Arguments:
+    /// * `device_id` - The device id of the player to disconnect.
+    fn disconnect_player(&mut self, device_id: i32) {
+        let mut main_menu = self.get_main_menu();
+        main_menu.bind_mut().remove_player(self.current_player_id);
+        // The device id index will also be the index of the appropriate player
+        let index = self
+            .devices
+            .iter()
+            .position(|&r| r == device_id)
+            .expect("Device not found");
+
+        self.players.remove(index);
+        self.devices.remove(index);
+        self.current_player_id = self.devices.len() as i32;
+    }
+
     fn get_main_menu(&mut self) -> Gd<MainMenu> {
         if self.main_menu.is_none() {
             self.main_menu = Some(self.base().get_node_as::<MainMenu>("MainMenu"));
@@ -155,8 +186,14 @@ impl Game {
 
         self.started = true;
         let mut players = self.players.clone();
-        for player in players.iter_mut() {
-            let player_id = player.bind().get_player_id();
+        for (index, player) in players.iter_mut().enumerate() {
+            let player_id = index as i32 + 1;
+            player.set_name(format!("Player{}", player_id).into());
+
+            let mut bound_player = player.bind_mut();
+            bound_player.set_device_id(self.devices[index]);
+            bound_player.set_player_id(player_id);
+            drop(bound_player);
 
             self.split_screen(player_id);
             self.assign_player_to_subviewport(player.clone(), player_id);
@@ -211,17 +248,17 @@ impl Game {
             player.set_name(format!("Player{}", self.current_player_id).into());
             self.players.push(player);
         }
-
-        self.num_alive_players = self.players.len() as i32;
     }
 
     pub fn remove_player(&mut self, player_id: i32) {
-        self.num_alive_players -= 1;
         self.players.remove(player_id as usize - 1);
 
         if self.started && self.players.len() == 1 {
             let player = self.players.get(0).expect("Player not found");
             self.winning_player = player.bind().get_player_id();
+            self.end_game();
+        } else if self.started && self.players.len() == 0 {
+            self.winning_player = player_id;
             self.end_game();
         }
     }

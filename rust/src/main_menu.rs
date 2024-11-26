@@ -27,6 +27,13 @@ impl MainMenu {
     }
 
     #[func]
+    pub fn remove_player(&self, player_id: i32) {
+        self.base()
+            .get_node_as::<AnimatedSprite2D>(format!("Player{}", player_id))
+            .set_visible(false);
+    }
+
+    #[func]
     pub fn add_notification(&self, msg: String) {
         let mut notification_box = self.base().get_node_as::<RichTextLabel>("NotificationBox");
         notification_box.clear();
