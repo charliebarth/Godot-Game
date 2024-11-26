@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
 
+use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
@@ -527,6 +528,16 @@ impl Player {
     /// * `player_id` - The player ID to set
     pub fn set_player_id(&mut self, player_id: i32) {
         self.player_id = player_id;
+
+        for child in self.base_mut().get_children().iter_shared() {
+            if let Ok(mut node) = child.try_cast::<CanvasItem>() {
+                let layer_num = player_id * 2;
+                node.set_visibility_layer(1 << layer_num);
+                node.set_light_mask(1023);
+            }
+        }
+
+        self.base_mut().emit_signal("id_changed".into(), &[]);
     }
 
     #[func]
@@ -774,6 +785,9 @@ impl Player {
         hitbox.set_monitoring(false);
         hitbox.set_collision_layer(1 << 3);
     }
+
+    #[signal]
+    pub fn id_changed() {}
 }
 /// Getters for nodes
 impl Player {
