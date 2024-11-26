@@ -14,8 +14,8 @@ use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::prelude::*;
 
+use crate::game::Game;
 use crate::metal_object::MetalObject;
-use crate::player_manager::PlayerManager;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::enums::force::Force;
@@ -187,7 +187,7 @@ impl Player {
         parent_viewport.add_child(camera);
         self.base_mut().queue_free();
         self.base()
-            .get_node_as::<PlayerManager>("/root/Game/PlayerManager")
+            .get_node_as::<Game>("/root/Game")
             .bind_mut()
             .remove_player(self.player_id);
     }

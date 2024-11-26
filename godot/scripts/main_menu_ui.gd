@@ -3,12 +3,7 @@ extends Control
 @onready var game = get_node("/root/Game") as Game
 
 func _on_player_pressed() -> void:
-	var attempt_start = game.attempt_start(false)
-	if attempt_start:
-		game.start_game()
-	else:
-		var main_menu = get_parent() as MainMenu
-		main_menu.add_notification("Too few players connected")
+	game.attempt_start(false)
 
 
 func _on_settings_pressed() -> void:
@@ -20,9 +15,4 @@ func _on_quit_pressed() -> void:
 
 
 func _on_test_mode_pressed() -> void:
-	var attempt_start = game.attempt_start(true)
-	if attempt_start:
-		game.start_game()
-	else:
-		var main_menu = get_parent() as MainMenu
-		main_menu.add_notification("Incorrect number of players. Only one player allow")
+	game.attempt_start(true)

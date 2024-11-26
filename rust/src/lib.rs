@@ -21,6 +21,7 @@ mod player {
     }
 
     mod player_states {
+        pub mod attack;
         pub mod crouch;
         pub mod crouch_end;
         pub mod crouch_start;
@@ -33,7 +34,6 @@ mod player {
         pub mod slide;
         pub mod slide_crouch;
         pub mod sprint;
-        pub mod attack;
     }
 
     mod metals {
@@ -45,7 +45,6 @@ mod player {
 pub mod game;
 pub mod main_menu;
 pub mod metal_object;
-pub mod player_manager;
 
 mod items {
     pub mod coin;
