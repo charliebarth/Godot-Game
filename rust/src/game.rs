@@ -501,7 +501,6 @@ impl Game {
     }
 
     fn reparent_level(&mut self) {
-        godot_print!("Reparenting level");
         if let Some(map) = self.map.take() {
             let mut p1_viewport = self
                 .base()
