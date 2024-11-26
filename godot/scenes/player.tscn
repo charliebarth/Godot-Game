@@ -1061,7 +1061,7 @@ script = ExtResource("32_lkxkj")
 position = Vector2(-1, -1.5)
 shape = SubResource("RectangleShape2D_jp1u6")
 
-[node name="Label" type="Label" parent="."]
+[node name="FpsCounter" type="Label" parent="."]
 offset_left = 415.0
 offset_top = -256.0
 offset_right = 460.0
