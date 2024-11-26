@@ -41,7 +41,7 @@ impl Metal for Pewter {
 
         self.show_particles = false;
 
-        if self.current_reserve <= 0.0 {
+        if self.current_reserve > 0.0 {
             if input_manager.fetch_metal_event(MetalEvents::Pewter) {
                 self.show_particles = true;
                 self.burn(player);
