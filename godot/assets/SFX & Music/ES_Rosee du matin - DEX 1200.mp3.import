@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cyf518ij6x0jj"
+path="res://.godot/imported/ES_Rosee du matin - DEX 1200.mp3-e14219faf0344a23908bde5120cf3ff0.mp3str"
+
+[deps]
+
+source_file="res://assets/SFX & Music/ES_Rosee du matin - DEX 1200.mp3"
+dest_files=["res://.godot/imported/ES_Rosee du matin - DEX 1200.mp3-e14219faf0344a23908bde5120cf3ff0.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

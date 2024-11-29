@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://vpakk8ov0chg"]
+[gd_scene load_steps=4 format=3 uid="uid://vpakk8ov0chg"]
 
 [ext_resource type="PackedScene" uid="uid://c1l6h04x8ew74" path="res://scenes/main_menu.tscn" id="1_gw26h"]
+[ext_resource type="AudioStream" uid="uid://cyf518ij6x0jj" path="res://assets/SFX & Music/ES_Rosee du matin - DEX 1200.mp3" id="2_nitj3"]
 
 [sub_resource type="Environment" id="Environment_h8kyb"]
 background_mode = 3
@@ -17,3 +18,8 @@ environment = SubResource("Environment_h8kyb")
 
 [node name="MainMenu" parent="." instance=ExtResource("1_gw26h")]
 position = Vector2(5, 315)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_nitj3")
+volume_db = -10.0
+autoplay = true

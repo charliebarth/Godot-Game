@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dnpftf73dao0t"
+path="res://.godot/imported/ES_Feet, Land, Jump, Ground - Epidemic Sound - 0040-0142.wav-4570b972ac66398678c41da330a5112c.sample"
+
+[deps]
+
+source_file="res://assets/SFX & Music/ES_Feet, Land, Jump, Ground - Epidemic Sound - 0040-0142.wav"
+dest_files=["res://.godot/imported/ES_Feet, Land, Jump, Ground - Epidemic Sound - 0040-0142.wav-4570b972ac66398678c41da330a5112c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

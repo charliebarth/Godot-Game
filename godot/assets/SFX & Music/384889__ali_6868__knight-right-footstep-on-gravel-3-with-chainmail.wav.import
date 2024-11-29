@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cde2qi4a1y3mx"
+path="res://.godot/imported/384889__ali_6868__knight-right-footstep-on-gravel-3-with-chainmail.wav-eb353d215ace7f209564a3fdf2a04441.sample"
+
+[deps]
+
+source_file="res://assets/SFX & Music/384889__ali_6868__knight-right-footstep-on-gravel-3-with-chainmail.wav"
+dest_files=["res://.godot/imported/384889__ali_6868__knight-right-footstep-on-gravel-3-with-chainmail.wav-eb353d215ace7f209564a3fdf2a04441.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0
