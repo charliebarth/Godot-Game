@@ -1,4 +1,4 @@
-[gd_scene load_steps=64 format=4 uid="uid://c1l6h04x8ew74"]
+[gd_scene load_steps=65 format=4 uid="uid://c1l6h04x8ew74"]
 
 [ext_resource type="Shader" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="2_dfsnj"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="13_k8rir"]
 [ext_resource type="PackedScene" uid="uid://pcftbhomicfe" path="res://scenes/main_menu_ui.tscn" id="14_62cor"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="15_e22v7"]
+[ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="16_7qcqk"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ubq02"]
 shader = ExtResource("1_0mkdf")
@@ -8988,6 +8989,8 @@ offset_top = -541.0
 offset_right = 156.0
 offset_bottom = -476.0
 theme = SubResource("Theme_2phby")
+theme_override_fonts/normal_font = ExtResource("16_7qcqk")
+theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="NotificationBox"]

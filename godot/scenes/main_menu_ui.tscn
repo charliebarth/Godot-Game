@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://pcftbhomicfe"]
+[gd_scene load_steps=3 format=3 uid="uid://pcftbhomicfe"]
 
 [ext_resource type="Script" path="res://scripts/main_menu_ui.gd" id="1_1xku7"]
+[ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="2_8md47"]
 
 [node name="Main Menu UI" type="Control"]
 texture_filter = 2
@@ -22,18 +23,26 @@ layout_mode = 2
 
 [node name="Player" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_8md47")
+theme_override_font_sizes/font_size = 32
 text = "Play"
 
 [node name="TestMode" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_8md47")
+theme_override_font_sizes/font_size = 32
 text = "Test Mode"
 
 [node name="Settings" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_8md47")
+theme_override_font_sizes/font_size = 32
 text = "Settings"
 
 [node name="Quit" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_8md47")
+theme_override_font_sizes/font_size = 32
 text = "Quit"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Player" to="." method="_on_player_pressed"]

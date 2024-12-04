@@ -1,4 +1,4 @@
-[gd_scene load_steps=158 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=159 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -30,6 +30,7 @@
 [ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="Texture2D" uid="uid://cjofih2mbdsil" path="res://icon.svg" id="30_o8iik"]
 [ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
+[ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="32_j10vn"]
 [ext_resource type="Script" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
 [ext_resource type="Script" path="res://scripts/fps_counter.gd" id="32_sw38e"]
 [ext_resource type="Texture2D" uid="uid://df41jj4lm8ber" path="res://assets/Character/dust1.png" id="34_7k2wi"]
@@ -1076,6 +1077,8 @@ offset_left = 344.0
 offset_top = -260.0
 offset_right = 389.0
 offset_bottom = -237.0
+theme_override_fonts/font = ExtResource("32_j10vn")
+theme_override_font_sizes/font_size = 32
 script = ExtResource("32_sw38e")
 
 [node name="Dust" type="AnimatedSprite2D" parent="."]
@@ -1133,6 +1136,8 @@ offset_right = 513.0
 offset_bottom = -211.0
 scale = Vector2(0.614209, 0.614209)
 theme_override_constants/line_spacing = 10
+theme_override_fonts/font = ExtResource("32_j10vn")
+theme_override_font_sizes/font_size = 32
 text = "Disconnected
 60"
 horizontal_alignment = 1
