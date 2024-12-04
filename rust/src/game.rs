@@ -225,8 +225,24 @@ impl Game {
     }
 
     #[func]
-    pub fn device_changed(&self, device_id: i32, connected: bool) {
-        godot_print!("Device {} connected: {}", device_id, connected);
+    pub fn device_changed(&mut self, device_id: i32, connected: bool) {
+        if self.devices.contains(&device_id) && self.started {
+            let index = self
+                .devices
+                .iter()
+                .position(|&r| r == device_id)
+                .expect("Device not found");
+
+            let mut player = self.players.get(index).expect("Player not found").clone();
+
+            if connected {
+                player.bind_mut().set_disconnected(false); // tells the player they are no longer disconnected
+            } else {
+                player.bind_mut().set_disconnected(true); // tells the player they are disconnected
+            }
+        } else if self.devices.contains(&device_id) && !self.started {
+            self.disconnect_player(device_id);
+        }
     }
 
     pub fn get_number_of_players(&self) -> i32 {

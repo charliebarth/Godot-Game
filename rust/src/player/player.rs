@@ -19,6 +19,7 @@ use crate::game::Game;
 use crate::metal_object::MetalObject;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
+use super::disconnected::Disconnected;
 use super::enums::force::Force;
 use super::enums::player_events::PlayerEvents;
 use super::enums::player_states::PlayerStates;
@@ -64,6 +65,7 @@ pub struct Player {
     line_selector: Option<Gd<Sprite2D>>,
     pewter_particles: Option<Gd<GpuParticles2D>>,
     steel_particles: Option<Gd<GpuParticles2D>>,
+    disconnected: Option<Gd<Disconnected>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     metal_objects: Vec<Gd<MetalObject>>,
@@ -106,6 +108,7 @@ impl ICharacterBody2D for Player {
             line_selector: None,
             pewter_particles: None,
             steel_particles: None,
+            disconnected: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             mass: 70.0,
@@ -170,7 +173,8 @@ impl ICharacterBody2D for Player {
 
 #[godot_api]
 impl Player {
-    fn die(&mut self) {
+    #[func]
+    pub fn die(&mut self) {
         let mut camera = Camera2D::new_alloc();
         camera.set_name("OverviewCamera".into());
         camera.set_position(Vector2::new(20.0, -225.0));
@@ -786,8 +790,20 @@ impl Player {
         hitbox.set_collision_layer(1 << 3);
     }
 
+    /// A signal that is emmited by the player when it's id is changed
+    /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
     pub fn id_changed() {}
+
+    /// If passed true, the player turns on its timer to count down before the player is removed from the game
+    /// If passed false, the player turns off its timer meaning it is no longer disconnected
+    ///
+    /// # Arguments
+    /// * `disconnected` - A boolean that determines if the player is disconnected or not
+    pub fn set_disconnected(&mut self, disconnected: bool) {
+        let mut disconnected_node = self.get_disconnected();
+        disconnected_node.set_visible(disconnected);
+    }
 }
 /// Getters for nodes
 impl Player {
@@ -935,6 +951,17 @@ impl Player {
         self.steel_particles
             .as_ref()
             .expect("SteelParticles node not found")
+            .clone()
+    }
+
+    pub fn get_disconnected(&mut self) -> Gd<Disconnected> {
+        if self.disconnected.is_none() {
+            self.disconnected = Some(self.base().get_node_as::<Disconnected>("Disconnected"));
+        }
+
+        self.disconnected
+            .as_ref()
+            .expect("Disconnected node not found")
             .clone()
     }
 }

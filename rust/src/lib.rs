@@ -2,6 +2,7 @@ use godot::prelude::*;
 
 mod player {
 
+    pub mod disconnected;
     pub mod input_manager;
     pub mod metal_line;
     pub mod metal_manager;
