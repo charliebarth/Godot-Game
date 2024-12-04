@@ -164,15 +164,4 @@ impl InputManager {
     pub fn set_device_id(&mut self, device_id: i32) {
         self.device_id = device_id;
     }
-
-    fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
-        if event.is_action_pressed(StringName::from("throw")) {
-            // Check if player has coins to throw
-
-            // Get a coin
-
-            // Throw a coin
-            // self.throw(Vector2::new(0., 0.), Vector2::new(150., -200.));
-        }
-    }
 }

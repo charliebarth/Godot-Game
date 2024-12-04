@@ -43,7 +43,8 @@ impl IRigidBody2D for Coin {
 
         
         self.base_mut().set_freeze_enabled(true);
-        self.set_state(CoinState::Idle);        
+        self.set_state(CoinState::Idle);     
+           
         
         self.base_mut().set_contact_monitor(true);
         self.base_mut().set_max_contacts_reported(1);
@@ -82,10 +83,14 @@ impl Coin {
                 self.set_state(CoinState::PickedUp);
                 godot_print!("COIN IN STATE PICKED UP = {}", self.state);
 
-                player.bind_mut().adjust_coins(1, self); // Dereference and call the method
+
+                // let mut args = &[1.to_variant(), self.base_mut().to_variant()];
                 
+                // player.call_deferred(StringName::from("adjust_coins"), args);
+                player.bind_mut().adjust_coins(1, self); // Dereference and call the method
                 // let pos = Vector2::new(100000., -100000.);
                 // self.base_mut().set_global_position(pos);
+                
 
                 // let real_pos = self.base_mut().get_global_position();
                 // godot_print!("REPOSITIONING pickup to {} actually {}", pos, real_pos);
@@ -96,6 +101,10 @@ impl Coin {
             }
         }
     
+    }
+
+    fn defer_adjust_coins(&mut self, mut player: Player, amount: i8){
+        player.adjust_coins(amount, self)
     }
 
 
@@ -143,9 +152,8 @@ impl Coin {
         // drop the coin when it hits something 
         
         self.set_state(CoinState::Idle);
-        self.base_mut().set_linear_velocity(Vector2::ZERO);
-        self.base_mut().set_angular_velocity(0.0);
-        self.base_mut().set_freeze_enabled(true); 
+        // self.base_mut().set_axis_velocity(Vector2::ZERO);
+        self.base_mut().set_freeze_enabled(true);
 
 
         // change velocity to zero ? 
