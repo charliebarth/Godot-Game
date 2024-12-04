@@ -1,6 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://6eewvmcnjobm"]
+[gd_scene load_steps=11 format=3 uid="uid://6eewvmcnjobm"]
 
 [ext_resource type="Texture2D" uid="uid://c2n6252ucx1" path="res://assets/Items/Coins/Stroke Black/Coins_Bronze.png" id="1_gqjx5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7qo2g"]
+bounce = 0.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lmrp2"]
 atlas = ExtResource("1_gqjx5")
@@ -52,6 +55,7 @@ radius = 8.0
 radius = 5.0
 
 [node name="Coin" type="Coin"]
+physics_material_override = SubResource("PhysicsMaterial_7qo2g")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.5, -0.5)
