@@ -1,7 +1,7 @@
 use std::borrow::Borrow;
 
 use godot::classes::rigid_body_2d::FreezeMode;
-use godot::classes::{CharacterBody2D, IRigidBody2D, InputEvent, RigidBody2D};
+use godot::classes::{CharacterBody2D, IRigidBody2D, InputEvent, ResourceLoader, RigidBody2D, Texture2D, Timer};
 /// Represents a coin.
 ///
 /// Author : Trinity Pittman
@@ -27,6 +27,7 @@ pub struct Coin {
 
 #[godot_api]
 impl IRigidBody2D for Coin {
+
     /// Constructor for a Coin
     fn init(base: Base<RigidBody2D>) -> Self {
         Self {  
@@ -36,6 +37,7 @@ impl IRigidBody2D for Coin {
             curr_player: None,
         }
     }
+
 
     fn ready(&mut self) {
         godot_print!("{} at position {}", self.base().get_name(), self.base_mut().get_global_position());
@@ -49,12 +51,17 @@ impl IRigidBody2D for Coin {
         self.base_mut().set_contact_monitor(true);
         self.base_mut().set_max_contacts_reported(1);
     }
-
 }
 
 
 #[godot_api]
 impl Coin {
+
+    fn set_state(&mut self, new_state: CoinState) {
+        self.state = new_state;
+    }
+
+
     /// When someone enters this coins hit box we call the method to add a coin to that players  
     /// coin counter.
     ///
@@ -63,16 +70,9 @@ impl Coin {
     #[func]
     fn coin_pickup(&mut self, body: Gd<Node2D>) {
         
-
         if self.state == CoinState::Thrown {
-            if let Ok(mut player) = body.try_cast::<Player>() {
-                if player.get_name() != self.curr_player.as_ref().unwrap().get_name() {
-                    player.bind_mut().adjust_health(-10.);
-                    self.drop()
-                }
-            } else {
-                self.drop()
-            }
+            self.drop(body);
+
         } else if self.state == CoinState::Idle {
             godot_print!("\n{} pick-up attempt: Body entered -> {}", self.base().get_name(), body.get_name());  // Debug line
             godot_print!("COIN IN STATE {}", self.state);
@@ -80,36 +80,19 @@ impl Coin {
             godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
 
             if let Ok(mut player) = body.try_cast::<Player>() {
+                // Update state 
                 self.set_state(CoinState::PickedUp);
                 godot_print!("COIN IN STATE PICKED UP = {}", self.state);
 
+                // Adjust Players coins 
+                player.bind_mut().adjust_coins(1, self);            
 
-                // let mut args = &[1.to_variant(), self.base_mut().to_variant()];
-                
-                // player.call_deferred(StringName::from("adjust_coins"), args);
-                player.bind_mut().adjust_coins(1, self); // Dereference and call the method
-                // let pos = Vector2::new(100000., -100000.);
-                // self.base_mut().set_global_position(pos);
-                
-
-                // let real_pos = self.base_mut().get_global_position();
-                // godot_print!("REPOSITIONING pickup to {} actually {}", pos, real_pos);
+                // Keep track of this coins player 
                 self.curr_player = Some(player);
-                // self.base_mut().queue_free(); // Remove the coin from the scene
             } else {
                 godot_print!("Something other than player entered the coin.");
             }
         }
-    
-    }
-
-    fn defer_adjust_coins(&mut self, mut player: Player, amount: i8){
-        player.adjust_coins(amount, self)
-    }
-
-
-    fn set_state(&mut self, new_state: CoinState) {
-        self.state = new_state;
     }
 
 
@@ -122,41 +105,61 @@ impl Coin {
         // If in PickedUp state
         if self.state == CoinState::PickedUp {
             godot_print!("THROWING");
-            
+
             let force;
             let player = self.curr_player.as_mut().unwrap();
             let mut pos = player.get_global_position();
-            // let position = player.to_local(pos);
 
-            if (player.bind().get_dir() < 0.) {
+            if (player.bind().get_dir() < 0.) { // Throw left 
                 force = Vector2::new(-500., -400.);
-            } else {
+            } else {    // Throw right 
                 force = Vector2::new(500., -400.);
-                pos = pos + Vector2::new(20., 0.);
+                pos = pos + Vector2::new(20., 0.); // Adjust pos for throwing right 
             }
 
-            self.base_mut().set_freeze_enabled(false);
-            self.base_mut().set_global_position(pos);
-            let real_pos = self.base_mut().get_global_position();
+            self.base_mut().set_freeze_enabled(false); 
+            self.base_mut().set_global_position(pos);       // Set position to the player 
+            self.base_mut().set_visible(true);      // Ensure visible
+            self.base_mut().set_sleeping(false);    // Ensure awake 
 
+
+            // Debugging 
+            let real_pos = self.base_mut().get_global_position();
             godot_print!("REPOSITIONING {} to {} actually {}", self.base().get_name(), pos, real_pos);
+
+            // Apply impluse 
             godot_print!("Applying impulse {}", force);
-            // self.base_mut().set_center_of_mass(pos);
+            self.base_mut().set_linear_velocity(Vector2::ZERO);
+            self.base_mut().set_angular_velocity(0.);
             self.base_mut().apply_impulse(force);
 
+            // Debug physics 
+            let velocity = self.base_mut().get_linear_velocity();
+            let sleeping = self.base_mut().is_sleeping();
+            godot_print!("POS: {}", pos);
+            godot_print!("VIS: {}", self.base_mut().is_visible());
+            godot_print!("VEL: {}\nSLEEP: {}", velocity, sleeping);
+
+            // Update state 
             self.set_state(CoinState::Thrown);
         }
     }
 
-    pub fn drop(&mut self) {
-        // drop the coin when it hits something 
-        
-        self.set_state(CoinState::Idle);
-        // self.base_mut().set_axis_velocity(Vector2::ZERO);
-        self.base_mut().set_freeze_enabled(true);
 
-
-        // change velocity to zero ? 
+    pub fn drop(&mut self, body: Gd<Node2D>) {
+        // If the player the coin entered is not the current player 
+        if let Ok(mut player) = body.try_cast::<Player>() {
+            if player.get_name() != self.curr_player.as_ref().unwrap().get_name() {
+                // Hurt the player 
+                player.bind_mut().adjust_health(-10.);
+                // change the state to idle 
+                self.set_state(CoinState::Idle);
+            }
+        // If the player the coin entered is the current player
+        } else { 
+            // change the state to idle 
+            self.set_state(CoinState::Idle);
+        }
     }
 
     // #[func]
