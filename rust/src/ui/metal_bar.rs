@@ -73,7 +73,6 @@ impl MetalBar {
     fn load_texture(&mut self, path: &str) -> Gd<Texture2D>{
         let mut loader: Gd<ResourceLoader> = ResourceLoader::singleton(); 
 
-        let path_g: GString = GString::from(path);   // Change the string to a GString for godot
         let tex: Option<Gd<Resource>> = loader.load(path.into());
 
         tex.unwrap().cast::<Texture2D>() 

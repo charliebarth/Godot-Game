@@ -56,6 +56,8 @@ radius = 5.0
 
 [node name="Coin" type="Coin"]
 physics_material_override = SubResource("PhysicsMaterial_7qo2g")
+can_sleep = false
+continuous_cd = 1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.5, -0.5)

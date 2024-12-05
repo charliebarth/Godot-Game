@@ -38,7 +38,7 @@ impl ILabel for CoinCounter {
         let coin_cnt = GString::from(format!("{}", self.coins));
         self.base_mut().set_text(coin_cnt.into());
 
-        // for i in 0..STARTING_COIN_COUNT{
+        // for _i in 0..STARTING_COIN_COUNT{
         //     self.coin_holder.push(Coin::new_alloc());
         // }
     }
@@ -62,15 +62,15 @@ impl CoinCounter {
         // Update coin counter
         self.coins = new_coins;
 
+        // Change the position to outside the map 
         let pos = Vector2::new(100000., -100000.);
-        // coin.to_gd().set_global_position(pos);
-
-        let mut args = &[pos.to_variant()];
+        let args = &[pos.to_variant()];
         coin.to_gd().call_deferred(StringName::from("set_global_position"), args);
 
         // let real_pos = coin.to_gd().get_global_position();
         // godot_print!("\nREPOSITIONING {} to {} actually {}", coin.to_gd().get_name(), pos, real_pos);
 
+        // Add the coin to the coin holder 
         self.coin_holder.insert(self.coin_holder.len(), coin.to_gd());
     }
 
@@ -101,24 +101,10 @@ impl CoinCounter {
         if event.is_action_pressed(StringName::from("throw")) {
             // Check if player has coins to throw
             if (self.remove_coin()){
-                // Get a coin 
-                // let mut coin = Coin::new_alloc();
-
-                let player: Gd<CharacterBody2D> = self
-                    .base_mut()
-                    .get_owner()
-                    .unwrap()
-                    .get_owner()
-                    .unwrap()
-                    .cast::<CharacterBody2D>();
-                // godot_print!("Parent of coincounter: {}", player.get_name());
-
-                // let pos = player.get_global_position();
                 
-                // let mut coin = self.coin_holder.last_mut().unwrap();
+                // Get the last coin from the coin holder 
                 let length = self.coin_holder.len();
                 let mut coin = self.coin_holder.remove(length-1);
-                // coin.set_global_position(pos);
 
                 // Throw a coin
                 coin.bind_mut().throw();

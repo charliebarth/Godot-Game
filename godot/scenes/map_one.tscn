@@ -65,7 +65,7 @@ position = Vector2(211, -167)
 position = Vector2(-16, -112)
 
 [node name="Coin" parent="." instance=ExtResource("3_ubb7f")]
-position = Vector2(502, -93)
+position = Vector2(517, -95)
 
 [node name="Coin2" parent="." instance=ExtResource("3_ubb7f")]
 position = Vector2(599, -94)
