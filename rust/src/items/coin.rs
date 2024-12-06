@@ -51,6 +51,10 @@ impl IRigidBody2D for Coin {
         self.base_mut().set_contact_monitor(true);
         self.base_mut().set_max_contacts_reported(1);
     }
+
+    fn physics_process(&mut self, delta: f64){
+
+    }
 }
 
 
@@ -99,6 +103,11 @@ impl Coin {
         }
     }
 
+    fn resolve_stuck_coins(&mut self) {
+
+    }
+    
+
     /// Handles throwing of the coin, gets direction and applies impulse. 
     #[func]
     pub fn throw(&mut self) {
@@ -143,6 +152,7 @@ impl Coin {
             godot_print!("POS: {}", pos);
             godot_print!("VIS: {}", self.base_mut().is_visible());
             godot_print!("VEL: {}\nSLEEP: {}", velocity, sleeping);
+            godot_print!("BODIES: {}", self.base_mut().get_colliding_bodies());
 
             // Update state 
             self.set_state(CoinState::Thrown);

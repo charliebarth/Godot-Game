@@ -74,6 +74,7 @@ impl CoinCounter {
         let pos = Vector2::new(100000., -100000.);
         let args = &[pos.to_variant()];
         coin.to_gd().call_deferred(StringName::from("set_global_position"), args);
+        coin.to_gd().call_deferred(StringName::from("set_freeze_enabled"), &[true.to_variant()]);
 
         // let real_pos = coin.to_gd().get_global_position();
         // godot_print!("\nREPOSITIONING {} to {} actually {}", coin.to_gd().get_name(), pos, real_pos);
