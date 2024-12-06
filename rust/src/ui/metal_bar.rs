@@ -1,7 +1,7 @@
 /// Represents a Metal Bar that contains the amount of reserves for a particular metal type. 
 /// 
 /// Author : Trinity Pittman
-/// Version : 10/10/2024
+/// Version : Fall 2024
 
 use godot::prelude::*;
 use godot::classes::{ITextureProgressBar, ResourceLoader, TextureProgressBar, Texture2D};
@@ -23,6 +23,7 @@ pub struct MetalBar {
 
 
 #[godot_api]
+/// Godot methods for Metal reserve bar 
 impl ITextureProgressBar for MetalBar {
 
     /// Constructor for a Metal Bar
@@ -44,12 +45,13 @@ impl ITextureProgressBar for MetalBar {
 
 }
 
+/// Methods for the metal bar 
 impl MetalBar {
 
     /// Sets the under texture and progress texture of this metal bar
     /// 
-    /// Args: 
-    ///     path (&str): the path to the progress texture
+    /// # Arguments
+    /// * `path` (&str) - the path to the progress texture
     pub fn set_texture(&mut self, path: &str) {
         // Every bar will have the same under texture so we set that first
         let under_path: &str = "res://assets/HealthMetalBars/HealthBar DARK.png";
@@ -68,8 +70,8 @@ impl MetalBar {
 
     /// Loads in a texture given a path to the file. 
     /// 
-    /// Args:
-    ///     path (&str): the path the the texture to load
+    /// # Arguments
+    /// * `path` (&str) - the path the the texture to load
     fn load_texture(&mut self, path: &str) -> Gd<Texture2D>{
         let mut loader: Gd<ResourceLoader> = ResourceLoader::singleton(); 
 
@@ -79,12 +81,16 @@ impl MetalBar {
     }
 
     /// Sets the name of this metal bar 
+    /// # Arguments
+    /// * `name` (&str) - the name to set it to 
     pub fn set_name(&mut self, name: &str) {
         let name_g: GString = GString::from(name);   // Change the string to a GString for godot
         self.base_mut().set_name(name_g);
     }
 
     /// Gets the name of this metal bar 
+    /// # Returns 
+    /// * (StringName) - the name of the bar 
     pub fn get_name(&mut self) -> StringName {
         self.base_mut().get_name()
     }
@@ -95,22 +101,24 @@ impl MetalBar {
     }
 
     /// Getter method for the current number of reserves
+    /// # Returns 
+    /// * (f64) - the current reserves 
     pub fn get_reserves(&mut self) -> f64 {
         self.reserves
     }
 
     /// Setter method for the reserves
     /// 
-    /// Args:
-    ///     reserves (f64): the reserve value to set the reserves to 
+    /// # Arguments
+    /// * `reserves` (f64) - the reserve value to set the reserves to 
     pub fn set_value(&mut self, reserves: f64){
         self.base_mut().set_value(reserves); 
     }
 
     /// Adjusts the number of reserves of this metal positively or negatively 
     /// 
-    /// Args: 
-    ///     reserve (f64): the reserve amount to increment or decrement by 
+    /// # Arguments
+    /// * `reserve` (f64) - the reserve amount to increment or decrement by 
     pub fn adjust_reserves(&mut self, reserve: f64) {
 
         let new_reserve = if reserve < 0.0 {    // If adjusting negatively

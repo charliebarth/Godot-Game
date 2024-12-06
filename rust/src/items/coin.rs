@@ -1,31 +1,31 @@
-use std::borrow::Borrow;
-
-use godot::classes::rigid_body_2d::FreezeMode;
-use godot::classes::{CharacterBody2D, IRigidBody2D, InputEvent, ResourceLoader, RigidBody2D, Texture2D, Timer};
 /// Represents a coin.
 ///
-/// Author : Trinity Pittman
-/// Version : 10/02/2024
+/// Author: Trinity Pittman
+/// Date: Fall 2024
+use godot::classes::{IRigidBody2D, RigidBody2D};
+
 use godot::prelude::*;
 
-use crate::player::input_manager::InputManager;
 use crate::player::player::Player;
-use crate::player::enums::coin_events::{CoinState, CoinEvents};
+use crate::player::enums::coin_events::{CoinState};
 
-const SPEED: f64 = 25.0;
 
-/// Represents a coin
 #[derive(GodotClass)]
 #[class(base=RigidBody2D)]
+/// Represents a coin
 pub struct Coin {
     base: Base<RigidBody2D>,
+    /// The state of a Coin
     state: CoinState,
+    /// The weight of the coin
     weight: i32,
+    /// The current player whose coin counter the coin is in 
     curr_player: Option<Gd<Player>>
 }
 
 
 #[godot_api]
+/// Godot methods for the Coin
 impl IRigidBody2D for Coin {
 
     /// Constructor for a Coin
@@ -38,13 +38,13 @@ impl IRigidBody2D for Coin {
         }
     }
 
-
+    /// Method called on Coin creation. Sets coin freeze mode to true, and allows collsions. 
     fn ready(&mut self) {
         godot_print!("{} at position {}", self.base().get_name(), self.base_mut().get_global_position());
         self.base_mut().show();
 
         
-        self.base_mut().set_freeze_enabled(true);
+        self.base_mut().set_freeze_enabled(true); // Make the coin stay still 
         self.set_state(CoinState::Idle);     
            
         
@@ -55,8 +55,12 @@ impl IRigidBody2D for Coin {
 
 
 #[godot_api]
+/// Methods that belong to the coin 
 impl Coin {
 
+    /// Sets the state of the Coin based on what is passed in 
+    /// # Arguments
+    /// * `new_state` (CoinState) - The new state to set the coin to 
     fn set_state(&mut self, new_state: CoinState) {
         self.state = new_state;
     }
@@ -65,8 +69,8 @@ impl Coin {
     /// When someone enters this coins hit box we call the method to add a coin to that players  
     /// coin counter.
     ///
-    /// Args:
-    ///      body (Gd<Node2D>): the Node that enters this coin
+    /// # Arguments
+    /// * `body` (Gd<Node2D>) - the Node that enters this coin
     #[func]
     fn coin_pickup(&mut self, body: Gd<Node2D>) {
         
@@ -95,7 +99,7 @@ impl Coin {
         }
     }
 
-
+    /// Handles throwing of the coin, gets direction and applies impulse. 
     #[func]
     pub fn throw(&mut self) {
         
@@ -146,6 +150,8 @@ impl Coin {
     }
 
 
+    /// Handles dropping the coin, called when the coin enters something while in throw state. If 
+    /// the coin enters a player other than the player who threw the coin, damages the player.
     pub fn drop(&mut self, body: Gd<Node2D>) {
         // If the player the coin entered is not the current player 
         if let Ok(mut player) = body.try_cast::<Player>() {

@@ -1,14 +1,12 @@
-use std::borrow::BorrowMut;
-use std::collections::HashMap;
-
 /// Controls the metal bars on screen, stores bars that are not currently on screen and has methods 
 /// to add and remove bars from the on screen Vbox by name. 
 /// 
-/// Author : Trinity Pittman
-/// Version : 11/18/2024
+/// Author: Trinity Pittman
+/// Date: Fall 2024
 
+use std::collections::HashMap;
 use godot::prelude::*;
-use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};  // Import Node and VBoxContainer
+use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};  
 pub use crate::ui::metal_bar::MetalBar;
 
 
@@ -22,16 +20,21 @@ const TOTAL_BARS: u8 = 10;
 const PATHS: [&str; 10] = ["iron", "steel", "pewter", "tin", "bronze", "copper", "duralumin", 
                             "nicrosil", "chromium", "gold"];
 
+
 #[derive(GodotClass)]
 #[class(base=VBoxContainer)]
+/// Represents a manager for the metal bars 
 pub struct MetalReserveBarManager {
     base: Base<VBoxContainer>,
+    /// Holds the Bars in a hashmap of names and bars 
     bars: Option<HashMap<StringName, Gd<MetalBar>>>,  
 }
 
-/// Methods that belong to MetalReserveBarManager
+
 #[godot_api]
+/// Godot methods that belong to MetalReserveBarManager
 impl IVBoxContainer for  MetalReserveBarManager {    
+
     /// Initialization method for `MetalReserveBarManager`
     fn init(base: Base<VBoxContainer>) -> Self {
         Self {
@@ -76,6 +79,7 @@ impl IVBoxContainer for  MetalReserveBarManager {
 
 }
 
+/// Methods for MetalReserveBarManager 
 impl MetalReserveBarManager{
 
     /// Sets the metals currently on screen based on the keybindings set 
@@ -105,10 +109,11 @@ impl MetalReserveBarManager{
 
     /// Given the name of a metal, gets the metal bar associated with it
     /// 
-    /// Args: 
-    ///     name (&str): the name of the metal bar to get 
+    /// # Arguments
+    /// * `name` (&str) - the name of the metal bar to get 
     /// 
-    /// Returns: the metal bar or None if none exists 
+    /// # Returns 
+    /// * (Gd<MetalBar>) - the metal bar or None if none exists 
     pub fn get_metal_bar(&mut self, name: StringName) -> Gd<MetalBar> {
         if let Some(bar) = self.get_bars().get(&name){
             bar.clone()
@@ -127,7 +132,8 @@ impl MetalReserveBarManager{
 
     /// Gets the HashMap of metal bars, if it doesn't exist, create it
     /// 
-    /// Returns: HashMap of MetalBars and their name (StringName)
+    /// # Returns 
+    /// * (HashMap<StringName, Gd<MetalBar>>) - HashMap of MetalBars and their name (StringName)
     fn get_bars(&mut self) -> &mut HashMap<StringName, Gd<MetalBar>> {
         if self.bars.is_none() {
             self.bars = Some(HashMap::new());
@@ -136,6 +142,9 @@ impl MetalReserveBarManager{
     }
 
     /// Adds metals to all the bars contained within the metal reserve bar manager 
+    /// # Arguments
+    /// * `metals` (&Vec<StringName>) - the metals to increment
+    /// * `amt` (f64) - the ammount to increment by 
     pub fn add_metals(&mut self, metals: &Vec<StringName>, amt: f64){ // if needed 
         for i in 0..self.get_bars().len() {
             // Get the specific bar 

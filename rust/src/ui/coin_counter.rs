@@ -1,9 +1,9 @@
 /// Represents a coin counter.
 ///
-/// Author : Trinity Pittman
-/// Version : 10/02/2024
+/// Author: Trinity Pittman
+/// Date: Fall 2024
 use godot::{
-    classes::{CharacterBody2D, ILabel, InputEvent, Label},
+    classes::{ILabel, InputEvent, Label},
     prelude::*,
 };
 
@@ -12,17 +12,19 @@ use crate::{items::coin::Coin, player::{enums::coin_events::CoinEvents, input_ma
 // The amount of coins a player starts with
 const STARTING_COIN_COUNT: i32 = 0;
 
-/// Struct that represents a Coin Counter
 #[derive(GodotClass)]
 #[class(base=Label)]
+/// Struct that represents a Coin Counter
 pub struct CoinCounter {
     base: Base<Label>,
     /// The amount of coins
     coins: i32,
+    /// Holds Coins 
     coin_holder: Vec<Gd<Coin>>
 }
 
 #[godot_api]
+/// Godot methods that belong to the CoinCounter 
 impl ILabel for CoinCounter {
     /// Constructor for the Coin counter
     fn init(base: Base<Label>) -> Self {
@@ -43,6 +45,9 @@ impl ILabel for CoinCounter {
         // }
     }
 
+    /// On an input event, calls the process_coin_events method if the event is a CoinEvent 
+    /// # Arguments 
+    /// * `event` (Gd<InputEvent>) - the input event that took place 
     fn input(&mut self, event: Gd<InputEvent>) {
         let button_name = InputManager::event_to_input_name(event.clone());
         
@@ -53,8 +58,11 @@ impl ILabel for CoinCounter {
 }
 
 #[godot_api]
+/// Methods for the CoinCounter
 impl CoinCounter {
     /// Increments the number of coins
+    /// # Arguments
+    /// * `coin` (Coin) - the coin to add to the coin counter 
     pub fn add_coin(&mut self, coin: &mut Coin) {
         let new_coins = self.coins + 1; // Find how many coins to change to
         self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
@@ -76,8 +84,8 @@ impl CoinCounter {
 
     /// Setter method for the text
     ///
-    /// Args:
-    ///     text (String): The text to set the label to
+    /// # Arguments 
+    /// * `text` (String) - The text to set the label to
     fn set_text(&mut self, text: String) {
         let text_g = GString::from(text); // Change the string to a GString for godot
         self.base_mut().set_text(text_g); // set label text
@@ -97,6 +105,10 @@ impl CoinCounter {
         }
     }
 
+    /// Processes the coin event that happened
+    /// # Arguments
+    /// * `coin_event` (CoinEvents) - The coin event that took place
+    /// * `event` (Gd<InputEvent>) - The input event that took place 
     fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>){
         if event.is_action_pressed(StringName::from("throw")) {
             // Check if player has coins to throw
