@@ -869,12 +869,23 @@ z_index = -1
 position = Vector2(0, -9)
 
 [node name="LineSelector" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(80, 6)
 scale = Vector2(0.0664062, 0.0664062)
 texture = ExtResource("30_o8iik")
 script = ExtResource("31_hw5a7")
 
 [node name="AllomanticRange" type="AllomanticRange" parent="."]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AllomanticRange"]
 position = Vector2(0, 5)
@@ -887,5 +898,3 @@ shape = SubResource("CircleShape2D_fwaiq")
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
-[connection signal="body_entered" from="AllomanticRange" to="AllomanticRange" method="enter_range"]
-[connection signal="body_exited" from="AllomanticRange" to="AllomanticRange" method="exit_range"]

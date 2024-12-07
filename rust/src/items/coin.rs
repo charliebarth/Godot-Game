@@ -7,7 +7,7 @@ use godot::classes::{IRigidBody2D, RigidBody2D};
 use godot::prelude::*;
 
 use crate::player::player::Player;
-use crate::player::enums::coin_events::{CoinState};
+use crate::player::enums::coin_events::CoinState;
 
 
 #[derive(GodotClass)]
@@ -102,10 +102,6 @@ impl Coin {
             }
         }
     }
-
-    fn resolve_stuck_coins(&mut self) {
-
-    }
     
 
     /// Handles throwing of the coin, gets direction and applies impulse. 
@@ -125,9 +121,10 @@ impl Coin {
 
             if (player.bind().get_dir() < 0.) { // Throw left 
                 force = Vector2::new(-500., -400.);
+                pos = pos + Vector2::new(0., -5.); // Adjust pos to be higher
             } else {    // Throw right 
                 force = Vector2::new(500., -400.);
-                pos = pos + Vector2::new(20., 0.); // Adjust pos for throwing right 
+                pos = pos + Vector2::new(20., -15.); // Adjust pos for throwing right 
             }
 
             self.base_mut().set_freeze_enabled(false); 

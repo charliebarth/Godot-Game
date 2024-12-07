@@ -26,8 +26,24 @@ impl IArea2D for MetalVial {
         Self {
             base,
             metals: None,
-            amt: 10.
+            amt: 30.
         }
+    }
+
+    fn ready(&mut self) {
+        let mut new_metals = Vec::new();
+        new_metals.push(StringName::from("iron"));
+        new_metals.push(StringName::from("steel"));
+        new_metals.push(StringName::from("pewter"));
+        // new_metals.push(StringName::from("tin"));
+        // new_metals.push(StringName::from("bronze"));
+        // new_metals.push(StringName::from("copper"));
+        // new_metals.push(StringName::from("duralumin"));
+        // new_metals.push(StringName::from("nicrosil"));
+        // new_metals.push(StringName::from("chromium"));
+        // new_metals.push(StringName::from("gold"));
+        
+        self.set_metals(new_metals);
     }
 }
 
@@ -63,8 +79,8 @@ impl MetalVial {
         self.metals = Some(metals);
     }
 
-    #[func]
-    fn is_metal(&self) -> bool {
-        true // Metal vials are made of metal
-    }
+    // #[func]
+    // fn is_metal(&self) -> bool {
+    //     true // Metal vials are made of metal
+    // }
 }
