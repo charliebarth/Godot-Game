@@ -70,9 +70,9 @@ impl IVBoxContainer for  MetalReserveBarManager {
                 self.get_metal_bar(metal_name)
                         .hide();     
             }
-            
-            godot_print!("ALL BARS CREATED")
         }
+
+        godot_print!("ALL BARS CREATED");
 
         self.setup_keybinds();
     }
