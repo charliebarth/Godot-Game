@@ -1127,14 +1127,17 @@ lifetime = 2.0
 [node name="Landing" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("38_gtvlb")
 volume_db = -15.0
+bus = &"SFX"
 
 [node name="Footstep" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("38_rea0i")
 volume_db = 5.0
+bus = &"SFX"
 
 [node name="Jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("39_6vh5j")
 volume_db = -12.0
+bus = &"SFX"
 
 [node name="Disconnected" type="Disconnected" parent="."]
 visible = false

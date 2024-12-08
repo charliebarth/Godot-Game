@@ -31,3 +31,4 @@ position = Vector2(5, 315)
 stream = SubResource("AudioStreamPlaylist_pfbvb")
 volume_db = -10.0
 autoplay = true
+bus = &"Music"
