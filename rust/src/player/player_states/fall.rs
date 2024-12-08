@@ -15,8 +15,6 @@ pub struct Fall;
 
 impl PlayerState for Fall {
     fn enter(player: &mut Player) {
-        player.set_gravity(FALL_GRAVITY);
-
         if player.get_previous_state() != PlayerStates::Jump {
             player.add_timeout_event(TimeoutEvents::CoyoteTime);
         }
@@ -32,12 +30,15 @@ impl PlayerState for Fall {
 
         if player.base().is_on_floor() {
             player.set_state(PlayerStates::Land);
-        } else if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
+        } else if input_manager.check_for_player_event(PlayerEvents::Jump)
+            && player.jump_available()
+        {
             player.set_state(PlayerStates::Jump);
         } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
             player.set_state(PlayerStates::Attack);
         } else {
             Fall::run(player);
+            Fall::fall(player);
         }
     }
 }
@@ -58,5 +59,12 @@ impl Fall {
 
         player.set_dir(horizontal_dir);
         player.apply_horizontal_velocity(horizontal_dir, speed);
+    }
+
+    fn fall(player: &mut Player) {
+        let vertical_velocity = player.base().get_velocity().y;
+        if vertical_velocity >= 0.0 {
+            player.set_gravity(FALL_GRAVITY);
+        }
     }
 }

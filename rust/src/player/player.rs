@@ -439,6 +439,24 @@ impl Player {
         self.previous_state
     }
 
+    /// Get the previous state of the player as a string
+    ///
+    /// # Returns
+    /// * `String` - The previous state of the player as a string
+    #[func]
+    pub fn get_previous_state_str(&self) -> String {
+        self.previous_state.as_str().into()
+    }
+
+    /// Get the current state of the player as a string
+    ///
+    /// # Returns
+    /// * `String` - The current state of the player as a string
+    #[func]
+    pub fn get_current_state_str(&self) -> String {
+        self.current_state.as_str().into()
+    }
+
     /// A sliding upper limit for the player's run speed
     /// This is changed based on how far the joystick is pressed
     ///

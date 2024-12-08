@@ -1,4 +1,4 @@
-[gd_scene load_steps=159 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=160 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -251,6 +251,10 @@ atlas = ExtResource("3_6sfda")
 region = Rect2(120, 0, 120, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wyxyx"]
+atlas = ExtResource("3_6sfda")
+region = Rect2(240, 0, 120, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hos1x"]
 atlas = ExtResource("3_6sfda")
 region = Rect2(240, 0, 120, 80)
 
@@ -632,6 +636,9 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hos1x")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4gbwa")
 }, {
@@ -1159,8 +1166,11 @@ offset_bottom = 85.4783
 
 [connection signal="id_changed" from="." to="Player1Vis" method="_on_player_id_changed"]
 [connection signal="id_changed" from="." to="PointLight2D" method="_on_player_id_changed"]
+[connection signal="animation_changed" from="Player1Vis" to="Player1Vis" method="_on_animation_changed"]
 [connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
+[connection signal="animation_changed" from="Player2Vis" to="Player2Vis" method="_on_animation_changed"]
 [connection signal="animation_finished" from="Player2Vis" to="Player2Vis" method="_on_animation_finished"]
+[connection signal="animation_changed" from="Player3Vis" to="Player3Vis" method="_on_animation_changed"]
 [connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
 [connection signal="animation_changed" from="OwnerVis" to="OwnerVis" method="_on_animation_changed"]
 [connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
