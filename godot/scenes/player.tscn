@@ -28,7 +28,7 @@
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
 [ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
-[ext_resource type="Texture2D" uid="uid://cjofih2mbdsil" path="res://icon.svg" id="30_o8iik"]
+[ext_resource type="Texture2D" uid="uid://b5lf080mspvgn" path="res://assets/navigation_e.png" id="29_a80li"]
 [ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="32_j10vn"]
 [ext_resource type="Script" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
@@ -1057,9 +1057,10 @@ z_index = -1
 position = Vector2(0, -9)
 
 [node name="LineSelector" type="Sprite2D" parent="."]
-position = Vector2(80, 6)
-scale = Vector2(0.0664062, 0.0664062)
-texture = ExtResource("30_o8iik")
+self_modulate = Color(0.785124, 0.785124, 0.785124, 1)
+position = Vector2(58.2344, -0.234374)
+scale = Vector2(0.360352, 0.360352)
+texture = ExtResource("29_a80li")
 script = ExtResource("31_hw5a7")
 
 [node name="Hitbox" type="Area2D" parent="."]
