@@ -1,10 +1,8 @@
 extends Control
-
-@onready var game = get_node("/root/Game") as Game
+@onready var main_menu = $".." as MainMenu
 
 func _on_exit_pressed() -> void:
-	pass # Replace with function body.
-	# call return to main menu function on Game
+	main_menu.swap_to_main_menu()
 
 
 func _on_tree_exited() -> void:

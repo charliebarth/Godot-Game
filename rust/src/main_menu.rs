@@ -1,5 +1,5 @@
 use godot::{
-    classes::{AnimatedSprite2D, AnimationPlayer, RichTextLabel},
+    classes::{AnimatedSprite2D, AnimationPlayer, Control, RichTextLabel},
     prelude::*,
 };
 
@@ -8,12 +8,18 @@ use godot::{
 
 pub struct MainMenu {
     base: Base<Node2D>,
+    settings_menu: Option<Gd<Control>>,
+    main_menu: Option<Gd<Control>>,
 }
 
 #[godot_api]
 impl INode2D for MainMenu {
     fn init(base: Base<Node2D>) -> Self {
-        Self { base }
+        Self {
+            base,
+            settings_menu: None,
+            main_menu: None,
+        }
     }
 }
 
@@ -45,13 +51,49 @@ impl MainMenu {
         notification_box_animation.play();
     }
 
-    #[func]
-    pub fn on_tree_exited(&mut self) {
-        self.base_mut().set_process(false);
+    fn get_settings_menu(&mut self) -> Gd<Control> {
+        if self.settings_menu.is_none() {
+            self.settings_menu = Some(self.base().get_node_as::<Control>("Settings"));
+        }
+
+        self.settings_menu
+            .as_ref()
+            .expect("SettingsMenu node not found")
+            .clone()
+    }
+
+    fn get_main_menu(&mut self) -> Gd<Control> {
+        if self.main_menu.is_none() {
+            self.main_menu = Some(self.base().get_node_as::<Control>("MainMenuUI"));
+        }
+
+        self.main_menu
+            .as_ref()
+            .expect("MainMenu node not found")
+            .clone()
     }
 
     #[func]
-    pub fn on_tree_entered(&mut self) {
-        self.base_mut().set_process(true);
+    pub fn swap_to_settings(&mut self) {
+        let mut main_menu = self.get_main_menu();
+        let mut settings_menu = self.get_settings_menu();
+
+        main_menu.set_process(false);
+        main_menu.set_visible(false);
+
+        settings_menu.set_process(true);
+        settings_menu.set_visible(true);
+    }
+
+    #[func]
+    pub fn swap_to_main_menu(&mut self) {
+        let mut main_menu = self.get_main_menu();
+        let mut settings_menu = self.get_settings_menu();
+
+        main_menu.set_process(true);
+        main_menu.set_visible(true);
+
+        settings_menu.set_process(false);
+        settings_menu.set_visible(false);
     }
 }

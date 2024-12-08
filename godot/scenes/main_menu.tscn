@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=4 uid="uid://c1l6h04x8ew74"]
+[gd_scene load_steps=66 format=4 uid="uid://c1l6h04x8ew74"]
 
 [ext_resource type="Shader" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="2_dfsnj"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="13_k8rir"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="15_e22v7"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="16_7qcqk"]
+[ext_resource type="PackedScene" uid="uid://ku6hvdegx5ws" path="res://scenes/settings.tscn" id="17_ugvbt"]
 [ext_resource type="PackedScene" uid="uid://cq384dq4edi6l" path="res://scenes/menu.tscn" id="17_wwnru"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ubq02"]
@@ -8992,10 +8993,18 @@ libraries = {
 "": SubResource("AnimationLibrary_30skv")
 }
 
-[node name="Menu" parent="." instance=ExtResource("17_wwnru")]
+[node name="MainMenuUI" parent="." instance=ExtResource("17_wwnru")]
 custom_minimum_size = Vector2(200, 200)
 offset_left = -185.0
 offset_top = -561.0
 offset_right = 1757.0
 offset_bottom = 1146.0
 scale = Vector2(0.191565, 0.191565)
+
+[node name="Settings" parent="." instance=ExtResource("17_ugvbt")]
+visible = false
+offset_left = -332.0
+offset_top = -557.0
+offset_right = 1588.0
+offset_bottom = 523.0
+scale = Vector2(0.35, 0.35)

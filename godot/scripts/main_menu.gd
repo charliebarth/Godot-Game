@@ -1,6 +1,7 @@
 extends Control
 
 @onready var game = get_node("/root/Game") as Game
+@onready var main_menu = $".." as MainMenu
 
 
 func _on_play_pressed() -> void:
@@ -12,12 +13,8 @@ func _on_test_mode_pressed() -> void:
 
 
 func _on_settings_pressed() -> void:
-	pass # Replace with function body.
+	main_menu.swap_to_settings()
 
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
-
-
-func _on_main_menu_tree_exited() -> void:
-	pass # Replace with function body.
