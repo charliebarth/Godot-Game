@@ -44,4 +44,14 @@ impl MainMenu {
         notification_box_animation.set_current_animation("fade_out".into());
         notification_box_animation.play();
     }
+
+    #[func]
+    pub fn on_tree_exited(&mut self) {
+        self.base_mut().set_process(false);
+    }
+
+    #[func]
+    pub fn on_tree_entered(&mut self) {
+        self.base_mut().set_process(true);
+    }
 }

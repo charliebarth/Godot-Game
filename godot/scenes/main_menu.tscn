@@ -13,9 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://djgj8feyaey46" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props Animation.png" id="11_x43ck"]
 [ext_resource type="Texture2D" uid="uid://delk3457diwxa" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Idle.png" id="12_074oe"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="13_k8rir"]
-[ext_resource type="PackedScene" uid="uid://pcftbhomicfe" path="res://scenes/main_menu_ui.tscn" id="14_62cor"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="15_e22v7"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="16_7qcqk"]
+[ext_resource type="PackedScene" uid="uid://cq384dq4edi6l" path="res://scenes/menu.tscn" id="17_wwnru"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ubq02"]
 shader = ExtResource("1_0mkdf")
@@ -8977,12 +8977,6 @@ offset_right = 1025.0
 offset_bottom = 202.0
 color = Color(0.725, 0.725, 0.725, 0.535)
 
-[node name="Main Menu UI" parent="." instance=ExtResource("14_62cor")]
-offset_left = -42.0
-offset_top = -468.0
-offset_right = -42.0
-offset_bottom = -468.0
-
 [node name="NotificationBox" type="RichTextLabel" parent="."]
 offset_left = -152.0
 offset_top = -541.0
@@ -8997,3 +8991,11 @@ bbcode_enabled = true
 libraries = {
 "": SubResource("AnimationLibrary_30skv")
 }
+
+[node name="Menu" parent="." instance=ExtResource("17_wwnru")]
+custom_minimum_size = Vector2(200, 200)
+offset_left = -185.0
+offset_top = -561.0
+offset_right = 1757.0
+offset_bottom = 1146.0
+scale = Vector2(0.191565, 0.191565)
