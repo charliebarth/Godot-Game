@@ -1,10 +1,6 @@
-use godot::{
-    classes::{AnimatedSprite2D, AnimationPlayer},
-    obj::WithBaseField,
-};
+use godot::{classes::AnimatedSprite2D, obj::WithBaseField};
 
 use crate::player::{
-    self,
     enums::{player_events::PlayerEvents, player_states::PlayerStates},
     player::Player,
     traits::player_state::PlayerState,

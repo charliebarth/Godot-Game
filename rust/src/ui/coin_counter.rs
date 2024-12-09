@@ -119,7 +119,7 @@ impl CoinCounter {
     fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
         if event.is_action_pressed(StringName::from("throw")) {
             // Check if player has coins to throw
-            if (self.remove_coin()) {
+            if self.remove_coin() {
                 // Get the last coin from the coin holder
                 let length = self.coin_holder.len();
                 let mut coin = self.coin_holder.remove(length - 1);

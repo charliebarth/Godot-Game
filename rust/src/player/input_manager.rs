@@ -2,7 +2,6 @@ use godot::classes::InputMap;
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::{HashMap, HashSet};
 
-use super::enums::coin_events::CoinEvents;
 use super::enums::metal_events::MetalEvents;
 use super::enums::player_events::PlayerEvents;
 

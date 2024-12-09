@@ -7,7 +7,6 @@ use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
-use godot::classes::Label;
 use godot::classes::PointLight2D;
 use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
