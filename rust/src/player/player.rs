@@ -299,9 +299,17 @@ impl Player {
     ///     metals (Vec<StringName>): the metals to effect
     ///     amt (f64): the new amount to set the metals to
     pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
+        for metal in metals {
+            self.get_metal_manager()
+                .bind_mut()
+                .increase_metal_reserve(metal, amt);
+        }
+    }
+
+    pub fn set_metal_reserve_amount(&mut self, metal: StringName, amt: f64) {
         self.get_metal_reserve_bar_manager()
             .bind_mut()
-            .add_metals(&metals, amt);
+            .set_metal_amount(metal, amt);
     }
 
     /// Represents the direction the player is trying to move

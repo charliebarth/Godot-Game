@@ -1,32 +1,29 @@
-/// Represents a Metal Vial. 
-/// 
+use godot::classes::{Area2D, IArea2D};
+/// Represents a Metal Vial.
+///
 /// Author : Trinity Pittman
 /// Version : 10/03/2024
-
 use godot::prelude::*;
-use godot::classes::{Area2D, IArea2D};
 
 use crate::player::player::Player;
-
 
 /// Represents a Metal Vial  
 #[derive(GodotClass)]
 #[class(base=Area2D)]
 pub struct MetalVial {
     base: Base<Area2D>,
-    metals: Option<Vec<StringName>>, 
-    amt: f64
+    metals: Option<Vec<StringName>>,
+    amt: f64,
 }
 
 #[godot_api]
 impl IArea2D for MetalVial {
-
-    /// Constructor for a Metal Vial 
+    /// Constructor for a Metal Vial
     fn init(base: Base<Area2D>) -> Self {
         Self {
             base,
             metals: None,
-            amt: 30.
+            amt: 30.,
         }
     }
 
@@ -42,33 +39,32 @@ impl IArea2D for MetalVial {
         // new_metals.push(StringName::from("nicrosil"));
         // new_metals.push(StringName::from("chromium"));
         // new_metals.push(StringName::from("gold"));
-        
+
         self.set_metals(new_metals);
     }
 }
 
 #[godot_api]
 impl MetalVial {
-
     /// When someone enters this metal vial hit box we call the method to add metal to that players  
-    /// metal bars. 
-    /// 
-    /// Args: 
-    ///      body (Gd<Node2D>): the Node that enters this metal vial. 
+    /// metal bars.
+    ///
+    /// Args:
+    ///      body (Gd<Node2D>): the Node that enters this metal vial.
     #[func]
     fn metal_pickup(&mut self, body: Gd<Node2D>) {
         let body_name = body.get_name();
-        godot_print!("Metal entered by {body_name}");    // Prints who picked up the coin
-        
+        godot_print!("Metal entered by {body_name}"); // Prints who picked up the coin
+
         if let Ok(mut player) = body.try_cast::<Player>() {
             player.bind_mut().adjust_metals(self.get_metals(), self.amt); // Dereference and call the method
-            self.base_mut().queue_free();     // Remove the vial from the scene 
+            self.base_mut().queue_free(); // Remove the vial from the scene
         } else {
             godot_print!("Something other than player entered the coin.");
-        }            
+        }
     }
 
-    fn get_metals(&mut self) -> Vec<StringName>{
+    fn get_metals(&mut self) -> Vec<StringName> {
         if self.metals.is_none() {
             self.metals = Some(Vec::new());
         }

@@ -42,4 +42,12 @@ impl MetalManager {
             metal.as_mut().update(player);
         }
     }
+
+    pub fn increase_metal_reserve(&mut self, metal: StringName, amount: f64) {
+        for m in &mut self.metals {
+            if m.as_ref().as_str() == metal.to_string() {
+                m.as_mut().increase_reserve(amount);
+            }
+        }
+    }
 }

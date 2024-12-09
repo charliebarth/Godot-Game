@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=17 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
 [ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="6_htvoh"]
 [ext_resource type="PackedScene" uid="uid://6eewvmcnjobm" path="res://scenes/coin.tscn" id="7_vk4k8"]
+[ext_resource type="PackedScene" uid="uid://cdk7m3yxd0fm0" path="res://scenes/metal_vial.tscn" id="8_dufnk"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
@@ -175,3 +176,6 @@ position = Vector2(376, -825)
 
 [node name="Coin" parent="." instance=ExtResource("7_vk4k8")]
 position = Vector2(521, -114)
+
+[node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(206, -16)

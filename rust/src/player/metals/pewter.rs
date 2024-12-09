@@ -51,11 +51,18 @@ impl Metal for Pewter {
             }
         }
 
+        player.set_metal_reserve_amount(self.as_str().into(), self.current_reserve);
         player
             .get_pewter_particles()
             .set_visible(self.show_particles);
-        // let mut metal_reserve_bar_manager_godot = player.get_metal_reserve_bar_manager();
-        // let mut metal_reserve_bar_manager = metal_reserve_bar_manager_godot.bind_mut();
-        // metal_reserve_bar_manager.adjust_bar_amount("pewter", self.current_reserve);
+    }
+
+    fn as_str(&self) -> &str {
+        "pewter"
+    }
+
+    fn increase_reserve(&mut self, amount: f64) {
+        self.current_reserve += amount;
+        self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
     }
 }
