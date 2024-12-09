@@ -30,6 +30,9 @@ current_tab = 0
 
 [node name="Sound" type="TabBar" parent="TabContainer"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Controls")
+focus_neighbor_right = NodePath("../Graphics")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/VBoxContainer/Master")
 metadata/_tab_index = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Sound"]
@@ -53,21 +56,31 @@ theme_override_constants/separation = 64
 
 [node name="Master" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
 layout_mode = 2
+focus_neighbor_top = NodePath("../WorldSFX")
+focus_neighbor_bottom = NodePath("../Music")
 bus_name = "Master"
 
 [node name="Music" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Master")
+focus_neighbor_bottom = NodePath("../SFX")
 bus_name = "Music"
 
 [node name="SFX" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Music")
+focus_neighbor_bottom = NodePath("../PlayerSFX")
 
 [node name="PlayerSFX" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
 layout_mode = 2
+focus_neighbor_top = NodePath("../SFX")
+focus_neighbor_bottom = NodePath("../WorldSFX")
 bus_name = "PlayerSFX"
 
 [node name="WorldSFX" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
 layout_mode = 2
+focus_neighbor_top = NodePath("../PlayerSFX")
+focus_neighbor_bottom = NodePath("../Master")
 bus_name = "WorldSFX"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer"]
@@ -84,6 +97,8 @@ text = "Apply"
 [node name="Graphics" type="TabBar" parent="TabContainer"]
 visible = false
 layout_mode = 2
+focus_neighbor_left = NodePath("../Sound")
+focus_neighbor_right = NodePath("../Controls")
 metadata/_tab_index = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Graphics"]
@@ -106,6 +121,8 @@ alignment = 1
 [node name="Controls" type="TabBar" parent="TabContainer"]
 visible = false
 layout_mode = 2
+focus_neighbor_left = NodePath("../Graphics")
+focus_neighbor_right = NodePath("../Sound")
 metadata/_tab_index = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Controls"]
@@ -134,6 +151,7 @@ theme_override_constants/separation = 32
 layout_mode = 2
 theme_override_constants/separation = 32
 
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_apply_pressed"]
 [connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music" method="_on_apply_pressed"]
 [connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX" method="_on_apply_pressed"]
