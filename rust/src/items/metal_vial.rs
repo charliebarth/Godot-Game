@@ -14,6 +14,8 @@ use crate::player::player::Player;
 #[class(base=Area2D)]
 pub struct MetalVial {
     base: Base<Area2D>,
+    metals: Option<Vec<StringName>>, 
+    amt: f64
 }
 
 #[godot_api]
@@ -23,7 +25,25 @@ impl IArea2D for MetalVial {
     fn init(base: Base<Area2D>) -> Self {
         Self {
             base,
+            metals: None,
+            amt: 30.
         }
+    }
+
+    fn ready(&mut self) {
+        let mut new_metals = Vec::new();
+        new_metals.push(StringName::from("iron"));
+        new_metals.push(StringName::from("steel"));
+        new_metals.push(StringName::from("pewter"));
+        // new_metals.push(StringName::from("tin"));
+        // new_metals.push(StringName::from("bronze"));
+        // new_metals.push(StringName::from("copper"));
+        // new_metals.push(StringName::from("duralumin"));
+        // new_metals.push(StringName::from("nicrosil"));
+        // new_metals.push(StringName::from("chromium"));
+        // new_metals.push(StringName::from("gold"));
+        
+        self.set_metals(new_metals);
     }
 }
 
@@ -41,15 +61,26 @@ impl MetalVial {
         godot_print!("Metal entered by {body_name}");    // Prints who picked up the coin
         
         if let Ok(mut player) = body.try_cast::<Player>() {
-            player.bind_mut().adjust_metals(); // Dereference and call the method
+            player.bind_mut().adjust_metals(self.get_metals(), self.amt); // Dereference and call the method
             self.base_mut().queue_free();     // Remove the vial from the scene 
         } else {
             godot_print!("Something other than player entered the coin.");
         }            
     }
 
-    #[func]
-    fn is_metal(&self) -> bool {
-        true // Metal vials are made of metal
+    fn get_metals(&mut self) -> Vec<StringName>{
+        if self.metals.is_none() {
+            self.metals = Some(Vec::new());
+        }
+        self.metals.as_ref().expect("Metals not found").clone()
     }
+
+    fn set_metals(&mut self, metals: Vec<StringName>) {
+        self.metals = Some(metals);
+    }
+
+    // #[func]
+    // fn is_metal(&self) -> bool {
+    //     true // Metal vials are made of metal
+    // }
 }

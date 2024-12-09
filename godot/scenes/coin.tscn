@@ -1,6 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://6eewvmcnjobm"]
+[gd_scene load_steps=11 format=3 uid="uid://6eewvmcnjobm"]
 
 [ext_resource type="Texture2D" uid="uid://c2n6252ucx1" path="res://assets/Items/Coins/Stroke Black/Coins_Bronze.png" id="1_gqjx5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7qo2g"]
+bounce = 0.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lmrp2"]
 atlas = ExtResource("1_gqjx5")
@@ -45,10 +48,18 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_3vgww"]
+radius = 8.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_jhmiw"]
-radius = 7.07107
+radius = 8.0
 
 [node name="Coin" type="Coin"]
+collision_layer = 2
+physics_material_override = SubResource("PhysicsMaterial_7qo2g")
+can_sleep = false
+lock_rotation = true
+continuous_cd = 1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.5, -0.5)
@@ -57,7 +68,12 @@ sprite_frames = SubResource("SpriteFrames_8dn5o")
 autoplay = "default"
 frame_progress = 0.988928
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="EnteringCollison" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_3vgww")
+
+[node name="RigidBodyCollison" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_jhmiw")
 
-[connection signal="body_entered" from="." to="." method="coin_pickup"]
+[connection signal="body_entered" from="Area2D" to="." method="coin_pickup"]

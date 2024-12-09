@@ -32,7 +32,7 @@ impl INode2D for InputManager {
             return;
         }
 
-        let button_name = self.event_to_input_name(event.clone());
+        let button_name = InputManager::event_to_input_name(event.clone());
 
         if !self.button_released.contains_key(&button_name) {
             self.button_released.insert(button_name.clone(), true);
@@ -85,7 +85,7 @@ impl InputManager {
         self.player_events.contains_key(&event)
     }
 
-    fn event_to_input_name(&self, event: Gd<InputEvent>) -> String {
+    pub fn event_to_input_name(event: Gd<InputEvent>) -> String {
         let mut input_map = InputMap::singleton();
         let inputs = input_map.get_actions();
 

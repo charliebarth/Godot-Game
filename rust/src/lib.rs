@@ -8,12 +8,13 @@ mod player {
     pub mod metal_manager;
     pub mod player;
 
-    mod enums {
+    pub mod enums {
         pub mod force;
         pub mod metal_events;
         pub mod player_events;
         pub mod player_states;
         pub mod timeout_events;
+        pub mod coin_events;
     }
 
     mod traits {
