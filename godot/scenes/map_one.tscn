@@ -163,7 +163,20 @@ position = Vector2(376, -825)
 position = Vector2(521, -114)
 
 [node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(206, -16)
+position = Vector2(-928, -760)
+scale = Vector2(0.602394, 0.602394)
+
+[node name="MetalVial4" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(444, -443)
+scale = Vector2(0.602394, 0.602394)
+
+[node name="MetalVial2" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(956, 377)
+scale = Vector2(0.602394, 0.602394)
+
+[node name="MetalVial3" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(-1084, 376)
+scale = Vector2(0.602394, 0.602394)
 
 [node name="Platforms" type="Node" parent="."]
 
