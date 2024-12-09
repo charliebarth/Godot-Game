@@ -2,6 +2,7 @@ extends Control
 
 @onready var game = get_node("/root/Game") as Game
 @onready var main_menu = $".." as MainMenu
+@onready var play: Button = $MarginContainer/HBoxContainer/VBoxContainer/Play
 
 
 func _on_play_pressed() -> void:
@@ -18,3 +19,14 @@ func _on_settings_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+	
+
+func _on_visibility_changed() -> void:
+	if self.visible && play != null:
+		play.grab_focus.call_deferred()
+		
+
+
+func _on_ready() -> void:
+	if self.visible:
+		play.grab_focus.call_deferred()
