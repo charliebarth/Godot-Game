@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=21 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -8,23 +8,13 @@
 [ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="6_htvoh"]
 [ext_resource type="PackedScene" uid="uid://6eewvmcnjobm" path="res://scenes/coin.tscn" id="7_vk4k8"]
 [ext_resource type="PackedScene" uid="uid://cdk7m3yxd0fm0" path="res://scenes/metal_vial.tscn" id="8_dufnk"]
+[ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="9_fk6gw"]
+[ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
 shader_parameter/density = 0.25
 shader_parameter/speed = Vector2(0.02, 0.01)
-
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pcbnu"]
-polygon = PackedVector2Array(-569, -18, -467, -18, -465, -14, -468, -9, -566, -8, -569, -13)
-
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qc8gb"]
-polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -723, 189, -745, 162, -748, -335)
-
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
-polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 2389, 187, 2384, -75, 450, -78, 451, 1)
-
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xjc83"]
-polygon = PackedVector2Array(-1024, -112, -675, -112, -677, -83, -1022, -82, -1025, -108)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
 frequency = 0.0045
@@ -41,6 +31,24 @@ shader = ExtResource("1_y7bd1")
 shader_parameter/density = 0.6
 shader_parameter/speed = Vector2(0.001, 0.001)
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qc8gb"]
+polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -723, 189, -745, 162, -748, -335)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_4rjuc"]
+polygon = PackedVector2Array(65, 1, 69, 163, 93, 189, 1012, 189, 1045, 220, 1047, 386, -1242, 387, -1238, 848, 2368, 851, 2362, -1419, 1199, -1421, 1194, -749, 1031, -748, 1036, -312, 1125, -225, 1127.51, -76.9491, 450, -78, 451, 1)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_xjc83"]
+polygon = PackedVector2Array(-1024, -112, -675, -112, -677, -83, -1022, -82, -1025, -108)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_w1ndh"]
+polygon = PackedVector2Array(452, -226, 720, -226, 774, -279, 773, -290, 865, -290, 890, -317, 891, -750, 68, -750, 73, -588, 93, -564, 422, -562, 447, -531, 457, -530, 457, -521, 453, -517)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_girdu"]
+polygon = PackedVector2Array(-453, -481, -456, -526, -416, -562, -94, -562, -70, -589, -69, -750, -2266, -737, -2273, 844, -1222, 849, -1220, 385, -1219, 224, -1184, 188, -911, 190, -885, 163, -884, -334, -1107, -334, -1108, -480, -1048, -538, -1048, -546, -794, -546, -738, -483)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7e6k5"]
+polygon = PackedVector2Array(-1030, -709, -1028, -897, -994, -931, 1153, -931, 1216, -869, 1231, -1408, -2280, -1415, -2274, -683)
 
 [node name="MapOne" type="Node2D"]
 light_mask = 3
@@ -60,29 +68,6 @@ position = Vector2(-10, 295)
 [node name="SpawnFour" type="Marker2D" parent="."]
 position = Vector2(-2, -843)
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
-modulate = Color(1, 1, 1, 0)
-position = Vector2(742, -137)
-occluder = SubResource("OccluderPolygon2D_pcbnu")
-
-[node name="LightOccluder2D3" type="LightOccluder2D" parent="."]
-modulate = Color(1, 1, 1, 0)
-position = Vector2(309, -136)
-occluder = SubResource("OccluderPolygon2D_pcbnu")
-
-[node name="LightOccluder2D2" type="LightOccluder2D" parent="."]
-modulate = Color(1, 1, 1, 0)
-occluder = SubResource("OccluderPolygon2D_qc8gb")
-
-[node name="LightOccluder2D4" type="LightOccluder2D" parent="."]
-modulate = Color(1, 1, 1, 0)
-occluder = SubResource("OccluderPolygon2D_4rjuc")
-
-[node name="LightOccluder2D5" type="LightOccluder2D" parent="."]
-modulate = Color(1, 1, 1, 0)
-position = Vector2(850, -175)
-occluder = SubResource("OccluderPolygon2D_xjc83")
-
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.703808, 0.703808, 0.703808, 1)
 
@@ -97,7 +82,7 @@ position = Vector2(-12, -299)
 position = Vector2(211, -167)
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-13, 1)
+position = Vector2(-22, 354)
 
 [node name="Fog" type="ColorRect" parent="."]
 z_index = 20
@@ -179,3 +164,70 @@ position = Vector2(521, -114)
 
 [node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
 position = Vector2(206, -16)
+
+[node name="Platforms" type="Node" parent="."]
+
+[node name="WoodenPlatform" parent="Platforms" instance=ExtResource("9_fk6gw")]
+position = Vector2(1.78814e-07, 21)
+scale = Vector2(1.13708, 1.13708)
+
+[node name="WoodenPlatform4" parent="Platforms" instance=ExtResource("9_fk6gw")]
+position = Vector2(1, -730)
+scale = Vector2(1.13708, 1.13708)
+
+[node name="WoodenPlatform2" parent="Platforms" instance=ExtResource("9_fk6gw")]
+position = Vector2(302, -146)
+
+[node name="WoodenPlatform3" parent="Platforms" instance=ExtResource("9_fk6gw")]
+position = Vector2(-284, -410)
+
+[node name="wooden_platform5" parent="Platforms" instance=ExtResource("10_xpb1e")]
+z_index = -1
+position = Vector2(-762, -172)
+
+[node name="wooden_platform6" parent="Platforms" instance=ExtResource("10_xpb1e")]
+z_index = -1
+position = Vector2(-750, -72)
+
+[node name="wooden_platform7" parent="Platforms" instance=ExtResource("10_xpb1e")]
+z_index = -1
+position = Vector2(1027, -344)
+
+[node name="wooden_platform8" parent="Platforms" instance=ExtResource("10_xpb1e")]
+z_index = -1
+position = Vector2(1017, -549)
+
+[node name="wooden_platform9" parent="Platforms" instance=ExtResource("10_xpb1e")]
+z_index = -1
+position = Vector2(441, -334)
+
+[node name="wooden_platform10" parent="Platforms" instance=ExtResource("10_xpb1e")]
+z_index = -1
+position = Vector2(451, -433)
+
+[node name="LightOccluders" type="Node" parent="."]
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="LightOccluders"]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_qc8gb")
+
+[node name="LightOccluder2D4" type="LightOccluder2D" parent="LightOccluders"]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_4rjuc")
+
+[node name="LightOccluder2D5" type="LightOccluder2D" parent="LightOccluders"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(850, -175)
+occluder = SubResource("OccluderPolygon2D_xjc83")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="LightOccluders"]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_w1ndh")
+
+[node name="LightOccluder2D3" type="LightOccluder2D" parent="LightOccluders"]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_girdu")
+
+[node name="LightOccluder2D6" type="LightOccluder2D" parent="LightOccluders"]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_7e6k5")
