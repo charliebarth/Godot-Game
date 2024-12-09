@@ -2,6 +2,7 @@ use godot::prelude::*;
 
 mod player {
 
+    pub mod disconnected;
     pub mod input_manager;
     pub mod metal_line;
     pub mod metal_manager;
@@ -21,6 +22,7 @@ mod player {
     }
 
     mod player_states {
+        pub mod attack;
         pub mod crouch;
         pub mod crouch_end;
         pub mod crouch_start;
@@ -33,7 +35,6 @@ mod player {
         pub mod slide;
         pub mod slide_crouch;
         pub mod sprint;
-        pub mod attack;
     }
 
     mod metals {
@@ -45,7 +46,6 @@ mod player {
 pub mod game;
 pub mod main_menu;
 pub mod metal_object;
-pub mod player_manager;
 
 mod items {
     pub mod coin;
@@ -53,8 +53,6 @@ mod items {
 }
 
 mod ui {
-    pub mod allomantic_line;
-    pub mod allomantic_range;
     pub mod coin_counter;
     pub mod metal_bar;
     pub mod metal_reserve_bar_manager;

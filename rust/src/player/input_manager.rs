@@ -46,8 +46,10 @@ impl INode2D for InputManager {
     }
 
     fn physics_process(&mut self, _delta: f64) {
-        for timer in self.player_events.values_mut() {
-            *timer += 1;
+        for (event, timer) in self.player_events.iter_mut() {
+            if event.timeout() > -1 {
+                *timer += 1;
+            }
         }
 
         // Expire events after a certain number of frames (e.g., 60 frames)

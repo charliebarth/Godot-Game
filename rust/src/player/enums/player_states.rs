@@ -1,9 +1,9 @@
 use crate::player::{
     player::Player,
     player_states::{
-        crouch::Crouch, crouch_end::CrouchEnd, crouch_start::CrouchStart, fall::Fall, idle::Idle,
-        jump::Jump, land::Land, roll::Roll, run::Run, slide::Slide, slide_crouch::SlideCrouch,
-        sprint::Sprint, attack::Attack,
+        attack::Attack, crouch::Crouch, crouch_end::CrouchEnd, crouch_start::CrouchStart,
+        fall::Fall, idle::Idle, jump::Jump, land::Land, roll::Roll, run::Run, slide::Slide,
+        slide_crouch::SlideCrouch, sprint::Sprint,
     },
     traits::player_state::PlayerState,
 };
@@ -33,7 +33,7 @@ impl PlayerStates {
             PlayerStates::Crouch => "crouch_walk",
             PlayerStates::CrouchEnd => "crouch_end",
             PlayerStates::CrouchStart => "crouch_start",
-            PlayerStates::Fall => "jump_fall",
+            PlayerStates::Fall => "fall",
             PlayerStates::Idle => "idle",
             PlayerStates::Jump => "jump",
             PlayerStates::Land => "land",

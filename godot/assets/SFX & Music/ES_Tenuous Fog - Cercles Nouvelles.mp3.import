@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://8wek4qfbtsrq"
+path="res://.godot/imported/ES_Tenuous Fog - Cercles Nouvelles.mp3-bd277ca9cd46a48f097dfdae510fdb00.mp3str"
+
+[deps]
+
+source_file="res://assets/SFX & Music/ES_Tenuous Fog - Cercles Nouvelles.mp3"
+dest_files=["res://.godot/imported/ES_Tenuous Fog - Cercles Nouvelles.mp3-bd277ca9cd46a48f097dfdae510fdb00.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

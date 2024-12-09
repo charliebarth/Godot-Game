@@ -1,0 +1,322 @@
+[gd_scene load_steps=4 format=3 uid="uid://sk7urw8x5b6t"]
+
+[ext_resource type="Script" path="res://scripts/settings_tab_menu.gd" id="1_0wp7c"]
+[ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
+[ext_resource type="Script" path="res://scripts/audio_slider.gd" id="4_u10kp"]
+
+[node name="SettingsTabMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0wp7c")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 100.0
+offset_top = 50.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+current_tab = 0
+
+[node name="Sound" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../Controls")
+focus_neighbor_right = NodePath("../Graphics")
+focus_neighbor_bottom = NodePath("MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider")
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Sound"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Sound/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/separation = 64
+
+[node name="Master" type="Control" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_u10kp")
+bus_name = "Master"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 42
+
+[node name="AudioName" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Master Volume"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.001
+
+[node name="VSeparator2" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer"]
+layout_mode = 2
+
+[node name="AudioNum" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "60"
+
+[node name="Music" type="Control" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_u10kp")
+bus_name = "Music"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 42
+
+[node name="AudioName" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Master Volume"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.001
+
+[node name="VSeparator2" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer"]
+layout_mode = 2
+
+[node name="AudioNum" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "60"
+
+[node name="SFX" type="Control" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_u10kp")
+bus_name = "SFX"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 42
+
+[node name="AudioName" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Master Volume"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.001
+
+[node name="VSeparator2" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer"]
+layout_mode = 2
+
+[node name="AudioNum" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "60"
+
+[node name="PlayerSFX" type="Control" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_u10kp")
+bus_name = "PlayerSFX"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 42
+
+[node name="AudioName" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Master Volume"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.001
+
+[node name="VSeparator2" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer"]
+layout_mode = 2
+
+[node name="AudioNum" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "60"
+
+[node name="WorldSFX" type="Control" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("4_u10kp")
+bus_name = "WorldSFX"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 42
+
+[node name="AudioName" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Master Volume"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+focus_neighbor_bottom = NodePath("../../../../../HBoxContainer/Apply")
+max_value = 1.0
+step = 0.001
+
+[node name="VSeparator2" type="VSeparator" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer"]
+layout_mode = 2
+
+[node name="AudioNum" type="Label" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "60"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+
+[node name="Apply" type="Button" parent="TabContainer/Sound/MarginContainer/HBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../../ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer/HSlider")
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Apply"
+
+[node name="Graphics" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_left = NodePath("../Sound")
+focus_neighbor_right = NodePath("../Controls")
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Graphics"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Graphics/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 64
+alignment = 1
+
+[node name="Controls" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_left = NodePath("../Graphics")
+focus_neighbor_right = NodePath("../Sound")
+metadata/_tab_index = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Controls"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Controls/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="HSeparator2" type="HSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music" method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX" method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX" method="_on_h_slider_value_changed"]
+[connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX" method="_on_h_slider_value_changed"]
+[connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_apply_pressed"]
+[connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music" method="_on_apply_pressed"]
+[connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX" method="_on_apply_pressed"]
+[connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX" method="_on_apply_pressed"]
+[connection signal="pressed" from="TabContainer/Sound/MarginContainer/HBoxContainer/Apply" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/WorldSFX" method="_on_apply_pressed"]

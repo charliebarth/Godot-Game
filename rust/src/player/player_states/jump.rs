@@ -27,7 +27,7 @@ impl PlayerState for Jump {
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
-        if player.is_anim_finished() {
+        if !input_manager.check_for_player_event(PlayerEvents::Jump) {
             next_state = PlayerStates::Fall;
         } else if player.base().is_on_floor() {
             next_state = PlayerStates::Land;

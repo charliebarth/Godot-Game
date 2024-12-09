@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://vpakk8ov0chg"]
+[gd_scene load_steps=7 format=3 uid="uid://vpakk8ov0chg"]
 
 [ext_resource type="PackedScene" uid="uid://c1l6h04x8ew74" path="res://scenes/main_menu.tscn" id="1_gw26h"]
+[ext_resource type="AudioStream" uid="uid://cyf518ij6x0jj" path="res://assets/SFX & Music/ES_Rosee du matin - DEX 1200.mp3" id="2_nitj3"]
+[ext_resource type="AudioStream" uid="uid://8wek4qfbtsrq" path="res://assets/SFX & Music/ES_Tenuous Fog - Cercles Nouvelles.mp3" id="3_418gl"]
+[ext_resource type="AudioStream" uid="uid://dydhf560n5qon" path="res://assets/SFX & Music/ES_Leave No Trace - Alec Slayne.mp3" id="4_k8wqu"]
 
 [sub_resource type="Environment" id="Environment_h8kyb"]
 background_mode = 3
@@ -9,13 +12,23 @@ glow_intensity = 0.4
 glow_strength = 0.6
 glow_blend_mode = 0
 
+[sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_pfbvb"]
+stream_count = 3
+stream_0 = ExtResource("2_nitj3")
+stream_1 = ExtResource("3_418gl")
+stream_2 = ExtResource("4_k8wqu")
+
 [node name="Game" type="Game"]
 texture_filter = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_h8kyb")
 
-[node name="PlayerManager" type="PlayerManager" parent="."]
-
 [node name="MainMenu" parent="." instance=ExtResource("1_gw26h")]
 position = Vector2(5, 315)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamPlaylist_pfbvb")
+volume_db = -10.0
+autoplay = true
+bus = &"Music"

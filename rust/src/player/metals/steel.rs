@@ -93,19 +93,24 @@ impl Metal for Steel {
         let mut godot_input_manager = player.get_input_manager();
         let mut input_manager = godot_input_manager.bind_mut();
         self.show_particles = false;
-
-        if input_manager.fetch_metal_event(MetalEvents::Steel) {
-            self.push = -1.0;
-        } else if input_manager.fetch_metal_event(MetalEvents::Iron) {
-            self.push = 1.0;
-        } else {
-            self.push = 0.0;
-        }
+        self.push = 0.0;
 
         // Burning is an actual steel push
-        if self.current_reserve > 0.0 && self.push != 0.0 {
-            self.burn(player);
-        } else {
+        if self.current_reserve > 0.0 {
+            if input_manager.fetch_metal_event(MetalEvents::Steel) {
+                self.push += -1.0;
+            }
+
+            if input_manager.fetch_metal_event(MetalEvents::Iron) {
+                self.push += 1.0;
+            };
+
+            if self.push != 0.0 {
+                self.burn(player)
+            }
+        }
+
+        if self.current_reserve <= 0.0 || self.push == 0.0 {
             player.set_is_steel_burning(false);
         }
 
