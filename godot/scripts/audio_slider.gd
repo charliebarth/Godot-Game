@@ -4,7 +4,7 @@ extends Control
 @onready var audio_num: Label = $HBoxContainer/AudioNum
 @onready var h_slider: HSlider = $HBoxContainer/HSlider
 
-@export_enum("Master", "Music", "SFX") var bus_name: String
+@export_enum("Master", "Music", "SFX", "PlayerSFX", "WorldSFX") var bus_name: String
 
 var bus_index: int = 0
 
@@ -23,7 +23,6 @@ func set_audio_num() -> void:
 
 func set_starting_volume() -> void:
 	var audio_settings = ConfigFileHandler.load_audio_settings()
-	print(audio_settings[bus_name])
 	h_slider.value = audio_settings[bus_name]
 
 func _on_h_slider_value_changed(value: float) -> void:

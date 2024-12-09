@@ -60,6 +60,14 @@ bus_name = "Music"
 [node name="SFX" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
 layout_mode = 2
 
+[node name="PlayerSFX" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
+layout_mode = 2
+bus_name = "PlayerSFX"
+
+[node name="WorldSFX" parent="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_ftepq")]
+layout_mode = 2
+bus_name = "WorldSFX"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Sound/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 8

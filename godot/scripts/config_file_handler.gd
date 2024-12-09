@@ -9,6 +9,8 @@ func _ready() -> void:
 		config.set_value("audio", "Master", 0.6)
 		config.set_value("audio", "Music", 0.6)
 		config.set_value("audio", "SFX", 0.6)
+		config.set_value("audio", "PlayerSFX", 0.6)
+		config.set_value("audio", "WorldSFX", 0.6)
 	
 		config.save(SETTINGS_FILE_PATH)
 	else:

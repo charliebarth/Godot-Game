@@ -1081,6 +1081,7 @@ position = Vector2(-1, -1.5)
 shape = SubResource("RectangleShape2D_jp1u6")
 
 [node name="FpsCounter" type="Label" parent="."]
+visible = false
 offset_left = 344.0
 offset_top = -260.0
 offset_right = 389.0

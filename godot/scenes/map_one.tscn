@@ -88,13 +88,13 @@ z_index = 1
 position = Vector2(-369, -19)
 
 [node name="MetalObject2" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-128, -301)
+position = Vector2(-12, -299)
 
 [node name="MetalObject3" parent="." instance=ExtResource("2_3yakd")]
 position = Vector2(211, -167)
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-16, -112)
+position = Vector2(-13, 1)
 
 [node name="Fog" type="ColorRect" parent="."]
 z_index = 20
