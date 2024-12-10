@@ -39,6 +39,7 @@ impl PlayerState for Sprint {
 }
 
 impl Sprint {
+    /// Applies horizontal velocity to the player so they can sprint
     fn run(player: &mut Player) {
         let dir = player.get_dir();
         let speed = player.get_run_speed() * 1.3;

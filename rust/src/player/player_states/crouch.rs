@@ -38,6 +38,10 @@ impl PlayerState for Crouch {
 }
 
 impl Crouch {
+    /// Applies horizontal velocity to the player so they can walk while crouching
+    ///
+    /// # Arguments
+    /// * `player` - The player
     fn run(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
 
