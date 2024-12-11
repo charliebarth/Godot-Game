@@ -28,6 +28,13 @@ impl MetalEvents {
         }
     }
 
+    /// Method to get the low burn variant of the event
+    ///
+    /// # Arguments
+    /// * `event` - The event to get the low burn variant of
+    ///
+    /// # Returns
+    /// * `Some(MetalEvents)` - The low burn variant of the event
     pub fn get_low_burn_variant(event: MetalEvents) -> Option<MetalEvents> {
         match event {
             MetalEvents::Pewter => Some(Self::PewterLowBurn),

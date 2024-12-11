@@ -3,17 +3,28 @@ use godot::{
     prelude::*,
 };
 
+/// The MainMenu class is responsible for managing the main menu UI.
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 
 pub struct MainMenu {
+    /// The base node of the MainMenu.
     base: Base<Node2D>,
+    /// A reference to the settings menu.
     settings_menu: Option<Gd<Control>>,
+    /// A reference to the UI buttons of the main menu.
     main_menu: Option<Gd<Control>>,
 }
 
 #[godot_api]
 impl INode2D for MainMenu {
+    /// The Godot constructor for the MainMenu class.
+    ///
+    /// # Arguments
+    /// * `base` - The base node of the MainMenu.
+    ///
+    /// # Returns
+    /// * `MainMenu` - A new instance of the MainMenu class.
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
@@ -25,6 +36,11 @@ impl INode2D for MainMenu {
 
 #[godot_api]
 impl MainMenu {
+    /// This function reveals the player sprite on the main menu
+    /// to show that a player has joined the game.
+    ///
+    /// # Arguments
+    /// * `player_id` - The id of the player that has joined the game.
     #[func]
     pub fn add_player(&self, player_id: i32) {
         self.base()
@@ -32,6 +48,11 @@ impl MainMenu {
             .set_visible(true);
     }
 
+    /// This function hides the player sprite on the main menu
+    /// to show that a player has left the game.
+    ///
+    /// # Arguments
+    /// * `player_id` - The id of the player that has left the game.
     #[func]
     pub fn remove_player(&self, player_id: i32) {
         self.base()
@@ -39,6 +60,13 @@ impl MainMenu {
             .set_visible(false);
     }
 
+    /// This function adds a notification to the notification box.
+    /// This is used for error messages such as trying to start a game with an incorrect number of players.
+    /// This is also used for victory messages after a game has ended.
+    /// The notification will fade out after a few seconds.
+    ///
+    /// # Arguments
+    /// * `msg` - The message to display in the notification box.
     #[func]
     pub fn add_notification(&self, msg: String) {
         let mut notification_box = self.base().get_node_as::<RichTextLabel>("NotificationBox");
@@ -51,6 +79,10 @@ impl MainMenu {
         notification_box_animation.play();
     }
 
+    /// This function returns the settings menu node.
+    ///
+    /// # Returns
+    /// * `Control` - The settings menu node.
     fn get_settings_menu(&mut self) -> Gd<Control> {
         if self.settings_menu.is_none() {
             self.settings_menu = Some(self.base().get_node_as::<Control>("Settings"));
@@ -62,6 +94,10 @@ impl MainMenu {
             .clone()
     }
 
+    /// This function returns the main menu node.
+    ///
+    /// # Returns
+    /// * `Control` - The main menu node.
     fn get_main_menu(&mut self) -> Gd<Control> {
         if self.main_menu.is_none() {
             self.main_menu = Some(self.base().get_node_as::<Control>("MainMenuUI"));
@@ -73,6 +109,7 @@ impl MainMenu {
             .clone()
     }
 
+    /// This function swaps the main menu with the settings menu.
     #[func]
     pub fn swap_to_settings(&mut self) {
         let mut main_menu = self.get_main_menu();
@@ -85,6 +122,7 @@ impl MainMenu {
         settings_menu.set_visible(true);
     }
 
+    /// This function swaps the settings menu with the main menu.
     #[func]
     pub fn swap_to_main_menu(&mut self) {
         let mut main_menu = self.get_main_menu();

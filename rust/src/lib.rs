@@ -1,3 +1,5 @@
+/// This file is the connection point between Rust and Godot
+/// It is responsible for defining the Rust library and the classes that Godot can use
 use godot::prelude::*;
 
 mod player {
@@ -9,12 +11,12 @@ mod player {
     pub mod player;
 
     pub mod enums {
+        pub mod coin_events;
         pub mod force;
         pub mod metal_events;
         pub mod player_events;
         pub mod player_states;
         pub mod timeout_events;
-        pub mod coin_events;
     }
 
     mod traits {

@@ -9,6 +9,13 @@ pub enum TriggerEvents {
 
 impl TriggerEvents {
     /// Returns the corresponding trigger event for a given player event.
+    /// This is used to determine whether a player event should be recorded on press or release.
+    ///
+    /// # Arguments
+    /// * `event` - The player event to get the corresponding trigger event for.
+    ///
+    /// # Returns
+    /// * `TriggerEvents` - The corresponding trigger event for the player event.
     pub fn trigger_for_player_event(event: PlayerEvents) -> TriggerEvents {
         match event {
             PlayerEvents::Jump => TriggerEvents::OnPress,
@@ -37,11 +44,18 @@ pub enum PlayerEvents {
     /// This is a modifier key on the controller.
     /// If button is held/the event is registered and a metal event is triggered, the metal event will be triggered with the LowBurn variant.
     LowBurn,
+    /// The player has died or should die.
     Die,
 }
 
 impl PlayerEvents {
     /// Converts a string to the corresponding player event.
+    ///
+    /// # Arguments
+    /// * `button` - The string to convert to a player event.
+    ///
+    /// # Returns
+    /// * `Some(PlayerEvents)` - The corresponding player event.
     pub fn from_string(button: &str) -> Option<PlayerEvents> {
         match button {
             "jump" => Some(PlayerEvents::Jump),
@@ -56,6 +70,9 @@ impl PlayerEvents {
 
     /// This determines the number of frames a player event should be held in a vec of registered events before expiring and being removed.
     /// -1 means the event should persist until the button is released
+    ///
+    /// # Returns
+    /// * `i8` - The number of frames the event should be held in a vec of registered events before expiring and being removed.
     pub fn timeout(&self) -> i8 {
         match self {
             PlayerEvents::Jump => 12,

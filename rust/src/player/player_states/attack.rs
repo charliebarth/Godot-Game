@@ -7,12 +7,6 @@ impl PlayerState for Attack {
     fn enter(player: &mut Player) {
         // Enable the hitbox of the player while they are attacking
         player.enable_hitbox();
-
-        // Attack from jump
-
-        // Attack from falling
-
-        // Attack from standing
     }
 
     fn update(player: &mut Player) {

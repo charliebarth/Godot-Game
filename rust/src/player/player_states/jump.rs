@@ -47,6 +47,10 @@ impl PlayerState for Jump {
 }
 
 impl Jump {
+    /// Applies horizontal velocity to the player so they can move while jumping
+    ///
+    /// # Arguments
+    /// * `player` - The player
     fn run(player: &mut Player) {
         let run_strength = player.get_horizontal_movement();
 
@@ -72,10 +76,19 @@ impl Jump {
         });
     }
 
+    /// Exits the jump state and enters the next state
+    /// This is used so there are fewer exit points in the update function
     fn exit(player: &mut Player, next_state: PlayerStates) {
         player.set_state(next_state);
     }
 
+    /// This method allows the player to determine their jump height based on how long the jump button is held
+    /// The longer the jump button is held, the higher the player will jump until the jump event is released or
+    /// automatically expired after a predetermined amount of time
+    ///
+    /// # Arguments
+    /// * `player` - The player
+    /// * `input_manager` - This is used to check if the jump button is pressed
     fn jump(player: &mut Player, input_manager: GdMut<'_, InputManager>) {
         if !input_manager.check_for_player_event(PlayerEvents::Jump) {
             return;

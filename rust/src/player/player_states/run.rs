@@ -47,6 +47,11 @@ impl PlayerState for Run {
 }
 
 impl Run {
+    /// Applies horizontal velocity to the player so they can run
+    /// and updates the player's animation speed based on how far the joystick is pushed
+    ///
+    /// # Arguments
+    /// * `player` - The player
     fn run(player: &mut Player) {
         let run_strength = player.get_horizontal_movement();
 
@@ -61,7 +66,7 @@ impl Run {
         player.set_run_speed(scaled_speed);
 
         // This is the acceleration of the player
-        // Make this a constant or field of the player
+        // TODO: make this a constant or field of the player
         let speed = 900.0;
         player.add_force(Force::Run {
             acceleration: run_strength * speed,

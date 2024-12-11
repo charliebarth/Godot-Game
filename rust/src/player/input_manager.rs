@@ -5,18 +5,37 @@ use std::collections::{HashMap, HashSet};
 use super::enums::metal_events::MetalEvents;
 use super::enums::player_events::PlayerEvents;
 
+/// The input manager is responsible for handling all input events for a given player and device.
+/// It will convert button presses into player events and metal events.
+/// This allows us to add extra functionality such as being able to map to different events to the same button
+/// based on how long the button is held down.
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct InputManager {
+    /// The base node of the InputManager.
     base: Base<Node2D>,
+    /// The player events that have been triggered.
+    /// Events will be removed after a certain number of frames or when the button is released.
     player_events: HashMap<PlayerEvents, i8>,
+    /// The metal events that have been triggered.
+    /// This will persist until the button is released.
     metal_events: HashSet<MetalEvents>,
+    /// A hashmap to keep track of whether a button has been released.
+    /// This prevents an event from being triggered multiple times while a button is held down.
     button_released: HashMap<String, bool>,
+    /// The device id that the input manager is listening for.
     device_id: i32,
 }
 
 #[godot_api]
 impl INode2D for InputManager {
+    /// The Godot constructor for the InputManager class.
+    ///
+    /// # Arguments
+    /// * `base` - The base node of the InputManager.
+    ///
+    /// # Returns
+    /// * `InputManager` - A new instance of the InputManager class.
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
@@ -27,6 +46,11 @@ impl INode2D for InputManager {
         }
     }
 
+    /// This is a built in method for Godot that is called when an input event is detected.
+    /// An input event will be converted to either a PlayerEvent or a MetalEvent and then stored for use in the game.
+    ///
+    /// # Arguments
+    /// * `event` - The input event that was detected.
     fn input(&mut self, event: Gd<InputEvent>) {
         if self.device_id == -1 || event.get_device() != self.device_id {
             return;
@@ -45,6 +69,11 @@ impl INode2D for InputManager {
         }
     }
 
+    /// This is a built in method for Godot that is called every physics frame.
+    /// This is where the player events are updated and expired after a certain number of frames.
+    ///
+    /// # Arguments
+    /// * `delta` - The time since the last frame.
     fn physics_process(&mut self, _delta: f64) {
         for (event, timer) in self.player_events.iter_mut() {
             if event.timeout() > -1 {
@@ -107,6 +136,12 @@ impl InputManager {
         "".to_string()
     }
 
+    /// This function takes a MetalEvent and determines if it should be stored, removed, or toggled.
+    ///
+    /// Arguments:
+    /// * `metal_event` - The MetalEvent to process
+    /// * `event` - The input event that was detected
+    /// * `button_name` - The name of the button that was pressed
     fn process_metal_events(
         &mut self,
         metal_event: MetalEvents,
@@ -134,6 +169,13 @@ impl InputManager {
         }
     }
 
+    /// This function takes a PlayerEvent and determines if it should be stored or removed.
+    /// It also keeps track of whether a button has been released to prevent an event from being triggered multiple times while a button is held down.
+    ///
+    /// Arguments:
+    /// * `player_event` - The PlayerEvent to process
+    /// * `event` - The input event that was detected
+    /// * `button_name` - The name of the button that was pressed
     fn process_player_events(
         &mut self,
         player_event: PlayerEvents,
@@ -152,6 +194,13 @@ impl InputManager {
         }
     }
 
+    /// Determines if a specific metal event has been triggered.
+    ///
+    /// Arguments:
+    /// * `metal_event` - The metal event to check for
+    ///
+    /// Returns:
+    /// * `bool` - True if the metal event has been triggered, false otherwise
     pub fn fetch_metal_event(&mut self, metal_event: MetalEvents) -> bool {
         if let Some(_) = self.metal_events.get(&metal_event) {
             true
@@ -160,6 +209,10 @@ impl InputManager {
         }
     }
 
+    /// Sets the device id that the input manager is listening for.
+    ///
+    /// Arguments:
+    /// * `device_id` - The device id to set
     pub fn set_device_id(&mut self, device_id: i32) {
         self.device_id = device_id;
     }

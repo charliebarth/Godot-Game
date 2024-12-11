@@ -44,6 +44,7 @@ impl PlayerState for Fall {
 }
 
 impl Fall {
+    /// Applies horizontal velocity to the player so they can move while falling
     fn run(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
 
@@ -61,6 +62,11 @@ impl Fall {
         player.apply_horizontal_velocity(horizontal_dir, speed);
     }
 
+    /// This is used to swap from the jump gravity to the fall gravity
+    /// when the player's vertical velocity in no longer upwards
+    ///
+    /// # Arguments
+    /// * `player` - The player
     fn fall(player: &mut Player) {
         let vertical_velocity = player.base().get_velocity().y;
         if vertical_velocity >= 0.0 {
