@@ -2,17 +2,19 @@
 ///
 /// Author: Trinity Pittman
 /// Date: Fall 2024
-use godot::classes::{IRigidBody2D, RigidBody2D};
 
 use godot::prelude::*;
+use godot::classes::{IRigidBody2D, RigidBody2D};
 
 use crate::player::enums::coin_events::CoinState;
 use crate::player::player::Player;
 
 #[derive(GodotClass)]
 #[class(base=RigidBody2D)]
+#[derive(Debug)]
 /// Represents a coin
 pub struct Coin {
+    // The base node of the Coin 
     base: Base<RigidBody2D>,
     /// The state of a Coin
     state: CoinState,
@@ -25,43 +27,62 @@ pub struct Coin {
 #[godot_api]
 /// Godot methods for the Coin
 impl IRigidBody2D for Coin {
-    /// Constructor for a Coin
+    /// The Godot contructor for the Coin class node
+    ///
+    /// # Arguments
+    /// * `base` - The base node type for the coin
+    ///
+    /// # Returns
+    /// * `Coin` - The Coin node
     fn init(base: Base<RigidBody2D>) -> Self {
         Self {
             base,
-            state: CoinState::Idle,
-            weight: 10,
-            curr_player: None,
+            state: CoinState::Idle,     // Initial state 
+            weight: 10,                 
+            curr_player: None,          // Initialy no player 
         }
     }
 
-    /// Method called on Coin creation. Sets coin freeze mode to true, and allows collsions.
+    /// The Godot method called when the coin enters the scene tree for the first time
+    /// Any one time logic and initialization should be done here
+    /// NOTE: This only is called the very first time the instance enters the scene tree
+    /// 
+    /// Sets coin freeze mode to true, and allows collsions.
     fn ready(&mut self) {
         godot_print!(
             "{} at position {}",
             self.base().get_name(),
             self.base_mut().get_global_position()
-        );
-        self.base_mut().show();
+        ); 
+
+        self.base_mut().show(); // Show the coin
 
         self.base_mut().set_freeze_enabled(true); // Make the coin stay still
-        self.set_state(CoinState::Idle);
+        self.set_state(CoinState::Idle); 
 
-        self.base_mut().set_contact_monitor(true);
+        // Emits signals when it collides with another physics body 
+        self.base_mut().set_contact_monitor(true); 
+        // By default this is set to 0, if we want to record contacts it needs to be greater
         self.base_mut().set_max_contacts_reported(1);
     }
-
-    fn physics_process(&mut self, delta: f64) {}
 }
 
 #[godot_api]
-/// Methods that belong to the coin
+/// Methods that belong to the Coin
 impl Coin {
+
     /// Sets the state of the Coin based on what is passed in
     /// # Arguments
     /// * `new_state` (CoinState) - The new state to set the coin to
-    fn set_state(&mut self, new_state: CoinState) {
+    pub fn set_state(&mut self, new_state: CoinState) {
         self.state = new_state;
+    }
+
+    /// Sets the current player holding the coin
+    /// # Arguments
+    /// * `new_player` (Gd<Player>) - The new player to hold the coin 
+    pub fn set_curr_player(&mut self, new_player: Gd<Player>) {
+        self.curr_player = Some(new_player);
     }
 
     /// When someone enters this coins hit box we call the method to add a coin to that players  
@@ -71,18 +92,21 @@ impl Coin {
     /// * `body` (Gd<Node2D>) - the Node that enters this coin
     #[func]
     fn coin_pickup(&mut self, body: Gd<Node2D>) {
-        if self.state == CoinState::Thrown {
+        if self.state == CoinState::Thrown {   // If in state thrown and it hits smth, call drop 
             self.drop(body);
-        } else if self.state == CoinState::Idle {
+
+        } else if self.state == CoinState::Idle {   // If in state idle and it hits something
             godot_print!(
                 "\n{} pick-up attempt: Body entered -> {}",
                 self.base().get_name(),
                 body.get_name()
             ); // Debug line
-            godot_print!("COIN IN STATE {}", self.state);
+
+            godot_print!("COIN IN STATE {}", self.state); // Prints coin state 
             let body_name = body.get_name();
             godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
-
+            
+            // See if what entered the coin was a player 
             if let Ok(mut player) = body.try_cast::<Player>() {
                 // Update state
                 self.set_state(CoinState::PickedUp);
@@ -92,7 +116,7 @@ impl Coin {
                 player.bind_mut().adjust_coins(1, self);
 
                 // Keep track of this coins player
-                self.curr_player = Some(player);
+                self.set_curr_player(player);
             } else {
                 godot_print!("Something other than player entered the coin.");
             }
@@ -102,12 +126,12 @@ impl Coin {
     /// Handles throwing of the coin, gets direction and applies impulse.
     #[func]
     pub fn throw(&mut self) {
-        godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
-        godot_print!("COIN IN STATE {}", self.state);
+        // godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
+        // godot_print!("COIN IN STATE {}", self.state);
 
         // If in PickedUp state
         if self.state == CoinState::PickedUp {
-            godot_print!("THROWING");
+            godot_print!("THROWING {}", self.base().get_name());
 
             let force;
             let player = self.curr_player.as_mut().unwrap();
@@ -144,12 +168,12 @@ impl Coin {
             self.base_mut().apply_impulse(force);
 
             // Debug physics
-            let velocity = self.base_mut().get_linear_velocity();
-            let sleeping = self.base_mut().is_sleeping();
-            godot_print!("POS: {}", pos);
-            godot_print!("VIS: {}", self.base_mut().is_visible());
-            godot_print!("VEL: {}\nSLEEP: {}", velocity, sleeping);
-            godot_print!("BODIES: {}", self.base_mut().get_colliding_bodies());
+            // let velocity = self.base_mut().get_linear_velocity();
+            // let sleeping = self.base_mut().is_sleeping();
+            // godot_print!("POS: {}", pos);
+            // godot_print!("VIS: {}", self.base_mut().is_visible());
+            // godot_print!("VEL: {}\nSLEEP: {}", velocity, sleeping);
+            // godot_print!("BODIES: {}", self.base_mut().get_colliding_bodies());
 
             // Update state
             self.set_state(CoinState::Thrown);
@@ -169,13 +193,17 @@ impl Coin {
             }
         // If the player the coin entered is the current player
         } else {
-            // change the state to idle
+            // Change the state to idle
             self.set_state(CoinState::Idle);
         }
     }
 
-    // #[func]
-    // pub fn is_metal(&self) -> bool {
-    //     true // A coin is made of metal
-    // }
+    /// This method is the way to determine if the object is metal.
+    ///
+    /// # Returns
+    /// * `bool` - True if the object is metal.
+    #[func]
+    pub fn is_metal(&self) -> bool {
+        true
+    }
 }
