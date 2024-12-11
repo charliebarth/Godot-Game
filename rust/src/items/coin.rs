@@ -58,7 +58,6 @@ impl IRigidBody2D for Coin {
         self.base_mut().show(); // Show the coin
 
         self.base_mut().set_freeze_enabled(true); // Make the coin stay still
-        self.set_state(CoinState::Idle); 
 
         // Emits signals when it collides with another physics body 
         self.base_mut().set_contact_monitor(true); 
@@ -126,8 +125,8 @@ impl Coin {
     /// Handles throwing of the coin, gets direction and applies impulse.
     #[func]
     pub fn throw(&mut self) {
-        // godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
-        // godot_print!("COIN IN STATE {}", self.state);
+        godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
+        godot_print!("COIN IN STATE {}", self.state);
 
         // If in PickedUp state
         if self.state == CoinState::PickedUp {

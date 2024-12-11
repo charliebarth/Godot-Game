@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 /// Represents a coin counter.
 ///
 /// Author: Trinity Pittman
@@ -13,7 +15,7 @@ use crate::{
 };
 
 // The amount of coins a player starts with
-const STARTING_COIN_COUNT: i32 = 0;
+const STARTING_COIN_COUNT: i32 = 10;
 
 #[derive(GodotClass)]
 #[class(base=Label)]
@@ -93,8 +95,8 @@ impl CoinCounter {
                 StringName::from("set_freeze_enabled"), 
                 &[true.to_variant()]);
 
-        // let real_pos = coin.to_gd().get_global_position();
-        // godot_print!("\nREPOSITIONING {} to {} actually {}", coin.to_gd().get_name(), pos, real_pos);
+        let real_pos = coin.to_gd().get_global_position();
+        godot_print!("\nREPOSITIONING {} to {} actually {}", coin.to_gd().get_name(), pos, real_pos);
 
         // Add the coin to the coin holder
         self.coin_holder.insert(self.coin_holder.len(), coin.to_gd());
@@ -145,27 +147,50 @@ impl CoinCounter {
 
     /// Adds the number of coins to start the game depending on the starting coin count. 
     fn add_starting_coins(&mut self) {
-        // for i in 0..STARTING_COIN_COUNT{
-        //     let coin_scene = load::<PackedScene>("res://scenes/coin.tscn");
-        //     let mut coin = coin_scene.instantiate_as::<Coin>().clone();
-        //     coin.request_ready();
-        //     coin.set_global_position(Vector2::new(850., -175.));
+        for i in 0..STARTING_COIN_COUNT{
+            // Get the coin scene and instantiate it 
+            let coin_scene = load::<PackedScene>("res://scenes/coin.tscn");
+            let mut coin = coin_scene.instantiate_as::<Coin>().clone();
+
+            // Set the name of the coin 
+            let coin_id = i as i32 + 1;
+            coin.set_name(format!("Coin{}", coin_id).into());
             
-        //     godot_print!("COIN {} = {}", i, coin.get_name());
-        //     godot_print!("Coin pos: {}", coin.get_position());
+            // Get the player and set the coins current player 
+            let player = self.base().get_node_as::<Player>("../../");
+            coin.bind_mut().set_curr_player(player.to_godot());
 
-            // // godot_print!("Parent of coincounter {}", self.base().get_owner());
-            // // Set the current player 
-            // if let Ok(player) = self.base().get_owner().unwrap().try_cast::<Player>() {
+            // Set initial state
+            coin.bind_mut().set_state(CoinState::PickedUp);
+            coin.set_visible(true);  // Set visible 
 
-            //     coin.bind_mut().set_curr_player(player.to_godot());
-            // }
+            // Add to coin counter
+            let new_coins = self.coins + 1; // Find how many coins to change to
+            self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
 
-            // // Set initial state
-            // coin.bind_mut().set_state(CoinState::PickedUp);
+            // Update coin counter
+            self.coins = new_coins;
 
-            // // Add to coin counter
-            // self.add_coin(&mut coin.bind_mut());
-        // }
+            // Set position
+            let pos = Vector2::new(100000., -100000.);
+            coin.set_global_position(pos);
+
+            // Enable freeze mode 
+            coin.set_freeze_enabled(true);
+
+            godot_print!("Coin vis: {}\nCoin pos: {}\nCoin name: {}",
+                            coin.is_visible(), 
+                            coin.get_global_position(),
+                            coin.get_name()
+                        );
+
+            // Add the coin to the coin holder
+            self.coin_holder.insert(self.coin_holder.len(), coin.clone());
+
+            // Add the coin to the map (this calls the coin ready method)
+            let mut map = player.get_parent().unwrap();
+            map.add_child(coin);
+        
+        }
     }
 }
