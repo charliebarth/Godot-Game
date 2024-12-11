@@ -1,5 +1,3 @@
-use std::borrow::BorrowMut;
-
 /// Represents a coin counter.
 ///
 /// Author: Trinity Pittman
@@ -11,7 +9,11 @@ use godot::{
 
 use crate::{
     items::coin::Coin,
-    player::{enums::coin_events::{CoinEvents, CoinState}, input_manager::InputManager, player::Player},
+    player::{
+        enums::coin_events::{CoinEvents, CoinState},
+        input_manager::InputManager,
+        player::Player,
+    },
 };
 
 // The amount of coins a player starts with
@@ -42,13 +44,13 @@ impl ILabel for CoinCounter {
     fn init(base: Base<Label>) -> Self {
         Self {
             base,
-            coins: 0,  
-            coin_holder: Vec::new(),    // Create a new vector to hold coins 
+            coins: 0,
+            coin_holder: Vec::new(), // Create a new vector to hold coins
         }
     }
 
     /// The Godot method called when the coin counter enters the scene tree for the first time
-    /// Sets the base value of coins and adds coins to the player. 
+    /// Sets the base value of coins and adds coins to the player.
     fn ready(&mut self) {
         let coin_cnt = GString::from(format!("{}", self.coins));
         self.base_mut().set_text(coin_cnt.into());
@@ -85,21 +87,23 @@ impl CoinCounter {
         let pos = Vector2::new(100000., -100000.);
         let args = &[pos.to_variant()];
         coin.to_gd()
-            .call_deferred(
-                StringName::from("set_global_position"), 
-                args);
+            .call_deferred(StringName::from("set_global_position"), args);
 
-        // Enable freeze mode 
+        // Enable freeze mode
         coin.to_gd()
-            .call_deferred(
-                StringName::from("set_freeze_enabled"), 
-                &[true.to_variant()]);
+            .call_deferred(StringName::from("set_freeze_enabled"), &[true.to_variant()]);
 
         let real_pos = coin.to_gd().get_global_position();
-        godot_print!("\nREPOSITIONING {} to {} actually {}", coin.to_gd().get_name(), pos, real_pos);
+        godot_print!(
+            "\nREPOSITIONING {} to {} actually {}",
+            coin.to_gd().get_name(),
+            pos,
+            real_pos
+        );
 
         // Add the coin to the coin holder
-        self.coin_holder.insert(self.coin_holder.len(), coin.to_gd());
+        self.coin_holder
+            .insert(self.coin_holder.len(), coin.to_gd());
     }
 
     /// Setter method for the text
@@ -112,8 +116,8 @@ impl CoinCounter {
     }
 
     /// Removes coins from this Coin Counter, returns false if we cannot carry this out
-    /// # Returns 
-    /// * boolean of whether the coin can be removed 
+    /// # Returns
+    /// * boolean of whether the coin can be removed
     pub fn remove_coin(&mut self) -> bool {
         let new_coins = self.coins - 1;
 
@@ -145,24 +149,24 @@ impl CoinCounter {
         }
     }
 
-    /// Adds the number of coins to start the game depending on the starting coin count. 
+    /// Adds the number of coins to start the game depending on the starting coin count.
     fn add_starting_coins(&mut self) {
-        for i in 0..STARTING_COIN_COUNT{
-            // Get the coin scene and instantiate it 
+        for i in 0..STARTING_COIN_COUNT {
+            // Get the coin scene and instantiate it
             let coin_scene = load::<PackedScene>("res://scenes/coin.tscn");
             let mut coin = coin_scene.instantiate_as::<Coin>().clone();
 
-            // Set the name of the coin 
+            // Set the name of the coin
             let coin_id = i as i32 + 1;
             coin.set_name(format!("Coin{}", coin_id).into());
-            
-            // Get the player and set the coins current player 
+
+            // Get the player and set the coins current player
             let player = self.base().get_node_as::<Player>("../../");
             coin.bind_mut().set_curr_player(player.to_godot());
 
             // Set initial state
             coin.bind_mut().set_state(CoinState::PickedUp);
-            coin.set_visible(true);  // Set visible 
+            coin.set_visible(true); // Set visible
 
             // Add to coin counter
             let new_coins = self.coins + 1; // Find how many coins to change to
@@ -175,22 +179,23 @@ impl CoinCounter {
             let pos = Vector2::new(100000., -100000.);
             coin.set_global_position(pos);
 
-            // Enable freeze mode 
+            // Enable freeze mode
             coin.set_freeze_enabled(true);
 
-            godot_print!("Coin vis: {}\nCoin pos: {}\nCoin name: {}",
-                            coin.is_visible(), 
-                            coin.get_global_position(),
-                            coin.get_name()
-                        );
+            godot_print!(
+                "Coin vis: {}\nCoin pos: {}\nCoin name: {}",
+                coin.is_visible(),
+                coin.get_global_position(),
+                coin.get_name()
+            );
 
             // Add the coin to the coin holder
-            self.coin_holder.insert(self.coin_holder.len(), coin.clone());
+            self.coin_holder
+                .insert(self.coin_holder.len(), coin.clone());
 
             // Add the coin to the map (this calls the coin ready method)
             let mut map = player.get_parent().unwrap();
             map.add_child(coin);
-        
         }
     }
 }
