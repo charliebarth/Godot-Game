@@ -16,6 +16,7 @@ const MIN_RESERVE: f64 = 0.0;
 #[class(base=TextureProgressBar)]
 /// Struct that reprents a Metal Reserve Bar 
 pub struct MetalBar {
+    // The base node of the metal bar 
     base: Base<TextureProgressBar>,
     /// The amount of Metal reserved in the bar 
     reserves: f64,
@@ -26,7 +27,13 @@ pub struct MetalBar {
 /// Godot methods for Metal reserve bar 
 impl ITextureProgressBar for MetalBar {
 
-    /// Constructor for a Metal Bar
+    /// The Godot contructor for the MetalBar class node
+    ///
+    /// # Arguments
+    /// * `base` - The base node type for the metal bar
+    ///
+    /// # Returns
+    /// * `MetalBar` - The MetalBar node
     fn init(base: Base<TextureProgressBar>) -> Self {
 
         Self {
@@ -35,6 +42,7 @@ impl ITextureProgressBar for MetalBar {
         }
     }
 
+    /// The Godot method called when the coin counter enters the scene tree for the first time
     /// Sets the Metals value to 0.0 at the start of the round and sets min and max value
     fn ready(&mut self){
         self.base_mut().set_value(0.0);
@@ -72,6 +80,8 @@ impl MetalBar {
     /// 
     /// # Arguments
     /// * `path` (&str) - the path the the texture to load
+    /// # Returns
+    /// * (Gd<Texture2D>) - the texture loaded 
     fn load_texture(&mut self, path: &str) -> Gd<Texture2D>{
         let mut loader: Gd<ResourceLoader> = ResourceLoader::singleton(); 
 

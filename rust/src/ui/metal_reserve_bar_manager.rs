@@ -1,18 +1,22 @@
-pub use crate::ui::metal_bar::MetalBar;
-use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};
-use godot::prelude::*;
 /// Controls the metal bars on screen, stores bars that are not currently on screen and has methods
 /// to add and remove bars from the on screen Vbox by name.
 ///
 /// Author: Trinity Pittman
 /// Date: Fall 2024
+
 use std::collections::HashMap;
+
+use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};
+use godot::prelude::*;
+
+pub use crate::ui::metal_bar::MetalBar;
+
 
 // The maximum number of bars to display on a players screen at a time
 const MAX_BARS_ON_SCREEN: u8 = 4;
 
 // Change this to account for how many we currently support
-const TOTAL_BARS: u8 = 10;
+const TOTAL_BARS: u8 = 3;
 
 // Represents the order of supported metals (simply reorder these based on implementation)
 const PATHS: [&str; 10] = [
@@ -32,6 +36,7 @@ const PATHS: [&str; 10] = [
 #[class(base=VBoxContainer)]
 /// Represents a manager for the metal bars
 pub struct MetalReserveBarManager {
+    /// The base node of the MetalReserveBarManager
     base: Base<VBoxContainer>,
     /// Holds the Bars in a hashmap of names and bars
     bars: Option<HashMap<StringName, Gd<MetalBar>>>,
@@ -40,11 +45,18 @@ pub struct MetalReserveBarManager {
 #[godot_api]
 /// Godot methods that belong to MetalReserveBarManager
 impl IVBoxContainer for MetalReserveBarManager {
-    /// Initialization method for `MetalReserveBarManager`
+    /// The Godot contructor for the MetalReserveBarManager class node
+    ///
+    /// # Arguments
+    /// * `base` - The base node type for the MetalReserveBarManager
+    ///
+    /// # Returns
+    /// * `MetalReserveBarManager` - The MetalReserveBarManager node
     fn init(base: Base<VBoxContainer>) -> Self {
         Self { base, bars: None }
     }
 
+    /// The Godot method called when the coin counter enters the scene tree for the first time
     /// Creates and sets up the bars inside the Metal Reserve Bar Manager
     fn ready(&mut self) {
         // Create Metals that are auto added to VBox based on the keybound metals
@@ -83,6 +95,7 @@ impl IVBoxContainer for MetalReserveBarManager {
 impl MetalReserveBarManager {
     /// Sets the metals currently on screen based on the keybindings set
     fn setup_keybinds(&mut self) {
+        // Get the input mappings 
         let mut input_map: Gd<InputMap> = InputMap::singleton();
         let inputs: Array<StringName> = input_map.get_actions();
 
