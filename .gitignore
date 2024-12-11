@@ -2,3 +2,4 @@ target/
 .godot/
 .DS_Store
 .idea/
+.vscode/

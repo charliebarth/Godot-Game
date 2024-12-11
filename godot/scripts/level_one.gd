@@ -1,7 +1,9 @@
 extends Node2D
 
 
-# Called when the node enters the scene tree for the first time.
+## Called when the node enters the scene tree for the first time.
+## This will clone each TileMapLayer in the scene and set the visibility_layer and light_mask.
+## This is done so players can see shadows on their screens without shadows affecting other player's screens.
 func _ready() -> void:
 	var children = self.get_children()
 

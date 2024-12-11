@@ -3,6 +3,7 @@ extends Sprite2D
 # Variable for setting the lerp speed
 var lerp_speed = 10.0
 
+## This function moves the line selector based on the joystick input
 func _process(delta):
 	var radius = 40
 
@@ -11,7 +12,7 @@ func _process(delta):
 	var joystick_y = Input.get_axis("right_stick_down", "right_stick_up")
 	
 	# Calculate the direction vector and invert y-axis
-	var direction = Vector2(joystick_x, -joystick_y)  # Negate y for intuitive direction
+	var direction = Vector2(joystick_x, -joystick_y) # Negate y for intuitive direction
 
 	# Only update if the joystick is being pushed
 	if direction.length() > 0.0:
