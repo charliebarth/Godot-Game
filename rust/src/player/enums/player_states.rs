@@ -28,6 +28,11 @@ pub enum PlayerStates {
 }
 
 impl PlayerStates {
+    /// Converts the player state to a string.
+    /// This is used to get the name of the animation to play.
+    ///
+    /// # Returns
+    /// * `&str` - The name of the animation to play.
     pub fn as_str(&self) -> &str {
         match self {
             PlayerStates::Crouch => "crouch_walk",
@@ -46,6 +51,10 @@ impl PlayerStates {
         }
     }
 
+    /// Calls the update function for the current state.
+    ///
+    /// # Arguments
+    /// * `player` - A mutable reference to the player so that the state can be updated.
     pub fn update_state(self, player: &mut Player) {
         match self {
             PlayerStates::Idle => Idle::update(player),
@@ -64,6 +73,10 @@ impl PlayerStates {
         }
     }
 
+    /// Calls the enter function for the current state.
+    ///
+    /// # Arguments
+    /// * `player` - A mutable reference to the player so that the state can be updated.
     pub fn enter_state(self, player: &mut Player) {
         match self {
             PlayerStates::Idle => Idle::enter(player),

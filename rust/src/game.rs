@@ -18,25 +18,45 @@ const THREE_PLAYER_WIDTH: f32 = 960.0;
 const THREE_PLAYER_HEIGHT: f32 = 540.0;
 
 use crate::{main_menu::MainMenu, player::player::Player};
+
+/// The Game class is responsible for managing the game state such as players, maps, and the main menu.
+/// This is also the root node of the scene tree.
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct Game {
+    /// The base node of the Game.
     base: Base<Node2D>,
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
+    /// A list of connected input devices.
     devices: Vec<i32>,
+    /// The name of the button that players must press to register.
     register_button: StringName,
+    /// The scene for the player node.
     player_scene: Gd<PackedScene>,
+    /// The ID of the next player to register.
     current_player_id: i32,
+    /// Whether the game has started.
     started: bool,
+    /// The current map.
     map: Option<Gd<Node2D>>,
+    /// The ID of the winning player.
     winning_player: i32,
+    /// A collection of maps/levels that can be loaded.
     maps: HashMap<String, Gd<PackedScene>>,
+    /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
 }
 
 #[godot_api]
 impl INode2D for Game {
+    /// The Godot constructor for the Game class.
+    ///
+    /// # Arguments
+    /// * `base` - The base node of the Game.
+    ///
+    /// # Returns
+    /// * `Game` - A new instance of the Game class.
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
@@ -53,6 +73,9 @@ impl INode2D for Game {
         }
     }
 
+    /// This is a built in method for Godot that is called when a node is first added to the scene.
+    /// This registers signal from the built in input singleton for when a device is connected or disconnected.
+    /// It also loads the maps that can be used in the game.
     fn ready(&mut self) {
         Input::singleton().connect(
             "joy_connection_changed".into(),
@@ -136,6 +159,10 @@ impl Game {
         self.current_player_id = self.devices.len() as i32;
     }
 
+    /// This will get the main menu node.
+    ///
+    /// Returns:
+    /// * `MainMenu` - The main menu node.
     fn get_main_menu(&mut self) -> Gd<MainMenu> {
         if self.main_menu.is_none() {
             self.main_menu = Some(self.base().get_node_as::<MainMenu>("MainMenu"));
@@ -147,6 +174,13 @@ impl Game {
             .clone()
     }
 
+    /// This will attempt to start the game.
+    /// It will check if the appropriate conditions are met to start the game.
+    ///
+    /// Arguments:
+    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
+    ///
+    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
     #[func]
     pub fn attempt_start(&mut self, test_mode: bool) {
         if !test_mode && self.players.len() >= 2 || (test_mode && self.players.len() == 1) {
@@ -166,6 +200,8 @@ impl Game {
             .add_notification(notification);
     }
 
+    /// This will start the game.
+    /// Note: This will remove the main menu and instantiate the map.
     #[func]
     pub fn start_game(&mut self) {
         // First remove the main menu
@@ -204,6 +240,9 @@ impl Game {
         }
     }
 
+    /// This will end the game.
+    /// It will clean up all the split screen viewports and players.
+    /// After cleanup returns the main menu and shows a message stating who won the game.
     #[func]
     pub fn end_game(&mut self) {
         self.started = false;
@@ -224,6 +263,14 @@ impl Game {
             .add_notification(format!("Player {} wins!", self.winning_player));
     }
 
+    /// This function is called when a device is connected or disconnected.
+    /// It is hooked up to the joy_connection_changed signal from the Input singleton.
+    /// If a device is connected and the player it will reconnect the player to the device.
+    /// If a device is disconnected it will disconnect the player from the device and remove them from the game.
+    ///
+    /// Arguments:
+    /// * `device_id` - The id of the device that has changed.
+    /// * `connected` - A boolean that determines if the device is connected or disconnected.
     #[func]
     pub fn device_changed(&mut self, device_id: i32, connected: bool) {
         if self.devices.contains(&device_id) && self.started {
@@ -245,14 +292,24 @@ impl Game {
         }
     }
 
+    /// This function returns the number of players in the game.
+    ///
+    /// Returns:
+    /// * `i32` - The number of players in the game.
     pub fn get_number_of_players(&self) -> i32 {
         self.players.len() as i32
     }
 
+    /// This function selects the map for the game.
+    ///
+    /// Arguments:
+    /// * `map` - The map to select.
     pub fn set_map(&mut self, map: Gd<Node2D>) {
         self.map = Some(map);
     }
 
+    /// This function resets the players in the game.
+    /// It cleans up any old data and reinstaniates the players.
     fn reset_players(&mut self) {
         self.players.clear();
         self.current_player_id = 0;
@@ -266,6 +323,11 @@ impl Game {
         }
     }
 
+    /// This will disconnect a player from the game.
+    /// If there is only one player left in the game they will be declared the winner.
+    ///
+    /// Arguments:
+    /// * `player_id` - The id of the player to disconnect.
     pub fn remove_player(&mut self, player_id: i32) {
         self.players.remove(player_id as usize - 1);
 
@@ -279,6 +341,13 @@ impl Game {
         }
     }
 
+    /// This will select a spawn point for a player based on their player id.
+    ///
+    /// Arguments:
+    /// * `player_id` - The id of the player to select a spawn point for.
+    ///
+    /// Returns:
+    /// * `Vector2` - The spawn point for the player.
     fn select_spawn_point(&self, player_id: i32) -> Vector2 {
         let spawn_point_name = match player_id {
             1 => "SpawnOne",
@@ -296,6 +365,11 @@ impl Game {
         spawn_point.get_position()
     }
 
+    /// This will assign a player to a subviewport/split screen pane.
+    ///
+    /// # Arguments
+    /// * `player` - The player to assign to the subviewport.
+    /// * `player_id` - The id of the player to assign to the subviewport.
     fn assign_player_to_subviewport(&self, player: Gd<Player>, player_id: i32) {
         let mut subviewport: Gd<SubViewport>;
         match player_id {
@@ -327,6 +401,10 @@ impl Game {
         subviewport.add_child(player);
     }
 
+    /// This will adjust the camera zoom for a player based on the number of players and thus size of each split screen pane.
+    ///
+    /// # Arguments
+    /// * `player_id` - The id of the player to adjust the camera zoom for.
     fn adjust_player_camera_zoom(&self, player_id: i32) {
         if player_id == 2 {
             self.adjust_two_player_camera_zoom();
@@ -337,6 +415,7 @@ impl Game {
         }
     }
 
+    /// This will adjust the camera zoom for a two player split screen.
     fn adjust_two_player_camera_zoom(&self) {
         let mut camera1 = self.base().get_node_as::<Camera2D>(
             "SplitScreenOne/PlayerOneContainer/PlayerOneViewport/Player1/Camera2D",
@@ -349,6 +428,7 @@ impl Game {
         camera2.set_zoom(Vector2::new(1.0, 1.0));
     }
 
+    /// This will adjust the camera zoom for a three player split screen.
     fn adjust_three_player_camera_zoom(&self) {
         let mut camera3 = self.base().get_node_as::<Camera2D>(
             "SplitScreenOne/PlayerThreeContainer/PlayerThreeViewport/Player3/Camera2D",
@@ -357,6 +437,7 @@ impl Game {
         camera3.set_zoom(Vector2::new(1.0, 1.0));
     }
 
+    /// This will adjust the camera zoom for a four player split screen.
     fn adjust_four_player_camera_zoom(&self) {
         let mut camera4 = self.base().get_node_as::<Camera2D>(
             "SplitScreenTwo/PlayerFourContainer/PlayerFourViewport/Player4/Camera2D",
@@ -365,6 +446,10 @@ impl Game {
         camera4.set_zoom(Vector2::new(1.0, 1.0));
     }
 
+    /// This will split the screen based on the number of players.
+    ///
+    /// # Arguments
+    /// * `player_id` - The id of the player to split the screen for.
     fn split_screen(&mut self, player_id: i32) {
         match player_id {
             1 => self.one_player_split_screen(),
@@ -379,6 +464,7 @@ impl Game {
         }
     }
 
+    /// This will add the first viewport for a single player. The viewport will be fullscreen.
     fn one_player_split_screen(&mut self) {
         let mut split_screen_one = HBoxContainer::new_alloc();
         let mut p1_container = SubViewportContainer::new_alloc();
@@ -399,6 +485,7 @@ impl Game {
         self.assign_one_player_screen_sizes();
     }
 
+    /// This will resize the screen to fullscreen for a single player.
     fn assign_one_player_screen_sizes(&self) {
         let mut split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
@@ -413,6 +500,7 @@ impl Game {
         split_screen_one.set_size(Vector2::new(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT));
     }
 
+    /// This will add the second viewport for a two player split screen.
     fn two_player_split_screen(&mut self) {
         let p1_viewport = self
             .base()
@@ -438,6 +526,8 @@ impl Game {
         self.assign_two_player_screen_sizes();
     }
 
+    /// This will resize the screen to fit two players.
+    /// Each split screen will be the full width of the screen and half the height.
     fn assign_two_player_screen_sizes(&self) {
         let mut split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
@@ -466,6 +556,7 @@ impl Game {
         split_screen_two.set_anchors_preset(LayoutPreset::CENTER_TOP);
     }
 
+    /// This will add the third and fourth viewports for a three player split screen.
     fn three_player_split_screen(&mut self) {
         let mut split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let p1_viewport =
@@ -487,6 +578,8 @@ impl Game {
         self.assign_three_player_screen_sizes();
     }
 
+    /// This will resize the screen to fit three players.
+    /// Each split screen will be half the width of the screen and half the height.
     fn assign_three_player_screen_sizes(&self) {
         let split_screen_one = self.base().get_node_as::<HBoxContainer>("SplitScreenOne");
         let mut p1_container =
@@ -521,6 +614,7 @@ impl Game {
         p2_container.set_size(Vector2::new(THREE_PLAYER_WIDTH, THREE_PLAYER_HEIGHT));
     }
 
+    /// This will add the fourth viewport for a four player split screen.
     fn four_player_split_screen(&self) {
         let mut split_screen_two = self.base().get_node_as::<HBoxContainer>("SplitScreenTwo");
         let p2_viewport =
@@ -542,6 +636,8 @@ impl Game {
         self.assign_four_player_screen_sizes();
     }
 
+    /// This will resize the screen to fit four players.
+    /// Each split screen will be half the width of the screen and half the height.
     fn assign_four_player_screen_sizes(&self) {
         let mut split_screen_two = self.base().get_node_as::<HBoxContainer>("SplitScreenTwo");
         let mut p4_container =
@@ -553,6 +649,8 @@ impl Game {
         split_screen_two.set_anchors_preset(LayoutPreset::TOP_LEFT);
     }
 
+    /// This will reparent the map to the first subviewport.
+    /// This is required so that the map can be seen by the players.
     fn reparent_level(&mut self) {
         if let Some(map) = self.map.take() {
             let mut p1_viewport = self
@@ -565,6 +663,8 @@ impl Game {
         }
     }
 
+    /// This will remove the map overview camera from the fourth viewport.
+    /// This camera is placed there during a three player game to provide an overview of the entire level.
     fn remove_fourth_viewport_camera(&self) {
         let mut overview_container = self
             .base()
