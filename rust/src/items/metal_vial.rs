@@ -96,13 +96,4 @@ impl MetalVial {
     fn set_metals(&mut self, metals: Vec<StringName>) {
         self.metals = Some(metals);
     }
-
-    /// This method is the way to determine if the object is metal.
-    ///
-    /// # Returns
-    /// * `bool` - True if the object is metal.
-    #[func]
-    pub fn is_metal(&self) -> bool {
-        true
-    }
 }

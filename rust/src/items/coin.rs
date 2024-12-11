@@ -11,7 +11,6 @@ use crate::player::player::Player;
 
 #[derive(GodotClass)]
 #[class(base=RigidBody2D)]
-#[derive(Debug)]
 /// Represents a coin
 pub struct Coin {
     // The base node of the Coin 
@@ -45,7 +44,6 @@ impl IRigidBody2D for Coin {
 
     /// The Godot method called when the coin enters the scene tree for the first time
     /// Any one time logic and initialization should be done here
-    /// NOTE: This only is called the very first time the instance enters the scene tree
     /// 
     /// Sets coin freeze mode to true, and allows collsions.
     fn ready(&mut self) {
@@ -195,14 +193,5 @@ impl Coin {
             // Change the state to idle
             self.set_state(CoinState::Idle);
         }
-    }
-
-    /// This method is the way to determine if the object is metal.
-    ///
-    /// # Returns
-    /// * `bool` - True if the object is metal.
-    #[func]
-    pub fn is_metal(&self) -> bool {
-        true
     }
 }
