@@ -116,10 +116,10 @@ impl InputManager {
 
     /// Takes an InputEvent and returns the name of the input event.
     ///  
-    ///  # Arguments 
-    /// * `event` (Gd<InputEvent>) - the input event to convert to string representation
-    /// # Returns 
-    /// (String) - the string representation of the event 
+    ///  # Arguments
+    /// * `event` (`Gd<InputEvent>`) - the input event to convert to string representation
+    /// # Returns
+    /// (String) - the string representation of the event
     pub fn event_to_input_name(event: Gd<InputEvent>) -> String {
         let mut input_map = InputMap::singleton();
         let inputs = input_map.get_actions();

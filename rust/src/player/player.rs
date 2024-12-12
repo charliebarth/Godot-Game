@@ -340,8 +340,8 @@ impl Player {
 
     /// Adjusts the coins in this players coin_counter positively or negatively.
     ///
-    /// # Arguments 
-    /// * `pos_neg`` (i8) - if -1, remove_coin    if +1, add_coin
+    /// # Arguments
+    /// * `pos_neg` (i8) - if -1, remove_coin    if +1, add_coin
     pub fn adjust_coins(&mut self, pos_neg: i8, coin: &mut Coin) {
         if pos_neg == -1 {
             // Dereference and call the method
@@ -354,8 +354,8 @@ impl Player {
     /// Adjusts specific metals in this players metal bar manager to some amount.
     ///
     /// # Arguments
-    /// * `metals`` (Vec<StringName>) - the metals to effect
-    /// * `amt`` (f64) - the new amount to set the metals to
+    /// * `metals` (`Vec<StringName>`) - the metals to effect
+    /// * `amt` (f64) - the new amount to set the metals to
     pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
         for metal in metals {
             self.get_metal_manager()
