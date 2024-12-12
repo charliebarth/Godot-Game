@@ -1,27 +1,26 @@
+use godot::classes::{Area2D, IArea2D};
 /// Represents a Metal Vial.
 ///
 /// Author : Trinity Pittman
 /// Version : Fall 2024
-
 use godot::prelude::*;
-use godot::classes::{Area2D, IArea2D};
 
 use crate::player::player::Player;
- 
+
 #[derive(GodotClass)]
 #[class(base=Area2D)]
-/// Represents a Metal Vial 
+/// Represents a Metal Vial
 pub struct MetalVial {
     // The base node of the MetalVial
     base: Base<Area2D>,
-    /// A vector of metals this metal vial increments 
+    /// A vector of metals this metal vial increments
     metals: Option<Vec<StringName>>,
-    /// The amt the metal vial increments the metals by 
+    /// The amt the metal vial increments the metals by
     amt: f64,
 }
 
 #[godot_api]
-/// Godot methods for MetalVial 
+/// Godot methods for MetalVial
 impl IArea2D for MetalVial {
     /// The Godot contructor for the MetalVial class node
     ///
@@ -39,7 +38,7 @@ impl IArea2D for MetalVial {
     }
 
     /// The Godot method called when the metal vial enters the scene tree for the first time
-    /// Sets the metals this metal vial will increment. 
+    /// Sets the metals this metal vial will increment.
     fn ready(&mut self) {
         let mut new_metals = Vec::new();
         new_metals.push(StringName::from("iron"));
@@ -63,8 +62,8 @@ impl MetalVial {
     /// When someone enters this metal vial hit box we call the method to add metal to that players  
     /// metal bars.
     ///
-    /// # Arguments 
-    /// * `body` (Gd<Node2D>) - the Node that enters this metal vial.
+    /// # Arguments
+    /// * `body` (`Gd<Node2D>`) - the Node that enters this metal vial.
     #[func]
     fn metal_pickup(&mut self, body: Gd<Node2D>) {
         let body_name = body.get_name();
@@ -78,10 +77,10 @@ impl MetalVial {
         }
     }
 
-    /// Gets the metals this metal vial increments 
-    /// 
-    /// # Returns 
-    /// * The metals the vials increment 
+    /// Gets the metals this metal vial increments
+    ///
+    /// # Returns
+    /// * The metals the vials increment
     fn get_metals(&mut self) -> Vec<StringName> {
         if self.metals.is_none() {
             self.metals = Some(Vec::new());
@@ -90,9 +89,9 @@ impl MetalVial {
     }
 
     /// Sets the metals this metal vial will increment
-    /// 
-    /// # Arguments 
-    /// * `metals` (Vec<StringName>) - the names of the metals to set
+    ///
+    /// # Arguments
+    /// * `metals` (`Vec<StringName>`) - the names of the metals to set
     fn set_metals(&mut self, metals: Vec<StringName>) {
         self.metals = Some(metals);
     }

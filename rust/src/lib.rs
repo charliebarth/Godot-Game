@@ -2,7 +2,7 @@
 /// It is responsible for defining the Rust library and the classes that Godot can use
 use godot::prelude::*;
 
-mod player {
+pub mod player {
 
     pub mod disconnected;
     pub mod input_manager;
@@ -19,12 +19,12 @@ mod player {
         pub mod timeout_events;
     }
 
-    mod traits {
+    pub mod traits {
         pub mod metal;
         pub mod player_state;
     }
 
-    mod player_states {
+    pub mod player_states {
         pub mod attack;
         pub mod crouch;
         pub mod crouch_end;
@@ -40,7 +40,7 @@ mod player {
         pub mod sprint;
     }
 
-    mod metals {
+    pub mod metals {
         pub mod pewter;
         pub mod steel;
     }
@@ -50,12 +50,12 @@ pub mod game;
 pub mod main_menu;
 pub mod metal_object;
 
-mod items {
+pub mod items {
     pub mod coin;
     pub mod metal_vial;
 }
 
-mod ui {
+pub mod ui {
     pub mod coin_counter;
     pub mod metal_bar;
     pub mod metal_reserve_bar_manager;

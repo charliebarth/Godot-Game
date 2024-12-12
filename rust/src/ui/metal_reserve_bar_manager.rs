@@ -3,14 +3,12 @@
 ///
 /// Author: Trinity Pittman
 /// Date: Fall 2024
-
 use std::collections::HashMap;
 
 use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};
 use godot::prelude::*;
 
 pub use crate::ui::metal_bar::MetalBar;
-
 
 // The maximum number of bars to display on a players screen at a time
 const MAX_BARS_ON_SCREEN: u8 = 4;
@@ -95,7 +93,7 @@ impl IVBoxContainer for MetalReserveBarManager {
 impl MetalReserveBarManager {
     /// Sets the metals currently on screen based on the keybindings set
     fn setup_keybinds(&mut self) {
-        // Get the input mappings 
+        // Get the input mappings
         let mut input_map: Gd<InputMap> = InputMap::singleton();
         let inputs: Array<StringName> = input_map.get_actions();
 
@@ -125,7 +123,7 @@ impl MetalReserveBarManager {
     /// * `name` (&str) - the name of the metal bar to get
     ///
     /// # Returns
-    /// * (Gd<MetalBar>) - the metal bar or None if none exists
+    /// * (`Gd<MetalBar>`) - the metal bar or None if none exists
     pub fn get_metal_bar(&mut self, name: StringName) -> Gd<MetalBar> {
         if let Some(bar) = self.get_bars().get(&name) {
             bar.clone()
@@ -154,7 +152,7 @@ impl MetalReserveBarManager {
 
     /// Adds metals to all the bars contained within the metal reserve bar manager
     /// # Arguments
-    /// * `metals` (&Vec<StringName>) - the metals to increment
+    /// * `metals` (`&Vec<StringName>`) - the metals to increment
     /// * `amt` (f64) - the ammount to increment by
     pub fn add_metals(&mut self, metals: &Vec<StringName>, amt: f64) {
         // if needed

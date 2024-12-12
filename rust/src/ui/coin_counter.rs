@@ -60,7 +60,7 @@ impl ILabel for CoinCounter {
 
     /// On an input event, calls the process_coin_events method if the event is a CoinEvent
     /// # Arguments
-    /// * `event` (Gd<InputEvent>) - the input event that took place
+    /// * `event` (`Gd<InputEvent>`) - the input event that took place
     fn input(&mut self, event: Gd<InputEvent>) {
         let button_name = InputManager::event_to_input_name(event.clone());
 
@@ -134,7 +134,7 @@ impl CoinCounter {
     /// Processes the coin event that happened
     /// # Arguments
     /// * `coin_event` (CoinEvents) - The coin event that took place
-    /// * `event` (Gd<InputEvent>) - The input event that took place
+    /// * `event` (`Gd<InputEvent>`) - The input event that took place
     fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
         if event.is_action_pressed(StringName::from("throw")) {
             // Check if player has coins to throw
