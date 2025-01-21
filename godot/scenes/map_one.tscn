@@ -240,3 +240,18 @@ occluder = SubResource("OccluderPolygon2D_girdu")
 [node name="LightOccluder2D6" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_7e6k5")
+
+[node name="Marker2D" type="MetalPickup" parent="."]
+position = Vector2(533.244, -107.361)
+
+[node name="MetalVial5" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(607, -99)
+
+[node name="MetalVial6" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(467, -98)
+
+[node name="MetalVial7" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(702, -99)
+
+[node name="MetalVial8" parent="." instance=ExtResource("8_dufnk")]
+position = Vector2(771, -92)

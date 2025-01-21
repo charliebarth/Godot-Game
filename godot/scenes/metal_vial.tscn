@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://cdk7m3yxd0fm0"]
+[gd_scene load_steps=13 format=3 uid="uid://cdk7m3yxd0fm0"]
 
 [ext_resource type="Texture2D" uid="uid://bt7wl72nxecoa" path="res://assets/Items/Big Vial - BLACK - Spritesheet.png" id="1_gb7n6"]
+[ext_resource type="AudioStream" uid="uid://dhlqxflmq6yun" path="res://assets/SFX & Music/swallowing_sound.wav" id="2_2tpp8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_27b3r"]
 atlas = ExtResource("1_gb7n6")
@@ -82,5 +83,9 @@ frame_progress = 0.0413678
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1, 1)
 shape = SubResource("CapsuleShape2D_858xe")
+
+[node name="Swallow" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_2tpp8")
+bus = &"SFX"
 
 [connection signal="body_entered" from="." to="." method="metal_pickup"]

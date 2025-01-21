@@ -4,7 +4,7 @@
 /// Version : Fall 2024
 
 use godot::prelude::*;
-use godot::classes::{Area2D, IArea2D};
+use godot::classes::{Area2D, AudioStreamPlayer2D, IArea2D};
 
 use crate::player::player::Player;
  
@@ -71,8 +71,13 @@ impl MetalVial {
         godot_print!("Metal entered by {body_name}"); // Prints who picked up the coin
 
         if let Ok(mut player) = body.try_cast::<Player>() {
+
             player.bind_mut().adjust_metals(self.get_metals(), self.amt); // Dereference and call the method
+
+            self.play_sound();
+
             self.base_mut().queue_free(); // Remove the vial from the scene
+            
         } else {
             godot_print!("Something other than player entered the coin.");
         }
@@ -95,5 +100,16 @@ impl MetalVial {
     /// * `metals` (Vec<StringName>) - the names of the metals to set
     fn set_metals(&mut self, metals: Vec<StringName>) {
         self.metals = Some(metals);
+    }
+
+    fn play_sound(&mut self){
+        // Play swallowing sound
+        let mut sound_effect: Gd<AudioStreamPlayer2D> = 
+            self.base()
+            .get_node_as::<AudioStreamPlayer2D>("Swallow");
+        sound_effect.set_global_position(self.base().get_global_position());
+        sound_effect.play();
+        godot_print!("Playback started: {}", sound_effect.is_playing());
+        godot_print!("Sound Played {}", sound_effect.get_name());
     }
 }
