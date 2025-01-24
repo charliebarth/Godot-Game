@@ -1,4 +1,4 @@
-[gd_scene load_steps=160 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=161 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -42,6 +42,7 @@
 [ext_resource type="AudioStream" uid="uid://drjjxs8iebgqu" path="res://assets/SFX & Music/ES_Asphalt, Male, Walk - Epidemic Sound - 5878-6035.wav" id="38_rea0i"]
 [ext_resource type="AudioStream" uid="uid://dnpftf73dao0t" path="res://assets/SFX & Music/ES_Feet, Land, Jump, Ground - Epidemic Sound - 0040-0142.wav" id="39_6vh5j"]
 [ext_resource type="Shader" path="res://shader scripts/timer.gdshader" id="41_q8agc"]
+[ext_resource type="AudioStream" uid="uid://cgukktsplom06" path="res://assets/SFX & Music/metal_vial_sound.wav" id="42_4u70w"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
 light_mode = 2
@@ -1139,6 +1140,10 @@ bus = &"PlayerSFX"
 stream = ExtResource("39_6vh5j")
 volume_db = -12.0
 bus = &"PlayerSFX"
+
+[node name="Vial" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("42_4u70w")
+bus = &"SFX"
 
 [node name="Disconnected" type="Disconnected" parent="."]
 visible = false

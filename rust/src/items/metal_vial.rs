@@ -74,7 +74,12 @@ impl MetalVial {
 
             player.bind_mut().adjust_metals(self.get_metals(), self.amt); // Dereference and call the method
 
-            self.play_sound();
+            self.play_sound(player);
+
+            
+            // Set position
+            // let pos = Vector2::new(100000., -100000.);
+            // self.base_mut().set_global_position(pos);
 
             self.base_mut().queue_free(); // Remove the vial from the scene
             
@@ -102,14 +107,12 @@ impl MetalVial {
         self.metals = Some(metals);
     }
 
-    fn play_sound(&mut self){
+
+    fn play_sound(&mut self, player: Gd<Player>){
         // Play swallowing sound
         let mut sound_effect: Gd<AudioStreamPlayer2D> = 
-            self.base()
-            .get_node_as::<AudioStreamPlayer2D>("Swallow");
-        sound_effect.set_global_position(self.base().get_global_position());
+            player.get_node_as("./Vial");
+            
         sound_effect.play();
-        godot_print!("Playback started: {}", sound_effect.is_playing());
-        godot_print!("Sound Played {}", sound_effect.get_name());
     }
 }

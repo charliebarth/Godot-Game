@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=21 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="6_htvoh"]
 [ext_resource type="PackedScene" uid="uid://cdk7m3yxd0fm0" path="res://scenes/metal_vial.tscn" id="8_dufnk"]
 [ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="9_fk6gw"]
+[ext_resource type="PackedScene" uid="uid://crbuuc3thgs0g" path="res://scenes/metal_pickup.tscn" id="10_5bopr"]
 [ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
@@ -241,17 +242,8 @@ occluder = SubResource("OccluderPolygon2D_girdu")
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_7e6k5")
 
-[node name="Marker2D" type="MetalPickup" parent="."]
-position = Vector2(533.244, -107.361)
-
-[node name="MetalVial5" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(607, -99)
-
 [node name="MetalVial6" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(467, -98)
+position = Vector2(252, -20)
 
-[node name="MetalVial7" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(702, -99)
-
-[node name="MetalVial8" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(771, -92)
+[node name="MetalPickup" parent="." instance=ExtResource("10_5bopr")]
+position = Vector2(513, -109)
