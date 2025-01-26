@@ -112,6 +112,8 @@ pub struct Player {
     cached_nodes: HashMap<CachedNode, Gd<Node>>,
     /// The settings for the game
     settings: Gd<Settings>,
+    /// The number of eliminations the player has
+    eliminations: i32,
 }
 
 #[godot_api]
@@ -157,6 +159,7 @@ impl ICharacterBody2D for Player {
             is_attacking: false,
             cached_nodes: HashMap::new(),
             settings,
+            eliminations: 0,
         }
     }
 
@@ -329,6 +332,14 @@ impl Player {
     /// * `f64` - The health of the player
     pub fn get_health(&self) -> f64 {
         self.health
+    }
+
+    /// Get the eliminations of the player
+    ///
+    /// # Returns
+    /// * `i32` - The eliminations of the player
+    pub fn get_eliminations(&self) -> i32 {
+        self.eliminations
     }
 
     /// Get the direction the player is facing
@@ -822,7 +833,9 @@ impl Player {
     /// # Returns
     /// * `Gd<GpuParticles2D>` - The current particles of the player
     fn get_particles(&self) -> Gd<GpuParticles2D> {
-        self.current_particles.clone().expect("No current particles set for player")
+        self.current_particles
+            .clone()
+            .expect("No current particles set for player")
     }
 
     /// Adds a metal to the active burning metals

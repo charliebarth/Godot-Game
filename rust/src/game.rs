@@ -364,16 +364,53 @@ impl Game {
     }
 
     pub fn remove_player(&mut self, player_id: i32) {
-        self.players.remove(player_id as usize - 1);
+        // self.players.remove(player_id as usize - 1);
+        //
+        // if self.started && self.players.len() == 1 {
+        //     let player = self.players.get(0).expect("Player not found");
+        //     self.winning_player = player.bind().get_player_id();
+        //     self.end_game();
+        // } else if self.started && self.players.len() == 0 {
+        //     self.winning_player = player_id;
+        //     self.end_game();
+        // }
 
-        if self.started && self.players.len() == 1 {
-            let player = self.players.get(0).expect("Player not found");
-            self.winning_player = player.bind().get_player_id();
-            self.end_game();
-        } else if self.started && self.players.len() == 0 {
-            self.winning_player = player_id;
-            self.end_game();
+        let player_index = player_id as usize - 1;
+        let player = self.players.get(player_index).expect("Player not found");
+
+        // TODO: Increment the number of eliminations of the player that eliminated this player
+        // how to get the player that eliminated this player?
+
+        // check if a player has reached the required elimination count
+        if self.check_win_condition() {
+            self.end_game()
+        } else {
+            self.players.remove(player_index);
+
+            if self.players.len() == 1 {
+                self.start_new_round();
+            }
         }
+    }
+
+    /// This will check if a player has reached the required elimination count.
+    ///
+    /// Returns:
+    /// * `bool` - True if a player has reached the required elimination count, false otherwise.
+    fn check_win_condition(&self) -> bool {
+        // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
+        const REQUIRED_ELIMINATIONS: i32 = 10;
+        // check if any player has reached the required number of eliminations
+        self.players
+            .iter()
+            .any(|player| player.bind().get_eliminations() >= REQUIRED_ELIMINATIONS)
+    }
+
+    /// This will start a new round. It will reset the players and start the game again.
+    ///
+    fn start_new_round(&mut self) {
+        self.respawn_players();
+        self.start_game();
     }
 
     fn day_night_cycle(&mut self) {
