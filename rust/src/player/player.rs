@@ -109,6 +109,8 @@ pub struct Player {
     is_steel_burning: bool,
     /// If the player is attacking or not
     is_attacking: bool,
+    /// The number of eliminations the player has
+    eliminations: i32,
 }
 
 #[godot_api]
@@ -157,6 +159,7 @@ impl ICharacterBody2D for Player {
             mass: 70.0,
             is_steel_burning: false,
             is_attacking: false,
+            eliminations: 0,
         }
     }
 
@@ -298,6 +301,12 @@ impl Player {
     pub fn get_health(&self) -> f64 {
         self.health
     }
+
+    /// Get the eliminations of the player
+    ///
+    /// # Returns
+    /// * `i32` - The eliminations of the player
+    pub fn get_eliminations(&self) -> i32 {self.eliminations}
 
     /// Get the direction the player is facing
     ///
