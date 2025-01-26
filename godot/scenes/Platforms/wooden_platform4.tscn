@@ -1,9 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://bcmac4mal51c3"]
+[gd_scene load_steps=4 format=3 uid="uid://bcmac4mal51c3"]
 
 [ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="1_52wre"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6pmc2"]
 size = Vector2(117, 10)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8b47s"]
+polygon = PackedVector2Array(-57, -5, 58, -4, 58, 4, -57, 4)
 
 [node name="wooden_platform4" type="StaticBody2D"]
 
@@ -16,3 +19,7 @@ region_rect = Rect2(381, 936, 123, 17)
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_6pmc2")
 one_way_collision = true
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_8b47s")
