@@ -1,6 +1,7 @@
-[gd_scene load_steps=69 format=3 uid="uid://tnernkxjfar4"]
+[gd_scene load_steps=75 format=3 uid="uid://tnernkxjfar4"]
 
 [ext_resource type="Texture2D" uid="uid://cx7epgltfxyrt" path="res://assets/Maps/dungeon/Textures/FX/TX FX Candle Flame.png" id="1_uuidm"]
+[ext_resource type="Script" path="res://scripts/candle.gd" id="2_d114u"]
 
 [sub_resource type="Shader" id="Shader_uqmka"]
 code = "shader_type canvas_item;
@@ -481,7 +482,39 @@ animations = [{
 "speed": 11.0
 }]
 
+[sub_resource type="Curve" id="Curve_fopgu"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.492, 1), 0.0, 0.0, 0, 0, Vector2(0.996, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ilkuo"]
+curve = SubResource("Curve_fopgu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_83erf"]
+lifetime_randomness = 0.3
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 12.0
+emission_ring_inner_radius = 5.0
+gravity = Vector3(0, -5, 0)
+scale_min = 0.5
+scale_max = 0.9
+scale_curve = SubResource("CurveTexture_ilkuo")
+color = Color(0.941, 0.416, 0.26, 0.702)
+turbulence_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_dscy8"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_od00t"]
+gradient = SubResource("Gradient_dscy8")
+fill = 1
+fill_from = Vector2(0.5, 0.508547)
+fill_to = Vector2(0.82906, 0.15812)
+
 [node name="Node2D" type="Node2D"]
+script = ExtResource("2_d114u")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 self_modulate = Color(0.937293, 0.622618, 0.396936, 1)
@@ -489,5 +522,14 @@ material = SubResource("ShaderMaterial_xb8t7")
 position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_il6xj")
 animation = &"candleFlame"
-autoplay = "candleFlame"
-frame_progress = 0.787168
+frame_progress = 0.371876
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+amount = 3
+process_material = SubResource("ParticleProcessMaterial_83erf")
+lifetime = 4.0
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(1, 0.209649, 0, 1)
+energy = 0.5
+texture = SubResource("GradientTexture2D_od00t")
