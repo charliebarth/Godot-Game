@@ -1,0 +1,85 @@
+[gd_scene load_steps=13 format=3 uid="uid://b26ws836bp20r"]
+
+[ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="1_1okpk"]
+
+[sub_resource type="Curve" id="Curve_dg7lj"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.152, 0.618289), -2.32258, -2.32258, 0, 0, Vector2(0.264, 1), 2.22426, 2.22426, 0, 0, Vector2(0.444, 0.0184563), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_2l4nq"]
+curve = SubResource("Curve_dg7lj")
+
+[sub_resource type="Gradient" id="Gradient_3kwtb"]
+offsets = PackedFloat32Array(0, 0.0720721, 0.238739, 0.765766)
+colors = PackedColorArray(1, 1, 1, 1, 0.897543, 0.723403, 0.181887, 1, 0.88964, 0.25632, 0.066144, 1, 0.807927, 0, 0.0223782, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6jh0y"]
+gradient = SubResource("Gradient_3kwtb")
+
+[sub_resource type="Curve" id="Curve_gy8tr"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.068, 1), 0.0, 0.0, 0, 0, Vector2(0.42, 0.814597), 0.0, 0.0, 0, 0, Vector2(0.528, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_q3v8e"]
+curve = SubResource("Curve_gy8tr")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6gn1v"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(6, 3, 1)
+direction = Vector3(0, -1, 0)
+spread = 5.0
+initial_velocity_min = 5.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, -20, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_q3v8e")
+color_ramp = SubResource("GradientTexture1D_6jh0y")
+alpha_curve = SubResource("CurveTexture_2l4nq")
+turbulence_enabled = true
+turbulence_noise_scale = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3jnq"]
+atlas = ExtResource("1_1okpk")
+region = Rect2(480, 483, 60, 60)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nxymm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l3jnq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_yjdcp"]
+offsets = PackedFloat32Array(0, 0.837333)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_uwp0v"]
+gradient = SubResource("Gradient_yjdcp")
+fill = 1
+fill_from = Vector2(0.512821, 0.508547)
+fill_to = Vector2(0.944444, 0.136752)
+
+[node name="camp_fire" type="Node2D"]
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+modulate = Color(3.5, 1, 1, 1)
+amount = 300
+process_material = SubResource("ParticleProcessMaterial_6gn1v")
+trail_lifetime = 0.1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-2, 5)
+scale = Vector2(0.65, 0.65)
+sprite_frames = SubResource("SpriteFrames_nxymm")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0, -3)
+scale = Vector2(7.78516, 7.78516)
+color = Color(0.816138, 0.274432, 9.62615e-08, 1)
+energy = 1.25
+texture = SubResource("GradientTexture2D_uwp0v")
