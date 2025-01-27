@@ -514,7 +514,6 @@ fill_from = Vector2(0.5, 0.508547)
 fill_to = Vector2(0.82906, 0.15812)
 
 [node name="Node2D" type="Node2D"]
-script = ExtResource("2_d114u")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 self_modulate = Color(0.937293, 0.622618, 0.396936, 1)
@@ -523,6 +522,7 @@ position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_il6xj")
 animation = &"candleFlame"
 frame_progress = 0.371876
+script = ExtResource("2_d114u")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 amount = 3
@@ -533,3 +533,5 @@ lifetime = 4.0
 color = Color(1, 0.209649, 0, 1)
 energy = 0.5
 texture = SubResource("GradientTexture2D_od00t")
+
+[connection signal="frame_changed" from="AnimatedSprite2D" to="AnimatedSprite2D" method="_on_frame_changed"]
