@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=20 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
 [ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
 [ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="6_htvoh"]
-[ext_resource type="PackedScene" uid="uid://cdk7m3yxd0fm0" path="res://scenes/metal_vial.tscn" id="8_dufnk"]
 [ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="9_fk6gw"]
 [ext_resource type="PackedScene" uid="uid://crbuuc3thgs0g" path="res://scenes/metal_pickup.tscn" id="10_5bopr"]
 [ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
@@ -85,6 +84,7 @@ position = Vector2(211, -167)
 position = Vector2(-22, 354)
 
 [node name="Fog" type="ColorRect" parent="."]
+visible = false
 z_index = 20
 material = SubResource("ShaderMaterial_18wl2")
 offset_left = -2288.0
@@ -142,7 +142,7 @@ position = Vector2(-988, -756)
 position = Vector2(-425, -4)
 
 [node name="chandelier9" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-40, -241)
+position = Vector2(-39, -237)
 
 [node name="Torch2" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(920, -538)
@@ -158,22 +158,6 @@ position = Vector2(498, 316)
 
 [node name="Torch9" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(376, -825)
-
-[node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(-928, -760)
-scale = Vector2(0.602394, 0.602394)
-
-[node name="MetalVial4" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(444, -443)
-scale = Vector2(0.602394, 0.602394)
-
-[node name="MetalVial2" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(956, 377)
-scale = Vector2(0.602394, 0.602394)
-
-[node name="MetalVial3" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(-1084, 376)
-scale = Vector2(0.602394, 0.602394)
 
 [node name="Platforms" type="Node" parent="."]
 
@@ -215,6 +199,17 @@ position = Vector2(441, -334)
 z_index = -1
 position = Vector2(451, -433)
 
+[node name="Metal Pickups" type="Node" parent="."]
+
+[node name="MetalPickup" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
+position = Vector2(35, -299)
+
+[node name="MetalPickup2" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
+position = Vector2(956, 373)
+
+[node name="MetalPickup3" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
+position = Vector2(-894, -763)
+
 [node name="LightOccluders" type="Node" parent="."]
 
 [node name="LightOccluder2D2" type="LightOccluder2D" parent="LightOccluders"]
@@ -241,9 +236,3 @@ occluder = SubResource("OccluderPolygon2D_girdu")
 [node name="LightOccluder2D6" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_7e6k5")
-
-[node name="MetalVial6" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(252, -20)
-
-[node name="MetalPickup" parent="." instance=ExtResource("10_5bopr")]
-position = Vector2(513, -109)

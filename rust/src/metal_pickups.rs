@@ -4,6 +4,8 @@ use godot::classes::{IMarker2D, Marker2D, Timer};
 use crate::items::coin::Coin;
 use crate::items::metal_vial::MetalVial;
 
+const WAIT_TIME: f64 = 5.;
+
 #[derive(GodotClass)]
 #[class(base=Marker2D)]
 pub struct MetalPickup {
@@ -24,20 +26,14 @@ impl IMarker2D for MetalPickup {
         self.make_vial();
 
         let mut timer: Gd<Timer> = self.base().get_node_as("./Timer");
-        timer.set_wait_time(5.0);
+        timer.set_autostart(true);
+        timer.set_wait_time(WAIT_TIME);
         timer.set_one_shot(false);
         timer.start();
-        godot_print!("TIMER START");
-        godot_print!(
-            "Timer exists: {}",
-            self.base().has_node("./Timer".into()) // Verifies the timer node exists
-        );
-        godot_print!("Timer is stopped: {}", timer.is_stopped());
-        godot_print!("Time left: {}\nTimer wait: {}", 
-            timer.get_time_left(),
-            timer.get_wait_time());
-        
+
+        godot_print!("TIMER START");       
     }
+
 }
 
 #[godot_api]
@@ -64,10 +60,17 @@ impl MetalPickup {
     #[func]
     fn on_timer_timeout(&mut self) {
         godot_print!("TIMER TIMEOUT");
-        if self.metal_vial.as_ref().unwrap().is_inside_tree() {
-            godot_print!("MetalVial still exists, skipping respawn.");
+    
+        if let Some(metal_vial) = self.metal_vial.as_ref() {
+            if metal_vial.is_instance_valid() {
+                godot_print!("MetalVial still exists, skipping respawn.");
+            } else {
+                self.make_vial();
+            }
         } else {
+            godot_print!("MetalVial reference is None, creating a new one.");
             self.make_vial();
         }
     }
+    
 }

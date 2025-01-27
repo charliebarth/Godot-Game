@@ -3,4 +3,7 @@
 [node name="MetalPickup" type="MetalPickup"]
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 45.0
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="on_timer_timeout"]
