@@ -17,5 +17,5 @@ jobs:
         run: |
           git config --global user.name "Michael-Imerman"
           git config --global user.email "Michael.imerman1@gmail.com"
-          git remote add public https://github.com/Michael-Imerman/MistbornArena-public.git
+          git remote add public git@github.com:Michael-Imerman/MistbornArena-Public.git
           git push --force public main
