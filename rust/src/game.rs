@@ -216,7 +216,7 @@ impl Game {
             .expect("Map not found")
             .instantiate_as::<Node2D>();
 
-        // TODO: Call map method to trigger a camera pan accross the map. Once that method has returned start the game.
+        // TODO: Call map method to trigger a camera pan across the map. Once that method has returned start the game.
         // The player manager will reparent the map under the first subviewport and will remove it and all it's children at the end of the game.
         self.set_map(map);
 
