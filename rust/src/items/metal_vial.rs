@@ -7,6 +7,8 @@ use godot::prelude::*;
 use godot::classes::{Area2D, AudioStreamPlayer2D, IArea2D};
 
 use crate::player::player::Player;
+
+const OFF_MAP: Vector2 = Vector2::new(-100000.,100000.);
  
 #[derive(GodotClass)]
 #[class(base=Area2D)]
@@ -42,6 +44,7 @@ impl IArea2D for MetalVial {
     /// Sets the metals this metal vial will increment. 
     fn ready(&mut self) {
         let mut new_metals = Vec::new();
+
         new_metals.push(StringName::from("iron"));
         new_metals.push(StringName::from("steel"));
         new_metals.push(StringName::from("pewter"));
@@ -79,9 +82,9 @@ impl MetalVial {
             
             // Set position
             // let pos = Vector2::new(100000., -100000.);
-            // self.base_mut().set_global_position(pos);
+            self.base_mut().set_global_position(OFF_MAP);
 
-            self.base_mut().queue_free(); // Remove the vial from the scene
+            // self.base_mut().queue_free(); // Remove the vial from the scene
             
         } else {
             godot_print!("Something other than player entered the coin.");
