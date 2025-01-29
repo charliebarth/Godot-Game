@@ -11551,7 +11551,7 @@ shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
 environment = SubResource("Environment_x7wf1")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(528, -319)
+position = Vector2(1262, 55)
 zoom = Vector2(2.5, 2.5)
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
