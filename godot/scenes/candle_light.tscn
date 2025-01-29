@@ -483,7 +483,7 @@ animations = [{
 }]
 
 [sub_resource type="Curve" id="Curve_fopgu"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.492, 1), 0.0, 0.0, 0, 0, Vector2(0.996, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.196, 1), 0.0, 0.0, 0, 0, Vector2(0.996, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_d6y2v"]
@@ -501,7 +501,7 @@ gravity = Vector3(0, -5, 0)
 scale_min = 0.5
 scale_max = 0.9
 scale_curve = SubResource("CurveTexture_d6y2v")
-color = Color(0.941, 0.416, 0.26, 0.702)
+color = Color(5, 0.8, 0.5, 0.702)
 turbulence_enabled = true
 
 [sub_resource type="Gradient" id="Gradient_i4cj2"]
@@ -516,7 +516,7 @@ fill_to = Vector2(0.82906, 0.15812)
 [node name="Node2D" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-self_modulate = Color(0.937293, 0.622618, 0.396936, 1)
+self_modulate = Color(1.5, 0.6, 0.397, 1)
 material = SubResource("ShaderMaterial_xb8t7")
 position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_il6xj")
@@ -525,13 +525,15 @@ frame_progress = 0.371876
 script = ExtResource("2_d114u")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-amount = 3
+amount = 2
 process_material = SubResource("ParticleProcessMaterial_83erf")
 lifetime = 4.0
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-color = Color(1, 0.209649, 0, 1)
-energy = 0.5
+position = Vector2(0, -3)
+scale = Vector2(0.15, 0.15)
+color = Color(1, 0.498474, 0, 1)
+energy = 3.0
 texture = SubResource("GradientTexture2D_od00t")
 
 [connection signal="frame_changed" from="AnimatedSprite2D" to="AnimatedSprite2D" method="_on_frame_changed"]

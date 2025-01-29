@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://ryehfll5666w"]
 
 [ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="1_18es1"]
-[ext_resource type="PackedScene" uid="uid://tnernkxjfar4" path="res://scenes/candle_light.tscn" id="2_yhu3i"]
+[ext_resource type="PackedScene" uid="uid://tnernkxjfar4" path="res://scenes/candle_light.tscn" id="2_4efla"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mm8nw"]
 atlas = ExtResource("1_18es1")
@@ -42,17 +42,17 @@ energy = 1.12
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_4on4l")
 
-[node name="Node2D2" parent="." instance=ExtResource("2_yhu3i")]
+[node name="Node2D" parent="." instance=ExtResource("2_4efla")]
 position = Vector2(20, -3)
 
-[node name="Node2D" parent="." instance=ExtResource("2_yhu3i")]
+[node name="Node2D2" parent="." instance=ExtResource("2_4efla")]
 position = Vector2(30, -1)
 
-[node name="Node2D3" parent="." instance=ExtResource("2_yhu3i")]
+[node name="Node2D3" parent="." instance=ExtResource("2_4efla")]
 position = Vector2(38, -2)
 
-[node name="Node2D4" parent="." instance=ExtResource("2_yhu3i")]
+[node name="Node2D4" parent="." instance=ExtResource("2_4efla")]
 position = Vector2(47, 0)
 
-[node name="Node2D5" parent="." instance=ExtResource("2_yhu3i")]
-position = Vector2(56, -3)
+[node name="Node2D5" parent="." instance=ExtResource("2_4efla")]
+position = Vector2(56, -4)
