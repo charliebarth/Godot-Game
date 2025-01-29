@@ -7,21 +7,21 @@
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.152, 0.618289), -2.32258, -2.32258, 0, 0, Vector2(0.264, 1), 2.22426, 2.22426, 0, 0, Vector2(0.444, 0.0184563), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 5
 
-[sub_resource type="CurveTexture" id="CurveTexture_2l4nq"]
+[sub_resource type="CurveTexture" id="CurveTexture_4pfum"]
 curve = SubResource("Curve_dg7lj")
 
 [sub_resource type="Gradient" id="Gradient_3kwtb"]
 offsets = PackedFloat32Array(0, 0.0720721, 0.238739, 0.765766)
 colors = PackedColorArray(1, 1, 1, 1, 0.897543, 0.723403, 0.181887, 1, 0.88964, 0.25632, 0.066144, 1, 0.807927, 0, 0.0223782, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_6jh0y"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_63y56"]
 gradient = SubResource("Gradient_3kwtb")
 
 [sub_resource type="Curve" id="Curve_gy8tr"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.528, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_q3v8e"]
+[sub_resource type="CurveTexture" id="CurveTexture_amh4a"]
 curve = SubResource("Curve_gy8tr")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6gn1v"]
@@ -36,9 +36,9 @@ initial_velocity_max = 50.0
 gravity = Vector3(0, -25, 0)
 scale_min = 0.7
 scale_max = 2.0
-scale_curve = SubResource("CurveTexture_q3v8e")
-color_ramp = SubResource("GradientTexture1D_6jh0y")
-alpha_curve = SubResource("CurveTexture_2l4nq")
+scale_curve = SubResource("CurveTexture_amh4a")
+color_ramp = SubResource("GradientTexture1D_63y56")
+alpha_curve = SubResource("CurveTexture_4pfum")
 turbulence_enabled = true
 turbulence_noise_scale = 6.0
 
@@ -692,11 +692,11 @@ animations = [{
 "speed": 11.0
 }]
 
-[sub_resource type="Gradient" id="Gradient_8gtts"]
+[sub_resource type="Gradient" id="Gradient_3qtuq"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_3ihce"]
-gradient = SubResource("Gradient_8gtts")
+gradient = SubResource("Gradient_3qtuq")
 fill = 1
 fill_from = Vector2(0.495726, 0.517094)
 fill_to = Vector2(0.884615, 0.166667)
