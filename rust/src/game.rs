@@ -46,6 +46,7 @@ pub struct Game {
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
+    game_mode: Option<StringName>,
 }
 
 #[godot_api]
@@ -70,6 +71,7 @@ impl INode2D for Game {
             winning_player: 0,
             maps: HashMap::new(),
             main_menu: None,
+            game_mode: Some("last_player_standing".into()),
         }
     }
 
@@ -172,6 +174,17 @@ impl Game {
             .as_ref()
             .expect("MetalLine node not found")
             .clone()
+    }
+
+    pub fn get_game_mode(&mut self) -> StringName {
+        self.game_mode
+            .as_ref()
+            .unwrap()
+            .clone()
+    }
+
+    fn set_game_mode(&mut self, mode: StringName) {
+        self.game_mode = Some(mode)
     }
 
     /// This will attempt to start the game.

@@ -1,6 +1,7 @@
 use godot::prelude::*;
 use godot::classes::{IMarker2D, Marker2D, Timer};
 
+use crate::game::Game;
 use crate::items::metal_vial::MetalVial;
 
 const WAIT_TIME: f64 = 5.;
@@ -34,7 +35,6 @@ impl IMarker2D for MetalPickup {
 
         godot_print!("TIMER START");       
     }
-
 }
 
 #[godot_api]
@@ -44,6 +44,28 @@ impl MetalPickup {
         let mut metal = metal_scene.instantiate_as::<MetalVial>().clone();
         metal.set_name("MetalVialPickup".into());
         metal.set_visible(true);
+
+        let mut new_metals = Vec::new();
+
+        {
+            let mut game = self.base().get_node_as::<Game>("/root/Game").clone();
+        
+            let mode = game.bind_mut().get_game_mode(); 
+
+            godot_print!("Current game mode: {}", mode);
+
+            if mode == "last_player_standing".into() {
+                godot_print!("GAME MODE LAST PLAYER STANDING");
+                new_metals.push(StringName::from("pewter"));
+            } else {
+                godot_print!("GAME MODE SMTH ELSE");
+                new_metals.push(StringName::from("iron"));
+                new_metals.push(StringName::from("steel"));
+            }
+        }
+
+        metal.bind_mut().set_metals(new_metals);              
+
         self.metal_vial = Some(metal);
 
         // Add metal vial to node tree

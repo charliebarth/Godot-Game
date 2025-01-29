@@ -43,11 +43,11 @@ impl IArea2D for MetalVial {
     /// The Godot method called when the metal vial enters the scene tree for the first time
     /// Sets the metals this metal vial will increment. 
     fn ready(&mut self) {
-        let mut new_metals = Vec::new();
+        // let mut new_metals = Vec::new();
 
-        new_metals.push(StringName::from("iron"));
-        new_metals.push(StringName::from("steel"));
-        new_metals.push(StringName::from("pewter"));
+        // new_metals.push(StringName::from("iron"));
+        // new_metals.push(StringName::from("steel"));
+        // new_metals.push(StringName::from("pewter"));
         // new_metals.push(StringName::from("tin"));
         // new_metals.push(StringName::from("bronze"));
         // new_metals.push(StringName::from("copper"));
@@ -56,7 +56,7 @@ impl IArea2D for MetalVial {
         // new_metals.push(StringName::from("chromium"));
         // new_metals.push(StringName::from("gold"));
 
-        self.set_metals(new_metals);
+        // self.set_metals(new_metals);
     }
 }
 
@@ -106,7 +106,7 @@ impl MetalVial {
     /// 
     /// # Arguments 
     /// * `metals` (Vec<StringName>) - the names of the metals to set
-    fn set_metals(&mut self, metals: Vec<StringName>) {
+    pub fn set_metals(&mut self, metals: Vec<StringName>) {
         self.metals = Some(metals);
     }
 
