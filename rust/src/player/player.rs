@@ -294,6 +294,7 @@ impl Player {
         self.delta
     }
 
+    #[func]
     /// Get the health of the player
     ///
     /// # Returns
@@ -302,6 +303,7 @@ impl Player {
         self.health
     }
 
+    #[func]
     /// Get the eliminations of the player
     ///
     /// # Returns
@@ -345,6 +347,12 @@ impl Player {
 
         // Update the health bar of the player
         self.get_health_bar().set_value(self.get_health());
+    }
+
+    #[func]
+    /// Adjust the eliminations of the player
+    pub fn increment_eliminations(&mut self) {
+        self.eliminations += 1;
     }
 
     /// Adjusts the coins in this players coin_counter positively or negatively.

@@ -372,7 +372,7 @@ impl Game {
     /// This will start a new round. It will reset the players and start the game again.
     ///
     fn start_new_round(&mut self) {
-        self.respawn_players();
+        self.reset_players();
         self.start_game();
     }
 
