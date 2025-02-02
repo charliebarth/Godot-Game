@@ -567,7 +567,6 @@ animations = [{
 scale = Vector2(5, 5)
 color = Color(0.757969, 0.331064, 0.11479, 1)
 energy = 1.25
-shadow_enabled = true
 texture = SubResource("GradientTexture2D_jw8vk")
 
 [node name="PointLight2D2" type="PointLight2D" parent="."]

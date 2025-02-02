@@ -39,7 +39,6 @@ position = Vector2(38, 5)
 scale = Vector2(5.3833, 5.3833)
 color = Color(0.816138, 0.274432, 9.62615e-08, 1)
 energy = 1.12
-shadow_enabled = true
 texture = SubResource("GradientTexture2D_4on4l")
 
 [node name="Node2D" parent="." instance=ExtResource("2_4efla")]

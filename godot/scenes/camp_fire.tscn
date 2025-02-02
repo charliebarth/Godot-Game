@@ -1204,5 +1204,4 @@ sprite_frames = SubResource("SpriteFrames_3lrtg")
 scale = Vector2(7.78516, 7.78516)
 color = Color(0.816138, 0.274432, 9.62615e-08, 1)
 energy = 1.25
-shadow_enabled = true
 texture = SubResource("GradientTexture2D_uwp0v")
