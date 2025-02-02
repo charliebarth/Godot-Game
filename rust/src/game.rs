@@ -19,6 +19,8 @@ const THREE_PLAYER_HEIGHT: f32 = 540.0;
 
 use crate::{main_menu::MainMenu, player::player::Player};
 
+static mut GAME_MODE: Option<String> = None;
+
 /// The Game class is responsible for managing the game state such as players, maps, and the main menu.
 /// This is also the root node of the scene tree.
 #[derive(GodotClass)]
@@ -174,6 +176,14 @@ impl Game {
             .clone()
     }
 
+    pub fn get_game_mode() -> String {
+        unsafe {GAME_MODE.clone().unwrap()}
+    }
+
+    fn set_game_mode(&mut self, mode: String) {
+        unsafe {GAME_MODE = Some(mode)}
+    }
+
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
     ///
@@ -183,6 +193,10 @@ impl Game {
     /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
     #[func]
     pub fn attempt_start(&mut self, test_mode: bool) {
+
+        // TODO - make this actually set the right game mode 
+        self.set_game_mode("last_player_standing".to_string());
+
         if !test_mode && self.players.len() >= 2 || (test_mode && self.players.len() == 1) {
             self.start_game();
             return;
