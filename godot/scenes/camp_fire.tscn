@@ -1201,7 +1201,14 @@ scale = Vector2(0.933962, 0.933962)
 sprite_frames = SubResource("SpriteFrames_3lrtg")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-scale = Vector2(7.78516, 7.78516)
-color = Color(0.816138, 0.274432, 9.62615e-08, 1)
-energy = 1.25
+scale = Vector2(12, 12)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.65
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_uwp0v")
+
+[node name="PointLight2D3" type="PointLight2D" parent="."]
+scale = Vector2(12, 12)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.65
 texture = SubResource("GradientTexture2D_uwp0v")

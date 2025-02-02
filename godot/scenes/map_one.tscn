@@ -15,22 +15,6 @@ shader = ExtResource("1_y7bd1")
 shader_parameter/density = 0.25
 shader_parameter/speed = Vector2(0.02, 0.01)
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
-frequency = 0.0045
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bql8j"]
-width = 1920
-height = 1080
-seamless = true
-seamless_blend_skirt = 0.75
-noise = SubResource("FastNoiseLite_ikvr1")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_18wl2"]
-shader = ExtResource("1_y7bd1")
-shader_parameter/density = 0.6
-shader_parameter/speed = Vector2(0.001, 0.001)
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
-
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qc8gb"]
 polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -723, 189, -745, 162, -748, -335)
 
@@ -48,6 +32,22 @@ polygon = PackedVector2Array(-453, -481, -456, -526, -416, -562, -94, -562, -70,
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7e6k5"]
 polygon = PackedVector2Array(-1030, -709, -1028, -897, -994, -931, 1153, -931, 1216, -869, 1231, -1408, -2280, -1415, -2274, -683)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
+frequency = 0.0045
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bql8j"]
+width = 1920
+height = 1080
+seamless = true
+seamless_blend_skirt = 0.75
+noise = SubResource("FastNoiseLite_ikvr1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_18wl2"]
+shader = ExtResource("1_y7bd1")
+shader_parameter/density = 0.6
+shader_parameter/speed = Vector2(0.001, 0.001)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
 
 [node name="MapOne" type="Node2D"]
 light_mask = 3
@@ -68,7 +68,7 @@ position = Vector2(-10, 295)
 position = Vector2(-2, -843)
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0.703808, 0.703808, 0.703808, 1)
+color = Color(0.0858917, 0.0858917, 0.0858917, 1)
 
 [node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
 z_index = 1
@@ -82,18 +82,6 @@ position = Vector2(211, -167)
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
 position = Vector2(-22, 354)
-
-[node name="Fog" type="ColorRect" parent="."]
-z_index = 20
-material = SubResource("ShaderMaterial_18wl2")
-offset_left = -2288.0
-offset_top = -1425.0
-offset_right = 2381.0
-offset_bottom = 852.0
-color = Color(0.725, 0.725, 0.725, 0.535)
-
-[node name="camp_fire" parent="." instance=ExtResource("5_hth5s")]
-position = Vector2(1100, -84)
 
 [node name="LightSources" type="Node" parent="."]
 
@@ -116,17 +104,11 @@ scale = Vector2(0.996811, 0.996811)
 [node name="chandelier3" parent="LightSources" instance=ExtResource("6_htvoh")]
 position = Vector2(925, -913)
 
-[node name="chandelier5" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-213, 207)
-
 [node name="chandelier6" parent="LightSources" instance=ExtResource("6_htvoh")]
 position = Vector2(-1022, 207)
 
-[node name="chandelier7" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(898, 207)
-
 [node name="chandelier8" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-18, -914)
+position = Vector2(-38, -709)
 
 [node name="Torch7" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-865, 8)
@@ -141,7 +123,7 @@ position = Vector2(-988, -756)
 position = Vector2(-425, -4)
 
 [node name="chandelier9" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-40, -241)
+position = Vector2(-39, 42)
 
 [node name="Torch2" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(920, -538)
@@ -157,6 +139,9 @@ position = Vector2(498, 316)
 
 [node name="Torch9" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(376, -825)
+
+[node name="camp_fire" parent="LightSources" instance=ExtResource("5_hth5s")]
+position = Vector2(1100, -84)
 
 [node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
 position = Vector2(-928, -760)
@@ -219,10 +204,12 @@ position = Vector2(451, -433)
 [node name="LightOccluder2D2" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_qc8gb")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D4" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_4rjuc")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D5" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
@@ -232,11 +219,24 @@ occluder = SubResource("OccluderPolygon2D_xjc83")
 [node name="LightOccluder2D" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_w1ndh")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D3" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_girdu")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D6" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_7e6k5")
+occluder_light_mask = 524289
+
+[node name="Fog" type="ColorRect" parent="."]
+visible = false
+z_index = 20
+material = SubResource("ShaderMaterial_18wl2")
+offset_left = -2288.0
+offset_top = -1425.0
+offset_right = 2381.0
+offset_bottom = 852.0
+color = Color(0.785, 0.785, 0.785, 0.6)

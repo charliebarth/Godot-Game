@@ -1001,7 +1001,6 @@ animation = &"fall"
 script = ExtResource("20_h83s5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_bajs7")
 
@@ -1041,6 +1040,15 @@ position = Vector2(-2.38419e-07, -18)
 scale = Vector2(44.4023, 22.6347)
 energy = 0.1
 shadow_enabled = true
+shadow_item_cull_mask = 524288
+texture = SubResource("GradientTexture2D_dokqc")
+script = ExtResource("26_f1f48")
+
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+position = Vector2(-2.38419e-07, -18)
+scale = Vector2(44.4023, 22.6347)
+energy = 0.1
+shadow_item_cull_mask = 524288
 texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")
 
