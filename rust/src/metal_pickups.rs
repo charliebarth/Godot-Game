@@ -47,22 +47,17 @@ impl MetalPickup {
 
         let mut new_metals = Vec::new();
 
-        {
-            let mut game = self.base().get_node_as::<Game>("/root/Game").clone();
-        
-            let mode = game.bind_mut().get_game_mode(); 
+        let mode = self.find_game_mode();
 
-            godot_print!("Current game mode: {}", mode);
-
-            if mode == "last_player_standing".into() {
-                godot_print!("GAME MODE LAST PLAYER STANDING");
-                new_metals.push(StringName::from("pewter"));
-            } else {
-                godot_print!("GAME MODE SMTH ELSE");
-                new_metals.push(StringName::from("iron"));
-                new_metals.push(StringName::from("steel"));
-            }
+        if mode == "last_player_standing".to_string() { //TODO set what we want the vials to incr
+            godot_print!("GAME MODE LAST PLAYER STANDING");
+            new_metals.push(StringName::from("pewter"));
+        } else {
+            godot_print!("GAME MODE SMTH ELSE");
+            new_metals.push(StringName::from("iron"));
+            new_metals.push(StringName::from("steel"));
         }
+
 
         metal.bind_mut().set_metals(new_metals);              
 
@@ -80,25 +75,22 @@ impl MetalPickup {
             .clone()
     }
 
+    fn find_game_mode(&mut self) -> String {
+       
+        let mode = Game::get_game_mode();
+
+        mode
+    }
+
     #[func]
     fn on_timer_timeout(&mut self) {
         godot_print!("TIMER TIMEOUT");
-    
-        // if let Some(metal_vial) = self.metal_vial.as_ref() {
-        //     if metal_vial.is_instance_valid() {
-        //         godot_print!("MetalVial still exists, skipping respawn.");
-        //     } else {
-        //         self.make_vial();
-        //     }
-        // } else {
-        //     godot_print!("MetalVial reference is None, creating a new one.");
-        //     self.make_vial();
-        // }
+
 
         if self.get_metal_vial().get_global_position() == OFF_MAP {
             self.get_metal_vial().set_global_position(self.base().get_global_position());
         } else {
-            godot_print!("MetalVial still exists, skipping respawn.");
+            godot_print!("MetalVial still exists, skipping respawn.\n");
         }
     }
     
