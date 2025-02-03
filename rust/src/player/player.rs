@@ -123,7 +123,7 @@ impl ICharacterBody2D for Player {
     fn init(base: Base<CharacterBody2D>) -> Self {
         let path = GString::from("physics/2d/default_gravity");
         let gravity: f64 =
-            FromGodot::try_from_variant(&ProjectSettings::singleton().get_setting(path)).unwrap();
+            FromGodot::try_from_variant(&ProjectSettings::singleton().get_setting(&path)).unwrap();
 
         Self {
             base,
@@ -235,7 +235,7 @@ impl Player {
     /// as well as notify the game that the player has died
     pub fn die(&mut self) {
         let mut camera = Camera2D::new_alloc();
-        camera.set_name("OverviewCamera".into());
+        camera.set_name("OverviewCamera");
         camera.set_position(Vector2::new(20.0, -225.0));
         camera.set_zoom(Vector2::new(0.37, 0.37));
 
@@ -248,7 +248,7 @@ impl Player {
             .unwrap();
 
         parent_viewport.set_canvas_cull_mask(1);
-        parent_viewport.add_child(camera);
+        parent_viewport.add_child(&camera);
         self.base_mut().queue_free();
         self.base()
             .get_node_as::<Game>("/root/Game")
@@ -383,7 +383,7 @@ impl Player {
     pub fn get_horizontal_movement(&mut self) -> f32 {
         let move_left = StringName::from(format!("move_left{}", self.device_id));
         let move_right = StringName::from(format!("move_right{}", self.device_id));
-        Input::singleton().get_axis(move_left, move_right)
+        Input::singleton().get_axis(&move_left, &move_right)
     }
 
     /// Sets the player's velocity to the speed passed * the magnitude of the direction passed
@@ -444,11 +444,11 @@ impl Player {
 
         let mut sprite = self.get_sprite();
         self.anim_finished = false;
-        sprite.set_animation(animation_name.clone());
+        sprite.set_animation(&animation_name);
         sprite.play();
 
         for player_vis in self.player_vis.iter_mut() {
-            player_vis.set_animation(animation_name.clone());
+            player_vis.set_animation(&animation_name);
             player_vis.play();
         }
     }
@@ -625,7 +625,7 @@ impl Player {
             }
         }
 
-        self.base_mut().emit_signal("id_changed".into(), &[]);
+        self.base_mut().emit_signal("id_changed", &[]);
     }
 
     #[func]

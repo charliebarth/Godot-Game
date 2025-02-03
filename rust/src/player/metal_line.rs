@@ -46,7 +46,7 @@ impl INode2D for MetalLine {
         let points = self.points.take().unwrap();
         let colors = self.colors.take().unwrap();
         self.base_mut()
-            .draw_multiline_colors_ex(points, colors)
+            .draw_multiline_colors_ex(&points, &colors)
             .width(2.0)
             .done();
     }

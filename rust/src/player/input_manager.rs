@@ -134,7 +134,7 @@ impl InputManager {
                 break;
             }
 
-            if input_map.event_is_action(event.clone(), input.clone()) {
+            if input_map.event_is_action(&event, &input) {
                 return input_str;
             }
         }
