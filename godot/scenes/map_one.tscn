@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=21 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="9_fk6gw"]
 [ext_resource type="PackedScene" uid="uid://crbuuc3thgs0g" path="res://scenes/metal_pickup.tscn" id="10_5bopr"]
 [ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
+[ext_resource type="PackedScene" uid="uid://b26ws836bp20r" path="res://scenes/fire.tscn" id="10_y0ce3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
@@ -85,9 +86,6 @@ position = Vector2(-22, 354)
 
 [node name="LightSources" type="Node" parent="."]
 
-[node name="Torch" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(850, -175)
-
 [node name="Torch4" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-175, -357)
 
@@ -96,16 +94,6 @@ position = Vector2(-767, -267)
 
 [node name="Torch6" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(176, -357)
-
-[node name="chandelier2" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-708, -913)
-scale = Vector2(0.996811, 0.996811)
-
-[node name="chandelier3" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(925, -913)
-
-[node name="chandelier6" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-1022, 207)
 
 [node name="chandelier8" parent="LightSources" instance=ExtResource("6_htvoh")]
 position = Vector2(-38, -709)
@@ -116,26 +104,17 @@ position = Vector2(-865, 8)
 [node name="chandelier" parent="LightSources" instance=ExtResource("6_htvoh")]
 position = Vector2(-1042, -529)
 
-[node name="camp_fire2" parent="LightSources" instance=ExtResource("5_hth5s")]
-position = Vector2(-988, -756)
-
 [node name="camp_fire3" parent="LightSources" instance=ExtResource("5_hth5s")]
-position = Vector2(-425, -4)
+position = Vector2(-1187, 380)
 
 [node name="chandelier9" parent="LightSources" instance=ExtResource("6_htvoh")]
 position = Vector2(-39, 42)
 
 [node name="Torch2" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(920, -538)
-
-[node name="camp_fire4" parent="LightSources" instance=ExtResource("5_hth5s")]
-position = Vector2(895, 380)
+position = Vector2(916, -685)
 
 [node name="Torch3" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-519, 293)
-
-[node name="Torch8" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(498, 316)
 
 [node name="Torch9" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(376, -825)
@@ -143,21 +122,29 @@ position = Vector2(376, -825)
 [node name="camp_fire" parent="LightSources" instance=ExtResource("5_hth5s")]
 position = Vector2(1100, -84)
 
+[node name="camp_fire2" parent="LightSources" instance=ExtResource("10_y0ce3")]
+z_index = -1
+position = Vector2(-802, -757)
+
 [node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(-928, -760)
-scale = Vector2(0.602394, 0.602394)
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(-807, -791)
+scale = Vector2(0.8, 0.8)
 
 [node name="MetalVial4" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(444, -443)
-scale = Vector2(0.602394, 0.602394)
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(443, -444)
+scale = Vector2(0.7, 0.7)
 
 [node name="MetalVial2" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(956, 377)
-scale = Vector2(0.602394, 0.602394)
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(956, 375)
+scale = Vector2(0.8, 0.8)
 
 [node name="MetalVial3" parent="." instance=ExtResource("8_dufnk")]
-position = Vector2(-1084, 376)
-scale = Vector2(0.602394, 0.602394)
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(-1084, 375)
+scale = Vector2(0.8, 0.8)
 
 [node name="Platforms" type="Node" parent="."]
 
