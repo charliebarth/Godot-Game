@@ -44,7 +44,7 @@ impl MainMenu {
     #[func]
     pub fn add_player(&self, player_id: i32) {
         self.base()
-            .get_node_as::<AnimatedSprite2D>(format!("Player{}", player_id))
+            .get_node_as::<AnimatedSprite2D>(format!("Player{}", player_id).as_str())
             .set_visible(true);
     }
 
@@ -56,7 +56,7 @@ impl MainMenu {
     #[func]
     pub fn remove_player(&self, player_id: i32) {
         self.base()
-            .get_node_as::<AnimatedSprite2D>(format!("Player{}", player_id))
+            .get_node_as::<AnimatedSprite2D>(format!("Player{}", player_id).as_str())
             .set_visible(false);
     }
 
@@ -71,11 +71,11 @@ impl MainMenu {
     pub fn add_notification(&self, msg: String) {
         let mut notification_box = self.base().get_node_as::<RichTextLabel>("NotificationBox");
         notification_box.clear();
-        notification_box.append_text(format!("[center]{}", msg).into());
+        notification_box.append_text(format!("[center]{}", msg).as_str());
 
         let mut notification_box_animation =
             notification_box.get_node_as::<AnimationPlayer>("AnimationPlayer");
-        notification_box_animation.set_current_animation("fade_out".into());
+        notification_box_animation.set_current_animation("fade_out");
         notification_box_animation.play();
     }
 
