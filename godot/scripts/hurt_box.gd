@@ -16,4 +16,3 @@ func _on_area_entered(area: Area2D):
 			if parent_player.get_health() <= 0:
 				# increment the elims of the attacking player
 				area.get_parent().increment_eliminations()
-				print("Attacker's kills: ", area.get_parent().get_eliminations())

@@ -201,9 +201,26 @@ impl Game {
     }
 
     /// This will start the game.
+    /// It is the top level of the game and will call all the necessary methods to start the game.
+    ///
+    pub fn start_game(&mut self) {
+        self.start_round();
+        while !self.check_win_condition() {
+            self.start_new_round();
+        }
+        // find the winning player
+        for player in self.players.iter() {
+            if player.bind().get_eliminations() >= 10 {
+                self.winning_player = player.bind().get_player_id();
+            }
+        }
+        self.end_game();
+    }
+
+    /// This will start a round of the game.
     /// Note: This will remove the main menu and instantiate the map.
     #[func]
-    pub fn start_game(&mut self) {
+    pub fn start_round(&mut self) {
         // First remove the main menu
         let main_menu = self.get_main_menu();
         self.base_mut().remove_child(main_menu);
@@ -323,13 +340,14 @@ impl Game {
         }
     }
 
+
     /// This will disconnect a player from the game.
     /// If there is only one player left in the game they will be declared the winner.
     ///
     /// Arguments:
     /// * `player_id` - The id of the player to disconnect.
     pub fn remove_player(&mut self, player_id: i32) {
-        // self.players.remove(player_id as usize - 1);
+        self.players.remove(player_id as usize - 1);
         //
         // if self.started && self.players.len() == 1 {
         //     let player = self.players.get(0).expect("Player not found");
@@ -340,40 +358,45 @@ impl Game {
         //     self.end_game();
         // }
 
-        let player_index = player_id as usize - 1;
-        let player = self.players.get(player_index).expect("Player not found");
-
-        // TODO: Increment the number of eliminations of the player that eliminated this player
-        // how to get the player that eliminated this player?
-
-        // check if a player has reached the required elimination count
-        if self.check_win_condition() {
-            self.end_game()
-        } else {
-            self.players.remove(player_index);
-
-            if self.players.len() == 1 {
-                self.start_new_round();
-            }
-        }
+        // check if any player has reached the required elimination count
+        // if self.check_win_condition() {
+        //     godot_print!("Player {} wins!", player_id);
+        //     self.end_game()
+        // } else {
+        //     godot_print!("I AM AT THE START OF ELSE");
+        //     self.players.remove(player_index);
+        //     godot_print!("The length of the players is: {}", self.players.len());
+        //
+        //     if self.players.len() == 1 {
+        //         self.start_new_round();
+        //     }
+        // }
+        //
+        // godot_print!("I AM AT THE END OF REMOVE PLAYER");
     }
 
     /// This will check if a player has reached the required elimination count.
     ///
     /// Returns:
-    /// * `bool` - True if a player has reached the required elimination count, false otherwise.
+    /// * `flag` - If a player has reached the required elimination count.
     fn check_win_condition(&self) -> bool {
         // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
         const REQUIRED_ELIMINATIONS: i32 = 10;
-        // check if any player has reached the required number of eliminations
-        self.players.iter().any(|player| player.bind().get_eliminations() >= REQUIRED_ELIMINATIONS)
+        // check if a player has reached the required number of eliminations and return that player's id
+        let mut flag = false;
+        for player in self.players.iter() {
+            if player.bind().get_eliminations() >= REQUIRED_ELIMINATIONS {
+                flag = true;
+            }
+        }
+        flag
     }
 
     /// This will start a new round. It will reset the players and start the game again.
     ///
     fn start_new_round(&mut self) {
         self.reset_players();
-        self.start_game();
+        self.start_round();
     }
 
     /// This will select a spawn point for a player based on their player id.
