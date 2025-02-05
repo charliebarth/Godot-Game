@@ -701,9 +701,10 @@ impl Game {
 
         timer.set_wait_time(5.0);
         timer.set_autostart(true);
+        let game = self.base().get_node_as::<Game>(".");
         timer.connect(
             "timeout",
-            &Callable::from_object_method(&self.base().get_node_as::<Game>("."), "cycle_change"),
+            &Callable::from_object_method(&game, "cycle_change"),
         );
 
         self.base_mut().add_child(&timer);
@@ -711,13 +712,24 @@ impl Game {
 
     #[func]
     pub fn cycle_change(&mut self) {
-        let brightness: f32 = if self.day { 0.01 } else { 0.1 };
-        self.day = !self.day;
-
+        let brightness: f32 = if self.day { 0.05 } else { 1.0 };
         self.base_mut().emit_signal(
-            "change_cycle",
+            "change_cycle_player",
             &[Variant::from(brightness), Variant::from(0.0)],
         );
+
+        let brigtness_map = if self.day { 0.4 } else { 1.0 };
+        let scale_map = if self.day { 0.6 } else { 1.0 };
+        self.base_mut().emit_signal(
+            "change_cycle_map",
+            &[
+                Variant::from(brigtness_map),
+                Variant::from(0.0),
+                Variant::from(scale_map),
+            ],
+        );
+
+        self.day = !self.day;
     }
 
     #[signal]
@@ -727,5 +739,14 @@ impl Game {
     /// Arguments:
     /// * `light_level` - The new light level. This is a percentage where 1.0 is the original light level and is 0.0 off.
     /// * `transition_time` - The time it will take to transition to the new light level.
-    pub fn change_cycle(&self, light_level: f32, transition_time: f64) {}
+    pub fn change_cycle_map(&self, light_level: f32, transition_time: f64, scale: f32) {}
+
+    #[signal]
+    /// This signal is emitted when the day/night cycle changes.
+    /// It will be received by the player and any map light sources who when then make the gradual change to the new light level.
+    ///
+    /// Arguments:
+    /// * `light_level` - The new light level. This is a percentage where 1.0 is the original light level and is 0.0 off.
+    /// * `transition_time` - The time it will take to transition to the new light level.
+    pub fn change_cycle_player(&self, light_level: f32, transition_time: f64) {}
 }

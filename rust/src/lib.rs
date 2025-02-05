@@ -48,7 +48,9 @@ pub mod player {
 
 pub mod game;
 pub mod main_menu;
+pub mod map_light;
 pub mod metal_object;
+pub mod player_light;
 
 pub mod items {
     pub mod coin;
