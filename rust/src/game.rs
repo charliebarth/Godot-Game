@@ -697,9 +697,10 @@ impl Game {
     }
 
     fn day_night_cycle(&mut self) {
+        const CYCLE_LENGTH: f64 = 10.0;
         let mut timer = Timer::new_alloc();
 
-        timer.set_wait_time(5.0);
+        timer.set_wait_time(CYCLE_LENGTH);
         timer.set_autostart(true);
         let game = self.base().get_node_as::<Game>(".");
         timer.connect(
@@ -712,10 +713,11 @@ impl Game {
 
     #[func]
     pub fn cycle_change(&mut self) {
+        const TRANSITION_TIME: f64 = 3.0;
         let brightness: f32 = if self.day { 0.05 } else { 1.0 };
         self.base_mut().emit_signal(
             "change_cycle_player",
-            &[Variant::from(brightness), Variant::from(0.0)],
+            &[Variant::from(brightness), Variant::from(TRANSITION_TIME)],
         );
 
         let brigtness_map = if self.day { 0.4 } else { 1.0 };
@@ -724,7 +726,7 @@ impl Game {
             "change_cycle_map",
             &[
                 Variant::from(brigtness_map),
-                Variant::from(0.0),
+                Variant::from(TRANSITION_TIME),
                 Variant::from(scale_map),
             ],
         );

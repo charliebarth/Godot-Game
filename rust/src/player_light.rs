@@ -1,5 +1,5 @@
 use godot::{
-    classes::{IPointLight2D, PointLight2D},
+    classes::{IPointLight2D, PointLight2D, Tween},
     prelude::*,
 };
 
@@ -36,8 +36,19 @@ impl IPointLight2D for PlayerLight {
 #[godot_api]
 impl PlayerLight {
     #[func]
-    pub fn transition_light_levels(&mut self, light_level: f32, _transition_time: f64) {
-        let default_energy = self.energy;
-        self.base_mut().set_energy(light_level * default_energy);
+    pub fn transition_light_levels(&mut self, light_level: f32, transition_time: f64) {
+        let target_energy = light_level * self.energy;
+
+        let mut tween = self
+            .base_mut()
+            .create_tween()
+            .expect("Failed to create tween");
+
+        tween.tween_property(
+            &self.base_mut().get_node_as::<PlayerLight>("."),
+            "energy",
+            &Variant::from(target_energy),
+            transition_time,
+        );
     }
 }
