@@ -711,7 +711,7 @@ process_material = SubResource("ParticleProcessMaterial_6gn1v")
 lifetime = 3.0
 trail_lifetime = 0.1
 
-[node name="PointLight2D" type="PointLight2D" parent="."]
+[node name="PointLight2D" type="MapLight" parent="."]
 position = Vector2(0, -3)
 scale = Vector2(12, 12)
 color = Color(0.752941, 0.423529, 0.258824, 1)
@@ -719,7 +719,7 @@ energy = 0.8
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_uwp0v")
 
-[node name="PointLight2D3" type="PointLight2D" parent="."]
+[node name="PointLight2D3" type="MapLight" parent="."]
 position = Vector2(0, -3)
 scale = Vector2(12, 12)
 color = Color(0.752941, 0.423529, 0.258824, 1)
