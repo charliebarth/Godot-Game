@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use godot::{
     classes::{
         control::LayoutPreset, viewport::DefaultCanvasItemTextureFilter, HBoxContainer, InputEvent,
-        InputMap, Marker2D, SubViewport, SubViewportContainer,
+        InputMap, Marker2D, SubViewport, SubViewportContainer, Timer,
     },
     prelude::*,
 };
@@ -46,6 +46,7 @@ pub struct Game {
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
+    day: bool,
 }
 
 #[godot_api]
@@ -70,6 +71,7 @@ impl INode2D for Game {
             winning_player: 0,
             maps: HashMap::new(),
             main_menu: None,
+            day: true,
         }
     }
 
@@ -238,6 +240,8 @@ impl Game {
             let spawn_position = self.select_spawn_point(player_id);
             player.set_position(spawn_position);
         }
+
+        self.day_night_cycle();
     }
 
     /// This will end the game.
@@ -691,4 +695,37 @@ impl Game {
         overview_container.set_canvas_cull_mask(1);
         overview_container.add_child(&camera);
     }
+
+    fn day_night_cycle(&mut self) {
+        let mut timer = Timer::new_alloc();
+
+        timer.set_wait_time(5.0);
+        timer.set_autostart(true);
+        timer.connect(
+            "timeout",
+            &Callable::from_object_method(&self.base().get_node_as::<Game>("."), "cycle_change"),
+        );
+
+        self.base_mut().add_child(&timer);
+    }
+
+    #[func]
+    pub fn cycle_change(&mut self) {
+        let brightness: f32 = if self.day { 0.01 } else { 0.1 };
+        self.day = !self.day;
+
+        self.base_mut().emit_signal(
+            "change_cycle",
+            &[Variant::from(brightness), Variant::from(0.0)],
+        );
+    }
+
+    #[signal]
+    /// This signal is emitted when the day/night cycle changes.
+    /// It will be received by the player and any map light sources who when then make the gradual change to the new light level.
+    ///
+    /// Arguments:
+    /// * `light_level` - The new light level. This is a percentage where 1.0 is the original light level and is 0.0 off.
+    /// * `transition_time` - The time it will take to transition to the new light level.
+    pub fn change_cycle(&self, light_level: f32, transition_time: f64) {}
 }

@@ -175,6 +175,13 @@ impl ICharacterBody2D for Player {
 
         // Set the health bar to the player's health
         self.get_health_bar().set_value(self.get_health());
+
+        let mut game = self.base().get_node_as::<Game>("/root/Game");
+        let player = self.base().get_node_as::<Player>(".");
+        game.connect(
+            "change_cycle",
+            &Callable::from_object_method(&player, "transition_light_levels"),
+        );
     }
 
     /// The Godot method called every physics frame
@@ -866,6 +873,13 @@ impl Player {
     pub fn set_disconnected(&mut self, disconnected: bool) {
         let mut disconnected_node = self.get_disconnected();
         disconnected_node.set_visible(disconnected);
+    }
+
+    #[func]
+    pub fn transition_light_levels(&mut self, light_level: f32, _transition_time: f64) {
+        let mut point_light = self.get_point_light();
+        let _current_energy = point_light.get_energy();
+        point_light.set_energy(light_level);
     }
 }
 /// Getters for nodes
