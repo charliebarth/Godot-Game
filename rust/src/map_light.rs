@@ -1,7 +1,5 @@
-use std::default;
-
 use godot::{
-    classes::{IPointLight2D, PointLight2D},
+    classes::{IPointLight2D, PointLight2D, Tween},
     prelude::*,
 };
 
@@ -44,13 +42,33 @@ impl IPointLight2D for MapLight {
 #[godot_api]
 impl MapLight {
     #[func]
-    pub fn transition_light_levels(&mut self, light_level: f32, _transition_time: f64, scale: f32) {
-        let default_energy = self.energy;
-        self.base_mut().set_energy(light_level * default_energy);
+    pub fn transition_light_levels(&mut self, light_level: f32, transition_time: f64, scale: f32) {
+        let target_energy = light_level * self.energy;
+        let target_scale = scale * self.scale;
+        let target_scale_vec = Vector2::new(target_scale, target_scale);
 
-        let default_scale = self.scale;
-        let new_scale = scale * default_scale;
-        self.base_mut()
-            .set_scale(Vector2::new(new_scale, new_scale));
+        let mut tween = self
+            .base_mut()
+            .create_tween()
+            .expect("Failed to create tween");
+
+        tween.tween_property(
+            &self.base_mut().get_node_as::<MapLight>("."),
+            "energy",
+            &Variant::from(target_energy),
+            transition_time,
+        );
+
+        let mut tween = self
+            .base_mut()
+            .create_tween()
+            .expect("Failed to create tween");
+
+        tween.tween_property(
+            &self.base_mut().get_node_as::<MapLight>("."),
+            "scale",
+            &Variant::from(target_scale_vec),
+            transition_time,
+        );
     }
 }
