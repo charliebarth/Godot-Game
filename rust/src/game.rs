@@ -755,7 +755,7 @@ impl Game {
     /// Arguments:
     /// * `light_level` - The new light level. This is a percentage where 1.0 is the original light level and is 0.0 off.
     /// * `transition_time` - The time it will take to transition to the new light level.
-    pub fn change_cycle_map(&self, light_level: f32, transition_time: f64, scale: f32) {}
+    pub fn change_cycle_map(&self, light_level: f32, transition_time: f64, scale: f32);
 
     #[signal]
     /// This signal is emitted when the day/night cycle changes.
@@ -764,5 +764,5 @@ impl Game {
     /// Arguments:
     /// * `light_level` - The new light level. This is a percentage where 1.0 is the original light level and is 0.0 off.
     /// * `transition_time` - The time it will take to transition to the new light level.
-    pub fn change_cycle_player(&self, light_level: f32, transition_time: f64) {}
+    pub fn change_cycle_player(&self, light_level: f32, transition_time: f64);
 }
