@@ -1,5 +1,5 @@
 use godot::{
-    classes::{IPointLight2D, PointLight2D, Tween},
+    classes::{IPointLight2D, PointLight2D},
     prelude::*,
 };
 
