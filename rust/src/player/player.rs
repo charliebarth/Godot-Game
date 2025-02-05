@@ -385,8 +385,16 @@ impl Player {
 
     #[func]
     /// Adjust the eliminations of the player
-    pub fn increment_eliminations(&mut self) {
+    ///
+    /// # Arguments
+    /// * `attacker_id` - The id of the player who eliminated this player
+    pub fn increment_eliminations(&mut self, attacker_id: i32) {
         self.eliminations += 1;
+        // update the eliminations counter for a player in game
+        self.base().get_node_as::<Game>("/root/Game")
+            .bind_mut()
+            .update_eliminations(attacker_id);
+
     }
 
     /// Adjusts the coins in this players coin_counter positively or negatively.
