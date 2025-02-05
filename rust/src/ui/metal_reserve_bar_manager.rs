@@ -83,8 +83,6 @@ impl IVBoxContainer for MetalReserveBarManager {
             }
         }
 
-        godot_print!("ALL BARS CREATED");
-
         self.setup_keybinds();
     }
 }
@@ -103,7 +101,6 @@ impl MetalReserveBarManager {
 
             // If the name of the keybind is one of the metals..
             if PATHS.contains(&input.to_string().as_str()) {
-                godot_print!("{}", input);
                 let events: Array<Gd<godot::classes::InputEvent>> =
                     input_map.action_get_events(&input);
 
@@ -128,8 +125,6 @@ impl MetalReserveBarManager {
         if let Some(bar) = self.get_bars().get(&name) {
             bar.clone()
         } else {
-            godot_print!("METAL BAR NOT FOUND creating {}", name);
-
             // Create new bar
             let bar = MetalBar::new_alloc();
 
@@ -163,15 +158,12 @@ impl MetalReserveBarManager {
                 // If its one of the metals
                 // add metal reserves
                 bar.bind_mut().adjust_reserves(amt);
-                godot_print!("METALS ADDED to {}", bar.get_name())
             }
         }
     }
 
     // Adds and removes a metal bar from displaying on the screen
-    pub fn add_remove(&mut self, unbind: Gd<MetalBar>, bind: String) {
-        godot_print!("KEY REBINDINGS - stubbed")
-    }
+    pub fn add_remove(&mut self, unbind: Gd<MetalBar>, bind: String) {}
 
     /// Sets the amount of a metal in the reserve bar
     ///

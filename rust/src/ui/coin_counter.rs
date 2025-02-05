@@ -96,12 +96,6 @@ impl CoinCounter {
         );
 
         let real_pos = coin.to_gd().get_global_position();
-        godot_print!(
-            "\nREPOSITIONING {} to {} actually {}",
-            coin.to_gd().get_name(),
-            pos,
-            real_pos
-        );
 
         // Add the coin to the coin holder
         self.coin_holder
@@ -183,13 +177,6 @@ impl CoinCounter {
 
             // Enable freeze mode
             coin.set_freeze_enabled(true);
-
-            godot_print!(
-                "Coin vis: {}\nCoin pos: {}\nCoin name: {}",
-                coin.is_visible(),
-                coin.get_global_position(),
-                coin.get_name()
-            );
 
             // Add the coin to the coin holder
             self.coin_holder

@@ -46,12 +46,6 @@ impl IRigidBody2D for Coin {
     ///
     /// Sets coin freeze mode to true, and allows collsions.
     fn ready(&mut self) {
-        godot_print!(
-            "{} at position {}",
-            self.base().get_name(),
-            self.base_mut().get_global_position()
-        );
-
         self.base_mut().show(); // Show the coin
 
         self.base_mut().set_freeze_enabled(true); // Make the coin stay still
@@ -92,29 +86,19 @@ impl Coin {
             self.drop(body);
         } else if self.state == CoinState::Idle {
             // If in state idle and it hits something
-            godot_print!(
-                "\n{} pick-up attempt: Body entered -> {}",
-                self.base().get_name(),
-                body.get_name()
-            ); // Debug line
 
-            godot_print!("COIN IN STATE {}", self.state); // Prints coin state
             let body_name = body.get_name();
-            godot_print!("Coin entered by {body_name}"); // Prints who picked up the coin
 
             // See if what entered the coin was a player
             if let Ok(mut player) = body.try_cast::<Player>() {
                 // Update state
                 self.set_state(CoinState::PickedUp);
-                godot_print!("COIN IN STATE PICKED UP = {}", self.state);
 
                 // Adjust Players coins
                 player.bind_mut().adjust_coins(1, self);
 
                 // Keep track of this coins player
                 self.set_curr_player(player);
-            } else {
-                godot_print!("Something other than player entered the coin.");
             }
         }
     }
@@ -122,13 +106,8 @@ impl Coin {
     /// Handles throwing of the coin, gets direction and applies impulse.
     #[func]
     pub fn throw(&mut self) {
-        godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
-        godot_print!("COIN IN STATE {}", self.state);
-
         // If in PickedUp state
         if self.state == CoinState::PickedUp {
-            godot_print!("THROWING {}", self.base().get_name());
-
             let force;
             let player = self.curr_player.as_mut().unwrap();
             let mut pos = player.get_global_position();
@@ -150,26 +129,12 @@ impl Coin {
 
             // Debugging
             let real_pos = self.base_mut().get_global_position();
-            godot_print!(
-                "REPOSITIONING {} to {} actually {}",
-                self.base().get_name(),
-                pos,
-                real_pos
-            );
 
             // Apply impluse
-            godot_print!("Applying impulse {}", force);
+
             self.base_mut().set_linear_velocity(Vector2::ZERO);
             self.base_mut().set_angular_velocity(0.);
             self.base_mut().apply_impulse(force);
-
-            // Debug physics
-            // let velocity = self.base_mut().get_linear_velocity();
-            // let sleeping = self.base_mut().is_sleeping();
-            // godot_print!("POS: {}", pos);
-            // godot_print!("VIS: {}", self.base_mut().is_visible());
-            // godot_print!("VEL: {}\nSLEEP: {}", velocity, sleeping);
-            // godot_print!("BODIES: {}", self.base_mut().get_colliding_bodies());
 
             // Update state
             self.set_state(CoinState::Thrown);
