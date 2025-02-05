@@ -46,6 +46,8 @@ pub struct Game {
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
+    /// The number of kills for each player.
+    eliminations: HashMap<i32, i32>,
 }
 
 #[godot_api]
@@ -70,6 +72,7 @@ impl INode2D for Game {
             winning_player: 0,
             maps: HashMap::new(),
             main_menu: None,
+            eliminations: HashMap::new(),
         }
     }
 
@@ -137,6 +140,15 @@ impl Game {
         main_menu.bind_mut().add_player(self.current_player_id);
     }
 
+    /// Updates the number of elimination for a player as they get a new one.
+    ///
+    /// Arguments:
+    /// * `player_id` - The id of the player that got an elimination.
+    pub fn update_eliminations(&mut self, player_id: i32) {
+        let eliminations = self.eliminations.entry(player_id).or_insert(0);
+        *eliminations += 1;
+    }
+
     /// This will disconnect a player from the game.
     /// Disconnecting a player will remove them from the game and shift all still connected players up.
     /// For example if player 2 is disconnected player 3 will become player 2 and player 4 will become player 3.
@@ -202,10 +214,9 @@ impl Game {
 
     /// This will start the game.
     /// It is the top level of the game and will call all the necessary methods to start the game.
-    ///
     pub fn start_game(&mut self) {
         self.start_round();
-        while !self.check_win_condition() {
+        if !self.check_win_condition() {
             self.start_new_round();
         }
         // find the winning player
@@ -348,6 +359,15 @@ impl Game {
     /// * `player_id` - The id of the player to disconnect.
     pub fn remove_player(&mut self, player_id: i32) {
         self.players.remove(player_id as usize - 1);
+
+        if self.players.len() <= 1 {
+            if !self.check_win_condition() {
+                self.start_new_round();
+            } else {
+                self.end_game();
+            }
+        }
+
         //
         // if self.started && self.players.len() == 1 {
         //     let player = self.players.get(0).expect("Player not found");
@@ -386,6 +406,7 @@ impl Game {
         let mut flag = false;
         for player in self.players.iter() {
             if player.bind().get_eliminations() >= REQUIRED_ELIMINATIONS {
+                // TODO: This does not handle a tie yet
                 flag = true;
             }
         }
