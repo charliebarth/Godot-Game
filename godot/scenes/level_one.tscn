@@ -10717,7 +10717,7 @@ position = Vector2(-542, -851)
 [node name="Node2D3" parent="CandleShelf" instance=ExtResource("13_fu8kv")]
 position = Vector2(-533, -849)
 
-[node name="PointLight2D" type="PointLight2D" parent="CandleShelf"]
+[node name="PointLight2D" type="MapLight" parent="CandleShelf"]
 position = Vector2(-533, -852)
 scale = Vector2(6, 6)
 color = Color(0.752941, 0.423529, 0.258824, 1)
@@ -10873,28 +10873,28 @@ position = Vector2(571, 322)
 [node name="Node2D3" parent="Candles" instance=ExtResource("13_fu8kv")]
 position = Vector2(580, 324)
 
-[node name="PointLight2D" type="PointLight2D" parent="Candles"]
+[node name="PointLight2D" type="MapLight" parent="Candles"]
 position = Vector2(580, 321)
 scale = Vector2(6, 6)
 color = Color(0.752941, 0.423529, 0.258824, 1)
 energy = 0.5
 texture = SubResource("GradientTexture2D_ru3g4")
 
-[node name="PointLight2D2" type="PointLight2D" parent="Candles"]
+[node name="PointLight2D2" type="MapLight" parent="Candles"]
 position = Vector2(675, 318)
 scale = Vector2(5, 5)
 color = Color(0.752941, 0.423529, 0.258824, 1)
 energy = 0.35
 texture = SubResource("GradientTexture2D_ru3g4")
 
-[node name="PointLight2D3" type="PointLight2D" parent="Candles"]
+[node name="PointLight2D3" type="MapLight" parent="Candles"]
 position = Vector2(710, 318)
 scale = Vector2(5, 5)
 color = Color(0.752941, 0.423529, 0.258824, 1)
 energy = 0.35
 texture = SubResource("GradientTexture2D_ru3g4")
 
-[node name="PointLight2D4" type="PointLight2D" parent="Candles"]
+[node name="PointLight2D4" type="MapLight" parent="Candles"]
 position = Vector2(793, 322)
 scale = Vector2(3, 3)
 color = Color(0.752941, 0.423529, 0.258824, 1)
