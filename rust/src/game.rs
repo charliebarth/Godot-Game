@@ -171,6 +171,9 @@ impl Game {
 
         let mut main_menu = self.get_main_menu();
         main_menu.bind_mut().add_player(self.current_player_id);
+
+        // Add the player's ID and eliminations to the hashmap
+        self.eliminations.insert(self.current_player_id, 0);
     }
 
     /// Updates the number of elimination for a player as they get a new one.
@@ -221,20 +224,12 @@ impl Game {
         unsafe { GAME_MODE = Some(mode) }
     }
 
+    #[func]
     /// This will start the game.
     /// It is the top level of the game and will call all the necessary methods to start the game.
     pub fn start_game(&mut self) {
         self.start_round();
-        if !self.check_win_condition() {
-            self.start_new_round();
-        }
-        // find the winning player
-        for player in self.players.iter() {
-            if player.bind().get_eliminations() >= 10 {
-                self.winning_player = player.bind().get_player_id();
-            }
-        }
-        self.end_game();
+
     }
 
     /// This will start a round of the game.
@@ -397,6 +392,28 @@ impl Game {
     /// Arguments:
     /// * `player_id` - The id of the player to disconnect.
     pub fn remove_player(&mut self, player_id: i32) {
+        // before removing the player, update the eliminations for the player associated with the player_id in the hashmap
+
+        // get the number of eliminations for the player in the hashmap
+        let instance_eliminations = self.eliminations.get(&player_id).unwrap();
+
+        // get the number of eliminations of the player in this instance
+        let eliminations = self.players[player_id as usize - 1].bind().get_eliminations();
+
+        // update the eliminations in the hashmap with the eliminations in this instance + the eliminations in the hashmap
+        self.eliminations.insert(player_id, eliminations + instance_eliminations);
+
+        // add the player's eliminations in this instance to the eliminations already in the hashmap
+        // self.eliminations.insert(player_id, updated_eliminations + self.players[player_id as usize - 1].bind().get_eliminations());
+        // if let Some(player) = self.players.get((player_id - 1) as usize) {
+        //     let eliminations = player.bind().get_eliminations();
+        //     self.eliminations.entry(player_id).and_modify(|e| *e += eliminations).or_insert(eliminations);
+        // }
+
+        // compare the number of eliminations that the player has versus what the updated hashmap has
+        godot_print!("Player {} has {} eliminations", player_id, self.players[player_id as usize - 1].bind().get_eliminations());
+        godot_print!("Player {} has {} eliminations in the hashmap", player_id, self.eliminations.get(&player_id).unwrap());
+
         self.players.remove(player_id as usize - 1);
 
         if self.players.len() <= 1 {
@@ -438,18 +455,18 @@ impl Game {
     ///
     /// Returns:
     /// * `flag` - If a player has reached the required elimination count.
-    fn check_win_condition(&self) -> bool {
+    fn check_win_condition(&mut self) -> bool {
         // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
         const REQUIRED_ELIMINATIONS: i32 = 10;
-        // check if a player has reached the required number of eliminations and return that player's id
-        let mut flag = false;
-        for player in self.players.iter() {
-            if player.bind().get_eliminations() >= REQUIRED_ELIMINATIONS {
-                // TODO: This does not handle a tie yet
-                flag = true;
+        // check if a player has reached the required number of eliminations by checking the hashmap
+        for (_, eliminations) in self.eliminations.iter() {
+            if *eliminations >= REQUIRED_ELIMINATIONS {
+                // set the winning player to the player with the required number of eliminations
+                self.winning_player = self.eliminations.iter().position(|(&k, &v)| v == REQUIRED_ELIMINATIONS).unwrap() as i32 + 1;
+                return true;
             }
         }
-        flag
+        false
     }
 
     /// This will start a new round. It will reset the players and start the game again.
