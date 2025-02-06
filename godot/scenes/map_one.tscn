@@ -50,39 +50,14 @@ shader_parameter/density = 0.6
 shader_parameter/speed = Vector2(0.001, 0.001)
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
 
-[node name="MapOne" type="Node2D"]
+[node name="MapOne" type="Map"]
 light_mask = 3
 material = SubResource("ShaderMaterial_iw8d6")
 
 [node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
 
-[node name="SpawnOne" type="Marker2D" parent="."]
-position = Vector2(961, -149)
-
-[node name="SpawnTwo" type="Marker2D" parent="."]
-position = Vector2(-990, -386)
-
-[node name="SpawnThree" type="Marker2D" parent="."]
-position = Vector2(-10, 295)
-
-[node name="SpawnFour" type="Marker2D" parent="."]
-position = Vector2(-2, -843)
-
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.0858917, 0.0858917, 0.0858917, 1)
-
-[node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
-z_index = 1
-position = Vector2(-369, -19)
-
-[node name="MetalObject2" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-12, -299)
-
-[node name="MetalObject3" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(211, -167)
-
-[node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-22, 354)
 
 [node name="LightSources" type="Node" parent="."]
 
@@ -125,26 +100,6 @@ position = Vector2(1100, -84)
 [node name="camp_fire2" parent="LightSources" instance=ExtResource("10_y0ce3")]
 z_index = -1
 position = Vector2(-802, -757)
-
-[node name="MetalVial" parent="." instance=ExtResource("8_dufnk")]
-modulate = Color(1, 1, 1, 0.5)
-position = Vector2(-807, -791)
-scale = Vector2(0.8, 0.8)
-
-[node name="MetalVial4" parent="." instance=ExtResource("8_dufnk")]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(443, -444)
-scale = Vector2(0.7, 0.7)
-
-[node name="MetalVial2" parent="." instance=ExtResource("8_dufnk")]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(956, 375)
-scale = Vector2(0.8, 0.8)
-
-[node name="MetalVial3" parent="." instance=ExtResource("8_dufnk")]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(-1084, 375)
-scale = Vector2(0.8, 0.8)
 
 [node name="Platforms" type="Node" parent="."]
 
@@ -227,3 +182,52 @@ offset_top = -1425.0
 offset_right = 2381.0
 offset_bottom = 852.0
 color = Color(0.785, 0.785, 0.785, 0.6)
+
+[node name="SpawnPoints" type="Node" parent="."]
+
+[node name="1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(961, -149)
+
+[node name="2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-990, -386)
+
+[node name="3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-10, 295)
+
+[node name="4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-2, -843)
+
+[node name="MetalObjects" type="Node" parent="."]
+
+[node name="MetalObject" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+z_index = 1
+position = Vector2(-369, -19)
+
+[node name="MetalObject2" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+position = Vector2(-12, -299)
+
+[node name="MetalObject3" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+position = Vector2(211, -167)
+
+[node name="MetalObject4" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+position = Vector2(-22, 354)
+
+[node name="MetalVial" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(-807, -791)
+scale = Vector2(0.8, 0.8)
+
+[node name="MetalVial4" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(443, -444)
+scale = Vector2(0.7, 0.7)
+
+[node name="MetalVial2" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(956, 375)
+scale = Vector2(0.8, 0.8)
+
+[node name="MetalVial3" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(-1084, 375)
+scale = Vector2(0.8, 0.8)
