@@ -3,7 +3,11 @@ extends TabBar
 @onready var display_mode_btn = $MarginContainer/VBoxContainer/DisplayMode/HBoxContainer/DisplayModeBtn
 @onready var border_mode_btn = $MarginContainer/VBoxContainer/BorderMode/HBoxContainer/BorderModeBtn
 @onready var vsync_mode_btn = $MarginContainer/VBoxContainer/VsyncMode/HBoxContainer/VsyncModeBtn
+@onready var window_size_btn = $MarginContainer/VBoxContainer/WindowSize/HBoxContainer/WindowSizeBtn
 
+var resolutions = [Vector2i(1920, 1080), Vector2i(1920,1200), 
+						Vector2i(1080,960), Vector2i(1280, 720), Vector2i(800,600)]
+						
 func _ready():
 	var graphics_settings = ConfigFileHandler.load_graphics_settings()
 	
@@ -15,6 +19,11 @@ func _ready():
 	
 	set_vsync(graphics_settings["vsync"])
 	vsync_mode_btn.button_pressed = graphics_settings["vsync"]
+	
+	var i = resolutions.find(graphics_settings["size"])
+	set_window_size(i)
+	print("Window size %s" %[i])
+	window_size_btn.selected = i
 	
 	print("loading window mode to %s" %[DisplayServer.window_get_mode()])
 	print("loading borderless %s" %[DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_BORDERLESS)])
@@ -33,6 +42,9 @@ func set_vsync(enabled: bool):
 	DisplayServer.window_set_vsync_mode(
 		DisplayServer.VSYNC_ENABLED if enabled 
 		else DisplayServer.VSYNC_DISABLED)
+
+func set_window_size(index: int) -> void:
+	DisplayServer.window_set_size(resolutions[index])
 		
 ## When the apply button is pressed, save the graphics setting.
 func _on_apply_pressed() -> void:

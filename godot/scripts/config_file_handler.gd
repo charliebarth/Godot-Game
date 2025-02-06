@@ -15,6 +15,7 @@ func _ready() -> void:
 		config.set_value("graphics", "fullscreen", true)
 		config.set_value("graphics", "borderless", false)
 		config.set_value("graphics", "vsync", false)
+		config.set_value("graphics", "size", Vector2i(1920, 1080))
 	
 		config.save(SETTINGS_FILE_PATH)
 	else:
@@ -50,6 +51,11 @@ func save_graphics_setting():
 		"vsync", 
 		DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED
 		)
+	config.set_value(
+		"graphics",
+		"size",
+		DisplayServer.window_get_size()
+	)
 	config.save(SETTINGS_FILE_PATH)
 	print("saved graphics settings")
 		

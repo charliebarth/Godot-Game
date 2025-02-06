@@ -352,6 +352,39 @@ layout_mode = 2
 [node name="VsyncModeBtn" type="CheckButton" parent="TabContainer/Graphics/MarginContainer/VBoxContainer/VsyncMode/HBoxContainer"]
 layout_mode = 2
 
+[node name="WindowSize" type="Control" parent="TabContainer/Graphics/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Graphics/MarginContainer/VBoxContainer/WindowSize"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Name" type="Label" parent="TabContainer/Graphics/MarginContainer/VBoxContainer/WindowSize/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Window Size"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Graphics/MarginContainer/VBoxContainer/WindowSize/HBoxContainer"]
+layout_mode = 2
+
+[node name="WindowSizeBtn" type="OptionButton" parent="TabContainer/Graphics/MarginContainer/VBoxContainer/WindowSize/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+selected = 0
+item_count = 5
+popup/item_0/text = "1920x1080"
+popup/item_1/text = "1920x1200"
+popup/item_1/id = 1
+popup/item_2/text = "1080x960"
+popup/item_2/id = 2
+popup/item_3/text = "1280x720"
+popup/item_3/id = 3
+popup/item_4/text = "800x600"
+popup/item_4/id = 4
+
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Graphics/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
@@ -411,4 +444,5 @@ theme_override_constants/separation = 32
 [connection signal="item_selected" from="TabContainer/Graphics/MarginContainer/VBoxContainer/DisplayMode/HBoxContainer/DisplayModeBtn" to="TabContainer/Graphics" method="set_window_mode"]
 [connection signal="toggled" from="TabContainer/Graphics/MarginContainer/VBoxContainer/BorderMode/HBoxContainer/BorderModeBtn" to="TabContainer/Graphics" method="set_border_mode"]
 [connection signal="toggled" from="TabContainer/Graphics/MarginContainer/VBoxContainer/VsyncMode/HBoxContainer/VsyncModeBtn" to="TabContainer/Graphics" method="set_vsync"]
+[connection signal="item_selected" from="TabContainer/Graphics/MarginContainer/VBoxContainer/WindowSize/HBoxContainer/WindowSizeBtn" to="TabContainer/Graphics" method="set_window_mode"]
 [connection signal="pressed" from="TabContainer/Graphics/MarginContainer/HBoxContainer/Apply" to="TabContainer/Graphics" method="_on_apply_pressed"]
