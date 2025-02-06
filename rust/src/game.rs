@@ -47,6 +47,8 @@ pub struct Game {
     /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
     day: bool,
+    /// The timer for the day/night cycle.
+    day_night_timer: Gd<Timer>,
 }
 
 #[godot_api]
@@ -59,6 +61,11 @@ impl INode2D for Game {
     /// # Returns
     /// * `Game` - A new instance of the Game class.
     fn init(base: Base<Node2D>) -> Self {
+        const CYCLE_LENGTH: f64 = 10.0;
+        let mut day_night_timer = Timer::new_alloc();
+
+        day_night_timer.set_wait_time(CYCLE_LENGTH);
+        day_night_timer.set_autostart(true);
         Self {
             base,
             players: Vec::new(),
@@ -72,6 +79,7 @@ impl INode2D for Game {
             maps: HashMap::new(),
             main_menu: None,
             day: true,
+            day_night_timer,
         }
     }
 
@@ -250,6 +258,13 @@ impl Game {
     #[func]
     pub fn end_game(&mut self) {
         self.started = false;
+
+        // End the day/night cycle and ensure all lights are at full brightness
+        let day_night_timer = self.day_night_timer.clone();
+        self.base_mut().remove_child(&day_night_timer);
+        self.day = false;
+        self.cycle_change();
+
         for mut child in self.base_mut().get_children().iter_shared() {
             if child.get_name().to_string().starts_with("SplitScreen") {
                 child.queue_free();
@@ -697,18 +712,14 @@ impl Game {
     }
 
     fn day_night_cycle(&mut self) {
-        const CYCLE_LENGTH: f64 = 10.0;
-        let mut timer = Timer::new_alloc();
-
-        timer.set_wait_time(CYCLE_LENGTH);
-        timer.set_autostart(true);
         let game = self.base().get_node_as::<Game>(".");
-        timer.connect(
+        self.day_night_timer.connect(
             "timeout",
             &Callable::from_object_method(&game, "cycle_change"),
         );
 
-        self.base_mut().add_child(&timer);
+        let day_night_timer = self.day_night_timer.clone();
+        self.base_mut().add_child(&day_night_timer);
     }
 
     #[func]
