@@ -3,6 +3,9 @@ extends Node
 var config = ConfigFile.new()
 const SETTINGS_FILE_PATH = "user://settings.ini"
 
+var resolutions = [Vector2i(1920, 1080), Vector2i(1920,1200), 
+						Vector2i(1080,960), Vector2i(1280, 720), Vector2i(800,600)]
+
 ## Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if !FileAccess.file_exists(SETTINGS_FILE_PATH):
@@ -13,9 +16,10 @@ func _ready() -> void:
 		config.set_value("audio", "WorldSFX", 0.6)
 		
 		config.set_value("graphics", "fullscreen", true)
+		config.set_value("graphics", "size", 0)
 		config.set_value("graphics", "borderless", false)
 		config.set_value("graphics", "vsync", false)
-		config.set_value("graphics", "size", Vector2i(1920, 1080))
+		config.set_value("graphics", "fps", 60)
 	
 		config.save(SETTINGS_FILE_PATH)
 	else:
@@ -40,22 +44,28 @@ func save_graphics_setting():
 		"graphics", 
 		"fullscreen", 
 		DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
-		)
+	)
+	config.set_value(
+		"graphics",
+		"size",
+		resolutions.find(DisplayServer.window_get_size())
+	)
 	config.set_value(
 		"graphics", 
 		"borderless", 
 		DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_BORDERLESS)
-		)
+	)
+	config.set_value(
+		"graphics",
+		"fps",
+		Engine.max_fps
+	)
 	config.set_value(
 		"graphics", 
 		"vsync", 
 		DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED
-		)
-	config.set_value(
-		"graphics",
-		"size",
-		DisplayServer.window_get_size()
 	)
+
 	config.save(SETTINGS_FILE_PATH)
 	print("saved graphics settings")
 		
@@ -66,4 +76,8 @@ func load_graphics_settings():
 		graphics_settings[key] = config.get_value("graphics", key)
 	
 	return graphics_settings
+
+func load_keybind_settings(id: int):
+	print("loading keybindings for player %s" %[id])
+	pass
 	
