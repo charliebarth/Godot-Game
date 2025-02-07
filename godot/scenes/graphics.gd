@@ -28,7 +28,6 @@ func _ready():
 	set_fps(graphics_settings["fps"])
 	fps_slider.value = graphics_settings["fps"]
 	
-	
 	print("\nloading window mode to %s" %[DisplayServer.window_get_mode()])
 	print("loading borderless %s" %[DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_BORDERLESS)])
 	print("loading vsync %s" %[DisplayServer.window_get_vsync_mode()])
