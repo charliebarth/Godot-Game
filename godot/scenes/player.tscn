@@ -1007,7 +1007,6 @@ shape = SubResource("CapsuleShape2D_bajs7")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, 1)
-zoom = Vector2(2, 2)
 
 [node name="InputManager" type="InputManager" parent="."]
 
