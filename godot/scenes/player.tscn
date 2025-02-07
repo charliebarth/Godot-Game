@@ -980,6 +980,7 @@ position = Vector2(0, 1)
 
 [node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
 physics_interpolation_mode = 0
+light_mask = 524289
 offset_left = -468.0
 offset_top = -241.0
 offset_right = -405.0
@@ -988,12 +989,14 @@ offset_bottom = -200.0
 [node name="MetalManager" type="MetalManager" parent="."]
 
 [node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
+light_mask = 524289
 offset_left = -385.0
 offset_top = -259.0
 offset_right = -352.0
 offset_bottom = -243.0
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
+light_mask = 524289
 z_index = 20
 offset_left = -475.0
 offset_top = -263.0
@@ -1021,6 +1024,7 @@ texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")
 
 [node name="SteelRange" type="Area2D" parent="."]
+visible = false
 
 [node name="AllomanticRangeShape" type="CollisionShape2D" parent="SteelRange"]
 position = Vector2(0, 1)
@@ -1028,6 +1032,7 @@ shape = SubResource("RectangleShape2D_indkr")
 
 [node name="MetalLine" type="MetalLine" parent="."]
 self_modulate = Color(0, 0.6, 2.1, 1)
+light_mask = 524289
 z_index = -1
 position = Vector2(0, -9)
 
@@ -1056,7 +1061,7 @@ position = Vector2(-1, -1.5)
 shape = SubResource("RectangleShape2D_jp1u6")
 
 [node name="FpsCounter" type="Label" parent="."]
-visible = false
+light_mask = 524289
 offset_left = 344.0
 offset_top = -260.0
 offset_right = 389.0
@@ -1086,6 +1091,7 @@ libraries = {
 visible = false
 self_modulate = Color(12, 1, 1, 1)
 show_behind_parent = true
+light_mask = 524289
 position = Vector2(0, -3)
 amount = 6
 process_material = SubResource("ParticleProcessMaterial_jhvi2")
@@ -1095,6 +1101,7 @@ lifetime = 2.0
 visible = false
 self_modulate = Color(1, 1, 17, 1)
 show_behind_parent = true
+light_mask = 524289
 position = Vector2(0, 3)
 amount = 12
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
