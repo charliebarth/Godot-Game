@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=23 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -50,6 +50,14 @@ shader_parameter/density = 0.6
 shader_parameter/speed = Vector2(0.001, 0.001)
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_vtfih")
 
+[sub_resource type="Gradient" id="Gradient_867xu"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pfm4w"]
+gradient = SubResource("Gradient_867xu")
+fill = 2
+
 [node name="MapOne" type="Map"]
 light_mask = 3
 material = SubResource("ShaderMaterial_iw8d6")
@@ -57,7 +65,7 @@ material = SubResource("ShaderMaterial_iw8d6")
 [node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0, 0, 0, 1)
+color = Color(0.0383972, 0.0383972, 0.0383972, 1)
 
 [node name="LightSources" type="Node" parent="."]
 
@@ -242,3 +250,9 @@ scale = Vector2(0.8, 0.8)
 modulate = Color(1, 1, 1, 0.6)
 position = Vector2(-1084, 375)
 scale = Vector2(0.8, 0.8)
+
+[node name="PointLight2D" type="PlayerLight" parent="."]
+position = Vector2(-144.5, -331)
+scale = Vector2(108.453, 38.875)
+energy = 0.1
+texture = SubResource("GradientTexture2D_pfm4w")
