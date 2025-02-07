@@ -1,4 +1,4 @@
-[gd_scene load_steps=160 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=158 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -23,7 +23,6 @@
 [ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="18_wsmie"]
 [ext_resource type="PackedScene" uid="uid://b2cab082bt2gh" path="res://scenes/metal_reserve_bars.tscn" id="20_elmgo"]
 [ext_resource type="Script" path="res://scripts/animated_sprite_2d.gd" id="20_h83s5"]
-[ext_resource type="Script" path="res://scripts/player_2_vis.gd" id="21_hfc5u"]
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="22_33rpo"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
@@ -42,9 +41,6 @@
 [ext_resource type="AudioStream" uid="uid://drjjxs8iebgqu" path="res://assets/SFX & Music/ES_Asphalt, Male, Walk - Epidemic Sound - 5878-6035.wav" id="38_rea0i"]
 [ext_resource type="AudioStream" uid="uid://dnpftf73dao0t" path="res://assets/SFX & Music/ES_Feet, Land, Jump, Ground - Epidemic Sound - 0040-0142.wav" id="39_6vh5j"]
 [ext_resource type="Shader" path="res://shader scripts/timer.gdshader" id="41_q8agc"]
-
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_o2ssi"]
-light_mode = 2
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j7yn6"]
 atlas = ExtResource("2_ybdal")
@@ -965,35 +961,7 @@ shader_parameter/border_width = 0.03
 z_index = 1
 script = ExtResource("1_pp08i")
 
-[node name="Player1Vis" type="AnimatedSprite2D" parent="."]
-material = SubResource("CanvasItemMaterial_o2ssi")
-position = Vector2(6, -29)
-scale = Vector2(1.3, 1.3)
-sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"fall"
-script = ExtResource("21_hfc5u")
-
-[node name="Player2Vis" type="AnimatedSprite2D" parent="."]
-material = SubResource("CanvasItemMaterial_o2ssi")
-position = Vector2(6, -29)
-scale = Vector2(1.3, 1.3)
-sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"fall"
-frame = 1
-frame_progress = 0.48611
-script = ExtResource("21_hfc5u")
-
-[node name="Player3Vis" type="AnimatedSprite2D" parent="."]
-material = SubResource("CanvasItemMaterial_o2ssi")
-position = Vector2(6, -29)
-scale = Vector2(1.3, 1.3)
-sprite_frames = SubResource("SpriteFrames_pintf")
-animation = &"fall"
-frame = 1
-frame_progress = 0.48611
-script = ExtResource("21_hfc5u")
-
-[node name="OwnerVis" type="AnimatedSprite2D" parent="."]
+[node name="PlayerAnimation" type="AnimatedSprite2D" parent="."]
 position = Vector2(6, -29)
 scale = Vector2(1.3, 1.3)
 sprite_frames = SubResource("SpriteFrames_pintf")
@@ -1175,17 +1143,11 @@ offset_bottom = 85.4783
 
 [node name="Timer" type="Timer" parent="Disconnected"]
 
-[connection signal="id_changed" from="." to="Player1Vis" method="_on_player_id_changed"]
 [connection signal="id_changed" from="." to="PointLight2D" method="_on_player_id_changed"]
-[connection signal="animation_changed" from="Player1Vis" to="Player1Vis" method="_on_animation_changed"]
-[connection signal="animation_finished" from="Player1Vis" to="Player1Vis" method="_on_animation_finished"]
-[connection signal="animation_changed" from="Player2Vis" to="Player2Vis" method="_on_animation_changed"]
-[connection signal="animation_finished" from="Player2Vis" to="Player2Vis" method="_on_animation_finished"]
-[connection signal="animation_changed" from="Player3Vis" to="Player3Vis" method="_on_animation_changed"]
-[connection signal="animation_finished" from="Player3Vis" to="Player3Vis" method="_on_animation_finished"]
-[connection signal="animation_changed" from="OwnerVis" to="OwnerVis" method="_on_animation_changed"]
-[connection signal="animation_finished" from="OwnerVis" to="." method="_on_owner_vis_animation_finished"]
-[connection signal="animation_finished" from="OwnerVis" to="OwnerVis" method="_on_animation_finished"]
+[connection signal="id_changed" from="." to="PointLight2D2" method="_on_player_id_changed"]
+[connection signal="animation_changed" from="PlayerAnimation" to="PlayerAnimation" method="_on_animation_changed"]
+[connection signal="animation_finished" from="PlayerAnimation" to="." method="_on_owner_vis_animation_finished"]
+[connection signal="animation_finished" from="PlayerAnimation" to="PlayerAnimation" method="_on_animation_finished"]
 [connection signal="body_entered" from="SteelRange" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="SteelRange" to="." method="_on_area_2d_body_exited"]
 [connection signal="area_entered" from="HurtBox" to="HurtBox" method="_on_area_entered"]
