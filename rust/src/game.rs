@@ -233,6 +233,8 @@ impl Game {
         // Set sizes and add players
         // The split screens will resize the individual panes based on the number of players added
         if self.players.len() == 1 {
+            const SINGLE_PLAYER_ZOOM: Vector2 = Vector2::new(2.0, 2.0);
+            self.players[0].bind_mut().set_zoom(SINGLE_PLAYER_ZOOM);
             split_screen_one.set_size(Vector2::new(SCREEN_WIDTH, SCREEN_HEIGHT));
             split_screen_one.bind_mut().add_players(odd_players);
         } else {

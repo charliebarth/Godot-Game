@@ -109,6 +109,8 @@ pub struct Player {
     is_steel_burning: bool,
     /// If the player is attacking or not
     is_attacking: bool,
+    /// The camera of the player
+    camera: Option<Gd<Camera2D>>,
 }
 
 #[godot_api]
@@ -157,6 +159,7 @@ impl ICharacterBody2D for Player {
             mass: 70.0,
             is_steel_burning: false,
             is_attacking: false,
+            camera: None,
         }
     }
 
@@ -254,6 +257,15 @@ impl Player {
             .get_node_as::<Game>("/root/Game")
             .bind_mut()
             .remove_player(self.player_id);
+    }
+
+    #[func]
+    /// Set the zoom for the player
+    ///
+    /// # Arguments
+    /// * `zoom` - The zoom to set the player to
+    pub fn set_zoom(&mut self, zoom: Vector2) {
+        self.get_camera().set_zoom(zoom);
     }
 
     /// Set the current state of the player and triggers the enter method of the new state
@@ -1074,6 +1086,17 @@ impl Player {
         self.disconnected
             .as_ref()
             .expect("Disconnected node not found")
+            .clone()
+    }
+
+    pub fn get_camera(&mut self) -> Gd<Camera2D> {
+        if self.camera.is_none() {
+            self.camera = Some(self.base().get_node_as::<Camera2D>("Camera2D"));
+        }
+
+        self.camera
+            .as_ref()
+            .expect("Camera2D node not found")
             .clone()
     }
 }
