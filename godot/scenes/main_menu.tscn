@@ -8957,7 +8957,7 @@ autoplay = "default"
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 position = Vector2(-14, -368)
-color = Color(0.703808, 0.703808, 0.703808, 1)
+color = Color(0.446777, 0.446777, 0.446777, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -368)
