@@ -245,3 +245,10 @@ position = Vector2(-144.5, -331)
 scale = Vector2(108.453, 38.875)
 energy = 0.1
 texture = SubResource("GradientTexture2D_pfm4w")
+
+[node name="UiLighting" type="PointLight2D" parent="."]
+position = Vector2(-144.5, -331)
+scale = Vector2(108.453, 38.875)
+energy = 0.25
+range_item_cull_mask = 524288
+texture = SubResource("GradientTexture2D_pfm4w")

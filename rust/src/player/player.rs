@@ -594,7 +594,8 @@ impl Player {
             if let Ok(mut node) = child.try_cast::<CanvasItem>() {
                 let layer_num = player_id * 2;
                 node.set_visibility_layer(1 << layer_num);
-                node.set_light_mask(1 << layer_num | 1);
+                let light_mask = node.get_light_mask();
+                node.set_light_mask(light_mask | 1 << layer_num);
             }
         }
 
