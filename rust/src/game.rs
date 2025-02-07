@@ -370,7 +370,7 @@ impl Game {
     #[func]
     pub fn cycle_change(&mut self) {
         const TRANSITION_TIME: f64 = 3.0;
-        let brightness: f32 = if self.day { 0.05 } else { 1.0 };
+        let brightness: f32 = if self.day { 0.02 } else { 1.0 };
         self.base_mut().emit_signal(
             "change_cycle_player",
             &[Variant::from(brightness), Variant::from(TRANSITION_TIME)],
