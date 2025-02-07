@@ -256,7 +256,7 @@ impl Player {
         self.base()
             .get_node_as::<Game>("/root/Game")
             .bind_mut()
-            .remove_player(self.player_id);
+            .remove_player(self.player_id, self.eliminations);
     }
 
     /// Set the current state of the player and triggers the enter method of the new state

@@ -48,6 +48,8 @@ pub struct Game {
     main_menu: Option<Gd<MainMenu>>,
     /// The number of kills for each player.
     eliminations: HashMap<i32, i32>,
+    // A flag to determine if a new round should be started
+    should_start_new_round: bool,
 }
 
 #[godot_api]
@@ -73,6 +75,8 @@ impl INode2D for Game {
             maps: HashMap::new(),
             main_menu: None,
             eliminations: HashMap::new(),
+            should_start_new_round: false,
+
         }
     }
 
@@ -117,6 +121,17 @@ impl INode2D for Game {
             {
                 self.disconnect_player(device_id);
             }
+        }
+    }
+
+    /// This is a built in method for Godot that is called every frame.
+    ///
+    /// Arguments:
+    /// * `delta` - The time in seconds since the last frame.
+    fn process(&mut self, _delta: f64) {
+        if self.should_start_new_round {
+            self.start_round();
+            self.should_start_new_round = false;
         }
     }
 }
@@ -199,7 +214,7 @@ impl Game {
     #[func]
     pub fn attempt_start(&mut self, test_mode: bool) {
         if !test_mode && self.players.len() >= 2 || (test_mode && self.players.len() == 1) {
-            self.start_game();
+            self.start_round();
             return;
         }
 
@@ -215,21 +230,15 @@ impl Game {
             .add_notification(notification);
     }
 
-    #[func]
-    /// This will start the game.
-    /// It is the top level of the game and will call all the necessary methods to start the game.
-    pub fn start_game(&mut self) {
-        self.start_round();
-
-    }
-
     /// This will start a round of the game.
     /// Note: This will remove the main menu and instantiate the map.
     #[func]
     pub fn start_round(&mut self) {
         // First remove the main menu
         let main_menu = self.get_main_menu();
-        self.base_mut().remove_child(main_menu);
+        if main_menu.is_inside_tree() {
+            self.base_mut().remove_child(main_menu);
+        }
 
         // Next instantiate the map, add it to the tree, and trigger it's camera pan (might make the map auto camera pan on ready/load)
         // Note: Currently defaulting to MapOne
@@ -352,64 +361,28 @@ impl Game {
     ///
     /// Arguments:
     /// * `player_id` - The id of the player to disconnect.
-    pub fn remove_player(&mut self, player_id: i32) {
+    /// * `instance_elims` - The number of eliminations the player got in this instance.
+    pub fn remove_player(&mut self, player_id: i32, instance_elims: i32) {
         // before removing the player, update the eliminations for the player associated with the player_id in the hashmap
 
         // get the number of eliminations for the player in the hashmap
-        let instance_eliminations = self.eliminations.get(&player_id).unwrap();
-
-        // get the number of eliminations of the player in this instance
-        let eliminations = self.players[player_id as usize - 1].bind().get_eliminations();
+        let eliminations = self.eliminations.get(&player_id).unwrap();
 
         // update the eliminations in the hashmap with the eliminations in this instance + the eliminations in the hashmap
-        self.eliminations.insert(player_id, eliminations + instance_eliminations);
+        self.eliminations.insert(player_id, eliminations + instance_elims);
 
-        // add the player's eliminations in this instance to the eliminations already in the hashmap
-        // self.eliminations.insert(player_id, updated_eliminations + self.players[player_id as usize - 1].bind().get_eliminations());
-        // if let Some(player) = self.players.get((player_id - 1) as usize) {
-        //     let eliminations = player.bind().get_eliminations();
-        //     self.eliminations.entry(player_id).and_modify(|e| *e += eliminations).or_insert(eliminations);
-        // }
-
-        // compare the number of eliminations that the player has versus what the updated hashmap has
-        godot_print!("Player {} has {} eliminations", player_id, self.players[player_id as usize - 1].bind().get_eliminations());
-        godot_print!("Player {} has {} eliminations in the hashmap", player_id, self.eliminations.get(&player_id).unwrap());
 
         self.players.remove(player_id as usize - 1);
 
-        if self.players.len() <= 1 {
+        let player_length = self.players.len();
+
+        if player_length <= 1 {
             if !self.check_win_condition() {
                 self.start_new_round();
             } else {
                 self.end_game();
             }
         }
-
-        //
-        // if self.started && self.players.len() == 1 {
-        //     let player = self.players.get(0).expect("Player not found");
-        //     self.winning_player = player.bind().get_player_id();
-        //     self.end_game();
-        // } else if self.started && self.players.len() == 0 {
-        //     self.winning_player = player_id;
-        //     self.end_game();
-        // }
-
-        // check if any player has reached the required elimination count
-        // if self.check_win_condition() {
-        //     godot_print!("Player {} wins!", player_id);
-        //     self.end_game()
-        // } else {
-        //     godot_print!("I AM AT THE START OF ELSE");
-        //     self.players.remove(player_index);
-        //     godot_print!("The length of the players is: {}", self.players.len());
-        //
-        //     if self.players.len() == 1 {
-        //         self.start_new_round();
-        //     }
-        // }
-        //
-        // godot_print!("I AM AT THE END OF REMOVE PLAYER");
     }
 
     /// This will check if a player has reached the required elimination count.
@@ -418,7 +391,7 @@ impl Game {
     /// * `flag` - If a player has reached the required elimination count.
     fn check_win_condition(&mut self) -> bool {
         // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
-        const REQUIRED_ELIMINATIONS: i32 = 10;
+        const REQUIRED_ELIMINATIONS: i32 = 2;
         // check if a player has reached the required number of eliminations by checking the hashmap
         for (_, eliminations) in self.eliminations.iter() {
             if *eliminations >= REQUIRED_ELIMINATIONS {
@@ -433,8 +406,13 @@ impl Game {
     /// This will start a new round. It will reset the players and start the game again.
     ///
     fn start_new_round(&mut self) {
+        for mut child in self.base_mut().get_children().iter_shared() {
+            if child.get_name().to_string().starts_with("SplitScreen") {
+                child.queue_free();
+            }
+        }
         self.reset_players();
-        self.start_round();
+        self.should_start_new_round = true;
     }
 
     /// This will select a spawn point for a player based on their player id.
