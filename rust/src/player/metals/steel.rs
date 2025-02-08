@@ -1,4 +1,5 @@
 use godot::builtin::Color;
+use godot::global::godot_print;
 use godot::obj::WithBaseField;
 
 use crate::player::enums::force::Force;
@@ -93,6 +94,12 @@ impl Metal for Steel {
                 x_velocity,
                 y_velocity,
             });
+
+            // NOTE: Setup a way so players can run on ceilings and walls if pulling or pushing into them
+            // I think this can be done with up direction from characterbody2d
+            godot_print!("Is on wall: {}", player.base().is_on_wall());
+            godot_print!("Is on floor: {}", player.base().is_on_floor());
+            godot_print!("Is on ceiling: {}", player.base().is_on_ceiling());
         }
     }
 
