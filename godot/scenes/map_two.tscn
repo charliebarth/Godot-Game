@@ -1,33 +1,26 @@
-[gd_scene load_steps=48 format=4 uid="uid://dybexb8rpvfsq"]
+[gd_scene load_steps=53 format=4 uid="uid://dybexb8rpvfsq"]
 
-[ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="1_j0cuv"]
-[ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="2_sjk4e"]
-[ext_resource type="Texture2D" uid="uid://c6krlpbe7xhmd" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Extra.png" id="3_8mr08"]
-[ext_resource type="Texture2D" uid="uid://v04hdqv0u4p0" path="res://assets/Maps/dungeon/Textures/TX Tileable - Dungeon Wall.png" id="4_iu852"]
-[ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="4_nw20u"]
-[ext_resource type="Texture2D" uid="uid://cgvajfsxvqd3s" path="res://assets/Maps/dungeon/Textures/TX Dungeon Wall Deco.png" id="4_xvb1n"]
-[ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="6_p8bf3"]
-[ext_resource type="Texture2D" uid="uid://g32m6yrrsecs" path="res://assets/Maps/dungeon/Textures/FX/TX FX Flame.png" id="7_rqie0"]
-[ext_resource type="PackedScene" uid="uid://tnernkxjfar4" path="res://scenes/candle_light.tscn" id="10_1vryo"]
-[ext_resource type="Texture2D" uid="uid://crtpjdqbhvedv" path="res://assets/Maps/dungeon/Textures/FX/TX FX Light Shaft.png" id="10_fag4h"]
-[ext_resource type="PackedScene" uid="uid://dowm3lcngx6fx" path="res://scenes/Platforms/wooden_platform2.tscn" id="12_ilsa5"]
-[ext_resource type="PackedScene" uid="uid://qa3m7u8pg211" path="res://scenes/Platforms/wooden_platform3.tscn" id="13_hbn43"]
-[ext_resource type="PackedScene" uid="uid://bcmac4mal51c3" path="res://scenes/Platforms/wooden_platform4.tscn" id="14_fsbha"]
-[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="15_3v5r1"]
-[ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="16_mnluf"]
-[ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="17_imyup"]
-[ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="18_ytmg1"]
-[ext_resource type="PackedScene" uid="uid://b26ws836bp20r" path="res://scenes/fire.tscn" id="19_hsegn"]
-
-[sub_resource type="Environment" id="Environment_x7wf1"]
-background_mode = 3
-glow_enabled = true
-glow_intensity = 0.4
-glow_strength = 0.6
-glow_blend_mode = 0
+[ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="1_op2yy"]
+[ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="2_yr2ep"]
+[ext_resource type="Texture2D" uid="uid://c6krlpbe7xhmd" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Extra.png" id="3_lbkpe"]
+[ext_resource type="Texture2D" uid="uid://cgvajfsxvqd3s" path="res://assets/Maps/dungeon/Textures/TX Dungeon Wall Deco.png" id="4_ucngq"]
+[ext_resource type="Texture2D" uid="uid://v04hdqv0u4p0" path="res://assets/Maps/dungeon/Textures/TX Tileable - Dungeon Wall.png" id="5_5k1ed"]
+[ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="6_pvcbi"]
+[ext_resource type="Texture2D" uid="uid://g32m6yrrsecs" path="res://assets/Maps/dungeon/Textures/FX/TX FX Flame.png" id="7_x2ql4"]
+[ext_resource type="PackedScene" uid="uid://tnernkxjfar4" path="res://scenes/candle_light.tscn" id="8_bhd03"]
+[ext_resource type="Texture2D" uid="uid://crtpjdqbhvedv" path="res://assets/Maps/dungeon/Textures/FX/TX FX Light Shaft.png" id="9_5ccbp"]
+[ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="10_laoxe"]
+[ext_resource type="PackedScene" uid="uid://dowm3lcngx6fx" path="res://scenes/Platforms/wooden_platform2.tscn" id="11_y4dgq"]
+[ext_resource type="PackedScene" uid="uid://qa3m7u8pg211" path="res://scenes/Platforms/wooden_platform3.tscn" id="12_atqcb"]
+[ext_resource type="PackedScene" uid="uid://bcmac4mal51c3" path="res://scenes/Platforms/wooden_platform4.tscn" id="13_7e3wc"]
+[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="14_7bhro"]
+[ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="15_076fl"]
+[ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="16_vu8gn"]
+[ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="17_c5hcy"]
+[ext_resource type="PackedScene" uid="uid://b26ws836bp20r" path="res://scenes/fire.tscn" id="18_oyqre"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6qe5g"]
-texture = ExtResource("1_j0cuv")
+texture = ExtResource("1_op2yy")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:0/0 = 0
@@ -1047,7 +1040,7 @@ texture = ExtResource("1_j0cuv")
 31:31/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_c372v"]
-texture = ExtResource("2_sjk4e")
+texture = ExtResource("2_yr2ep")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:0/0 = 0
@@ -2059,7 +2052,7 @@ texture = ExtResource("2_sjk4e")
 31:31/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_md5u7"]
-texture = ExtResource("3_8mr08")
+texture = ExtResource("3_lbkpe")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -2514,7 +2507,7 @@ sources/1 = SubResource("TileSetAtlasSource_c372v")
 sources/2 = SubResource("TileSetAtlasSource_md5u7")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s215q"]
-texture = ExtResource("4_xvb1n")
+texture = ExtResource("4_ucngq")
 3:0/0 = 0
 4:0/0 = 0
 5:0/0 = 0
@@ -3398,7 +3391,7 @@ texture = ExtResource("4_xvb1n")
 sources/0 = SubResource("TileSetAtlasSource_s215q")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_si6k5"]
-texture = ExtResource("4_iu852")
+texture = ExtResource("5_5k1ed")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -3660,7 +3653,7 @@ texture = ExtResource("4_iu852")
 sources/0 = SubResource("TileSetAtlasSource_si6k5")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_11foe"]
-texture = ExtResource("6_p8bf3")
+texture = ExtResource("6_pvcbi")
 18:0/0 = 0
 20:0/0 = 0
 1:1/0 = 0
@@ -5512,7 +5505,7 @@ texture = ExtResource("6_p8bf3")
 sources/1 = SubResource("TileSetAtlasSource_11foe")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wcwoi"]
-texture = ExtResource("6_p8bf3")
+texture = ExtResource("6_pvcbi")
 18:0/0 = 0
 20:0/0 = 0
 1:1/0 = 0
@@ -7363,7 +7356,7 @@ texture = ExtResource("6_p8bf3")
 sources/0 = SubResource("TileSetAtlasSource_wcwoi")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_46wri"]
-texture = ExtResource("6_p8bf3")
+texture = ExtResource("6_pvcbi")
 18:0/0 = 0
 20:0/0 = 0
 1:1/0 = 0
@@ -9214,7 +9207,7 @@ texture = ExtResource("6_p8bf3")
 sources/0 = SubResource("TileSetAtlasSource_46wri")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_txkp8"]
-texture = ExtResource("6_p8bf3")
+texture = ExtResource("6_pvcbi")
 18:0/0 = 0
 20:0/0 = 0
 1:1/0 = 0
@@ -11067,7 +11060,7 @@ sources/0 = SubResource("TileSetAtlasSource_txkp8")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kbdy1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qpghy"]
-texture = ExtResource("7_rqie0")
+texture = ExtResource("7_x2ql4")
 0:1/0 = 0
 1:1/0 = 0
 2:1/0 = 0
@@ -11177,8 +11170,17 @@ texture = ExtResource("7_rqie0")
 [sub_resource type="TileSet" id="TileSet_la2sg"]
 sources/0 = SubResource("TileSetAtlasSource_qpghy")
 
+[sub_resource type="Gradient" id="Gradient_71xjj"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_yxwem"]
+gradient = SubResource("Gradient_71xjj")
+fill = 1
+fill_from = Vector2(0.504274, 0.517094)
+fill_to = Vector2(0.867521, 0.188034)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kakmq"]
-texture = ExtResource("10_fag4h")
+texture = ExtResource("9_5ccbp")
 4:1/0 = 0
 5:1/0 = 0
 10:1/0 = 0
@@ -11532,7 +11534,7 @@ polygon = PackedVector2Array(-1216, 221, 481, 221, 495, 209, 495, 198, 506, 196,
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_17kim"]
 frequency = 0.0045
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bql8j"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6ugtl"]
 width = 1920
 height = 1080
 seamless = true
@@ -11540,22 +11542,31 @@ seamless_blend_skirt = 0.75
 noise = SubResource("FastNoiseLite_17kim")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plphe"]
-shader = ExtResource("15_3v5r1")
+shader = ExtResource("14_7bhro")
 shader_parameter/density = 1.0
 shader_parameter/speed = Vector2(0.001, 0.001)
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_6ugtl")
 
-[node name="Map2" type="Node2D"]
+[sub_resource type="Gradient" id="Gradient_867xu"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_x7wf1")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_i6idm"]
+gradient = SubResource("Gradient_867xu")
+fill = 2
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-1188, -519)
-zoom = Vector2(2.5, 2.5)
+[sub_resource type="Gradient" id="Gradient_o4nys"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_biqwp"]
+gradient = SubResource("Gradient_o4nys")
+fill = 2
+
+[node name="MapTwo" type="Map"]
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0.703808, 0.703808, 0.703808, 1)
+color = Color(0.0392157, 0.0392157, 0.0392157, 1)
 
 [node name="TileMapLayers" type="Node" parent="."]
 
@@ -11600,65 +11611,114 @@ tile_set = SubResource("TileSet_2p175")
 material = SubResource("ShaderMaterial_kbdy1")
 tile_set = SubResource("TileSet_la2sg")
 
-[node name="candle_light1" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light1" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-1083, 308)
 
-[node name="candle_light2" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light2" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-1072, 309)
 
-[node name="candle_light3" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light3" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-1063, 311)
 
-[node name="candle_light7" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light7" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-683, 308)
 
-[node name="candle_light8" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light8" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-672, 309)
 
-[node name="candle_light9" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light9" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-663, 311)
 
-[node name="candle_light15" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light15" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-380, 308)
 
-[node name="candle_light16" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light16" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-368, 309)
 
-[node name="candle_light17" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light17" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-359, 311)
 
-[node name="candle_light18" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light18" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(433, -18)
 
-[node name="candle_light19" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light19" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(336, 309)
 
-[node name="candle_light20" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light20" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(345, 311)
 
-[node name="candle_light30" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light30" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(374, 310)
 
-[node name="candle_light21" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light21" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(325, 308)
 
-[node name="candle_light22" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light22" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(217, 312)
 
-[node name="candle_light23" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light23" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(208, 309)
 
-[node name="candle_light24" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light24" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(196, 308)
 
-[node name="candle_light25" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light25" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-7, 311)
 
-[node name="candle_light26" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light26" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-16, 309)
 
-[node name="candle_light27" parent="FX/Flames" instance=ExtResource("10_1vryo")]
+[node name="candle_light27" parent="FX/Flames" instance=ExtResource("8_bhd03")]
 position = Vector2(-27, 308)
+
+[node name="PointLight2D" type="MapLight" parent="FX/Flames"]
+position = Vector2(-369, 310)
+scale = Vector2(5.5, 5.5)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
+
+[node name="PointLight2D2" type="MapLight" parent="FX/Flames"]
+position = Vector2(-16, 308)
+scale = Vector2(5.5, 5.5)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
+
+[node name="PointLight2D3" type="MapLight" parent="FX/Flames"]
+position = Vector2(-672, 307)
+scale = Vector2(5.5, 5.5)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
+
+[node name="PointLight2D4" type="MapLight" parent="FX/Flames"]
+position = Vector2(-1072, 308)
+scale = Vector2(5.5, 5.5)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
+
+[node name="PointLight2D5" type="MapLight" parent="FX/Flames"]
+position = Vector2(207, 307)
+scale = Vector2(5.5, 5.5)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
+
+[node name="PointLight2D6" type="MapLight" parent="FX/Flames"]
+position = Vector2(345, 310)
+scale = Vector2(5.5, 5.5)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
+
+[node name="PointLight2D7" type="MapLight" parent="FX/Flames"]
+position = Vector2(433, -20)
+scale = Vector2(3, 3)
+color = Color(0.752941, 0.423529, 0.258824, 1)
+energy = 0.4
+texture = SubResource("GradientTexture2D_yxwem")
 
 [node name="LightShafts" type="TileMapLayer" parent="FX"]
 modulate = Color(0.664, 0.891, 1, 0.2)
@@ -11667,47 +11727,47 @@ tile_set = SubResource("TileSet_qh8xj")
 
 [node name="PassablePlatforms" type="Node" parent="."]
 
-[node name="WoodenPlatform" parent="PassablePlatforms" instance=ExtResource("4_nw20u")]
+[node name="WoodenPlatform" parent="PassablePlatforms" instance=ExtResource("10_laoxe")]
 z_index = -2
 position = Vector2(-1231, 141)
 
-[node name="wooden_platform2" parent="PassablePlatforms" instance=ExtResource("12_ilsa5")]
+[node name="wooden_platform2" parent="PassablePlatforms" instance=ExtResource("11_y4dgq")]
 z_index = -2
 position = Vector2(491, 6)
 
-[node name="wooden_platform3" parent="PassablePlatforms" instance=ExtResource("13_hbn43")]
+[node name="wooden_platform3" parent="PassablePlatforms" instance=ExtResource("12_atqcb")]
 z_index = -2
 position = Vector2(-403, -307)
 
-[node name="wooden_platform4" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform4" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 z_index = -2
 position = Vector2(-383, -411)
 
-[node name="wooden_platform5" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform5" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 position = Vector2(-1297, -484)
 scale = Vector2(0.918468, 0.918468)
 
-[node name="wooden_platform6" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform6" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 position = Vector2(-1186, -728)
 scale = Vector2(0.918468, 0.918468)
 
-[node name="wooden_platform7" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform7" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 position = Vector2(-1282, -25)
 scale = Vector2(0.918468, 0.918468)
 
-[node name="wooden_platform8" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform8" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 position = Vector2(1066, -351)
 scale = Vector2(0.918468, 0.918468)
 
-[node name="wooden_platform9" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform9" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 position = Vector2(1244, -586)
 scale = Vector2(0.918468, 0.918468)
 
-[node name="wooden_platform10" parent="PassablePlatforms" instance=ExtResource("14_fsbha")]
+[node name="wooden_platform10" parent="PassablePlatforms" instance=ExtResource("13_7e3wc")]
 position = Vector2(1274, -217)
 scale = Vector2(0.918468, 0.918468)
 
-[node name="wooden_platform11" parent="PassablePlatforms" instance=ExtResource("12_ilsa5")]
+[node name="wooden_platform11" parent="PassablePlatforms" instance=ExtResource("11_y4dgq")]
 position = Vector2(-1056, -319)
 scale = Vector2(0.766753, 0.766753)
 
@@ -11730,6 +11790,7 @@ modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_whfx1")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="Fog" type="ColorRect" parent="CanvasLayer"]
 visible = false
@@ -11750,6 +11811,7 @@ offset_right = 2232.0
 offset_bottom = 1030.0
 scale = Vector2(1.10625, 1.10625)
 color = Color(0.527, 0.527, 0.527, 0.775)
+metadata/_edit_use_anchors_ = true
 
 [node name="Fog3" type="ColorRect" parent="CanvasLayer"]
 z_index = 20
@@ -11760,53 +11822,73 @@ offset_right = 1586.0
 offset_bottom = 1180.0
 scale = Vector2(1.16923, 1.16923)
 color = Color(0.725, 0.725, 0.725, 0.198)
+metadata/_edit_use_anchors_ = true
 
 [node name="CanvasModulate" type="CanvasModulate" parent="CanvasLayer"]
 color = Color(0.703808, 0.703808, 0.703808, 1)
 
 [node name="Lights" type="Node" parent="."]
 
-[node name="chandelier" parent="Lights" instance=ExtResource("16_mnluf")]
-position = Vector2(295, -257)
+[node name="chandelier" parent="Lights" instance=ExtResource("15_076fl")]
+position = Vector2(331, -254)
 
-[node name="chandelier2" parent="Lights" instance=ExtResource("16_mnluf")]
-position = Vector2(546, -257)
+[node name="chandelier2" parent="Lights" instance=ExtResource("15_076fl")]
+position = Vector2(582, -254)
 
-[node name="chandelier4" parent="Lights" instance=ExtResource("16_mnluf")]
-position = Vector2(-1123, -958)
+[node name="chandelier4" parent="Lights" instance=ExtResource("15_076fl")]
+position = Vector2(-1103, -958)
 rotation = -0.0974219
 
-[node name="Torch" parent="Lights" instance=ExtResource("17_imyup")]
-position = Vector2(-1361, 36)
+[node name="Torch" parent="Lights" instance=ExtResource("16_vu8gn")]
+position = Vector2(-1360, 48)
 
-[node name="Torch2" parent="Lights" instance=ExtResource("17_imyup")]
-position = Vector2(-711, -46)
+[node name="Torch2" parent="Lights" instance=ExtResource("16_vu8gn")]
+position = Vector2(-711, -33)
 
-[node name="camp_fire" parent="Lights" instance=ExtResource("18_ytmg1")]
+[node name="camp_fire" parent="Lights" instance=ExtResource("17_c5hcy")]
 position = Vector2(1361, 93)
 
-[node name="Torch3" parent="Lights" instance=ExtResource("17_imyup")]
+[node name="Torch3" parent="Lights" instance=ExtResource("16_vu8gn")]
 position = Vector2(-255, -483)
 
-[node name="Torch4" parent="Lights" instance=ExtResource("17_imyup")]
-position = Vector2(830, -480)
+[node name="Torch4" parent="Lights" instance=ExtResource("16_vu8gn")]
+position = Vector2(1204, -629)
 
-[node name="camp_fire2" parent="Lights" instance=ExtResource("19_hsegn")]
+[node name="camp_fire2" parent="Lights" instance=ExtResource("18_oyqre")]
 z_index = -1
 position = Vector2(369, -443)
+
+[node name="Torch5" parent="Lights" instance=ExtResource("16_vu8gn")]
+position = Vector2(-530, -716)
+
+[node name="Torch6" parent="Lights" instance=ExtResource("16_vu8gn")]
+position = Vector2(116, -716)
 
 [node name="Decorations" type="Node" parent="."]
 
 [node name="SpawnPoints" type="Node" parent="."]
 
-[node name="One" type="Marker2D" parent="SpawnPoints"]
+[node name="1" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(-1057, -380)
 
-[node name="Two" type="Marker2D" parent="SpawnPoints"]
+[node name="2" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(1066, -414)
 
-[node name="Three" type="Marker2D" parent="SpawnPoints"]
+[node name="3" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(0, -724)
 
-[node name="Four" type="Marker2D" parent="SpawnPoints"]
+[node name="4" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(1, 281)
+
+[node name="UiLighting" type="PointLight2D" parent="."]
+position = Vector2(-144.5, -331)
+scale = Vector2(108.453, 38.875)
+energy = 0.25
+range_item_cull_mask = 524288
+texture = SubResource("GradientTexture2D_i6idm")
+
+[node name="PointLight2D" type="PlayerLight" parent="."]
+position = Vector2(-144.5, -331)
+scale = Vector2(108.453, 38.875)
+energy = 0.1
+texture = SubResource("GradientTexture2D_biqwp")

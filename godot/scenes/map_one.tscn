@@ -79,22 +79,22 @@ position = Vector2(-767, -267)
 position = Vector2(176, -357)
 
 [node name="chandelier8" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-38, -709)
+position = Vector2(-3, -706)
 
 [node name="Torch7" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-865, 8)
 
 [node name="chandelier" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-1042, -529)
+position = Vector2(-1014, -526)
 
 [node name="camp_fire3" parent="LightSources" instance=ExtResource("5_hth5s")]
 position = Vector2(-1187, 380)
 
 [node name="chandelier9" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-39, 42)
+position = Vector2(0, 45)
 
 [node name="Torch2" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(916, -685)
+position = Vector2(916, -673)
 
 [node name="Torch3" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-519, 293)

@@ -90,6 +90,9 @@ impl INode2D for Game {
         let map_one = load::<PackedScene>("res://scenes/map_one.tscn");
         self.maps.insert("MapOne".to_string(), map_one);
 
+        let map_two = load::<PackedScene>("res://scenes/map_two.tscn");
+        self.maps.insert("MapTwo".to_string(), map_two);
+
         // Create the two split screens
         // Clone on a Gd is just a new ref not a new instance
         let mut split_screen_one = self.split_screen_one.clone();
@@ -227,7 +230,7 @@ impl Game {
         // Next instantiate the map
         let map = self
             .maps
-            .get("MapOne")
+            .get("MapTwo")
             .expect("Map not found")
             .instantiate_as::<Map>();
         self.set_map(map);

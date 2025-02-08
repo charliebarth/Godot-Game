@@ -10515,11 +10515,11 @@ texture = ExtResource("9_6t8ju")
 sources/1 = SubResource("TileSetAtlasSource_w5v40")
 sources/0 = SubResource("TileSetAtlasSource_cwdjo")
 
-[sub_resource type="Gradient" id="Gradient_71xjj"]
+[sub_resource type="Gradient" id="Gradient_o0lg0"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ru3g4"]
-gradient = SubResource("Gradient_71xjj")
+gradient = SubResource("Gradient_o0lg0")
 fill = 1
 fill_from = Vector2(0.504274, 0.517094)
 fill_to = Vector2(0.867521, 0.188034)
