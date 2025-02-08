@@ -960,6 +960,7 @@ shader_parameter/border_width = 0.03
 
 [node name="Player" type="Player"]
 z_index = 1
+collision_layer = 2049
 script = ExtResource("1_pp08i")
 
 [node name="PlayerAnimation" type="AnimatedSprite2D" parent="."]
@@ -1155,6 +1156,10 @@ offset_right = 128.263
 offset_bottom = 85.4783
 
 [node name="Timer" type="Timer" parent="Disconnected"]
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(324, -286)
+collision_mask = 3072
 
 [connection signal="id_changed" from="." to="PointLight2D" method="_on_player_id_changed"]
 [connection signal="id_changed" from="." to="PointLight2D2" method="_on_player_id_changed"]
