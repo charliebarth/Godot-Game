@@ -235,6 +235,20 @@ impl Player {
     }
 
     #[func]
+    pub fn make_player_visible(&mut self, player_id: i32) {
+        let mut player_sprite = self.get_sprite();
+        let current_layer = player_sprite.get_visibility_layer();
+        player_sprite.set_visibility_layer(current_layer | 1 << (player_id * 2));
+    }
+
+    #[func]
+    pub fn make_player_invisible(&mut self, player_id: i32) {
+        let mut player_sprite = self.get_sprite();
+        let current_layer = player_sprite.get_visibility_layer();
+        player_sprite.set_visibility_layer(current_layer & !(1 << (player_id * 2)));
+    }
+
+    #[func]
     /// Set the zoom for the player
     ///
     /// # Arguments
