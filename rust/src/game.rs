@@ -1,13 +1,9 @@
 use std::collections::HashMap;
 
 use godot::{
-    classes::{InputEvent, InputMap, Timer},
+    classes::{DisplayServer, InputEvent, InputMap, Timer},
     prelude::*,
 };
-
-const SCREEN_WIDTH: f32 = 1920.0;
-const SCREEN_HEIGHT: f32 = 1080.0;
-const HALF_SCREEN_HEIGHT: f32 = SCREEN_HEIGHT / 2.0;
 
 use crate::{main_menu::MainMenu, map::Map, player::player::Player, split_screen::SplitScreen};
 
@@ -45,6 +41,8 @@ pub struct Game {
     day: bool,
     /// The timer for the day/night cycle.
     day_night_timer: Gd<Timer>,
+    /// The size of the screen
+    screen_size: Vector2,
 }
 
 #[godot_api]
@@ -54,6 +52,8 @@ impl INode2D for Game {
         let mut day_night_timer = Timer::new_alloc();
         day_night_timer.set_wait_time(CYCLE_LENGTH);
         day_night_timer.set_autostart(true);
+
+        let screen_size = DisplayServer::singleton().screen_get_size();
 
         Self {
             base,
@@ -71,10 +71,12 @@ impl INode2D for Game {
             split_screen_two: SplitScreen::new_alloc(),
             day: true,
             day_night_timer,
+            screen_size: Vector2::new(screen_size.x as f32, screen_size.y as f32),
         }
     }
 
     fn ready(&mut self) {
+        godot_print!("Screen size: {:?}", self.screen_size);
         Input::singleton().connect(
             "joy_connection_changed",
             &Callable::from_object_method(
@@ -92,7 +94,7 @@ impl INode2D for Game {
         let mut split_screen_two = self.split_screen_two.clone();
         split_screen_one.set_name("SplitScreenOne");
         split_screen_two.set_name("SplitScreenTwo");
-        split_screen_two.set_position(Vector2::new(0.0, HALF_SCREEN_HEIGHT));
+        split_screen_two.set_position(Vector2::new(0.0, self.screen_size.y / 2.0));
 
         self.base_mut().add_child(&split_screen_one);
         self.base_mut().add_child(&split_screen_two);
@@ -129,6 +131,19 @@ impl INode2D for Game {
 
 #[godot_api]
 impl Game {
+    /// Reference viewport size for a single player pane at zoom 1.0
+    /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen
+    const REFERENCE_VIEWPORT: Vector2 = Vector2::new(960.0, 540.0);
+
+    /// Calculates the appropriate zoom factor based on viewport size
+    /// Uses the minimum zoom value to maintain aspect ratio
+    fn calculate_zoom(&self, viewport_size: Vector2) -> Vector2 {
+        let zoom_x = viewport_size.x / Self::REFERENCE_VIEWPORT.x;
+        let zoom_y = viewport_size.y / Self::REFERENCE_VIEWPORT.y;
+        let zoom = zoom_x.min(zoom_y);
+        Vector2::new(zoom, zoom)
+    }
+
     fn register_player(&mut self, device_id: i32) {
         self.devices.push(device_id);
         self.current_player_id = self.devices.len() as i32;
@@ -231,18 +246,14 @@ impl Game {
         }
 
         // Set sizes and add players
-        // The split screens will resize the individual panes based on the number of players added
-        if self.players.len() == 1 {
-            const SINGLE_PLAYER_ZOOM: Vector2 = Vector2::new(2.0, 2.0);
-            self.players[0].bind_mut().set_zoom(SINGLE_PLAYER_ZOOM);
-            split_screen_one.set_size(Vector2::new(SCREEN_WIDTH, SCREEN_HEIGHT));
-            split_screen_one.bind_mut().add_players(odd_players);
-        } else {
-            split_screen_one.set_size(Vector2::new(SCREEN_WIDTH, HALF_SCREEN_HEIGHT));
-            split_screen_two.set_size(Vector2::new(SCREEN_WIDTH, HALF_SCREEN_HEIGHT));
-            split_screen_one.bind_mut().add_players(odd_players);
-            split_screen_two.bind_mut().add_players(even_players);
+        let zoom: Vector2 = self.determine_screen_size();
+
+        for player in self.players.iter_mut() {
+            player.bind_mut().set_zoom(zoom);
         }
+
+        split_screen_one.bind_mut().add_players(odd_players);
+        split_screen_two.bind_mut().add_players(even_players);
 
         // Set the position of the players to the spawn point
         for (index, player) in players.iter_mut().enumerate() {
@@ -252,6 +263,22 @@ impl Game {
 
         self.started = true;
         self.day_night_cycle();
+    }
+
+    pub fn determine_screen_size(&mut self) -> Vector2 {
+        let screen_size: Vector2;
+        if self.players.len() == 1 {
+            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y);
+        } else if self.players.len() == 2 {
+            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
+            self.split_screen_two.set_size(screen_size);
+        } else {
+            screen_size = Vector2::new(self.screen_size.x / 2.0, self.screen_size.y / 2.0);
+            self.split_screen_two.set_size(screen_size);
+        }
+
+        self.split_screen_one.set_size(screen_size);
+        self.calculate_zoom(screen_size)
     }
 
     #[func]
