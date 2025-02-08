@@ -1024,6 +1024,7 @@ script = ExtResource("26_f1f48")
 
 [node name="SteelRange" type="Area2D" parent="."]
 visible = false
+collision_mask = 129
 
 [node name="AllomanticRangeShape" type="CollisionShape2D" parent="SteelRange"]
 position = Vector2(0, 1)
