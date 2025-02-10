@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://sk7urw8x5b6t"]
+[gd_scene load_steps=18 format=3 uid="uid://sk7urw8x5b6t"]
 
 [ext_resource type="Script" path="res://scripts/settings_tab_menu.gd" id="1_0wp7c"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scenes/graphics.gd" id="4_vq3k8"]
 [ext_resource type="Script" path="res://scenes/player_choice.gd" id="5_iw8m6"]
 [ext_resource type="Script" path="res://scenes/ui_placement.gd" id="6_ijgpl"]
+[ext_resource type="Script" path="res://scenes/ui_size.gd" id="7_5uhj3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bb2bd"]
 bg_color = Color(0.435294, 0.443137, 0.458824, 1)
@@ -42,6 +43,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 67.0
+offset_top = -11.0
+offset_right = 67.0
+offset_bottom = -11.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0wp7c")
@@ -933,13 +938,14 @@ layout_mode = 2
 theme_override_constants/separation = 64
 
 [node name="UI_Placement" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(1240, 540)
 layout_mode = 2
 script = ExtResource("6_ijgpl")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Placement"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 608.0
+offset_bottom = 282.0
 theme_override_constants/separation = 16
 
 [node name="Label" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Placement/VBoxContainer"]
@@ -965,6 +971,7 @@ size_flags_horizontal = 2
 size_flags_vertical = 2
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ip7be")
 toggle_mode = true
+button_pressed = true
 
 [node name="1" type="Button" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Placement/VBoxContainer/PanelContainer/GridContainer"]
 custom_minimum_size = Vector2(200, 100)
@@ -1006,6 +1013,43 @@ size_flags_vertical = 10
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cu4p5")
 toggle_mode = true
 
+[node name="HSeparator" type="HSeparator" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Placement/VBoxContainer"]
+layout_mode = 2
+
+[node name="UI_Size" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("7_5uhj3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size"]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 42.0
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "UI Size"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+value = 30.0
+
+[node name="Value" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "30"
+horizontal_alignment = 2
+
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_h_slider_value_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music" method="_on_h_slider_value_changed"]
@@ -1023,3 +1067,4 @@ toggle_mode = true
 [connection signal="value_changed" from="TabContainer/Graphics/MarginContainer/VBoxContainer/FPS cap/HBoxContainer/HSlider" to="TabContainer/Graphics" method="set_fps"]
 [connection signal="toggled" from="TabContainer/Graphics/MarginContainer/VBoxContainer/VsyncMode/HBoxContainer/VsyncModeBtn" to="TabContainer/Graphics" method="set_vsync"]
 [connection signal="pressed" from="TabContainer/Graphics/MarginContainer/HBoxContainer/Apply" to="TabContainer/Graphics" method="_on_apply_pressed"]
+[connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer/HBoxContainer/HSlider" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size" method="scale_UI_size"]
