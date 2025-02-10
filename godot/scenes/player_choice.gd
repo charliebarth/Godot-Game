@@ -1,7 +1,5 @@
 extends Control
 
-
-
 var button_group = ButtonGroup.new()
 
 func _ready():

@@ -2,8 +2,6 @@ extends Control
 
 var button_group = ButtonGroup.new()
 
-$..
-
 var positions = []
 
 func _ready():
