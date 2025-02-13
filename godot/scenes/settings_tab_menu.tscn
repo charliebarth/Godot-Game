@@ -1,12 +1,13 @@
-[gd_scene load_steps=18 format=3 uid="uid://sk7urw8x5b6t"]
+[gd_scene load_steps=19 format=3 uid="uid://sk7urw8x5b6t"]
 
 [ext_resource type="Script" path="res://scripts/settings_tab_menu.gd" id="1_0wp7c"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
 [ext_resource type="Script" path="res://scripts/audio_slider.gd" id="4_u10kp"]
-[ext_resource type="Script" path="res://scenes/graphics.gd" id="4_vq3k8"]
+[ext_resource type="Script" path="res://scripts/graphics.gd" id="4_vq3k8"]
 [ext_resource type="Script" path="res://scenes/player_choice.gd" id="5_iw8m6"]
-[ext_resource type="Script" path="res://scenes/ui_placement.gd" id="6_ijgpl"]
-[ext_resource type="Script" path="res://scenes/ui_size.gd" id="7_5uhj3"]
+[ext_resource type="Script" path="res://ui_placement.gd" id="6_ijgpl"]
+[ext_resource type="Script" path="res://ui_size.gd" id="7_5uhj3"]
+[ext_resource type="PackedScene" uid="uid://hiu0jooun71c" path="res://scenes/player_ui.tscn" id="8_wmhrj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bb2bd"]
 bg_color = Color(0.435294, 0.443137, 0.458824, 1)
@@ -1016,39 +1017,83 @@ toggle_mode = true
 [node name="HSeparator" type="HSeparator" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Placement/VBoxContainer"]
 layout_mode = 2
 
-[node name="UI_Size" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer"]
+[node name="UI_Size_Opacity" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 script = ExtResource("7_5uhj3")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity"]
 layout_mode = 0
-offset_right = 300.0
-offset_bottom = 42.0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer"]
+layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Label" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer"]
+[node name="UI_Size" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
 text = "UI Size"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
 size_flags_vertical = 1
-value = 30.0
+min_value = 1.0
+max_value = 5.0
+step = 0.1
+value = 1.0
 
-[node name="Value" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer/HBoxContainer"]
+[node name="Value" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
-text = "30"
+text = "1"
 horizontal_alignment = 2
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="UI_Opacity" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "UI Opacity
+"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(200, 32)
+layout_mode = 2
+size_flags_vertical = 1
+min_value = 0.1
+max_value = 1.0
+step = 0.1
+value = 1.0
+
+[node name="Value" type="Label" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "1"
+horizontal_alignment = 2
+
+[node name="Control" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayerUI" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer" instance=ExtResource("8_wmhrj")]
+layout_mode = 2
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_h_slider_value_changed"]
@@ -1067,4 +1112,5 @@ horizontal_alignment = 2
 [connection signal="value_changed" from="TabContainer/Graphics/MarginContainer/VBoxContainer/FPS cap/HBoxContainer/HSlider" to="TabContainer/Graphics" method="set_fps"]
 [connection signal="toggled" from="TabContainer/Graphics/MarginContainer/VBoxContainer/VsyncMode/HBoxContainer/VsyncModeBtn" to="TabContainer/Graphics" method="set_vsync"]
 [connection signal="pressed" from="TabContainer/Graphics/MarginContainer/HBoxContainer/Apply" to="TabContainer/Graphics" method="_on_apply_pressed"]
-[connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size/VBoxContainer/HBoxContainer/HSlider" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size" method="scale_UI_size"]
+[connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer/HSlider" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity" method="scale_UI_size"]
+[connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer2/HSlider" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity" method="scale_UI_opacity"]
