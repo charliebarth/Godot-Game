@@ -5,6 +5,8 @@ use std::time::Instant;
 
 use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
+use godot::classes::ConfigFile;
+use godot::classes::Control;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
@@ -175,6 +177,18 @@ impl ICharacterBody2D for Player {
 
         // Set the health bar to the player's health
         self.get_health_bar().set_value(self.get_health());
+
+        // Set the UI size 
+        let mut player_ui = self.base().get_node_as::<Control>("PlayerUI");
+        
+        let mut config = ConfigFile::new_gd();
+        let err = config.load(GString::from("user://settings.ini"));
+        let ui_settings = config.get_section_keys(GString::from("ui"));
+        godot_print!("{}", ui_settings);
+        let size: Variant = config.get_value(GString::from("ui"), GString::from("size"));
+        player_ui.set_scale(Vector2::new(size, size));
+        
+        
     }
 
     /// The Godot method called every physics frame
@@ -935,7 +949,7 @@ impl Player {
         if self.metal_reserve_bar_manager.is_none() {
             self.metal_reserve_bar_manager = Some(
                 self.base()
-                    .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager"),
+                    .get_node_as::<MetalReserveBarManager>("PlayerUI/MetalReserveBarManager"),
             );
         }
 
@@ -952,7 +966,7 @@ impl Player {
     /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
     pub fn get_health_bar(&mut self) -> Gd<TextureProgressBar> {
         if self.health_bar.is_none() {
-            self.health_bar = Some(self.base().get_node_as::<TextureProgressBar>("HealthBar"));
+            self.health_bar = Some(self.base().get_node_as::<TextureProgressBar>("PlayerUI/HealthBar"));
         }
 
         self.health_bar
@@ -970,7 +984,7 @@ impl Player {
         if self.coin_counter.is_none() {
             self.coin_counter = Some(
                 self.base()
-                    .get_node_as::<CoinCounter>("Coin_Counter_Panel/CoinCounter"),
+                    .get_node_as::<CoinCounter>("PlayerUI/Coin_Counter_Panel/CoinCounter"),
             );
         }
         self.coin_counter

@@ -76,6 +76,28 @@ func load_graphics_settings():
 		graphics_settings[key] = config.get_value("graphics", key)
 	
 	return graphics_settings
+	
+func save_ui_settings(size: float, opacity: float):
+	config.set_value(
+		"ui",
+		"size",
+		size
+	)
+	config.set_value(
+		"ui",
+		"opacity",
+		opacity
+	)
+	
+	config.save(SETTINGS_FILE_PATH)
+	print("saved ui settings")
+
+func load_ui_settings():
+	var ui_settings = {}
+	for key in config.get_section_keys("ui"):
+		ui_settings[key] = config.get_value("ui", key)
+		
+	return ui_settings
 
 func load_keybind_settings(id: int):
 	print("loading keybindings for player %s" %[id])

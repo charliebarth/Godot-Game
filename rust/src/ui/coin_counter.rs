@@ -161,7 +161,7 @@ impl CoinCounter {
             coin.set_name(format!("Coin{}", coin_id).into());
 
             // Get the player and set the coins current player
-            let player = self.base().get_node_as::<Player>("../../");
+            let player = self.base().get_node_as::<Player>("../../../");
             coin.bind_mut().set_curr_player(player.to_godot());
 
             // Set initial state

@@ -1089,11 +1089,20 @@ theme_override_font_sizes/font_size = 64
 text = "1"
 horizontal_alignment = 2
 
-[node name="Control" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="PlayerUI" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer" instance=ExtResource("8_wmhrj")]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+
+[node name="Apply" type="Button" parent="TabContainer/UI Customization/MarginContainer/HBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../../ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer/HSlider")
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Apply"
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_h_slider_value_changed"]
@@ -1114,3 +1123,4 @@ layout_mode = 2
 [connection signal="pressed" from="TabContainer/Graphics/MarginContainer/HBoxContainer/Apply" to="TabContainer/Graphics" method="_on_apply_pressed"]
 [connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer/HSlider" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity" method="scale_UI_size"]
 [connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer2/HSlider" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity" method="scale_UI_opacity"]
+[connection signal="pressed" from="TabContainer/UI Customization/MarginContainer/HBoxContainer/Apply" to="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity" method="_on_apply_pressed"]
