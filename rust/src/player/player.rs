@@ -5,6 +5,8 @@ use std::time::Instant;
 
 use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
+use godot::classes::ConfigFile;
+use godot::classes::Control;
 use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
@@ -190,6 +192,15 @@ impl ICharacterBody2D for Player {
             "tin_activated",
             &Callable::from_object_method(&tin_light, "adjust_tin_light"),
         );
+        // Set the UI size
+        let mut player_ui = self.base().get_node_as::<Control>("PlayerUI");
+
+        let mut config = ConfigFile::new_gd();
+        let err = config.load(GString::from("user://settings.ini"));
+        let ui_settings = config.get_section_keys(GString::from("ui"));
+        godot_print!("{}", ui_settings);
+        let size: Variant = config.get_value(GString::from("ui"), GString::from("size"));
+        player_ui.set_scale(Vector2::new(size, size));
     }
 
     /// The Godot method called every physics frame
@@ -391,10 +402,10 @@ impl Player {
     pub fn increment_eliminations(&mut self, attacker_id: i32) {
         self.eliminations += 1;
         // update the eliminations counter for a player in game
-        self.base().get_node_as::<Game>("/root/Game")
+        self.base()
+            .get_node_as::<Game>("/root/Game")
             .bind_mut()
             .update_eliminations(attacker_id);
-
     }
 
     /// Adjusts the coins in this players coin_counter positively or negatively.
@@ -1010,7 +1021,10 @@ impl Player {
     /// # Returns
     /// * `MetalReserveBarManager` - The MetalReserveBarManager node
     pub fn get_metal_reserve_bar_manager(&mut self) -> Gd<MetalReserveBarManager> {
-        self.get_cached_node(CachedNode::MetalReserveBarManager, "MetalReserveBarManager")
+        self.get_cached_node(
+            CachedNode::MetalReserveBarManager,
+            "PlayerUI/MetalReserveBarManager",
+        )
     }
 
     /// Getter for the HealthBar node
@@ -1019,7 +1033,7 @@ impl Player {
     /// # Returns
     /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
     pub fn get_health_bar(&mut self) -> Gd<TextureProgressBar> {
-        self.get_cached_node(CachedNode::HealthBar, "HealthBar")
+        self.get_cached_node(CachedNode::HealthBar, "PlayerUI/HealthBar")
     }
 
     /// Getter for CoinCounter node
@@ -1028,7 +1042,10 @@ impl Player {
     /// # Returns
     /// *  `CoinCounter` - The CoinCounter node used to show player coins.
     pub fn get_coin_counter(&mut self) -> Gd<CoinCounter> {
-        self.get_cached_node(CachedNode::CoinCounter, "Coin_Counter_Panel/CoinCounter")
+        self.get_cached_node(
+            CachedNode::CoinCounter,
+            "PlayerUI/Coin_Counter_Panel/CoinCounter",
+        )
     }
 
     /// Getter for the PointLight2D node

@@ -982,36 +982,47 @@ position = Vector2(0, 1)
 
 [node name="InputManager" type="InputManager" parent="."]
 
-[node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
-physics_interpolation_mode = 0
-light_mask = 524289
-offset_left = -468.0
-offset_top = -241.0
-offset_right = -405.0
-offset_bottom = -200.0
+[node name="PlayerUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -480.0
+offset_top = -272.0
+offset_right = -480.0
+offset_bottom = -272.0
 
-[node name="MetalManager" type="MetalManager" parent="."]
-
-[node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
-light_mask = 524289
-offset_left = -385.0
-offset_top = -259.0
-offset_right = -352.0
-offset_bottom = -243.0
-
-[node name="HealthBar" type="TextureProgressBar" parent="."]
-light_mask = 524289
+[node name="HealthBar" type="TextureProgressBar" parent="PlayerUI"]
 z_index = 20
-offset_left = -475.0
-offset_top = -263.0
-offset_right = -390.0
-offset_bottom = -223.0
+layout_mode = 0
+offset_left = 5.0
+offset_top = 8.0
+offset_right = 90.0
+offset_bottom = 48.0
 texture_under = ExtResource("22_33rpo")
 texture_progress = ExtResource("23_0ycqf")
 texture_progress_offset = Vector2(20, 7)
 
+
+[node name="MetalReserveBarManager" parent="PlayerUI" instance=ExtResource("20_elmgo")]
+physics_interpolation_mode = 0
+layout_mode = 0
+offset_left = 20.0
+offset_top = 30.0
+offset_right = 83.0
+offset_bottom = 71.0
+
+[node name="Coin_Counter_Panel" parent="PlayerUI" instance=ExtResource("22_l2cmc")]
+offset_left = 87.0
+offset_top = 9.0
+offset_right = 120.0
+offset_bottom = 25.0
+
+[node name="MetalManager" type="MetalManager" parent="."]
+
 [node name="PointLight2D" type="PlayerLight" parent="."]
 position = Vector2(-2.38419e-07, -18)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(-4, 12)
 scale = Vector2(44.4023, 22.6347)
 energy = 0.05
 shadow_enabled = true
