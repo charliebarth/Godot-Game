@@ -1,5 +1,6 @@
-use godot::builtin::Color;
-use godot::global::godot_print;
+use godot::builtin::{Color, Vector2};
+use godot::classes::Input;
+use godot::global::JoyAxis;
 use godot::obj::WithBaseField;
 
 use crate::player::enums::force::Force;
@@ -30,6 +31,8 @@ pub struct Steel {
     push: f32,
     /// A flag to determine if the player should show the steel particles.
     show_particles: bool,
+    /// The location of the metal object that the player is currently pushing or pulling.
+    object_location: Vector2,
 }
 
 impl Steel {
@@ -52,6 +55,7 @@ impl Steel {
             was_low_burn: false,
             push: 0.0,
             show_particles: false,
+            object_location: Vector2::ZERO,
         }
     }
 }
@@ -70,9 +74,8 @@ impl Metal for Steel {
             return;
         }
 
-        let metal_position = player.get_nearest_metal_object();
-
-        if metal_position.is_none() {
+        // Get the normalized direction from the player to the nearest metal object.
+        if self.object_location == Vector2::ZERO {
             return;
         }
 
@@ -86,21 +89,14 @@ impl Metal for Steel {
             player.add_force(Force::NormalForce { magnitude: -1.0 });
         }
 
-        if let Some(angle) = metal_position {
-            let x_velocity: f32 = max_acceleration * (angle.cos() as f32) * self.push;
-            let y_velocity: f32 = max_acceleration * (angle.sin() as f32) * self.push;
+        // Use the x and y components directly since 'direction' is normalized.
+        let x_velocity = max_acceleration * self.object_location.x * self.push;
+        let y_velocity = max_acceleration * self.object_location.y * self.push;
 
-            player.add_force(Force::SteelPush {
-                x_velocity,
-                y_velocity,
-            });
-
-            // NOTE: Setup a way so players can run on ceilings and walls if pulling or pushing into them
-            // I think this can be done with up direction from characterbody2d
-            godot_print!("Is on wall: {}", player.base().is_on_wall());
-            godot_print!("Is on floor: {}", player.base().is_on_floor());
-            godot_print!("Is on ceiling: {}", player.base().is_on_ceiling());
-        }
+        player.add_force(Force::SteelPush {
+            x_velocity,
+            y_velocity,
+        });
     }
 
     /// The low burn function for steel.
@@ -109,26 +105,60 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the metal line can be modified.
     fn low_burn(&mut self, player: &mut Player) {
+        // Mark that the player is low burning and decrease the reserve.
         self.was_low_burn = true;
         self.current_reserve -= self.low_burn_rate;
+        self.object_location = Vector2::ZERO;
 
+        // Get the metal line and show it.
         let mut metal_line = player.get_metal_line();
+        let player_position = metal_line.to_local(metal_line.get_global_position());
         let mut bound_metal_line = metal_line.bind_mut();
         bound_metal_line.set_should_show(true);
 
-        let metal_objects = player.get_metal_objects();
-        //let player_mass = player.get_mass();
+        // Get the joystick position.
+        let joy_position_x =
+            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_X);
+        let joy_position_y =
+            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_Y);
+        let joy_position = Vector2::new(joy_position_x, joy_position_y);
 
-        for metal_object in metal_objects.iter() {
-            let color = Color::from_rgba(0.0, 0.6, 2.3, 1.0);
-            let metal_object_position = metal_object.get_global_position();
-            //let metal_object_mass = metal_object.get_mass();
+        // A metal object must be within ±25 degrees to be selected.
+        let mut closest_obj_angle_diff: f32 = 40.0_f32.to_radians();
+
+        // Get the player position and the index of the closest metal object.
+        let mut index_closest_metal_object = usize::MAX;
+
+        for (index, metal_object) in player.get_metal_objects().iter().enumerate() {
+            let color = Color::from_rgba(0.0, 0.4, 0.9, 0.1);
+            let metal_object_position = bound_metal_line
+                .base()
+                .to_local(metal_object.get_global_position());
 
             bound_metal_line.add_line_segment(metal_object_position, color);
+
+            let closest_metal_object = self.get_closest_metal_object(
+                player_position,
+                joy_position,
+                closest_obj_angle_diff,
+                metal_object_position,
+            );
+
+            if let Some((metal_object_dir, angle_diff)) = closest_metal_object {
+                self.object_location = metal_object_dir;
+                closest_obj_angle_diff = angle_diff;
+                index_closest_metal_object = index;
+            }
+        }
+
+        if index_closest_metal_object != usize::MAX {
+            bound_metal_line.update_color(
+                Color::from_rgba(0.0, 0.6, 2.3, 1.0),
+                index_closest_metal_object,
+            );
         }
 
         drop(bound_metal_line);
-
         metal_line.queue_redraw();
     }
 
@@ -145,6 +175,22 @@ impl Metal for Steel {
         let mut input_manager = godot_input_manager.bind_mut();
         self.show_particles = false;
         self.push = 0.0;
+
+        // Low burning shows the allomantic lines
+        if self.current_reserve > 0.0 && input_manager.fetch_metal_event(MetalEvents::SteelLowBurn)
+        {
+            self.low_burn(player);
+            self.show_particles = true;
+        } else if self.was_low_burn {
+            self.was_low_burn = false;
+            self.object_location = Vector2::ZERO;
+            let mut metal_line = player.get_metal_line();
+            let mut bound_metal_line = metal_line.bind_mut();
+            bound_metal_line.set_should_show(false);
+            drop(bound_metal_line);
+
+            metal_line.queue_redraw();
+        }
 
         // Burning is an actual steel push
         if self.current_reserve > 0.0 {
@@ -165,22 +211,6 @@ impl Metal for Steel {
             player.set_is_steel_burning(false);
         }
 
-        // Low burning shows the allomantic lines
-        if self.current_reserve > 0.0 && input_manager.fetch_metal_event(MetalEvents::SteelLowBurn)
-        {
-            self.low_burn(player);
-            self.show_particles = true;
-        } else if self.was_low_burn {
-            self.was_low_burn = false;
-
-            let mut metal_line = player.get_metal_line();
-            let mut bound_metal_line = metal_line.bind_mut();
-            bound_metal_line.set_should_show(false);
-            drop(bound_metal_line);
-
-            metal_line.queue_redraw();
-        }
-
         player.set_metal_reserve_amount(self.as_str().into(), self.current_reserve);
         player.set_metal_reserve_amount("iron".into(), self.current_reserve);
         player
@@ -195,5 +225,45 @@ impl Metal for Steel {
     fn increase_reserve(&mut self, amount: f64) {
         self.current_reserve += amount;
         self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
+    }
+}
+
+impl Steel {
+    /// Checks if the passed metal object is the closest metal object to the joystick angle.
+    /// If it is then the direction and angle difference are returned.
+    /// Otherwise the current object location and angle difference are returned.
+    ///
+    /// # Arguments
+    /// * `metal_object` - A mutable reference to the metal object to check.
+    /// * `player_position` - The position of the player.
+    /// * `joy_position` - The position of the joystick.
+    /// * `current_shortest_angle_diff` - The current shortest angle difference.
+    ///
+    /// # Returns
+    /// * `(Vector2, f32)` - A tuple containing the direction of the metal object and the angle difference.
+    fn get_closest_metal_object(
+        &mut self,
+        player_position: Vector2,
+        joy_position: Vector2,
+        current_shortest_angle_diff: f32,
+        metal_object_position: Vector2,
+    ) -> Option<(Vector2, f32)> {
+        // Return the current object location and angle difference if joystick is in the deadzone.
+        if joy_position.length() < 0.2 {
+            return None;
+        }
+
+        // Calculate the direction from the player to the metal object.
+        let metal_object_dir = (metal_object_position - player_position).normalized();
+
+        // Calculate the absolute angle difference between the joystick direction and this metal object.
+        let angle_diff = joy_position.angle_to(metal_object_dir).abs();
+
+        // Only update if this metal object is within the selection cone and closer than our current best.
+        if angle_diff < current_shortest_angle_diff {
+            return Some((metal_object_dir, angle_diff));
+        }
+
+        None
     }
 }
