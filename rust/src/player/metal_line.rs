@@ -75,7 +75,7 @@ impl MetalLine {
 
         let start = self.base().to_local(self.base().get_global_position());
         points.push(start);
-        points.push(self.base().to_local(end));
+        points.push(end);
         colors.push(color);
 
         self.points = Some(points);
@@ -89,5 +89,13 @@ impl MetalLine {
     #[func]
     pub fn set_should_show(&mut self, should_show: bool) {
         self.should_show = should_show;
+    }
+
+    pub fn update_color(&mut self, color: Color, index: usize) {
+        if self.colors.is_none() {
+            return;
+        }
+
+        self.colors.as_mut().unwrap()[index] = color;
     }
 }
