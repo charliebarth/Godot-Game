@@ -5,19 +5,21 @@ use std::time::Instant;
 
 use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
+use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
-use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
 use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
+use godot::global::JoyAxis;
 use godot::prelude::*;
 
 use crate::game::Game;
 use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
+use crate::settings::Settings;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::disconnected::Disconnected;
@@ -99,6 +101,8 @@ pub struct Player {
     is_attacking: bool,
     /// HashMap storing cached node references
     cached_nodes: HashMap<CachedNode, Gd<Node>>,
+    /// The settings for the game
+    settings: Gd<Settings>,
 }
 
 #[godot_api]
@@ -112,8 +116,16 @@ impl ICharacterBody2D for Player {
     /// * `Player` - The Player node
     fn init(base: Base<CharacterBody2D>) -> Self {
         let path = GString::from("physics/2d/default_gravity");
-        let gravity: f64 =
-            FromGodot::try_from_variant(&ProjectSettings::singleton().get_setting(&path)).unwrap();
+
+        let settings = Engine::singleton()
+            .get_singleton("Settings")
+            .expect("settings singleton missing")
+            .try_cast::<Settings>()
+            .expect("settings is not a Settings");
+
+        let settings_bound = settings.bind();
+        let gravity: f64 = settings_bound.get_gravity() as f64;
+        drop(settings_bound);
 
         Self {
             base,
@@ -135,6 +147,7 @@ impl ICharacterBody2D for Player {
             is_steel_burning: false,
             is_attacking: false,
             cached_nodes: HashMap::new(),
+            settings,
         }
     }
 
@@ -778,33 +791,39 @@ impl Player {
     ///
     /// # Returns
     /// * `Option<f64>` - The angle of the nearest metal object if there is one within the range of the LineSelector
-    pub fn get_nearest_metal_object(&mut self) -> Option<f64> {
-        let mut nearest_metal_object: Option<f64> = None;
-        let max_angle: f64 = 5.0_f64.to_radians(); // Define max angle difference in radians
+    pub fn get_nearest_metal_object(&mut self) -> Option<Vector2> {
+        let joy_position_x =
+            Input::singleton().get_joy_axis(self.get_device_id(), JoyAxis::RIGHT_X);
+        let joy_position_y =
+            Input::singleton().get_joy_axis(self.get_device_id(), JoyAxis::RIGHT_Y);
+        let joy_position = Vector2::new(joy_position_x, joy_position_y);
 
-        let line_selector_position = self.get_line_selector().get_global_position();
+        // Return None if joystick is in the deadzone.
+        if joy_position.length() < 0.2 {
+            return None;
+        }
+
+        // Define the valid selection range (±15 degrees in radians).
+        let selection_threshold: f32 = 25.0_f32.to_radians();
+
+        let mut nearest_metal_object: Option<Vector2> = None;
         let player_position = self.base().get_global_position();
 
-        // Calculate angle of the line selector relative to the player
-        let line_selector_angle = (line_selector_position.y as f64 - player_position.y as f64)
-            .atan2(line_selector_position.x as f64 - player_position.x as f64);
-
-        let mut current_shortest_angle_diff: f64 = f64::MAX;
+        // Start with the threshold as the "current best" so that only objects within the cone are considered.
+        let mut current_shortest_angle_diff = selection_threshold;
         for metal_object in self.get_metal_objects().iter() {
             let metal_object_position = metal_object.get_global_position();
 
-            // Calculate angle of the metal object relative to the player
-            let metal_object_angle = (metal_object_position.y as f64 - player_position.y as f64)
-                .atan2(metal_object_position.x as f64 - player_position.x as f64);
+            // Calculate the direction from the player to the metal object.
+            let metal_object_dir = (metal_object_position - player_position).normalized();
 
-            // Calculate wrapped angle difference
-            let angle_diff = ((metal_object_angle - line_selector_angle + std::f64::consts::PI)
-                % (2.0 * std::f64::consts::PI))
-                - std::f64::consts::PI;
+            // Calculate the absolute angle difference between the joystick direction and this metal object.
+            let angle_diff = joy_position.angle_to(metal_object_dir).abs();
 
-            if angle_diff.abs() < max_angle && angle_diff.abs() < current_shortest_angle_diff {
-                current_shortest_angle_diff = angle_diff.abs();
-                nearest_metal_object = Some(metal_object_angle);
+            // Only update if this metal object is within the selection cone and closer than our current best.
+            if angle_diff < current_shortest_angle_diff {
+                current_shortest_angle_diff = angle_diff;
+                nearest_metal_object = Some(metal_object_dir);
             }
         }
 
