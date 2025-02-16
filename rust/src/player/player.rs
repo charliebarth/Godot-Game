@@ -115,8 +115,6 @@ impl ICharacterBody2D for Player {
     /// # Returns
     /// * `Player` - The Player node
     fn init(base: Base<CharacterBody2D>) -> Self {
-        let path = GString::from("physics/2d/default_gravity");
-
         let settings = Engine::singleton()
             .get_singleton("Settings")
             .expect("settings singleton missing")
