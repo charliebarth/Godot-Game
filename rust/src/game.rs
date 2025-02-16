@@ -1,11 +1,14 @@
 use std::collections::HashMap;
 
 use godot::{
-    classes::{DisplayServer, InputEvent, InputMap, Timer},
+    classes::{DisplayServer, Engine, InputEvent, InputMap, Timer},
     prelude::*,
 };
 
-use crate::{main_menu::MainMenu, map::Map, player::player::Player, split_screen::SplitScreen};
+use crate::{
+    main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
+    split_screen::SplitScreen,
+};
 
 static mut GAME_MODE: Option<String> = None;
 
@@ -45,6 +48,8 @@ pub struct Game {
     day_night_timer: Gd<Timer>,
     /// The size of the screen
     screen_size: Vector2,
+    /// The settings for the game
+    settings: Gd<Settings>,
 }
 
 #[godot_api]
@@ -56,6 +61,11 @@ impl INode2D for Game {
         day_night_timer.set_autostart(true);
 
         let screen_size = DisplayServer::singleton().screen_get_size();
+        let settings = Engine::singleton()
+            .get_singleton("Settings")
+            .expect("settings singleton missing")
+            .try_cast::<Settings>()
+            .expect("settings is not a Settings");
 
         Self {
             base,
@@ -74,6 +84,7 @@ impl INode2D for Game {
             day: true,
             day_night_timer,
             screen_size: Vector2::new(screen_size.x as f32, screen_size.y as f32),
+            settings,
         }
     }
 
@@ -230,7 +241,7 @@ impl Game {
         // Next instantiate the map
         let map = self
             .maps
-            .get("MapTwo")
+            .get(self.settings.bind().get_selected_map().as_str())
             .expect("Map not found")
             .instantiate_as::<Map>();
         self.set_map(map);
