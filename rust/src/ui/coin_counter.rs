@@ -3,7 +3,7 @@
 /// Author: Trinity Pittman
 /// Date: Fall 2024
 use godot::{
-    classes::{ILabel, InputEvent, Label},
+    classes::{ILabel, InputEvent, Label, Time},
     prelude::*,
 };
 
@@ -29,6 +29,8 @@ pub struct CoinCounter {
     coins: i32,
     /// Holds Coins
     coin_holder: Vec<Gd<Coin>>,
+    charging: bool,
+    charge_start: u64,
 }
 
 #[godot_api]
@@ -46,6 +48,8 @@ impl ILabel for CoinCounter {
             base,
             coins: 0,
             coin_holder: Vec::new(), // Create a new vector to hold coins
+            charging: false,
+            charge_start: 0,
         }
     }
 
@@ -56,6 +60,23 @@ impl ILabel for CoinCounter {
         self.base_mut().set_text(&coin_cnt);
 
         self.add_starting_coins();
+    }
+
+    fn process(&mut self, _delta: f64) {
+        if self.charging && Time::singleton().get_ticks_msec() - self.charge_start >= 3000 {
+            godot_print!("HIT MAX\n");
+            // Check if player has coins to throw
+            if self.remove_coin() {
+                // Get the last coin from the coin holder
+                let length = self.coin_holder.len();
+                let mut coin = self.coin_holder.remove(length - 1);
+
+                // Throw a coin
+                coin.bind_mut()
+                    .throw(self.charge_start, Time::singleton().get_ticks_msec());
+                self.charging = false;
+            }
+        }
     }
 
     /// On an input event, calls the process_coin_events method if the event is a CoinEvent
@@ -132,7 +153,13 @@ impl CoinCounter {
     /// * `coin_event` (CoinEvents) - The coin event that took place
     /// * `event` (`Gd<InputEvent>`) - The input event that took place
     fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
-        if event.is_action_pressed(&StringName::from("throw")) {
+        if event.is_action_pressed(StringName::from("throw")) {
+            if !self.charging {
+                self.charge_start = Time::singleton().get_ticks_msec();
+                self.charging = true;
+            }
+        }
+        if event.is_action_released(StringName::from("throw")) && self.charging {
             // Check if player has coins to throw
             if self.remove_coin() {
                 // Get the last coin from the coin holder
@@ -140,7 +167,9 @@ impl CoinCounter {
                 let mut coin = self.coin_holder.remove(length - 1);
 
                 // Throw a coin
-                coin.bind_mut().throw();
+                coin.bind_mut()
+                    .throw(self.charge_start, Time::singleton().get_ticks_msec());
+                self.charging = false;
             }
         }
     }

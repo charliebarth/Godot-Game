@@ -33,7 +33,7 @@ impl IMarker2D for MetalPickup {
         timer.set_one_shot(false);
         timer.start();
 
-        godot_print!("TIMER START");
+        // godot_print!("TIMER START");
     }
 }
 
@@ -83,13 +83,13 @@ impl MetalPickup {
 
     #[func]
     fn on_timer_timeout(&mut self) {
-        godot_print!("TIMER TIMEOUT");
+        // godot_print!("TIMER TIMEOUT");
 
         if self.get_metal_vial().get_global_position() == OFF_MAP {
             self.get_metal_vial()
                 .set_global_position(self.base().get_global_position());
         } else {
-            godot_print!("MetalVial still exists, skipping respawn.\n");
+            // godot_print!("MetalVial still exists, skipping respawn.\n");
         }
     }
 }
