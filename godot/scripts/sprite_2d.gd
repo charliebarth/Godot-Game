@@ -1,7 +1,7 @@
 extends Sprite2D
 
 # Variable for setting the lerp speed
-var lerp_speed = 10.0
+var lerp_speed = 15.0
 
 ## This function moves the line selector based on the joystick input
 func _process(delta):
