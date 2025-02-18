@@ -7,6 +7,7 @@ var lerp_speed = 15.0
 func _process(delta):
 	var radius = 40
 
+
 	# Get the joystick direction
 	var joystick_x = Input.get_axis("right_stick_left", "right_stick_right")
 	var joystick_y = Input.get_axis("right_stick_down", "right_stick_up")

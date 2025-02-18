@@ -1,9 +1,13 @@
 use godot::classes::InputMap;
+use godot::global::{JoyAxis, JoyButton};
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::{HashMap, HashSet};
 
-use super::enums::metal_events::MetalEvents;
+use super::enums::metal_type::{BurnType, ButtonState, MetalType};
 use super::enums::player_events::PlayerEvents;
+use super::metal_manager::MetalManager;
+use super::player::Player;
+use super::traits::metal::Metal;
 
 /// The input manager is responsible for handling all input events for a given player and device.
 /// It will convert button presses into player events and metal events.
@@ -19,12 +23,13 @@ pub struct InputManager {
     player_events: HashMap<PlayerEvents, i8>,
     /// The metal events that have been triggered.
     /// This will persist until the button is released.
-    metal_events: HashSet<MetalEvents>,
+    metal_events: HashSet<(MetalType, BurnType)>,
     /// A hashmap to keep track of whether a button has been released.
     /// This prevents an event from being triggered multiple times while a button is held down.
     button_released: HashMap<String, bool>,
     /// The device id that the input manager is listening for.
     device_id: i32,
+    metal_manager: MetalManager,
 }
 
 #[godot_api]
@@ -43,7 +48,14 @@ impl INode2D for InputManager {
             metal_events: HashSet::new(),
             button_released: HashMap::new(),
             device_id: -1,
+            metal_manager: MetalManager::new(),
         }
+    }
+
+    fn ready(&mut self) {
+        let parent = self.base().get_parent().expect("parent not found");
+        let player = parent.try_cast::<Player>().expect("player not found");
+        self.metal_manager.set_player(player);
     }
 
     /// This is a built in method for Godot that is called when an input event is detected.
@@ -64,8 +76,8 @@ impl INode2D for InputManager {
 
         if let Some(player_event) = PlayerEvents::from_string(&button_name) {
             self.process_player_events(player_event, event, button_name);
-        } else if let Some(metal_event) = MetalEvents::from_string(&button_name) {
-            self.process_metal_events(metal_event, event, button_name);
+        } else if let Some(metal_type) = MetalType::from_string(&button_name) {
+            self.process_metal_events(metal_type, event, button_name);
         }
     }
 
@@ -84,6 +96,8 @@ impl INode2D for InputManager {
         // Expire events after a certain number of frames (e.g., 60 frames)
         self.player_events
             .retain(|event, timer| event.timeout() == -1 || *timer < event.timeout());
+
+        self.metal_manager.update_metals();
     }
 }
 
@@ -150,29 +164,54 @@ impl InputManager {
     /// * `button_name` - The name of the button that was pressed
     fn process_metal_events(
         &mut self,
-        metal_event: MetalEvents,
+        metal_type: MetalType,
         event: Gd<InputEvent>,
         button_name: String,
     ) {
-        if event.is_pressed() {
-            if self.player_events.contains_key(&PlayerEvents::LowBurn) {
-                if let Some(low_burn_variant) = MetalEvents::get_low_burn_variant(metal_event) {
-                    if self.metal_events.contains(&low_burn_variant) {
-                        self.button_released.insert(button_name, true);
-                        self.metal_events.remove(&low_burn_variant);
-                    } else {
-                        self.button_released.insert(button_name, false);
-                        self.metal_events.insert(low_burn_variant);
-                    }
+        let burn_type = if self.player_events.contains_key(&PlayerEvents::LowBurn) {
+            BurnType::LowBurn
+        } else {
+            BurnType::Burn
+        };
+
+        let metal_event = (metal_type, burn_type);
+
+        // If the button is pressed
+        if event.is_action_pressed(button_name.as_str()) {
+            // If the player is holding down the low burn button then this is a low burn event
+            if burn_type == BurnType::LowBurn {
+                // If the low burn event is already in the set then remove it to stop the low burn
+                if self.metal_events.contains(&metal_event) {
+                    self.update_metal_events(metal_event, ButtonState::Released);
+
+                // If the low burn event is not in the set then add it to start the low burn
+                } else {
+                    self.update_metal_events(metal_event, ButtonState::Pressed);
                 }
+
+            // If the player is not holding down the low burn button then this is a burn event
             } else {
-                self.button_released.insert(button_name, false);
-                self.metal_events.insert(metal_event);
+                self.update_metal_events(metal_event, ButtonState::Pressed);
             }
-        } else if event.is_released() {
-            self.button_released.insert(button_name, true);
+
+        // If the button is released
+        } else if event.is_action_released(button_name.as_str()) {
+            self.update_metal_events(metal_event, ButtonState::Released);
+        }
+    }
+
+    fn update_metal_events(
+        &mut self,
+        metal_event: (MetalType, BurnType),
+        button_state: ButtonState,
+    ) {
+        if button_state == ButtonState::Pressed {
+            self.metal_events.insert(metal_event);
+        } else if button_state == ButtonState::Released {
             self.metal_events.remove(&metal_event);
         }
+
+        self.metal_manager.update_metal(metal_event, button_state);
     }
 
     /// This function takes a PlayerEvent and determines if it should be stored or removed.
@@ -197,21 +236,6 @@ impl InputManager {
         } else if event.is_released() {
             self.button_released.insert(button_name, true);
             self.player_events.remove(&player_event);
-        }
-    }
-
-    /// Determines if a specific metal event has been triggered.
-    ///
-    /// Arguments:
-    /// * `metal_event` - The metal event to check for
-    ///
-    /// Returns:
-    /// * `bool` - True if the metal event has been triggered, false otherwise
-    pub fn fetch_metal_event(&mut self, metal_event: MetalEvents) -> bool {
-        if let Some(_) = self.metal_events.get(&metal_event) {
-            true
-        } else {
-            false
         }
     }
 
