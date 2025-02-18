@@ -194,26 +194,16 @@ impl Game {
     }
 
     #[func]
-    pub fn attempt_start(&mut self, test_mode: bool) {
-        if !test_mode && self.players.len() >= 2 || (test_mode && self.players.len() == 1) {
-            self.start_game();
+    pub fn start_game(&mut self) {
+        if self.get_number_of_players() < 2 && !self.settings.bind().is_debug_mode() {
+            let notification = "Not enough players to start game.".to_string();
+
+            self.get_main_menu()
+                .bind_mut()
+                .add_notification(notification);
             return;
         }
 
-        let notification = (if test_mode {
-            "Incorrect number of players for test mode. Need exactly 1 player."
-        } else {
-            "Not enough players to start game."
-        })
-        .to_string();
-
-        self.get_main_menu()
-            .bind_mut()
-            .add_notification(notification);
-    }
-
-    #[func]
-    pub fn start_game(&mut self) {
         // First remove the main menu
         let main_menu = self.get_main_menu();
         self.base_mut().remove_child(&main_menu);
