@@ -13,7 +13,7 @@ pub mod player {
     pub mod enums {
         pub mod coin_events;
         pub mod force;
-        pub mod metal_events;
+        pub mod metal_type;
         pub mod player_events;
         pub mod player_states;
         pub mod timeout_events;

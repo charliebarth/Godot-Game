@@ -200,9 +200,6 @@ impl ICharacterBody2D for Player {
         // Reset the player to their default values such as animation speed, run speed, and jump force
         self.reset_player();
 
-        // Update all metals held by the player
-        self.get_metal_manager().bind_mut().update(self);
-
         // Update the current state of the player
         self.current_state.update_state(self);
         self.set_animation_direction();
