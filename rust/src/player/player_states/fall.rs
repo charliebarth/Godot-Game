@@ -21,10 +21,6 @@ impl PlayerState for Fall {
     }
 
     fn update(player: &mut Player) {
-        if player.get_is_steel_burning() {
-            return;
-        }
-
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
 
