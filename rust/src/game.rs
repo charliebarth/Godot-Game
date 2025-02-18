@@ -203,37 +203,17 @@ impl Game {
         unsafe { GAME_MODE = Some(mode) }
     }
 
-    /// This will attempt to start the game.
-    /// It will check if the appropriate conditions are met to start the game.
-    ///
-    /// Arguments:
-    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
-    ///
-    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
     #[func]
-    pub fn attempt_start(&mut self, test_mode: bool) {
-        // TODO - make this actually set the right game mode
-        self.set_game_mode("last_player_standing".to_string());
+    pub fn start_game(&mut self) {
+        if self.get_number_of_players() < 2 && !self.settings.bind().is_debug_mode() {
+            let notification = "Not enough players to start game.".to_string();
 
-        if !test_mode && self.players.len() >= 2 || (test_mode && self.players.len() == 1) {
-            self.start_game();
+            self.get_main_menu()
+                .bind_mut()
+                .add_notification(notification);
             return;
         }
 
-        let notification = (if test_mode {
-            "Incorrect number of players for test mode. Need exactly 1 player."
-        } else {
-            "Not enough players to start game."
-        })
-        .to_string();
-
-        self.get_main_menu()
-            .bind_mut()
-            .add_notification(notification);
-    }
-
-    #[func]
-    pub fn start_game(&mut self) {
         // First remove the main menu
         let main_menu = self.get_main_menu();
         self.base_mut().remove_child(&main_menu);

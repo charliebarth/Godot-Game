@@ -6,11 +6,7 @@ extends Control
 
 ## When the play button is pressed, attempt to start the game
 func _on_play_pressed() -> void:
-	game.attempt_start(false)
-
-## When the test mode button is pressed, attempt to start the game in test mode
-func _on_test_mode_pressed() -> void:
-	game.attempt_start(true)
+	game.start_game()
 
 ## When the settings button is pressed, swap to the settings menu
 func _on_settings_pressed() -> void:
