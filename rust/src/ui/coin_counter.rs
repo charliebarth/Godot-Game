@@ -3,7 +3,7 @@
 /// Author: Trinity Pittman
 /// Date: Fall 2024
 use godot::{
-    classes::{ILabel, InputEvent, Label},
+    classes::{ILabel, InputEvent, Label, Time},
     prelude::*,
 };
 
@@ -29,6 +29,8 @@ pub struct CoinCounter {
     coins: i32,
     /// Holds Coins
     coin_holder: Vec<Gd<Coin>>,
+    charging: bool,
+    charge_start: u64,
 }
 
 #[godot_api]
@@ -46,6 +48,8 @@ impl ILabel for CoinCounter {
             base,
             coins: 0,
             coin_holder: Vec::new(), // Create a new vector to hold coins
+            charging: false,
+            charge_start: 0,
         }
     }
 
@@ -57,6 +61,25 @@ impl ILabel for CoinCounter {
 
         self.add_starting_coins();
     }
+
+    fn process(&mut self, _delta: f64) {
+        if self.charging && Time::singleton().get_ticks_msec() - self.charge_start >= 3000 {
+            godot_print!("HIT MAX\n");
+            // Check if player has coins to throw
+            if self.remove_coin() {
+                // Get the last coin from the coin holder
+                let length = self.coin_holder.len();
+                let mut coin = self.coin_holder.remove(length - 1);
+                
+                // Throw a coin
+                coin.bind_mut().throw(
+                        self.charge_start, 
+                        Time::singleton().get_ticks_msec());
+                self.charging = false;
+            }
+        }
+    }
+
 
     /// On an input event, calls the process_coin_events method if the event is a CoinEvent
     /// # Arguments
@@ -94,12 +117,12 @@ impl CoinCounter {
             .call_deferred(StringName::from("set_freeze_enabled"), &[true.to_variant()]);
 
         let real_pos = coin.to_gd().get_global_position();
-        godot_print!(
-            "\nREPOSITIONING {} to {} actually {}",
-            coin.to_gd().get_name(),
-            pos,
-            real_pos
-        );
+        // godot_print!(
+        //     "\nREPOSITIONING {} to {} actually {}",
+        //     coin.to_gd().get_name(),
+        //     pos,
+        //     real_pos
+        // );
 
         // Add the coin to the coin holder
         self.coin_holder
@@ -137,14 +160,23 @@ impl CoinCounter {
     /// * `event` (Gd<InputEvent>) - The input event that took place
     fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
         if event.is_action_pressed(StringName::from("throw")) {
+            if !self.charging {
+                self.charge_start = Time::singleton().get_ticks_msec();
+                self.charging = true;
+            } 
+        } 
+        if event.is_action_released(StringName::from("throw")) && self.charging{
             // Check if player has coins to throw
             if self.remove_coin() {
                 // Get the last coin from the coin holder
                 let length = self.coin_holder.len();
                 let mut coin = self.coin_holder.remove(length - 1);
-
+                
                 // Throw a coin
-                coin.bind_mut().throw();
+                coin.bind_mut().throw(
+                        self.charge_start, 
+                        Time::singleton().get_ticks_msec());
+                self.charging = false;
             }
         }
     }
@@ -182,12 +214,12 @@ impl CoinCounter {
             // Enable freeze mode
             coin.set_freeze_enabled(true);
 
-            godot_print!(
-                "Coin vis: {}\nCoin pos: {}\nCoin name: {}",
-                coin.is_visible(),
-                coin.get_global_position(),
-                coin.get_name()
-            );
+            // godot_print!(
+            //     "Coin vis: {}\nCoin pos: {}\nCoin name: {}",
+            //     coin.is_visible(),
+            //     coin.get_global_position(),
+            //     coin.get_name()
+            // );
 
             // Add the coin to the coin holder
             self.coin_holder
