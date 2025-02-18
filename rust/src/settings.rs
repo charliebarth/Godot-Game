@@ -1,12 +1,18 @@
 use godot::{classes::Object, prelude::*};
 
+/// This is a struct for all the adjustable settings in the game
 #[derive(GodotClass)]
 #[class(base=Object)]
 pub struct Settings {
+    /// The base node of the Settings class.
     base: Base<Object>,
+    /// The player settings.
     pub player: PlayerSettings,
+    /// The environment settings.
     pub environment: EnvironmentSettings,
+    /// The map settings.
     pub map: MapSettings,
+    /// The general settings.
     pub general: GeneralSettings,
 }
 
