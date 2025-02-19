@@ -203,6 +203,17 @@ impl InputManager {
         }
     }
 
+    /// Determines if a specific metal event has been triggered.
+    ///
+    /// Arguments:
+    /// * `metal_event` - The metal event to check for
+    ///
+    /// Returns:
+    /// * `bool` - True if the metal event has been triggered, false otherwise
+    pub fn fetch_metal_event(&mut self, metal_event: (MetalType, BurnType, ButtonState)) -> bool {
+        self.metal_events.remove(&metal_event)
+    }
+
     /// This function takes a PlayerEvent and determines if it should be stored or removed.
     /// It also keeps track of whether a button has been released to prevent an event from being triggered multiple times while a button is held down.
     ///
@@ -226,10 +237,6 @@ impl InputManager {
             self.button_released.insert(button_name, true);
             self.player_events.remove(&player_event);
         }
-    }
-
-    pub fn fetch_metal_event(&mut self, metal_event: (MetalType, BurnType, ButtonState)) -> bool {
-        self.metal_events.remove(&metal_event)
     }
 
     /// Sets the device id that the input manager is listening for.
