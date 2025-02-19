@@ -2,6 +2,7 @@ use godot::obj::Gd;
 
 use crate::player::{
     enums::metal_type::{ButtonState, MetalType},
+    input_manager::InputManager,
     player::Player,
     traits::metal::Metal,
 };
@@ -49,10 +50,6 @@ impl Metal for Iron {
         self.steel.low_burn();
     }
 
-    fn as_str(&self) -> &str {
-        self.steel.as_str()
-    }
-
     fn update_reserve(&mut self, amount: f64) {
         self.steel.update_reserve(amount);
     }
@@ -61,11 +58,11 @@ impl Metal for Iron {
         self.steel.metal_type()
     }
 
-    fn update_low_burn(&mut self, button_state: ButtonState) {
-        self.steel.update_low_burn(button_state);
+    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
+        self.steel.update_low_burn(input_manager);
     }
 
-    fn update_burn(&mut self, button_state: ButtonState) {
-        self.steel.update_burn(button_state);
+    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
+        self.steel.update_burn(input_manager);
     }
 }
