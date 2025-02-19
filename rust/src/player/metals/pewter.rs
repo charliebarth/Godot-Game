@@ -26,6 +26,8 @@ pub struct Pewter {
     burning: bool,
     /// A flag to determine if the player is currently low burning pewter.
     low_burning: bool,
+    /// The previous amount of pewter the player had.
+    previous_reserve: f64,
 }
 
 impl Pewter {
@@ -54,6 +56,7 @@ impl Pewter {
         Self {
             capacity,
             current_reserve,
+            previous_reserve: 0.0,
             burn_rate,
             low_burn_rate,
             player,
@@ -130,6 +133,13 @@ impl Metal for Pewter {
         } else if self.low_burning {
             self.update_reserve(-self.low_burn_rate);
         }
+
+        if self.current_reserve != self.previous_reserve {
+            self.player
+                .bind_mut()
+                .set_metal_reserve_amount(self.metal_type.as_str(), self.current_reserve);
+        }
+        self.previous_reserve = self.current_reserve;
     }
 
     fn update_reserve(&mut self, amount: f64) {
