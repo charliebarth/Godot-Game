@@ -787,49 +787,6 @@ impl Player {
         self.is_steel_burning = is_steel_burning;
     }
 
-    /// Get the angle of the metal object closest to the angle of the LineSelector if the angle is within the range of the LineSelector
-    ///
-    /// # Returns
-    /// * `Option<f64>` - The angle of the nearest metal object if there is one within the range of the LineSelector
-    pub fn get_nearest_metal_object(&mut self) -> Option<Vector2> {
-        let joy_position_x =
-            Input::singleton().get_joy_axis(self.get_device_id(), JoyAxis::RIGHT_X);
-        let joy_position_y =
-            Input::singleton().get_joy_axis(self.get_device_id(), JoyAxis::RIGHT_Y);
-        let joy_position = Vector2::new(joy_position_x, joy_position_y);
-
-        // Return None if joystick is in the deadzone.
-        if joy_position.length() < 0.2 {
-            return None;
-        }
-
-        // Define the valid selection range (±15 degrees in radians).
-        let selection_threshold: f32 = 25.0_f32.to_radians();
-
-        let mut nearest_metal_object: Option<Vector2> = None;
-        let player_position = self.base().get_global_position();
-
-        // Start with the threshold as the "current best" so that only objects within the cone are considered.
-        let mut current_shortest_angle_diff = selection_threshold;
-        for metal_object in self.get_metal_objects().iter() {
-            let metal_object_position = metal_object.get_global_position();
-
-            // Calculate the direction from the player to the metal object.
-            let metal_object_dir = (metal_object_position - player_position).normalized();
-
-            // Calculate the absolute angle difference between the joystick direction and this metal object.
-            let angle_diff = joy_position.angle_to(metal_object_dir).abs();
-
-            // Only update if this metal object is within the selection cone and closer than our current best.
-            if angle_diff < current_shortest_angle_diff {
-                current_shortest_angle_diff = angle_diff;
-                nearest_metal_object = Some(metal_object_dir);
-            }
-        }
-
-        nearest_metal_object
-    }
-
     /// Enable the hitbox of the player when they are attacking
     ///
     /// # Arguments
