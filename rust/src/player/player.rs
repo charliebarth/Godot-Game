@@ -96,7 +96,6 @@ pub struct Player {
     metal_objects: Vec<Gd<MetalObject>>,
     /// The mass of the player in kilograms
     mass: f32,
-    is_steel_burning: bool,
     /// If the player is attacking or not
     is_attacking: bool,
     /// HashMap storing cached node references
@@ -142,7 +141,6 @@ impl ICharacterBody2D for Player {
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             mass: 70.0,
-            is_steel_burning: false,
             is_attacking: false,
             cached_nodes: HashMap::new(),
             settings,
@@ -767,24 +765,6 @@ impl Player {
     /// * `f32` - The mass of the player in kilograms
     pub fn get_mass(&self) -> f32 {
         self.mass
-    }
-
-    /// Checks if the player is burning steel
-    /// This is used by the fall state so that the player can be "falling" while
-    /// burning steel while ignoring transitions to new states
-    ///
-    /// # Returns
-    /// * `bool` - True if the player is burning steel, false otherwise
-    pub fn get_is_steel_burning(&self) -> bool {
-        self.is_steel_burning
-    }
-
-    /// Sets if the player is burning steel
-    ///
-    /// # Arguments
-    /// * `is_steel_burning` - A boolean that determines if the player is burning steel
-    pub fn set_is_steel_burning(&mut self, is_steel_burning: bool) {
-        self.is_steel_burning = is_steel_burning;
     }
 
     /// Enable the hitbox of the player when they are attacking
