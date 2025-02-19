@@ -129,19 +129,4 @@ impl MetalManager {
                 .update_reserve(amount);
         }
     }
-
-    pub fn update_metal(&mut self, metal_event: (MetalType, BurnType), button_state: ButtonState) {
-        let (metal_type, burn_type) = metal_event;
-        let metal_option = self.metals.get_mut(&metal_type);
-        if metal_option.is_none() {
-            return;
-        }
-
-        let metal = metal_option.unwrap();
-        if burn_type == BurnType::Burn {
-            metal.update_burn(button_state);
-        } else if burn_type == BurnType::LowBurn {
-            metal.update_low_burn(button_state);
-        }
-    }
 }
