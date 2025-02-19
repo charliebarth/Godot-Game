@@ -81,6 +81,14 @@ impl MetalVial {
         self.metals.clone()
     }
 
+    /// Sets the metals this metal vial will increment
+    ///
+    /// # Arguments
+    /// * `metals` (`Vec<StringName>`) - the names of the metals to set
+    pub fn set_metals(&mut self, metals: Vec<&'static str>) {
+        self.metals = metals
+    }
+
     fn play_sound(&mut self, player: Gd<Player>) {
         // Play swallowing sound
         let mut sound_effect: Gd<AudioStreamPlayer2D> = player.get_node_as("./Vial");
