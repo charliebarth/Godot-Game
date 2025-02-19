@@ -23,13 +23,12 @@ pub struct InputManager {
     player_events: HashMap<PlayerEvents, i8>,
     /// The metal events that have been triggered.
     /// This will persist until the button is released.
-    metal_events: HashSet<(MetalType, BurnType)>,
+    metal_events: HashSet<(MetalType, BurnType, ButtonState)>,
     /// A hashmap to keep track of whether a button has been released.
     /// This prevents an event from being triggered multiple times while a button is held down.
     button_released: HashMap<String, bool>,
     /// The device id that the input manager is listening for.
     device_id: i32,
-    metal_manager: Option<Gd<MetalManager>>,
 }
 
 #[godot_api]
@@ -48,7 +47,6 @@ impl INode2D for InputManager {
             metal_events: HashSet::new(),
             button_released: HashMap::new(),
             device_id: -1,
-            metal_manager: None,
         }
     }
 
@@ -113,10 +111,6 @@ impl InputManager {
         }
     }
 
-    pub fn set_metal_manager(&mut self, metal_manager: Gd<MetalManager>) {
-        self.metal_manager = Some(metal_manager);
-    }
-
     /// Checks if the event is in the hashmap but does not remove it.
     ///
     /// Arguments:
@@ -174,53 +168,38 @@ impl InputManager {
             BurnType::Burn
         };
 
-        let metal_event = (metal_type, burn_type);
-
         // If the button is pressed
         if event.is_action_pressed(button_name.as_str()) {
             // If the player is holding down the low burn button then this is a low burn event
             if burn_type == BurnType::LowBurn {
                 // If the low burn event is already in the set then remove it to stop the low burn
-                if self.metal_events.contains(&metal_event) {
-                    self.update_metal_events(metal_event, ButtonState::Released);
+                if self
+                    .metal_events
+                    .contains(&(metal_type, burn_type, ButtonState::Pressed))
+                {
+                    self.metal_events
+                        .remove(&(metal_type, burn_type, ButtonState::Pressed));
+                    self.metal_events
+                        .insert((metal_type, burn_type, ButtonState::Released));
 
                 // If the low burn event is not in the set then add it to start the low burn
                 } else {
-                    self.update_metal_events(metal_event, ButtonState::Pressed);
+                    self.metal_events
+                        .insert((metal_type, burn_type, ButtonState::Pressed));
                 }
 
             // If the player is not holding down the low burn button then this is a burn event
             } else {
-                self.update_metal_events(metal_event, ButtonState::Pressed);
+                self.metal_events
+                    .insert((metal_type, burn_type, ButtonState::Pressed));
             }
 
         // If the button is released
         } else if burn_type != BurnType::LowBurn && event.is_action_released(button_name.as_str()) {
-            self.update_metal_events(metal_event, ButtonState::Released);
-        }
-    }
-
-    fn update_metal_events(
-        &mut self,
-        metal_event: (MetalType, BurnType),
-        button_state: ButtonState,
-    ) {
-        if button_state == ButtonState::Pressed {
-            self.metal_events.insert(metal_event);
-        } else if button_state == ButtonState::Released {
-            self.metal_events.remove(&metal_event);
-        }
-
-        godot_print!(
-            "metal_event: {:?}, button_state: {:?}",
-            metal_event,
-            button_state
-        );
-
-        if let Some(metal_manager) = &mut self.metal_manager {
-            metal_manager
-                .bind_mut()
-                .update_metal(metal_event, button_state);
+            self.metal_events
+                .remove(&(metal_type, burn_type, ButtonState::Pressed));
+            self.metal_events
+                .insert((metal_type, burn_type, ButtonState::Released));
         }
     }
 
