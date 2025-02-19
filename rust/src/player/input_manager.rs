@@ -228,6 +228,10 @@ impl InputManager {
         }
     }
 
+    pub fn fetch_metal_event(&mut self, metal_event: (MetalType, BurnType, ButtonState)) -> bool {
+        self.metal_events.remove(&metal_event)
+    }
+
     /// Sets the device id that the input manager is listening for.
     ///
     /// Arguments:
