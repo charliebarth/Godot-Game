@@ -164,6 +164,11 @@ impl ICharacterBody2D for Player {
 
         // Set the health bar to the player's health
         self.get_health_bar().set_value(self.get_health());
+
+        // Give the metal manager access to the player
+        self.get_metal_manager()
+            .bind_mut()
+            .set_player(self.base().get_node_as::<Player>("."));
     }
 
     /// The Godot method called every physics frame
@@ -365,7 +370,7 @@ impl Player {
     /// # Arguments
     /// * `metals` (`Vec<StringName>`) - the metals to effect
     /// * `amt` (f64) - the new amount to set the metals to
-    pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
+    pub fn adjust_metals(&mut self, metals: Vec<&str>, amt: f64) {
         for metal in metals {
             self.get_metal_manager()
                 .bind_mut()
@@ -378,7 +383,7 @@ impl Player {
     /// # Arguments
     /// * `metal` - The metal to update
     /// * `amt` - The new amount to set the metal to
-    pub fn set_metal_reserve_amount(&mut self, metal: StringName, amt: f64) {
+    pub fn set_metal_reserve_amount(&mut self, metal: &str, amt: f64) {
         self.get_metal_reserve_bar_manager()
             .bind_mut()
             .set_metal_amount(metal, amt);
