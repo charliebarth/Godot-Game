@@ -170,8 +170,8 @@ impl MetalReserveBarManager {
     /// # Arguments
     /// * `name` (StringName) - the name of the metal to set the amount of
     /// * `amt` (f64) - the amount to set the metal to
-    pub fn set_metal_amount(&mut self, name: StringName, amt: f64) {
-        let mut bar = self.get_metal_bar(name);
+    pub fn set_metal_amount(&mut self, name: &str, amt: f64) {
+        let mut bar = self.get_metal_bar(name.into());
         bar.bind_mut().set_value(amt);
     }
 }
