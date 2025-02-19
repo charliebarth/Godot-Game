@@ -14,7 +14,7 @@ pub struct MetalVial {
     // The base node of the MetalVial
     base: Base<Area2D>,
     /// A vector of metals this metal vial increments
-    metals: Option<Vec<StringName>>,
+    metals: Vec<&'static str>,
     /// The amt the metal vial increments the metals by
     amt: f64,
 }
@@ -30,29 +30,16 @@ impl IArea2D for MetalVial {
     /// # Returns
     /// * `MetalVial` - The MetalVial node
     fn init(base: Base<Area2D>) -> Self {
+        let mut metals = Vec::new();
+        metals.push("iron");
+        metals.push("steel");
+        metals.push("pewter");
+
         Self {
             base,
-            metals: None,
+            metals,
             amt: 30.,
         }
-    }
-
-    /// The Godot method called when the metal vial enters the scene tree for the first time
-    /// Sets the metals this metal vial will increment.
-    fn ready(&mut self) {
-        let mut new_metals = Vec::new();
-        new_metals.push(StringName::from("iron"));
-        new_metals.push(StringName::from("steel"));
-        new_metals.push(StringName::from("pewter"));
-        // new_metals.push(StringName::from("tin"));
-        // new_metals.push(StringName::from("bronze"));
-        // new_metals.push(StringName::from("copper"));
-        // new_metals.push(StringName::from("duralumin"));
-        // new_metals.push(StringName::from("nicrosil"));
-        // new_metals.push(StringName::from("chromium"));
-        // new_metals.push(StringName::from("gold"));
-
-        self.set_metals(new_metals);
     }
 }
 
@@ -81,18 +68,7 @@ impl MetalVial {
     ///
     /// # Returns
     /// * The metals the vials increment
-    fn get_metals(&mut self) -> Vec<StringName> {
-        if self.metals.is_none() {
-            self.metals = Some(Vec::new());
-        }
-        self.metals.as_ref().expect("Metals not found").clone()
-    }
-
-    /// Sets the metals this metal vial will increment
-    ///
-    /// # Arguments
-    /// * `metals` (`Vec<StringName>`) - the names of the metals to set
-    fn set_metals(&mut self, metals: Vec<StringName>) {
-        self.metals = Some(metals);
+    fn get_metals(&mut self) -> Vec<&'static str> {
+        self.metals.clone()
     }
 }
