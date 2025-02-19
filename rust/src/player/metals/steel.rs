@@ -45,6 +45,8 @@ pub struct Steel {
     burn: bool,
     /// A reference to the player.
     player: Gd<Player>,
+    /// The type of metal.
+    metal_type: MetalType,
 }
 
 impl Metal for Steel {
@@ -54,26 +56,18 @@ impl Metal for Steel {
             if self.current_reserve != self.previous_reserve {
                 self.update_burn(ButtonState::Released);
                 self.update_low_burn(ButtonState::Released);
+                self.previous_reserve = self.current_reserve;
             }
             return;
         }
 
         if self.low_burn {
             self.low_burn();
-
-            // The player can only burn if they are low burning
-            if self.burn {
-                self.burn();
-            }
         }
 
-        // Update the metal reserver bars if the reserve has changed
-        if self.current_reserve != self.previous_reserve {
-            let mut player_clone = self.player.clone();
-            let mut player = player_clone.bind_mut();
-
-            player.set_metal_reserve_amount(self.as_str().into(), self.current_reserve);
-            player.set_metal_reserve_amount("iron".into(), self.current_reserve);
+        // The player can only burn if they are low burning
+        if self.burn {
+            self.burn();
         }
 
         self.previous_reserve = self.current_reserve;
@@ -87,19 +81,16 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the force can be modified.
     fn burn(&mut self) {
-        let mut player = self.player.bind_mut();
-
-        if !self.was_low_burn {
+        if !self.low_burn || self.object_location == Vector2::ZERO {
             return;
         }
 
-        // Get the normalized direction from the player to the nearest metal object.
-        if self.object_location == Vector2::ZERO {
-            return;
-        }
+        self.update_reserve(-self.burn_rate);
 
+        let mut player_clone = self.player.clone();
+        let mut player = player_clone.bind_mut();
         player.set_is_steel_burning(true);
-        self.current_reserve -= self.burn_rate;
+
         // TODO: Make constant
         let max_acceleration: f32 = 700.0;
 
@@ -123,13 +114,13 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the metal line can be modified.
     fn low_burn(&mut self) {
-        let mut player_clone = self.player.clone();
-        let mut player = player_clone.bind_mut();
-
         // Mark that the player is low burning and decrease the reserve.
         self.was_low_burn = true;
-        self.current_reserve -= self.low_burn_rate;
+        self.update_reserve(-self.low_burn_rate);
         self.object_location = Vector2::ZERO;
+
+        let mut player_clone = self.player.clone();
+        let mut player = player_clone.bind_mut();
 
         // Get the metal line and show it.
         let mut metal_line = player.get_metal_line();
@@ -184,16 +175,21 @@ impl Metal for Steel {
     }
 
     fn as_str(&self) -> &str {
-        "steel"
+        self.metal_type.as_str()
     }
 
-    fn increase_reserve(&mut self, amount: f64) {
+    fn update_reserve(&mut self, amount: f64) {
         self.current_reserve += amount;
         self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
+
+        let metal_type = self.metal_type.as_str();
+        self.player
+            .bind_mut()
+            .set_metal_reserve_amount(metal_type.into(), self.current_reserve);
     }
 
     fn metal_type(&self) -> MetalType {
-        MetalType::Steel
+        self.metal_type
     }
 
     /// Set the low burn state
@@ -229,22 +225,34 @@ impl Metal for Steel {
 }
 
 impl Steel {
-    pub fn new(player: Gd<Player>) -> Self {
+    pub fn new(
+        capacity: f64,
+        current_reserve: f64,
+        burn_rate: f64,
+        low_burn_rate: f64,
+        player: Gd<Player>,
+        metal_type: MetalType,
+    ) -> Self {
+        // player
+        //     .bind_mut()
+        //     .set_metal_reserve_amount(metal_type.as_str().into(), current_reserve);
         Self {
-            capacity: 100.0,
-            current_reserve: 0.0,
-            previous_reserve: 0.0,
-            burn_rate: 1.0,
-            low_burn_rate: 0.5,
+            capacity,
+            current_reserve,
+            previous_reserve: current_reserve,
+            burn_rate,
+            low_burn_rate,
             was_low_burn: false,
-            burn_direction: 0.0,
+            burn_direction: PUSH_BURN_DIRECTION,
             show_particles: false,
             object_location: Vector2::ZERO,
             low_burn: false,
             burn: false,
             player,
+            metal_type,
         }
     }
+
     /// Checks if the passed metal object is the closest metal object to the joystick angle.
     /// If it is then the direction and angle difference are returned.
     /// Otherwise the current object location and angle difference are returned.
@@ -312,5 +320,9 @@ impl Steel {
 
     pub fn set_burn_direction(&mut self, direction: f32) {
         self.burn_direction = direction;
+    }
+
+    pub fn set_metal_type(&mut self, metal_type: MetalType) {
+        self.metal_type = metal_type;
     }
 }

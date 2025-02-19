@@ -1,4 +1,6 @@
-use crate::player::enums::metal_type::MetalEvents;
+use godot::obj::Gd;
+
+use crate::player::enums::metal_type::{ButtonState, MetalType};
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
@@ -15,8 +17,14 @@ pub struct Pewter {
     burn_rate: f64,
     /// The rate at which the player burns pewter when using the low burn ability.
     low_burn_rate: f64,
-    /// A flag to determine if the player should show the pewter particles.
-    show_particles: bool,
+    /// A reference to the player.
+    player: Gd<Player>,
+    /// The type of metal.
+    metal_type: MetalType,
+    /// A flag to determine if the player is currently burning pewter.
+    burning: bool,
+    /// A flag to determine if the player is currently low burning pewter.
+    low_burning: bool,
 }
 
 impl Pewter {
@@ -30,13 +38,27 @@ impl Pewter {
     ///
     /// # Returns
     /// * `Pewter` - A new instance of the pewter struct.
-    pub fn new(capacity: f64, current_reserve: f64, burn_rate: f64, low_burn_rate: f64) -> Self {
+    pub fn new(
+        capacity: f64,
+        current_reserve: f64,
+        burn_rate: f64,
+        low_burn_rate: f64,
+        player: Gd<Player>,
+        metal_type: MetalType,
+    ) -> Self {
+        // player
+        //     .bind_mut()
+        //     .set_metal_reserve_amount(MetalType::Steel.as_str().into(), current_reserve);
+
         Self {
             capacity,
             current_reserve,
             burn_rate,
             low_burn_rate,
-            show_particles: false,
+            player,
+            metal_type,
+            burning: false,
+            low_burning: false,
         }
     }
 }
@@ -48,9 +70,13 @@ impl Metal for Pewter {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the run speed and jump force can be modified.
     fn burn(&mut self) {
-        // self.current_reserve -= self.burn_rate;
-        // player.set_run_speed(player.get_run_speed() * 2.0);
-        // player.set_jump_force(player.get_jump_force() * 1.5);
+        self.update_reserve(-self.burn_rate);
+        let mut player = self.player.bind_mut();
+
+        let run_speed = player.get_run_speed();
+        let jump_force = player.get_jump_force();
+        player.set_run_speed(run_speed * 2.0);
+        player.set_jump_force(jump_force * 1.5);
     }
 
     /// The low burn function for pewter.
@@ -59,47 +85,62 @@ impl Metal for Pewter {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the run speed and jump force can be modified.
     fn low_burn(&mut self) {
-        // self.current_reserve -= self.low_burn_rate;
-        // player.set_run_speed(player.get_run_speed() * 1.5);
-        // player.set_jump_force(player.get_jump_force() * 1.2);
+        self.update_reserve(-self.low_burn_rate);
+        let mut player = self.player.bind_mut();
+
+        let run_speed = player.get_run_speed();
+        let jump_force = player.get_jump_force();
+        player.set_run_speed(run_speed * 1.5);
+        player.set_jump_force(jump_force * 1.2);
     }
 
-    // /// The update function for pewter.
-    // /// This function check to see if the input manager has a pewter event.
-    // /// If the event is found then the burn function is called.
-    // /// If the low burn variant is found then the low burn function is called.
-    // /// This will also toggle the pewter particles on and off.
-    // ///
-    // /// # Arguments
-    // /// * `player` - A mutable reference to the player so that the input manager can be accessed.
-    // fn update(&mut self, player: &mut Player) {
-    //     let mut godot_input_manager = player.get_input_manager();
-    //     let mut input_manager = godot_input_manager.bind_mut();
-
-    //     self.show_particles = false;
-
-    //     if self.current_reserve > 0.0 {
-    //         if input_manager.fetch_metal_event(MetalEvents::Pewter) {
-    //             self.show_particles = true;
-    //             self.burn(player);
-    //         } else if input_manager.fetch_metal_event(MetalEvents::PewterLowBurn) {
-    //             self.low_burn(player);
-    //             self.show_particles = true;
-    //         }
-    //     }
-
-    //     player.set_metal_reserve_amount(self.as_str().into(), self.current_reserve);
-    //     player
-    //         .get_pewter_particles()
-    //         .set_visible(self.show_particles);
-    // }
+    /// The update function for pewter.
+    /// This function check to see if the input manager has a pewter event.
+    /// If the event is found then the burn function is called.
+    /// If the low burn variant is found then the low burn function is called.
+    /// This will also toggle the pewter particles on and off.
+    fn update(&mut self) {
+        if self.current_reserve <= 0.0 {
+            self.update_burn(ButtonState::Released);
+            self.update_low_burn(ButtonState::Released);
+        } else if self.burning {
+            self.update_reserve(-self.burn_rate);
+        } else if self.low_burning {
+            self.update_reserve(-self.low_burn_rate);
+        }
+    }
 
     fn as_str(&self) -> &str {
         "pewter"
     }
 
-    fn increase_reserve(&mut self, amount: f64) {
+    fn update_reserve(&mut self, amount: f64) {
         self.current_reserve += amount;
         self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
+    }
+
+    fn metal_type(&self) -> MetalType {
+        self.metal_type
+    }
+
+    fn update_burn(&mut self, button_state: ButtonState) {
+        self.burning = button_state == ButtonState::Pressed;
+
+        if self.burning {
+            self.burn();
+        }
+    }
+
+    fn update_low_burn(&mut self, button_state: ButtonState) {
+        self.low_burning = button_state == ButtonState::Pressed;
+
+        if self.low_burning {
+            self.low_burn();
+        }
+
+        self.player
+            .bind_mut()
+            .get_pewter_particles()
+            .set_visible(self.low_burning);
     }
 }
