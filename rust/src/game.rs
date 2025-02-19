@@ -89,7 +89,6 @@ impl INode2D for Game {
     }
 
     fn ready(&mut self) {
-        godot_print!("Screen size: {:?}", self.screen_size);
         Input::singleton().connect(
             "joy_connection_changed",
             &Callable::from_object_method(
