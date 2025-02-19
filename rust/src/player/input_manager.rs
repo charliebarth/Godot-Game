@@ -204,6 +204,8 @@ impl InputManager {
     }
 
     /// Determines if a specific metal event has been triggered.
+    /// Pressed events are left in the set so they can be replaced with a released event when the button is released.
+    /// Released events are removed from the set when fetched.
     ///
     /// Arguments:
     /// * `metal_event` - The metal event to check for
@@ -211,7 +213,13 @@ impl InputManager {
     /// Returns:
     /// * `bool` - True if the metal event has been triggered, false otherwise
     pub fn fetch_metal_event(&mut self, metal_event: (MetalType, BurnType, ButtonState)) -> bool {
-        self.metal_events.remove(&metal_event)
+        let button_state = metal_event.2;
+
+        if button_state == ButtonState::Pressed {
+            self.metal_events.contains(&metal_event)
+        } else {
+            self.metal_events.remove(&metal_event)
+        }
     }
 
     /// This function takes a PlayerEvent and determines if it should be stored or removed.
