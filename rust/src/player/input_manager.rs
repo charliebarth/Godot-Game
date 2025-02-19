@@ -29,7 +29,7 @@ pub struct InputManager {
     button_released: HashMap<String, bool>,
     /// The device id that the input manager is listening for.
     device_id: i32,
-    metal_manager: MetalManager,
+    metal_manager: Option<Gd<MetalManager>>,
 }
 
 #[godot_api]
@@ -48,14 +48,8 @@ impl INode2D for InputManager {
             metal_events: HashSet::new(),
             button_released: HashMap::new(),
             device_id: -1,
-            metal_manager: MetalManager::new(),
+            metal_manager: None,
         }
-    }
-
-    fn ready(&mut self) {
-        let parent = self.base().get_parent().expect("parent not found");
-        let player = parent.try_cast::<Player>().expect("player not found");
-        self.metal_manager.set_player(player);
     }
 
     /// This is a built in method for Godot that is called when an input event is detected.
@@ -64,11 +58,15 @@ impl INode2D for InputManager {
     /// # Arguments
     /// * `event` - The input event that was detected.
     fn input(&mut self, event: Gd<InputEvent>) {
-        if self.device_id == -1 || event.get_device() != self.device_id {
+        if self.device_id == -1 || event.get_device() != self.device_id || event.is_echo() {
             return;
         }
 
         let button_name = InputManager::event_to_input_name(event.clone());
+
+        if button_name == "" {
+            return;
+        }
 
         if !self.button_released.contains_key(&button_name) {
             self.button_released.insert(button_name.clone(), true);
@@ -96,8 +94,6 @@ impl INode2D for InputManager {
         // Expire events after a certain number of frames (e.g., 60 frames)
         self.player_events
             .retain(|event, timer| event.timeout() == -1 || *timer < event.timeout());
-
-        self.metal_manager.update_metals();
     }
 }
 
@@ -115,6 +111,10 @@ impl InputManager {
         } else {
             false
         }
+    }
+
+    pub fn set_metal_manager(&mut self, metal_manager: Gd<MetalManager>) {
+        self.metal_manager = Some(metal_manager);
     }
 
     /// Checks if the event is in the hashmap but does not remove it.
@@ -195,7 +195,7 @@ impl InputManager {
             }
 
         // If the button is released
-        } else if event.is_action_released(button_name.as_str()) {
+        } else if burn_type != BurnType::LowBurn && event.is_action_released(button_name.as_str()) {
             self.update_metal_events(metal_event, ButtonState::Released);
         }
     }
@@ -211,7 +211,17 @@ impl InputManager {
             self.metal_events.remove(&metal_event);
         }
 
-        self.metal_manager.update_metal(metal_event, button_state);
+        godot_print!(
+            "metal_event: {:?}, button_state: {:?}",
+            metal_event,
+            button_state
+        );
+
+        if let Some(metal_manager) = &mut self.metal_manager {
+            metal_manager
+                .bind_mut()
+                .update_metal(metal_event, button_state);
+        }
     }
 
     /// This function takes a PlayerEvent and determines if it should be stored or removed.
