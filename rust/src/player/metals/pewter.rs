@@ -145,14 +145,14 @@ impl Metal for Pewter {
         let mut input_manager = input_manager.bind_mut();
         let burn_type = BurnType::Burn;
 
-        if input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed)) {
+        if !self.burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+        {
             self.burn();
             self.burning = true;
-        } else if input_manager.fetch_metal_event((
-            self.metal_type,
-            burn_type,
-            ButtonState::Released,
-        )) {
+        } else if self.burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+        {
             self.cleanup_burn();
         }
     }
@@ -161,14 +161,14 @@ impl Metal for Pewter {
         let mut input_manager = input_manager.bind_mut();
         let burn_type = BurnType::LowBurn;
 
-        if input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed)) {
+        if !self.low_burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+        {
             self.low_burn();
             self.low_burning = true;
-        } else if input_manager.fetch_metal_event((
-            self.metal_type,
-            burn_type,
-            ButtonState::Released,
-        )) {
+        } else if self.low_burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+        {
             self.cleanup_lowburn();
         }
     }

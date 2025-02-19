@@ -207,15 +207,15 @@ impl Metal for Steel {
     fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
         let mut input_manager = input_manager.bind_mut();
         let burn_type = BurnType::LowBurn;
-        if input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed)) {
+        if !self.low_burn
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+        {
             self.low_burn = true;
             let mut player = self.player.bind_mut();
             player.get_steel_particles().set_visible(true);
-        } else if input_manager.fetch_metal_event((
-            self.metal_type,
-            burn_type,
-            ButtonState::Released,
-        )) {
+        } else if self.low_burn
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+        {
             self.cleanup_low_burn();
         }
     }
@@ -231,16 +231,16 @@ impl Metal for Steel {
         let burn_type = BurnType::Burn;
 
         // Mark that a burn has started and lockin the object to push against
-        if input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed)) {
+        if !self.burn
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+        {
             self.burn = true;
             self.object_location = self.closest_object;
 
         // Mark that a burn has ended and remove the object to push against
-        } else if input_manager.fetch_metal_event((
-            self.metal_type,
-            burn_type,
-            ButtonState::Released,
-        )) {
+        } else if self.burn
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+        {
             self.cleanup_burn();
         }
     }
