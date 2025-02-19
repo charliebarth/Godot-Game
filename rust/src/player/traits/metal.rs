@@ -27,7 +27,7 @@ pub trait Metal {
     ///
     /// # Arguments
     /// * `amount` - The amount to increase the reserve by
-    fn increase_reserve(&mut self, amount: f64);
+    fn update_reserve(&mut self, amount: f64);
 
     fn metal_type(&self) -> MetalType;
     /// This function is meant to be called when a metal is pressed or released
