@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=23 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -9,27 +9,12 @@
 [ext_resource type="PackedScene" uid="uid://d4kfghn6m26fd" path="res://scenes/Platforms/wooden_platform1.tscn" id="9_fk6gw"]
 [ext_resource type="PackedScene" uid="uid://crbuuc3thgs0g" path="res://scenes/metal_pickup.tscn" id="10_5bopr"]
 [ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
+[ext_resource type="PackedScene" uid="uid://b26ws836bp20r" path="res://scenes/fire.tscn" id="10_y0ce3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
 shader_parameter/density = 0.25
 shader_parameter/speed = Vector2(0.02, 0.01)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
-frequency = 0.0045
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bql8j"]
-width = 1920
-height = 1080
-seamless = true
-seamless_blend_skirt = 0.75
-noise = SubResource("FastNoiseLite_ikvr1")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_18wl2"]
-shader = ExtResource("1_y7bd1")
-shader_parameter/density = 0.6
-shader_parameter/speed = Vector2(0.001, 0.001)
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_bql8j")
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qc8gb"]
 polygon = PackedVector2Array(-452, -335, -451, 3, -65, 4, -69, 164, -94, 190, -723, 189, -745, 162, -748, -335)
@@ -49,57 +34,40 @@ polygon = PackedVector2Array(-453, -481, -456, -526, -416, -562, -94, -562, -70,
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7e6k5"]
 polygon = PackedVector2Array(-1030, -709, -1028, -897, -994, -931, 1153, -931, 1216, -869, 1231, -1408, -2280, -1415, -2274, -683)
 
-[node name="MapOne" type="Node2D"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ikvr1"]
+frequency = 0.0045
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vtfih"]
+width = 1920
+height = 1080
+seamless = true
+seamless_blend_skirt = 0.75
+noise = SubResource("FastNoiseLite_ikvr1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_18wl2"]
+shader = ExtResource("1_y7bd1")
+shader_parameter/density = 0.6
+shader_parameter/speed = Vector2(0.001, 0.001)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_vtfih")
+
+[sub_resource type="Gradient" id="Gradient_867xu"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pfm4w"]
+gradient = SubResource("Gradient_867xu")
+fill = 2
+
+[node name="MapOne" type="Map"]
 light_mask = 3
 material = SubResource("ShaderMaterial_iw8d6")
 
 [node name="LevelOne" parent="." instance=ExtResource("1_5xy7n")]
 
-[node name="SpawnOne" type="Marker2D" parent="."]
-position = Vector2(961, -149)
-
-[node name="SpawnTwo" type="Marker2D" parent="."]
-position = Vector2(-990, -386)
-
-[node name="SpawnThree" type="Marker2D" parent="."]
-position = Vector2(-10, 295)
-
-[node name="SpawnFour" type="Marker2D" parent="."]
-position = Vector2(-2, -843)
-
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(0.703808, 0.703808, 0.703808, 1)
-
-[node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
-z_index = 1
-position = Vector2(-369, -19)
-
-[node name="MetalObject2" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-12, -299)
-
-[node name="MetalObject3" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(211, -167)
-
-[node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-22, 354)
-
-[node name="Fog" type="ColorRect" parent="."]
-visible = false
-z_index = 20
-material = SubResource("ShaderMaterial_18wl2")
-offset_left = -2288.0
-offset_top = -1425.0
-offset_right = 2381.0
-offset_bottom = 852.0
-color = Color(0.725, 0.725, 0.725, 0.535)
-
-[node name="camp_fire" parent="." instance=ExtResource("5_hth5s")]
-position = Vector2(1100, -84)
+color = Color(0.0383972, 0.0383972, 0.0383972, 1)
 
 [node name="LightSources" type="Node" parent="."]
-
-[node name="Torch" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(850, -175)
 
 [node name="Torch4" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-175, -357)
@@ -110,54 +78,36 @@ position = Vector2(-767, -267)
 [node name="Torch6" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(176, -357)
 
-[node name="chandelier2" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-708, -913)
-scale = Vector2(0.996811, 0.996811)
-
-[node name="chandelier3" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(925, -913)
-
-[node name="chandelier5" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-213, 207)
-
-[node name="chandelier6" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-1022, 207)
-
-[node name="chandelier7" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(898, 207)
-
 [node name="chandelier8" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-18, -914)
+position = Vector2(-3, -706)
 
 [node name="Torch7" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-865, 8)
 
 [node name="chandelier" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-1042, -529)
-
-[node name="camp_fire2" parent="LightSources" instance=ExtResource("5_hth5s")]
-position = Vector2(-988, -756)
+position = Vector2(-1014, -526)
 
 [node name="camp_fire3" parent="LightSources" instance=ExtResource("5_hth5s")]
-position = Vector2(-425, -4)
+position = Vector2(-1187, 380)
 
 [node name="chandelier9" parent="LightSources" instance=ExtResource("6_htvoh")]
-position = Vector2(-39, -237)
+position = Vector2(0, 45)
 
 [node name="Torch2" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(920, -538)
-
-[node name="camp_fire4" parent="LightSources" instance=ExtResource("5_hth5s")]
-position = Vector2(895, 380)
+position = Vector2(916, -673)
 
 [node name="Torch3" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(-519, 293)
 
-[node name="Torch8" parent="LightSources" instance=ExtResource("4_0mjxy")]
-position = Vector2(498, 316)
-
 [node name="Torch9" parent="LightSources" instance=ExtResource("4_0mjxy")]
 position = Vector2(376, -825)
+
+[node name="camp_fire" parent="LightSources" instance=ExtResource("5_hth5s")]
+position = Vector2(1100, -84)
+
+[node name="camp_fire2" parent="LightSources" instance=ExtResource("10_y0ce3")]
+z_index = -1
+position = Vector2(-802, -757)
 
 [node name="Platforms" type="Node" parent="."]
 
@@ -215,10 +165,12 @@ position = Vector2(-894, -763)
 [node name="LightOccluder2D2" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_qc8gb")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D4" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_4rjuc")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D5" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
@@ -228,11 +180,86 @@ occluder = SubResource("OccluderPolygon2D_xjc83")
 [node name="LightOccluder2D" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_w1ndh")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D3" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_girdu")
+occluder_light_mask = 524289
 
 [node name="LightOccluder2D6" type="LightOccluder2D" parent="LightOccluders"]
 modulate = Color(1, 1, 1, 0)
 occluder = SubResource("OccluderPolygon2D_7e6k5")
+occluder_light_mask = 524289
+
+[node name="Fog" type="ColorRect" parent="."]
+visible = false
+z_index = 20
+material = SubResource("ShaderMaterial_18wl2")
+offset_left = -2288.0
+offset_top = -1425.0
+offset_right = 2381.0
+offset_bottom = 852.0
+color = Color(0.785, 0.785, 0.785, 0.6)
+
+[node name="SpawnPoints" type="Node" parent="."]
+
+[node name="1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(961, -149)
+
+[node name="2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-990, -386)
+
+[node name="3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-10, 295)
+
+[node name="4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-2, -843)
+
+[node name="MetalObjects" type="Node" parent="."]
+
+[node name="MetalObject" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+z_index = 1
+position = Vector2(-369, -19)
+
+[node name="MetalObject2" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+position = Vector2(-12, -299)
+
+[node name="MetalObject3" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+position = Vector2(211, -167)
+
+[node name="MetalObject4" parent="MetalObjects" instance=ExtResource("2_3yakd")]
+position = Vector2(-22, 354)
+
+[node name="MetalVial" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(-807, -791)
+scale = Vector2(0.8, 0.8)
+
+[node name="MetalVial4" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(443, -444)
+scale = Vector2(0.7, 0.7)
+
+[node name="MetalVial2" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(956, 375)
+scale = Vector2(0.8, 0.8)
+
+[node name="MetalVial3" parent="MetalObjects" instance=ExtResource("8_dufnk")]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(-1084, 375)
+scale = Vector2(0.8, 0.8)
+
+[node name="PointLight2D" type="PlayerLight" parent="."]
+position = Vector2(-144.5, -331)
+scale = Vector2(108.453, 38.875)
+energy = 0.1
+texture = SubResource("GradientTexture2D_pfm4w")
+
+[node name="UiLighting" type="PointLight2D" parent="."]
+position = Vector2(-144.5, -331)
+scale = Vector2(108.453, 38.875)
+energy = 0.25
+range_item_cull_mask = 524288
+texture = SubResource("GradientTexture2D_pfm4w")

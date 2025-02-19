@@ -61,13 +61,6 @@ theme_override_fonts/font = ExtResource("2_whb88")
 theme_override_font_sizes/font_size = 192
 text = "Play"
 
-[node name="TestMode" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(550, 150)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_whb88")
-theme_override_font_sizes/font_size = 192
-text = "Test Mode"
-
 [node name="Settings" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
@@ -85,6 +78,5 @@ text = "Quit"
 [connection signal="ready" from="." to="." method="_on_ready"]
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/TestMode" to="." method="_on_test_mode_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

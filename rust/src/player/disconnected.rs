@@ -51,10 +51,9 @@ impl ILabel for Disconnected {
                 .try_cast::<ShaderMaterial>()
                 .unwrap();
 
-            material
-                .set_shader_parameter("value".into(), Variant::from(remaining_time as f64 / 10.0));
+            material.set_shader_parameter("value", &Variant::from(remaining_time as f64 / 10.0));
 
-            self.base_mut().set_text(GString::from(format!(
+            self.base_mut().set_text(&GString::from(format!(
                 "Disconnected\n{}",
                 remaining_time as i32
             )));

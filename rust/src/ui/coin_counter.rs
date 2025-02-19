@@ -53,14 +53,14 @@ impl ILabel for CoinCounter {
     /// Sets the base value of coins and adds coins to the player.
     fn ready(&mut self) {
         let coin_cnt = GString::from(format!("{}", self.coins));
-        self.base_mut().set_text(coin_cnt.into());
+        self.base_mut().set_text(&coin_cnt);
 
         self.add_starting_coins();
     }
 
     /// On an input event, calls the process_coin_events method if the event is a CoinEvent
     /// # Arguments
-    /// * `event` (Gd<InputEvent>) - the input event that took place
+    /// * `event` (`Gd<InputEvent>`) - the input event that took place
     fn input(&mut self, event: Gd<InputEvent>) {
         let button_name = InputManager::event_to_input_name(event.clone());
 
@@ -78,7 +78,7 @@ impl CoinCounter {
     /// * `coin` (Coin) - the coin to add to the coin counter
     pub fn add_coin(&mut self, coin: &mut Coin) {
         let new_coins = self.coins + 1; // Find how many coins to change to
-        self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+        self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
 
         // Update coin counter
         self.coins = new_coins;
@@ -87,19 +87,15 @@ impl CoinCounter {
         let pos = Vector2::new(100000., -100000.);
         let args = &[pos.to_variant()];
         coin.to_gd()
-            .call_deferred(StringName::from("set_global_position"), args);
+            .call_deferred(&StringName::from("set_global_position"), args);
 
         // Enable freeze mode
-        coin.to_gd()
-            .call_deferred(StringName::from("set_freeze_enabled"), &[true.to_variant()]);
+        coin.to_gd().call_deferred(
+            &StringName::from("set_freeze_enabled"),
+            &[true.to_variant()],
+        );
 
         let real_pos = coin.to_gd().get_global_position();
-        godot_print!(
-            "\nREPOSITIONING {} to {} actually {}",
-            coin.to_gd().get_name(),
-            pos,
-            real_pos
-        );
 
         // Add the coin to the coin holder
         self.coin_holder
@@ -112,7 +108,7 @@ impl CoinCounter {
     /// * `text` (String) - The text to set the label to
     fn set_text(&mut self, text: String) {
         let text_g = GString::from(text); // Change the string to a GString for godot
-        self.base_mut().set_text(text_g); // set label text
+        self.base_mut().set_text(&text_g); // set label text
     }
 
     /// Removes coins from this Coin Counter, returns false if we cannot carry this out
@@ -125,7 +121,7 @@ impl CoinCounter {
             // If we dont have enough coins
             false
         } else {
-            self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+            self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
             self.coins = new_coins;
             true
         }
@@ -134,9 +130,9 @@ impl CoinCounter {
     /// Processes the coin event that happened
     /// # Arguments
     /// * `coin_event` (CoinEvents) - The coin event that took place
-    /// * `event` (Gd<InputEvent>) - The input event that took place
+    /// * `event` (`Gd<InputEvent>`) - The input event that took place
     fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
-        if event.is_action_pressed(StringName::from("throw")) {
+        if event.is_action_pressed(&StringName::from("throw")) {
             // Check if player has coins to throw
             if self.remove_coin() {
                 // Get the last coin from the coin holder
@@ -158,7 +154,7 @@ impl CoinCounter {
 
             // Set the name of the coin
             let coin_id = i as i32 + 1;
-            coin.set_name(format!("Coin{}", coin_id).into());
+            coin.set_name(&format!("Coin{}", coin_id));
 
             // Get the player and set the coins current player
             let player = self.base().get_node_as::<Player>("../../");
@@ -170,7 +166,7 @@ impl CoinCounter {
 
             // Add to coin counter
             let new_coins = self.coins + 1; // Find how many coins to change to
-            self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+            self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
 
             // Update coin counter
             self.coins = new_coins;
@@ -182,20 +178,13 @@ impl CoinCounter {
             // Enable freeze mode
             coin.set_freeze_enabled(true);
 
-            godot_print!(
-                "Coin vis: {}\nCoin pos: {}\nCoin name: {}",
-                coin.is_visible(),
-                coin.get_global_position(),
-                coin.get_name()
-            );
-
             // Add the coin to the coin holder
             self.coin_holder
                 .insert(self.coin_holder.len(), coin.clone());
 
             // Add the coin to the map (this calls the coin ready method)
             let mut map = player.get_parent().unwrap();
-            map.add_child(coin);
+            map.add_child(&coin);
         }
     }
 }

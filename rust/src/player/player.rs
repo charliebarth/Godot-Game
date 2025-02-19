@@ -5,19 +5,21 @@ use std::time::Instant;
 
 use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
+use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
-use godot::classes::ProjectSettings;
 use godot::classes::Sprite2D;
 use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
+use godot::global::JoyAxis;
 use godot::prelude::*;
 
 use crate::game::Game;
 use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
+use crate::settings::Settings;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::disconnected::Disconnected;
@@ -38,6 +40,24 @@ const MAX_RUN_SPEED: f32 = 600.0;
 const MIN_RUN_SPEED: f32 = 0.0;
 const MAX_JUMP_FORCE: f32 = 700.0;
 const MIN_JUMP_FORCE: f32 = 300.0;
+
+// Add an enum to identify different node types
+#[derive(Hash, Eq, PartialEq, Clone, Debug, Copy)]
+enum CachedNode {
+    HealthBar,
+    CoinCounter,
+    PointLight,
+    SteelParticles,
+    Disconnected,
+    Camera,
+    PewterParticles,
+    MetalLine,
+    LineSelector,
+    MetalReserveBarManager,
+    InputManager,
+    MetalManager,
+    Sprite,
+}
 
 #[derive(GodotClass)]
 #[class(base=CharacterBody2D)]
@@ -70,45 +90,18 @@ pub struct Player {
     /// The key is the event and the value is a tuple of the start time and duration of the event
     /// When the time since the start time is greater than the duration, the event is removed from the HashMap
     timeout_events: HashMap<TimeoutEvents, (Instant, Duration)>,
-    // TODO: Make all of these cached nodes a HashMap rather than a bunch of individual Option fields
-    /// The animated sprite of the player
-    sprite: Option<Gd<AnimatedSprite2D>>,
-    /// The input manager of the player
-    input_manager: Option<Gd<InputManager>>,
-    /// The metal manager of the player
-    metal_manager: Option<Gd<MetalManager>>,
-    /// The metal reserve bar manager of the player
-    metal_reserve_bar_manager: Option<Gd<MetalReserveBarManager>>,
-    /// The health bar of the player
-    health_bar: Option<Gd<TextureProgressBar>>,
-    /// The coin counter of the player
-    coin_counter: Option<Gd<CoinCounter>>,
-    /// The point light of the player
-    point_light: Option<Gd<PointLight2D>>,
-    /// A vec of the animated sprites of the current player that are shown to other players
-    player_vis: Vec<Gd<AnimatedSprite2D>>,
-    /// The node that draws lines to nearby metal objects
-    metal_line: Option<Gd<MetalLine>>,
-    /// A metal line selector node
-    /// This done by getting the angle of the node and the angle of metal object and comparing them
-    line_selector: Option<Gd<Sprite2D>>,
-    /// Particles that are emitted when the player is burning or low burning pewter
-    /// This is a visual reminder to the player that they are using pewter
-    pewter_particles: Option<Gd<GpuParticles2D>>,
-    /// Particles that are emitted when the player is burning or low burning steel
-    /// This is a visual reminder to the player that they are using steel
-    steel_particles: Option<Gd<GpuParticles2D>>,
-    /// This node has a timer that counts down and removes the player from the game if it reaches 0
-    disconnected: Option<Gd<Disconnected>>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     /// A vec of nearby metal objects that can be used by steel and iron
     metal_objects: Vec<Gd<MetalObject>>,
     /// The mass of the player in kilograms
     mass: f32,
-    is_steel_burning: bool,
     /// If the player is attacking or not
     is_attacking: bool,
+    /// HashMap storing cached node references
+    cached_nodes: HashMap<CachedNode, Gd<Node>>,
+    /// The settings for the game
+    settings: Gd<Settings>,
 }
 
 #[godot_api]
@@ -121,9 +114,15 @@ impl ICharacterBody2D for Player {
     /// # Returns
     /// * `Player` - The Player node
     fn init(base: Base<CharacterBody2D>) -> Self {
-        let path = GString::from("physics/2d/default_gravity");
-        let gravity: f64 =
-            FromGodot::try_from_variant(&ProjectSettings::singleton().get_setting(path)).unwrap();
+        let settings = Engine::singleton()
+            .get_singleton("Settings")
+            .expect("settings singleton missing")
+            .try_cast::<Settings>()
+            .expect("settings is not a Settings");
+
+        let settings_bound = settings.bind();
+        let gravity: f64 = settings_bound.get_gravity() as f64;
+        drop(settings_bound);
 
         Self {
             base,
@@ -139,24 +138,12 @@ impl ICharacterBody2D for Player {
             device_id: 0,
             player_id: 0,
             timeout_events: HashMap::new(),
-            sprite: None,
-            input_manager: None,
-            metal_manager: None,
-            metal_reserve_bar_manager: None,
-            health_bar: None,
-            coin_counter: None,
-            point_light: None,
-            player_vis: Vec::new(),
-            metal_line: None,
-            line_selector: None,
-            pewter_particles: None,
-            steel_particles: None,
-            disconnected: None,
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             mass: 70.0,
-            is_steel_burning: false,
             is_attacking: false,
+            cached_nodes: HashMap::new(),
+            settings,
         }
     }
 
@@ -175,6 +162,11 @@ impl ICharacterBody2D for Player {
 
         // Set the health bar to the player's health
         self.get_health_bar().set_value(self.get_health());
+
+        // Give the metal manager access to the player
+        self.get_metal_manager()
+            .bind_mut()
+            .set_player(self.base().get_node_as::<Player>("."));
     }
 
     /// The Godot method called every physics frame
@@ -211,9 +203,6 @@ impl ICharacterBody2D for Player {
         // Reset the player to their default values such as animation speed, run speed, and jump force
         self.reset_player();
 
-        // Update all metals held by the player
-        self.get_metal_manager().bind_mut().update(self);
-
         // Update the current state of the player
         self.current_state.update_state(self);
         self.set_animation_direction();
@@ -235,7 +224,7 @@ impl Player {
     /// as well as notify the game that the player has died
     pub fn die(&mut self) {
         let mut camera = Camera2D::new_alloc();
-        camera.set_name("OverviewCamera".into());
+        camera.set_name("OverviewCamera");
         camera.set_position(Vector2::new(20.0, -225.0));
         camera.set_zoom(Vector2::new(0.37, 0.37));
 
@@ -248,12 +237,35 @@ impl Player {
             .unwrap();
 
         parent_viewport.set_canvas_cull_mask(1);
-        parent_viewport.add_child(camera);
+        parent_viewport.add_child(&camera);
         self.base_mut().queue_free();
         self.base()
             .get_node_as::<Game>("/root/Game")
             .bind_mut()
             .remove_player(self.player_id);
+    }
+
+    #[func]
+    pub fn make_player_visible(&mut self, player_id: i32) {
+        let mut player_sprite = self.get_sprite();
+        let current_layer = player_sprite.get_visibility_layer();
+        player_sprite.set_visibility_layer(current_layer | 1 << (player_id * 2));
+    }
+
+    #[func]
+    pub fn make_player_invisible(&mut self, player_id: i32) {
+        let mut player_sprite = self.get_sprite();
+        let current_layer = player_sprite.get_visibility_layer();
+        player_sprite.set_visibility_layer(current_layer & !(1 << (player_id * 2)));
+    }
+
+    #[func]
+    /// Set the zoom for the player
+    ///
+    /// # Arguments
+    /// * `zoom` - The zoom to set the player to
+    pub fn set_zoom(&mut self, zoom: Vector2) {
+        self.get_camera().set_zoom(zoom);
     }
 
     /// Set the current state of the player and triggers the enter method of the new state
@@ -340,8 +352,8 @@ impl Player {
 
     /// Adjusts the coins in this players coin_counter positively or negatively.
     ///
-    /// # Arguments 
-    /// * `pos_neg`` (i8) - if -1, remove_coin    if +1, add_coin
+    /// # Arguments
+    /// * `pos_neg` (i8) - if -1, remove_coin    if +1, add_coin
     pub fn adjust_coins(&mut self, pos_neg: i8, coin: &mut Coin) {
         if pos_neg == -1 {
             // Dereference and call the method
@@ -354,9 +366,9 @@ impl Player {
     /// Adjusts specific metals in this players metal bar manager to some amount.
     ///
     /// # Arguments
-    /// * `metals`` (Vec<StringName>) - the metals to effect
-    /// * `amt`` (f64) - the new amount to set the metals to
-    pub fn adjust_metals(&mut self, metals: Vec<StringName>, amt: f64) {
+    /// * `metals` (`Vec<StringName>`) - the metals to effect
+    /// * `amt` (f64) - the new amount to set the metals to
+    pub fn adjust_metals(&mut self, metals: Vec<&str>, amt: f64) {
         for metal in metals {
             self.get_metal_manager()
                 .bind_mut()
@@ -369,7 +381,7 @@ impl Player {
     /// # Arguments
     /// * `metal` - The metal to update
     /// * `amt` - The new amount to set the metal to
-    pub fn set_metal_reserve_amount(&mut self, metal: StringName, amt: f64) {
+    pub fn set_metal_reserve_amount(&mut self, metal: &str, amt: f64) {
         self.get_metal_reserve_bar_manager()
             .bind_mut()
             .set_metal_amount(metal, amt);
@@ -383,7 +395,7 @@ impl Player {
     pub fn get_horizontal_movement(&mut self) -> f32 {
         let move_left = StringName::from(format!("move_left{}", self.device_id));
         let move_right = StringName::from(format!("move_right{}", self.device_id));
-        Input::singleton().get_axis(move_left, move_right)
+        Input::singleton().get_axis(&move_left, &move_right)
     }
 
     /// Sets the player's velocity to the speed passed * the magnitude of the direction passed
@@ -444,13 +456,8 @@ impl Player {
 
         let mut sprite = self.get_sprite();
         self.anim_finished = false;
-        sprite.set_animation(animation_name.clone());
+        sprite.set_animation(&animation_name);
         sprite.play();
-
-        for player_vis in self.player_vis.iter_mut() {
-            player_vis.set_animation(animation_name.clone());
-            player_vis.play();
-        }
     }
 
     /// Set the animation direction of the player
@@ -471,11 +478,6 @@ impl Player {
 
         sprite.set_scale(scale);
         sprite.set_position(pos);
-
-        for player_vis in self.player_vis.iter_mut() {
-            player_vis.set_scale(scale);
-            player_vis.set_position(pos);
-        }
     }
 
     /// Sets the speed of the player's animations
@@ -485,10 +487,6 @@ impl Player {
     pub fn set_animation_speed(&mut self, speed: f32) {
         let mut sprite = self.get_sprite();
         sprite.set_speed_scale(speed);
-
-        for player_vis in self.player_vis.iter_mut() {
-            player_vis.set_speed_scale(speed);
-        }
     }
 
     /// Get the previous state of the player
@@ -621,11 +619,12 @@ impl Player {
             if let Ok(mut node) = child.try_cast::<CanvasItem>() {
                 let layer_num = player_id * 2;
                 node.set_visibility_layer(1 << layer_num);
-                node.set_light_mask(1023);
+                let light_mask = node.get_light_mask();
+                node.set_light_mask(light_mask | 1 << layer_num);
             }
         }
 
-        self.base_mut().emit_signal("id_changed".into(), &[]);
+        self.base_mut().emit_signal("id_changed", &[]);
     }
 
     #[func]
@@ -646,10 +645,6 @@ impl Player {
         sprite.set_speed_scale(1.0);
         self.set_run_speed(DEFAULT_RUN_SPEED);
         self.set_jump_force(DEFAULT_JUMP_FORCE);
-
-        for player_vis in self.player_vis.iter_mut() {
-            player_vis.set_speed_scale(1.0);
-        }
     }
 
     /// Adds a force to the player's forces queue
@@ -772,61 +767,6 @@ impl Player {
         self.mass
     }
 
-    /// Checks if the player is burning steel
-    /// This is used by the fall state so that the player can be "falling" while
-    /// burning steel while ignoring transitions to new states
-    ///
-    /// # Returns
-    /// * `bool` - True if the player is burning steel, false otherwise
-    pub fn get_is_steel_burning(&self) -> bool {
-        self.is_steel_burning
-    }
-
-    /// Sets if the player is burning steel
-    ///
-    /// # Arguments
-    /// * `is_steel_burning` - A boolean that determines if the player is burning steel
-    pub fn set_is_steel_burning(&mut self, is_steel_burning: bool) {
-        self.is_steel_burning = is_steel_burning;
-    }
-
-    /// Get the angle of the metal object closest to the angle of the LineSelector if the angle is within the range of the LineSelector
-    ///
-    /// # Returns
-    /// * `Option<f64>` - The angle of the nearest metal object if there is one within the range of the LineSelector
-    pub fn get_nearest_metal_object(&mut self) -> Option<f64> {
-        let mut nearest_metal_object: Option<f64> = None;
-        let max_angle: f64 = 5.0_f64.to_radians(); // Define max angle difference in radians
-
-        let line_selector_position = self.get_line_selector().get_global_position();
-        let player_position = self.base().get_global_position();
-
-        // Calculate angle of the line selector relative to the player
-        let line_selector_angle = (line_selector_position.y as f64 - player_position.y as f64)
-            .atan2(line_selector_position.x as f64 - player_position.x as f64);
-
-        let mut current_shortest_angle_diff: f64 = f64::MAX;
-        for metal_object in self.get_metal_objects().iter() {
-            let metal_object_position = metal_object.get_global_position();
-
-            // Calculate angle of the metal object relative to the player
-            let metal_object_angle = (metal_object_position.y as f64 - player_position.y as f64)
-                .atan2(metal_object_position.x as f64 - player_position.x as f64);
-
-            // Calculate wrapped angle difference
-            let angle_diff = ((metal_object_angle - line_selector_angle + std::f64::consts::PI)
-                % (2.0 * std::f64::consts::PI))
-                - std::f64::consts::PI;
-
-            if angle_diff.abs() < max_angle && angle_diff.abs() < current_shortest_angle_diff {
-                current_shortest_angle_diff = angle_diff.abs();
-                nearest_metal_object = Some(metal_object_angle);
-            }
-        }
-
-        nearest_metal_object
-    }
-
     /// Enable the hitbox of the player when they are attacking
     ///
     /// # Arguments
@@ -856,7 +796,7 @@ impl Player {
     /// A signal that is emmited by the player when it's id is changed
     /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
-    pub fn id_changed() {}
+    pub fn id_changed();
 
     /// If passed true, the player turns on its timer to count down before the player is removed from the game
     /// If passed false, the player turns off its timer meaning it is no longer disconnected
@@ -870,20 +810,30 @@ impl Player {
 }
 /// Getters for nodes
 impl Player {
+    fn get_cached_node<T: GodotClass + Inherits<Node>>(
+        &mut self,
+        cache_key: CachedNode,
+        path: &str,
+    ) -> Gd<T> {
+        if !self.cached_nodes.contains_key(&cache_key) {
+            let node = self.base().get_node_as::<T>(path);
+            self.cached_nodes.insert(cache_key, node.upcast());
+        }
+
+        self.cached_nodes
+            .get(&cache_key)
+            .expect(&format!("{:?} node not found", cache_key))
+            .clone()
+            .cast::<T>()
+    }
+
     /// Getter for the InputManager node
     /// This effectively caches the InputManager node so that it does not have to be found every time it is needed
     ///
     /// # Returns
     /// * `InputManager` - The InputManager node
     pub fn get_input_manager(&mut self) -> Gd<InputManager> {
-        if self.input_manager.is_none() {
-            self.input_manager = Some(self.base().get_node_as::<InputManager>("InputManager"));
-        }
-
-        self.input_manager
-            .as_ref()
-            .expect("InputManager node not found")
-            .clone()
+        self.get_cached_node(CachedNode::InputManager, "InputManager")
     }
 
     /// Getter for the MetalManager node
@@ -892,14 +842,7 @@ impl Player {
     /// # Returns
     /// * `MetalManager` - The MetalManager node
     pub fn get_metal_manager(&mut self) -> Gd<MetalManager> {
-        if self.metal_manager.is_none() {
-            self.metal_manager = Some(self.base().get_node_as::<MetalManager>("MetalManager"));
-        }
-
-        self.metal_manager
-            .as_ref()
-            .expect("MetalManager node not found")
-            .clone()
+        self.get_cached_node(CachedNode::MetalManager, "MetalManager")
     }
 
     /// Getter for the AnimatedSprite2D node
@@ -908,22 +851,7 @@ impl Player {
     /// # Returns
     /// * `AnimatedSprite2D` - The AnimatedSprite2D node
     pub fn get_sprite(&mut self) -> Gd<AnimatedSprite2D> {
-        if self.sprite.is_none() {
-            self.sprite = Some(self.base().get_node_as::<AnimatedSprite2D>("OwnerVis"));
-
-            let player_vis_one = self.base().get_node_as::<AnimatedSprite2D>("Player1Vis");
-            let player_vis_two = self.base().get_node_as::<AnimatedSprite2D>("Player2Vis");
-            let player_vis_three = self.base().get_node_as::<AnimatedSprite2D>("Player3Vis");
-
-            self.player_vis.push(player_vis_one);
-            self.player_vis.push(player_vis_two);
-            self.player_vis.push(player_vis_three);
-        }
-
-        self.sprite
-            .as_ref()
-            .expect("OwnerVis node not found")
-            .clone()
+        self.get_cached_node(CachedNode::Sprite, "PlayerAnimation")
     }
 
     /// Getter for the MetalReserveBarManager node
@@ -932,17 +860,7 @@ impl Player {
     /// # Returns
     /// * `MetalReserveBarManager` - The MetalReserveBarManager node
     pub fn get_metal_reserve_bar_manager(&mut self) -> Gd<MetalReserveBarManager> {
-        if self.metal_reserve_bar_manager.is_none() {
-            self.metal_reserve_bar_manager = Some(
-                self.base()
-                    .get_node_as::<MetalReserveBarManager>("MetalReserveBarManager"),
-            );
-        }
-
-        self.metal_reserve_bar_manager
-            .as_ref()
-            .expect("MetalReserveBarManager node not found")
-            .clone()
+        self.get_cached_node(CachedNode::MetalReserveBarManager, "MetalReserveBarManager")
     }
 
     /// Getter for the HealthBar node
@@ -951,14 +869,7 @@ impl Player {
     /// # Returns
     /// * `TextureProgressBar` - The TextureProgressBar node used to display the player's health
     pub fn get_health_bar(&mut self) -> Gd<TextureProgressBar> {
-        if self.health_bar.is_none() {
-            self.health_bar = Some(self.base().get_node_as::<TextureProgressBar>("HealthBar"));
-        }
-
-        self.health_bar
-            .as_ref()
-            .expect("HealthBar node not found")
-            .clone()
+        self.get_cached_node(CachedNode::HealthBar, "HealthBar")
     }
 
     /// Getter for CoinCounter node
@@ -967,16 +878,7 @@ impl Player {
     /// # Returns
     /// *  `CoinCounter` - The CoinCounter node used to show player coins.
     pub fn get_coin_counter(&mut self) -> Gd<CoinCounter> {
-        if self.coin_counter.is_none() {
-            self.coin_counter = Some(
-                self.base()
-                    .get_node_as::<CoinCounter>("Coin_Counter_Panel/CoinCounter"),
-            );
-        }
-        self.coin_counter
-            .as_ref()
-            .expect("Could not find CoinCounter")
-            .clone()
+        self.get_cached_node(CachedNode::CoinCounter, "Coin_Counter_Panel/CoinCounter")
     }
 
     /// Getter for the PointLight2D node
@@ -985,14 +887,7 @@ impl Player {
     /// # Returns
     /// * `PointLight2D` - The PointLight2D node
     pub fn get_point_light(&mut self) -> Gd<PointLight2D> {
-        if self.point_light.is_none() {
-            self.point_light = Some(self.base().get_node_as::<PointLight2D>("PointLight2D"));
-        }
-
-        self.point_light
-            .as_ref()
-            .expect("PointLight2D node not found")
-            .clone()
+        self.get_cached_node(CachedNode::PointLight, "PointLight2D")
     }
 
     /// Getter for the MetalLine node
@@ -1001,14 +896,7 @@ impl Player {
     /// # Returns
     /// * `MetalLine` - The MetalLine node
     pub fn get_metal_line(&mut self) -> Gd<MetalLine> {
-        if self.metal_line.is_none() {
-            self.metal_line = Some(self.base().get_node_as::<MetalLine>("MetalLine"));
-        }
-
-        self.metal_line
-            .as_ref()
-            .expect("MetalLine node not found")
-            .clone()
+        self.get_cached_node(CachedNode::MetalLine, "MetalLine")
     }
 
     /// Getter for the LineSelector node
@@ -1017,14 +905,7 @@ impl Player {
     /// # Returns
     /// * `Sprite2D` - The LineSelector node
     pub fn get_line_selector(&mut self) -> Gd<Sprite2D> {
-        if self.line_selector.is_none() {
-            self.line_selector = Some(self.base().get_node_as::<Sprite2D>("LineSelector"));
-        }
-
-        self.line_selector
-            .as_ref()
-            .expect("LineSelector node not found")
-            .clone()
+        self.get_cached_node(CachedNode::LineSelector, "LineSelector")
     }
 
     /// Getter for the PewterParticles node
@@ -1033,15 +914,7 @@ impl Player {
     /// # Returns
     /// * `GpuParticles2D` - The PewterParticles node
     pub fn get_pewter_particles(&mut self) -> Gd<GpuParticles2D> {
-        if self.pewter_particles.is_none() {
-            self.pewter_particles =
-                Some(self.base().get_node_as::<GpuParticles2D>("PewterParticles"));
-        }
-
-        self.pewter_particles
-            .as_ref()
-            .expect("PewterParticles node not found")
-            .clone()
+        self.get_cached_node(CachedNode::PewterParticles, "PewterParticles")
     }
 
     /// Getter for the SteelParticles node
@@ -1050,15 +923,7 @@ impl Player {
     /// # Returns
     /// * `GpuParticles2D` - The SteelParticles node
     pub fn get_steel_particles(&mut self) -> Gd<GpuParticles2D> {
-        if self.steel_particles.is_none() {
-            self.steel_particles =
-                Some(self.base().get_node_as::<GpuParticles2D>("SteelParticles"));
-        }
-
-        self.steel_particles
-            .as_ref()
-            .expect("SteelParticles node not found")
-            .clone()
+        self.get_cached_node(CachedNode::SteelParticles, "SteelParticles")
     }
 
     /// Getter for the Disconnected node
@@ -1067,13 +932,10 @@ impl Player {
     /// # Returns
     /// * `Disconnected` - The Disconnected node
     pub fn get_disconnected(&mut self) -> Gd<Disconnected> {
-        if self.disconnected.is_none() {
-            self.disconnected = Some(self.base().get_node_as::<Disconnected>("Disconnected"));
-        }
+        self.get_cached_node(CachedNode::Disconnected, "Disconnected")
+    }
 
-        self.disconnected
-            .as_ref()
-            .expect("Disconnected node not found")
-            .clone()
+    pub fn get_camera(&mut self) -> Gd<Camera2D> {
+        self.get_cached_node(CachedNode::Camera, "Camera2D")
     }
 }

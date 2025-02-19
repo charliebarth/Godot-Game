@@ -3,14 +3,12 @@
 ///
 /// Author: Trinity Pittman
 /// Date: Fall 2024
-
 use std::collections::HashMap;
 
 use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};
 use godot::prelude::*;
 
 pub use crate::ui::metal_bar::MetalBar;
-
 
 // The maximum number of bars to display on a players screen at a time
 const MAX_BARS_ON_SCREEN: u8 = 4;
@@ -69,11 +67,11 @@ impl IVBoxContainer for MetalReserveBarManager {
 
                 // Set name of godot object
                 self.get_metal_bar(metal_name.clone())
-                    .set_name(metal_name.clone().to_string().into());
+                    .set_name(&metal_name.to_string());
 
                 // Add the bar to VBox
                 let metal = self.get_metal_bar(metal_name.clone());
-                self.base_mut().add_child(metal);
+                self.base_mut().add_child(&metal);
 
                 // Set the texture of the bar
                 self.get_metal_bar(metal_name.clone())
@@ -85,8 +83,6 @@ impl IVBoxContainer for MetalReserveBarManager {
             }
         }
 
-        godot_print!("ALL BARS CREATED");
-
         self.setup_keybinds();
     }
 }
@@ -95,7 +91,7 @@ impl IVBoxContainer for MetalReserveBarManager {
 impl MetalReserveBarManager {
     /// Sets the metals currently on screen based on the keybindings set
     fn setup_keybinds(&mut self) {
-        // Get the input mappings 
+        // Get the input mappings
         let mut input_map: Gd<InputMap> = InputMap::singleton();
         let inputs: Array<StringName> = input_map.get_actions();
 
@@ -105,9 +101,8 @@ impl MetalReserveBarManager {
 
             // If the name of the keybind is one of the metals..
             if PATHS.contains(&input.to_string().as_str()) {
-                godot_print!("{}", input);
                 let events: Array<Gd<godot::classes::InputEvent>> =
-                    input_map.action_get_events(input.clone());
+                    input_map.action_get_events(&input);
 
                 let mut max = 0;
                 // If something is keybound to the event and not reached max metals, show the bar
@@ -125,13 +120,11 @@ impl MetalReserveBarManager {
     /// * `name` (&str) - the name of the metal bar to get
     ///
     /// # Returns
-    /// * (Gd<MetalBar>) - the metal bar or None if none exists
+    /// * (`Gd<MetalBar>`) - the metal bar or None if none exists
     pub fn get_metal_bar(&mut self, name: StringName) -> Gd<MetalBar> {
         if let Some(bar) = self.get_bars().get(&name) {
             bar.clone()
         } else {
-            godot_print!("METAL BAR NOT FOUND creating {}", name);
-
             // Create new bar
             let bar = MetalBar::new_alloc();
 
@@ -154,7 +147,7 @@ impl MetalReserveBarManager {
 
     /// Adds metals to all the bars contained within the metal reserve bar manager
     /// # Arguments
-    /// * `metals` (&Vec<StringName>) - the metals to increment
+    /// * `metals` (`&Vec<StringName>`) - the metals to increment
     /// * `amt` (f64) - the ammount to increment by
     pub fn add_metals(&mut self, metals: &Vec<StringName>, amt: f64) {
         // if needed
@@ -165,23 +158,20 @@ impl MetalReserveBarManager {
                 // If its one of the metals
                 // add metal reserves
                 bar.bind_mut().adjust_reserves(amt);
-                godot_print!("METALS ADDED to {}", bar.get_name())
             }
         }
     }
 
     // Adds and removes a metal bar from displaying on the screen
-    pub fn add_remove(&mut self, unbind: Gd<MetalBar>, bind: String) {
-        godot_print!("KEY REBINDINGS - stubbed")
-    }
+    pub fn add_remove(&mut self, unbind: Gd<MetalBar>, bind: String) {}
 
     /// Sets the amount of a metal in the reserve bar
     ///
     /// # Arguments
     /// * `name` (StringName) - the name of the metal to set the amount of
     /// * `amt` (f64) - the amount to set the metal to
-    pub fn set_metal_amount(&mut self, name: StringName, amt: f64) {
-        let mut bar = self.get_metal_bar(name);
+    pub fn set_metal_amount(&mut self, name: &str, amt: f64) {
+        let mut bar = self.get_metal_bar(name.into());
         bar.bind_mut().set_value(amt);
     }
 }

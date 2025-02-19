@@ -1,5 +1,8 @@
+use std::collections::HashMap;
+
 use super::{
-    metals::{pewter::Pewter, steel::Steel},
+    enums::metal_type::{BurnType, ButtonState, MetalType},
+    metals::{iron::Iron, pewter::Pewter, steel::Steel},
     player::Player,
     traits::metal::Metal,
 };
@@ -9,12 +12,14 @@ use godot::prelude::*;
 /// It creates the metals and assigns them to the player based on the game mode.
 /// It also updates the metals every frame.
 #[derive(GodotClass)]
-#[class(base=Node2D)]
+#[class(base = Node2D)]
 pub struct MetalManager {
     /// The base node of the MetalManager.
     base: Base<Node2D>,
     /// The metals that the player has access to.
-    metals: Vec<Box<dyn Metal>>,
+    metals: HashMap<MetalType, Box<dyn Metal>>,
+    /// The player that the metal manager is attached to.
+    player: Option<Gd<Player>>,
 }
 
 #[godot_api]
@@ -29,12 +34,28 @@ impl INode2D for MetalManager {
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
-            metals: Vec::new(),
+            metals: HashMap::new(),
+            player: None,
         }
+    }
+
+    fn ready(&mut self) {
+        let player_node = self.base().get_parent().expect("parent not found");
+        let player = player_node.try_cast::<Player>().expect("player not found");
+
+        self.player = Some(player);
+    }
+
+    fn physics_process(&mut self, _delta: f64) {
+        self.update_metals();
     }
 }
 
 impl MetalManager {
+    pub fn set_player(&mut self, player: Gd<Player>) {
+        self.player = Some(player);
+    }
+
     /// Assigns the starting metals to the player based on the game mode.
     /// The match statement will be expanded in the future to include more game modes.
     ///
@@ -49,19 +70,47 @@ impl MetalManager {
 
     /// Assigns the metals for the last player standing game mode.
     fn last_player_standing(&mut self) {
-        self.metals
-            .push(Box::new(Pewter::new(100.0, 100.0, 0.05, 0.01)));
-        self.metals
-            .push(Box::new(Steel::new(100.0, 100.0, 0.05, 0.01)));
+        let player = self.player.as_ref().unwrap();
+
+        self.metals.insert(
+            MetalType::Pewter,
+            Box::new(Pewter::new(
+                100.0,
+                100.0,
+                0.05,
+                0.01,
+                player.clone(),
+                MetalType::Pewter,
+            )),
+        );
+        self.metals.insert(
+            MetalType::Steel,
+            Box::new(Steel::new(
+                100.0,
+                100.0,
+                0.05,
+                0.01,
+                player.clone(),
+                MetalType::Steel,
+            )),
+        );
+        self.metals.insert(
+            MetalType::Iron,
+            Box::new(Iron::new(
+                100.0,
+                100.0,
+                0.05,
+                0.01,
+                player.clone(),
+                MetalType::Iron,
+            )),
+        );
     }
 
     /// Updates every metal that the player has access to.
-    ///
-    /// # Arguments
-    /// * `player` - A mutable reference to the player so that the metals can be updated.
-    pub fn update(&mut self, player: &mut Player) {
+    pub fn update_metals(&mut self) {
         for metal in &mut self.metals {
-            metal.as_mut().update(player);
+            metal.1.as_mut().update();
         }
     }
 
@@ -70,11 +119,14 @@ impl MetalManager {
     /// # Arguments
     /// * `metal` - The name of the metal to increase the reserve of.
     /// * `amount` - The amount to increase the reserve by.
-    pub fn increase_metal_reserve(&mut self, metal: StringName, amount: f64) {
-        for m in &mut self.metals {
-            if m.as_ref().as_str() == metal.to_string() {
-                m.as_mut().increase_reserve(amount);
-            }
+    pub fn increase_metal_reserve(&mut self, metal: &str, amount: f64) {
+        let metal_type = MetalType::from_string(metal);
+
+        if let Some(metal_type) = metal_type {
+            self.metals
+                .get_mut(&metal_type)
+                .unwrap()
+                .update_reserve(amount);
         }
     }
 }

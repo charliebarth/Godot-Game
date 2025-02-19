@@ -13,8 +13,8 @@ func _ready() -> void:
 			for i in range(4):
 				var duplicate: TileMapLayer = child.duplicate()
 
-				duplicate.visibility_layer = (1 << layer | 1 << (layer - 1))
-				duplicate.light_mask = (1 << layer | 1 << (layer - 1) | 1)
+				duplicate.visibility_layer = (1 << layer)
+				duplicate.light_mask = (1 << layer | 1)
 
 				# Optional: Give each duplicate a unique name for easier debugging
 				duplicate.name = child.name + "_duplicate_" + str(i + 1)
