@@ -82,7 +82,7 @@ impl Metal for Steel {
             let metal_type = self.metal_type.as_str();
             self.player
                 .bind_mut()
-                .set_metal_reserve_amount(metal_type.into(), self.current_reserve);
+                .set_metal_reserve_amount(metal_type, self.current_reserve);
         }
 
         self.previous_reserve = self.current_reserve;
