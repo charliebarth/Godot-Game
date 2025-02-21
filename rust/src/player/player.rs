@@ -170,11 +170,11 @@ impl ICharacterBody2D for Player {
             .set_player(self.base().get_node_as::<Player>("."));
 
         // Connect the tin signal to the player
-        let tin_light = self.base().get_node_as::<PlayerTinLight>("PlayerTinLight");
-        self.connect(
+        let tin_light = self.base().get_node_as::<PointLight2D>("PlayerTinLight");
+        self.base_mut().connect(
             "tin_activated",
             &Callable::from_object_method(&tin_light, "adjust_tin_light"),
-        )
+        );
     }
 
     /// The Godot method called every physics frame

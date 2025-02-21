@@ -1,4 +1,4 @@
-[gd_scene load_steps=158 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=159 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -1019,6 +1019,14 @@ script = ExtResource("26_f1f48")
 [node name="PointLight2D2" type="PlayerLight" parent="."]
 position = Vector2(-2.38419e-07, -18)
 scale = Vector2(44.4023, 22.6347)
+energy = 0.1
+shadow_item_cull_mask = 524288
+texture = SubResource("GradientTexture2D_dokqc")
+script = ExtResource("26_f1f48")
+
+[node name="PlayerTinLight" type="PlayerLight" parent="."]
+position = Vector2(-1.08248e-05, -425.425)
+scale = Vector2(1971.56, 512.33)
 energy = 0.1
 shadow_item_cull_mask = 524288
 texture = SubResource("GradientTexture2D_dokqc")
