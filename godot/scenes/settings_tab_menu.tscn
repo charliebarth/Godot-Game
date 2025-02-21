@@ -666,7 +666,7 @@ text = "Sprint"
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
+[node name="sprint" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
@@ -692,7 +692,7 @@ text = "Roll"
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
+[node name="roll" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
@@ -718,7 +718,7 @@ text = "Melee Attack"
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee/HBoxContainer"]
+[node name="melee" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
@@ -744,7 +744,7 @@ text = "Throw"
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
+[node name="throw" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
@@ -771,7 +771,7 @@ text = "Flare Metal(s)"
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare/HBoxContainer"]
+[node name="flare" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
@@ -795,7 +795,7 @@ text = "Low Burn"
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn/HBoxContainer"]
+[node name="low_burn" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
