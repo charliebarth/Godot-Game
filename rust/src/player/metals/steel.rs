@@ -29,8 +29,6 @@ pub struct Steel {
     burn_rate: f64,
     /// The rate at which the player burns steel when using the low burn ability.
     low_burn_rate: f64,
-    /// A flag to determine if the player was low burning.
-    was_low_burn: bool,
     /// The push value for the steel ability.
     /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
     burn_direction: f32,
@@ -63,13 +61,8 @@ impl Metal for Steel {
 
         self.update_reserve(-self.burn_rate);
 
-        let metal_object = self.object.as_ref().unwrap();
         let mut player_clone = self.player.clone();
         let mut player = player_clone.bind_mut();
-
-        if !player.is_metal_object_in_range(metal_object) {
-            return;
-        }
 
         // TODO: Make constant
         let max_acceleration: f32 = 700.0;
@@ -94,73 +87,13 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the metal line can be modified.
     fn low_burn(&mut self) {
-        if !self.burn {
-            self.object = None;
-            self.object_location = Vector2::ZERO;
-        }
-
-        // Mark that the player is low burning and decrease the reserve.
-        self.was_low_burn = true;
         self.update_reserve(-self.low_burn_rate);
-        let mut closest_object_location = Vector2::ZERO;
 
-        let mut player_clone = self.player.clone();
-        let mut player = player_clone.bind_mut();
-
-        // Get the metal line and show it.
-        let mut metal_line = player.get_metal_line();
-        let player_position = metal_line.to_local(metal_line.get_global_position());
-        let mut bound_metal_line = metal_line.bind_mut();
-        bound_metal_line.set_should_show(true);
-
-        // Get the joystick position.
-        let joy_position_x =
-            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_X);
-        let joy_position_y =
-            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_Y);
-        let joy_position = Vector2::new(joy_position_x, joy_position_y);
-
-        // A metal object must be within ±25 degrees to be selected.
-        let mut closest_obj_angle_diff: f32 = 40.0_f32.to_radians();
-
-        // Get the player position and the index of the closest metal object.
-        let mut index_closest_metal_object = usize::MAX;
-
-        for (index, metal_object) in player.get_metal_objects().iter().enumerate() {
-            let color = Color::from_rgba(0.0, 0.4, 0.9, 0.1);
-            let metal_object_position = bound_metal_line
-                .base()
-                .to_local(metal_object.get_global_position());
-
-            bound_metal_line.add_line_segment(metal_object_position, color);
-
-            let closest_metal_object = self.get_closest_metal_object(
-                player_position,
-                joy_position,
-                closest_obj_angle_diff,
-                metal_object_position,
-            );
-
-            if let Some((metal_object_dir, angle_diff)) = closest_metal_object {
-                closest_object_location = metal_object_dir;
-                closest_obj_angle_diff = angle_diff;
-                index_closest_metal_object = index;
-                if !self.burn {
-                    self.object = Some(metal_object.clone());
-                    self.object_location = closest_object_location;
-                };
-            }
+        if self.burn {
+            self.update_selected_object_location();
+        } else {
+            self.update_line_selection();
         }
-
-        if index_closest_metal_object != usize::MAX {
-            bound_metal_line.update_color(
-                Color::from_rgba(0.0, 0.6, 2.3, 1.0),
-                index_closest_metal_object,
-            );
-        }
-
-        drop(bound_metal_line);
-        metal_line.queue_redraw();
     }
 
     fn update_reserve(&mut self, amount: f64) {
@@ -195,7 +128,14 @@ impl Metal for Steel {
     fn set_low_burning(&mut self, low_burning: bool) {
         self.low_burn = low_burning;
 
-        if !self.low_burn {
+        if self.low_burn {
+            // This will tell the metal line to stop drawing lines and then queue a redraw to clear remaining lines from the screen
+            let mut player = self.player.bind_mut();
+            let mut metal_line = player.get_metal_line();
+            let mut bound_metal_line = metal_line.bind_mut();
+            bound_metal_line.set_should_show(true);
+            drop(bound_metal_line);
+        } else {
             self.cleanup_low_burn();
         }
     }
@@ -228,7 +168,6 @@ impl Steel {
             previous_reserve: 0.0,
             burn_rate,
             low_burn_rate,
-            was_low_burn: false,
             burn_direction: PUSH_BURN_DIRECTION,
             object: None,
             object_location: Vector2::ZERO,
@@ -277,6 +216,118 @@ impl Steel {
         None
     }
 
+    fn update_selected_object_location(&mut self) {
+        // If there is no object to push on stop
+        if self.object.is_none() {
+            return;
+        }
+
+        let mut player = self.player.bind_mut();
+
+        // If the metal object is no longer is range stop
+        let selected_metal_object = self.object.as_ref().unwrap();
+        if !player.is_metal_object_in_range(selected_metal_object) {
+            self.object = None;
+            self.object_location = Vector2::ZERO;
+            return;
+        }
+
+        // Get the metal line and show it.
+        let mut metal_line = player.get_metal_line();
+        let player_position = metal_line.to_local(metal_line.get_global_position());
+        let mut bound_metal_line = metal_line.bind_mut();
+
+        // Get the player position and the index of the closest metal object.
+        let mut index_closest_metal_object = usize::MAX;
+
+        for (index, metal_object) in player.get_metal_objects().iter().enumerate() {
+            let color = Color::from_rgba(0.0, 0.4, 0.9, 0.1);
+            let metal_object_position = bound_metal_line
+                .base()
+                .to_local(metal_object.get_global_position());
+
+            bound_metal_line.add_line_segment(metal_object_position, color);
+
+            if metal_object == selected_metal_object {
+                self.object_location = (metal_object_position - player_position).normalized();
+                index_closest_metal_object = index;
+            }
+        }
+
+        if index_closest_metal_object != usize::MAX {
+            bound_metal_line.update_color(
+                Color::from_rgba(0.0, 0.6, 2.3, 1.0),
+                index_closest_metal_object,
+            );
+        }
+
+        drop(bound_metal_line);
+        metal_line.queue_redraw();
+    }
+
+    fn update_line_selection(&mut self) {
+        self.object = None;
+        self.object_location = Vector2::ZERO;
+
+        let mut closest_object_location: Vector2;
+
+        let mut player_clone = self.player.clone();
+        let mut player = player_clone.bind_mut();
+
+        // Get the metal line and show it.
+        let mut metal_line = player.get_metal_line();
+        let player_position = metal_line.to_local(metal_line.get_global_position());
+        let mut bound_metal_line = metal_line.bind_mut();
+
+        // Get the joystick position.
+        let joy_position_x =
+            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_X);
+        let joy_position_y =
+            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_Y);
+        let joy_position = Vector2::new(joy_position_x, joy_position_y);
+
+        // A metal object must be within ±25 degrees to be selected.
+        let mut closest_obj_angle_diff: f32 = 40.0_f32.to_radians();
+
+        // Get the player position and the index of the closest metal object.
+        let mut index_closest_metal_object = usize::MAX;
+
+        for (index, metal_object) in player.get_metal_objects().iter().enumerate() {
+            let color = Color::from_rgba(0.0, 0.4, 0.9, 0.1);
+            let metal_object_position = bound_metal_line
+                .base()
+                .to_local(metal_object.get_global_position());
+
+            bound_metal_line.add_line_segment(metal_object_position, color);
+
+            let closest_metal_object = self.get_closest_metal_object(
+                player_position,
+                joy_position,
+                closest_obj_angle_diff,
+                metal_object_position,
+            );
+
+            if let Some((metal_object_dir, angle_diff)) = closest_metal_object {
+                closest_object_location = metal_object_dir;
+                closest_obj_angle_diff = angle_diff;
+                index_closest_metal_object = index;
+
+                self.object = Some(metal_object.clone());
+                self.object_location = closest_object_location;
+            }
+        }
+
+        if index_closest_metal_object != usize::MAX {
+            bound_metal_line.update_color(
+                Color::from_rgba(0.0, 0.6, 2.3, 1.0),
+                index_closest_metal_object,
+            );
+        }
+
+        drop(bound_metal_line);
+        metal_line.queue_redraw();
+    }
+
     /// When the player stops low burning, hide the steel particles
     /// and clean remaining metal lines from the screen
     fn cleanup_low_burn(&mut self) {
@@ -299,6 +350,7 @@ impl Steel {
 
     fn cleanup_burn(&mut self) {
         self.object_location = Vector2::ZERO;
+        self.object = None;
     }
 
     pub fn set_burn_direction(&mut self, direction: f32) {
