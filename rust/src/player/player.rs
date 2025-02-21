@@ -491,6 +491,10 @@ impl Player {
         sprite.set_speed_scale(speed);
     }
 
+    pub fn is_metal_object_in_range(&self, metal_object: &Gd<MetalObject>) -> bool {
+        self.metal_objects.contains(&metal_object)
+    }
+
     /// Get the previous state of the player
     ///
     /// # Returns
