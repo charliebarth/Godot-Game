@@ -103,6 +103,9 @@ impl INode2D for Game {
         let map_two = load::<PackedScene>("res://scenes/map_two.tscn");
         self.maps.insert("MapTwo".to_string(), map_two);
 
+        let map_three = load::<PackedScene>("res://scenes/map_three.tscn");
+        self.maps.insert("MapThree".to_string(), map_three);
+
         // Create the two split screens
         // Clone on a Gd is just a new ref not a new instance
         let mut split_screen_one = self.split_screen_one.clone();
