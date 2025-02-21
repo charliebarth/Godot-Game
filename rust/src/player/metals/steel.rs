@@ -225,8 +225,8 @@ impl Steel {
         let mut player = self.player.bind_mut();
 
         // If the metal object is no longer is range stop
-        let selected_metal_object = self.object.as_ref().unwrap();
-        if !player.is_metal_object_in_range(selected_metal_object) {
+        let selected_metal_object = self.object.clone().unwrap();
+        if !player.is_metal_object_in_range(&selected_metal_object) {
             self.object = None;
             self.object_location = Vector2::ZERO;
             return;
@@ -248,9 +248,15 @@ impl Steel {
 
             bound_metal_line.add_line_segment(metal_object_position, color);
 
-            if metal_object == selected_metal_object {
-                self.object_location = (metal_object_position - player_position).normalized();
-                index_closest_metal_object = index;
+            if metal_object == &selected_metal_object {
+                if player_position.distance_to(metal_object_position) < 10.0 {
+                    self.object = None;
+                    self.object_location = Vector2::ZERO;
+                }
+                {
+                    self.object_location = (metal_object_position - player_position).normalized();
+                    index_closest_metal_object = index;
+                }
             }
         }
 
