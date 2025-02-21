@@ -568,6 +568,7 @@ impl Player {
     ///
     /// # Returns
     /// * `i32` - The device ID of the player
+    #[func]
     pub fn get_device_id(&self) -> i32 {
         self.device_id
     }
