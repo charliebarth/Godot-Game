@@ -99,7 +99,28 @@ func load_ui_settings():
 		
 	return ui_settings
 
+func save_keybind_settings():
+	var events = ["jump", "roll", "sprint", "iron", "pewter"]
+	for i in 8:
+		for event in events:
+			print(event + "   "+ InputMap.action_get_events(event)[0].as_text())
+			#config.set_value(
+				#"keybinds",
+				#event,
+				#InputMap.action_get_events(event).as_text()
+			#)
+
 func load_keybind_settings(id: int):
 	print("loading keybindings for player %s" %[id])
-	pass
+	var keybind_settings = {}
+	var events = ["jump", "sprint", "roll", "attack", "throw", "low_burn", "pewter", "iron", "steel"]
+
+	for event in events: 
+		for key in InputMap.action_get_events(event):
+			#print("E: %s\tK: %s\tI: %s" %[event, key, key.device])
+			if key.device == id or key.device == -1:
+				keybind_settings[event] = key.as_text()
+
+	return keybind_settings
+
 	
