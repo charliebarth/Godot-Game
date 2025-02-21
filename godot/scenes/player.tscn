@@ -1163,6 +1163,16 @@ amount = 12
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
 lifetime = 2.0
 
+[node name="IronParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(1, 10, 10, 1)
+show_behind_parent = true
+light_mask = 524289
+position = Vector2(0, 3)
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+lifetime = 2.0
+
 [node name="Landing" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("38_gtvlb")
 volume_db = -15.0
