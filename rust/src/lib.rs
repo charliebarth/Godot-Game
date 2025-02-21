@@ -9,6 +9,7 @@ pub mod player {
     pub mod metal_line;
     pub mod metal_manager;
     pub mod player;
+    pub mod player_tin_light;
 
     pub mod enums {
         pub mod coin_events;

@@ -19,6 +19,7 @@ use godot::prelude::*;
 use crate::game::Game;
 use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
+use crate::player::player_tin_light::PlayerTinLight;
 use crate::settings::Settings;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
@@ -167,6 +168,13 @@ impl ICharacterBody2D for Player {
         self.get_metal_manager()
             .bind_mut()
             .set_player(self.base().get_node_as::<Player>("."));
+
+        // Connect the tin signal to the player
+        let tin_light = self.base().get_node_as::<PlayerTinLight>("PlayerTinLight");
+        self.connect(
+            "tin_activated",
+            &Callable::from_object_method(&tin_light, "adjust_tin_light"),
+        )
     }
 
     /// The Godot method called every physics frame
@@ -793,10 +801,26 @@ impl Player {
         hitbox.set_collision_layer(1 << 3);
     }
 
-    /// A signal that is emmited by the player when it's id is changed
+    /// Emit a signal to adjust the light for the player when they use tin
+    ///
+    /// # Arguments
+    /// * `light_level` - The target light level.
+    /// * `transition_time` - The time it takes to transition to the target light level.
+    pub fn emit_tin_signal(&mut self, light_level: f32, transition_time: f64) {
+        self.base_mut().emit_signal(
+            "tin_activated",
+            &[Variant::from(light_level), Variant::from(transition_time)],
+        );
+    }
+
+    /// A signal that is emitted by the player when it's id is changed
     /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
     pub fn id_changed();
+
+    /// A signal that is emitted by the player when it is using tin
+    #[signal]
+    pub fn tin_activated();
 
     /// If passed true, the player turns on its timer to count down before the player is removed from the game
     /// If passed false, the player turns off its timer meaning it is no longer disconnected

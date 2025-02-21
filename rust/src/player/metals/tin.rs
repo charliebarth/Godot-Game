@@ -102,13 +102,15 @@ impl Metal for Tin {
         // This could be done by updating the player_light I think?
         // Or make a new light node for the player to just deal with the visibility radius
 
+        // Emit the signal to do a regular burn
+        self.player.bind_mut().emit_tin_signal(1.0, 3.0);
     }
 
     /// The low burn function for tin.
     /// This ability will allow players to see easier when the night cycle occurs, but
     /// not as well as they would if they were burning tin regularly.
     fn low_burn(&mut self) {
-        // Does the same thing as burn, but with a smaller radius
+        self.player.bind_mut().emit_tin_signal(0.5, 3.0);
     }
 
     /// This function will update the total metal reserve for tin.
