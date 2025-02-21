@@ -1,7 +1,6 @@
-use godot::obj::Gd;
+use godot::obj::{Gd, GdMut};
 
-use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
-use crate::player::input_manager::InputManager;
+use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
@@ -65,20 +64,6 @@ impl Pewter {
             low_burning: false,
         }
     }
-
-    fn cleanup_burn(&mut self) {
-        self.burning = false;
-        // Remove movement buff from player
-    }
-
-    fn cleanup_lowburn(&mut self) {
-        self.low_burning = false;
-        self.player
-            .bind_mut()
-            .get_pewter_particles()
-            .set_visible(false);
-        // Remove movement buff from player
-    }
 }
 
 impl Metal for Pewter {
@@ -103,10 +88,6 @@ impl Metal for Pewter {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the run speed and jump force can be modified.
     fn low_burn(&mut self) {
-        self.player
-            .bind_mut()
-            .get_pewter_particles()
-            .set_visible(true);
         self.update_reserve(-self.low_burn_rate);
         let mut player = self.player.bind_mut();
 
@@ -114,32 +95,6 @@ impl Metal for Pewter {
         let jump_force = player.get_jump_force();
         player.set_run_speed(run_speed * 1.5);
         player.set_jump_force(jump_force * 1.2);
-    }
-
-    /// The update function for pewter.
-    /// This function check to see if the input manager has a pewter event.
-    /// If the event is found then the burn function is called.
-    /// If the low burn variant is found then the low burn function is called.
-    /// This will also toggle the pewter particles on and off.
-    fn update(&mut self) {
-        let mut input_manager = self.player.bind_mut().get_input_manager();
-        self.update_burn(&mut input_manager);
-        self.update_low_burn(&mut input_manager);
-        if self.current_reserve <= 0.0 {
-            self.cleanup_burn();
-            self.cleanup_lowburn();
-        } else if self.burning {
-            self.update_reserve(-self.burn_rate);
-        } else if self.low_burning {
-            self.update_reserve(-self.low_burn_rate);
-        }
-
-        if self.current_reserve != self.previous_reserve {
-            self.player
-                .bind_mut()
-                .set_metal_reserve_amount(self.metal_type.as_str(), self.current_reserve);
-        }
-        self.previous_reserve = self.current_reserve;
     }
 
     fn update_reserve(&mut self, amount: f64) {
@@ -151,35 +106,35 @@ impl Metal for Pewter {
         self.metal_type
     }
 
-    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::Burn;
-
-        if !self.burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.burn();
-            self.burning = true;
-        } else if self.burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
-            self.cleanup_burn();
-        }
+    fn current_reserve(&self) -> f64 {
+        self.current_reserve
     }
 
-    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::LowBurn;
+    fn burning(&self) -> bool {
+        self.burning
+    }
 
-        if !self.low_burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.low_burn();
-            self.low_burning = true;
-        } else if self.low_burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
-            self.cleanup_lowburn();
-        }
+    fn low_burning(&self) -> bool {
+        self.low_burning
+    }
+
+    fn set_burning(&mut self, burning: bool) {
+        self.burning = burning
+    }
+
+    fn set_low_burning(&mut self, low_burning: bool) {
+        self.low_burning = low_burning
+    }
+
+    fn get_player(&mut self) -> GdMut<'_, Player> {
+        self.player.bind_mut()
+    }
+
+    fn previous_reserve(&self) -> f64 {
+        self.previous_reserve
+    }
+
+    fn set_previous_reserve(&mut self, amt: f64) {
+        self.previous_reserve = amt;
     }
 }
