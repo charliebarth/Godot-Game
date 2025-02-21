@@ -28,6 +28,7 @@ use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::disconnected::Disconnected;
 use super::enums::force::Force;
+use super::enums::metal_type::MetalType;
 use super::enums::player_events::PlayerEvents;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
@@ -63,6 +64,7 @@ enum CachedNode {
     InputManager,
     MetalManager,
     Sprite,
+    IronParticles,
 }
 
 #[derive(GodotClass)]
@@ -1144,13 +1146,21 @@ impl Player {
         self.get_cached_node(CachedNode::TinParticles, "TinParticles")
     }
 
-    /// Getter for the IronParticles node
-    /// This effectively caches the IronParticles node so that it does not have to be found every time it is needed
+    /// Getter for the BronzeParticles node
+    /// This effectively caches the BronzeParticles node so that it does not have to be found every time it is needed
     ///
     /// # Returns
     /// * `GpuParticles2D` - The BronzeParticles node
     pub fn get_bronze_particles(&mut self) -> Gd<GpuParticles2D> {
         self.get_cached_node(CachedNode::BronzeParticles, "BronzeParticles")
+    }
+
+    /// Getter for the IronParticles node
+    /// This effectively caches the IronParticles node so that it does not have to be found every time it is needed
+    ///
+    /// * `GpuParticles2D` - The IronParticles node
+    pub fn get_iron_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::IronParticles, "IronParticles")
     }
 
     /// Getter for the Disconnected node
@@ -1164,5 +1174,13 @@ impl Player {
 
     pub fn get_camera(&mut self) -> Gd<Camera2D> {
         self.get_cached_node(CachedNode::Camera, "Camera2D")
+    }
+
+    pub fn get_metal_particles(&mut self, metal_type: MetalType) -> Gd<GpuParticles2D> {
+        match metal_type {
+            MetalType::Pewter => self.get_pewter_particles(),
+            MetalType::Steel => self.get_steel_particles(),
+            MetalType::Iron => self.get_iron_particles(),
+        }
     }
 }
