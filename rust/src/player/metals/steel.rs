@@ -131,7 +131,7 @@ impl Metal for Steel {
         if self.low_burn {
             // This will tell the metal line to stop drawing lines and then queue a redraw to clear remaining lines from the screen
             let mut player = self.player.bind_mut();
-            let mut metal_line = player.get_metal_line();
+            let mut metal_line = player.get_metal_line(self.metal_type);
             let mut bound_metal_line = metal_line.bind_mut();
             bound_metal_line.set_should_show(true);
             drop(bound_metal_line);
@@ -233,7 +233,7 @@ impl Steel {
         }
 
         // Get the metal line and show it.
-        let mut metal_line = player.get_metal_line();
+        let mut metal_line = player.get_metal_line(self.metal_type);
         let player_position = metal_line.to_local(metal_line.get_global_position());
         let mut bound_metal_line = metal_line.bind_mut();
 
@@ -260,9 +260,6 @@ impl Steel {
                 index_closest_metal_object,
             );
         }
-
-        drop(bound_metal_line);
-        metal_line.queue_redraw();
     }
 
     fn update_line_selection(&mut self) {
@@ -275,7 +272,7 @@ impl Steel {
         let mut player = player_clone.bind_mut();
 
         // Get the metal line and show it.
-        let mut metal_line = player.get_metal_line();
+        let mut metal_line = player.get_metal_line(self.metal_type);
         let player_position = metal_line.to_local(metal_line.get_global_position());
         let mut bound_metal_line = metal_line.bind_mut();
 
@@ -323,9 +320,6 @@ impl Steel {
                 index_closest_metal_object,
             );
         }
-
-        drop(bound_metal_line);
-        metal_line.queue_redraw();
     }
 
     /// When the player stops low burning, hide the steel particles
@@ -340,7 +334,7 @@ impl Steel {
             .set_visible(false);
 
         // This will tell the metal line to stop drawing lines and then queue a redraw to clear remaining lines from the screen
-        let mut metal_line = player.get_metal_line();
+        let mut metal_line = player.get_metal_line(self.metal_type);
         let mut bound_metal_line = metal_line.bind_mut();
         bound_metal_line.set_should_show(false);
         drop(bound_metal_line);

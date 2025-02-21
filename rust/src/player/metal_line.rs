@@ -39,7 +39,7 @@ impl INode2D for MetalLine {
     /// This is a build in method for Godot that is called when a node is first added to the scene.
     /// It can also be called in other circumstances such as when the node is made visible.
     fn draw(&mut self) {
-        if !self.should_show || self.points.is_none() {
+        if !self.should_show || self.points.is_none() || self.colors.is_none() {
             return;
         }
 
@@ -49,6 +49,12 @@ impl INode2D for MetalLine {
             .draw_multiline_colors_ex(&points, &colors)
             .width(2.0)
             .done();
+    }
+
+    fn process(&mut self, _delta: f64) {
+        if self.should_show {
+            self.base_mut().queue_redraw();
+        }
     }
 }
 
