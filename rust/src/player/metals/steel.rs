@@ -5,14 +5,11 @@ use godot::obj::WithBaseField;
 use godot::prelude::*;
 
 use crate::player::enums::force::Force;
-use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
-use crate::player::input_manager::InputManager;
+use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
-const NO_BURN_DIRECTION: f32 = 0.0;
 const PUSH_BURN_DIRECTION: f32 = -1.0;
-const PULL_BURN_DIRECTION: f32 = 1.0;
 
 /// The steel player ability.
 /// This ability allows the player to push and pull on metal objects.
@@ -36,8 +33,7 @@ pub struct Steel {
     /// The push value for the steel ability.
     /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
     burn_direction: f32,
-    /// A flag to determine if the player should show the steel particles.
-    show_particles: bool,
+
     /// The location of the metal object that the player is currently pushing or pulling.
     object_location: Vector2,
     /// The object that is closest to the line selector
@@ -53,41 +49,6 @@ pub struct Steel {
 }
 
 impl Metal for Steel {
-    fn update(&mut self) {
-        let mut input_manager_unbound = self.player.bind_mut().get_input_manager();
-        //let mut input_manager = input_manager_unbound.bind_mut();
-
-        if self.current_reserve <= 0.0 {
-            // If the reserve just hit 0 then turn off the burn and low burn
-            if self.current_reserve != self.previous_reserve {
-                self.cleanup_burn();
-                self.cleanup_low_burn();
-                self.previous_reserve = self.current_reserve;
-            }
-            return;
-        }
-
-        self.update_low_burn(&mut input_manager_unbound);
-        self.update_burn(&mut input_manager_unbound);
-
-        if self.low_burn {
-            self.low_burn();
-        }
-
-        if self.burn {
-            self.burn();
-        }
-
-        if self.current_reserve != self.previous_reserve {
-            let metal_type = self.metal_type.as_str();
-            self.player
-                .bind_mut()
-                .set_metal_reserve_amount(metal_type, self.current_reserve);
-        }
-
-        self.previous_reserve = self.current_reserve;
-    }
-
     /// The burn function for steel.
     /// This function pushes or pulls the player towards or away from the metal object nearest to the line selector node.
     /// The player will be pushed or pulled based on the angle between the player and the metal object.
@@ -98,6 +59,7 @@ impl Metal for Steel {
     /// * `player` - A mutable reference to the player so that the force can be modified.
     fn burn(&mut self) {
         if self.object_location == Vector2::ZERO {
+            godot_print!("zero");
             return;
         }
 
@@ -198,51 +160,46 @@ impl Metal for Steel {
         self.metal_type
     }
 
-    /// Set the low burn state
-    /// If setting to true, the low burn is being started and any one time logic such as revealing the steel particles should be done
-    /// If setting to false, the low burn is being stopped and any one time logic such as hiding the steel particles should be done
-    ///
-    /// # Arguments
-    /// * `low_burn` - A boolean to determine if the player should be low burning
-    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::LowBurn;
-        if !self.low_burn
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.low_burn = true;
-            let mut player = self.player.bind_mut();
-            player.get_steel_particles().set_visible(true);
-        } else if self.low_burn
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
+    fn current_reserve(&self) -> f64 {
+        self.current_reserve
+    }
+
+    fn burning(&self) -> bool {
+        self.burn
+    }
+
+    fn low_burning(&self) -> bool {
+        self.low_burn
+    }
+
+    fn set_burning(&mut self, burning: bool) {
+        self.burn = burning;
+
+        if self.burn {
+            self.object_location = self.closest_object;
+        } else {
+            self.cleanup_burn();
+        }
+    }
+
+    fn set_low_burning(&mut self, low_burning: bool) {
+        self.low_burn = low_burning;
+
+        if !self.low_burn {
             self.cleanup_low_burn();
         }
     }
 
-    /// Set the burn state
-    /// If setting to false, the burn is being stopped and thus any effects should be cleaned up and removed
-    ///
-    /// # Arguments
-    /// * `burn` - A boolean to determine if the player should be burning
-    /// * `direction` - The direction of the burn (-1.0 for push, 1.0 for pull, 0.0 for no burn)
-    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::Burn;
+    fn get_player(&mut self) -> GdMut<'_, Player> {
+        self.player.bind_mut()
+    }
 
-        // Mark that a burn has started and lockin the object to push against
-        if !self.burn
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.burn = true;
-            self.object_location = self.closest_object;
+    fn previous_reserve(&self) -> f64 {
+        self.previous_reserve
+    }
 
-        // Mark that a burn has ended and remove the object to push against
-        } else if self.burn
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
-            self.cleanup_burn();
-        }
+    fn set_previous_reserve(&mut self, amt: f64) {
+        self.previous_reserve = amt;
     }
 }
 
@@ -263,7 +220,7 @@ impl Steel {
             low_burn_rate,
             was_low_burn: false,
             burn_direction: PUSH_BURN_DIRECTION,
-            show_particles: false,
+
             object_location: Vector2::ZERO,
             closest_object: Vector2::ZERO,
             low_burn: false,
@@ -314,10 +271,11 @@ impl Steel {
     /// When the player stops low burning, hide the steel particles
     /// and clean remaining metal lines from the screen
     fn cleanup_low_burn(&mut self) {
-        self.low_burn = false;
         self.closest_object = Vector2::ZERO;
         let mut player = self.player.bind_mut();
-        player.get_steel_particles().set_visible(false);
+        player
+            .get_metal_particles(self.metal_type)
+            .set_visible(false);
 
         // This will tell the metal line to stop drawing lines and then queue a redraw to clear remaining lines from the screen
         let mut metal_line = player.get_metal_line();
@@ -329,7 +287,6 @@ impl Steel {
     }
 
     fn cleanup_burn(&mut self) {
-        self.burn = false;
         self.object_location = Vector2::ZERO;
     }
 

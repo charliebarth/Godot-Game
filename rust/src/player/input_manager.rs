@@ -179,8 +179,6 @@ impl InputManager {
                 {
                     self.metal_events
                         .remove(&(metal_type, burn_type, ButtonState::Pressed));
-                    self.metal_events
-                        .insert((metal_type, burn_type, ButtonState::Released));
 
                 // If the low burn event is not in the set then add it to start the low burn
                 } else {
@@ -198,8 +196,6 @@ impl InputManager {
         } else if burn_type != BurnType::LowBurn && event.is_action_released(button_name.as_str()) {
             self.metal_events
                 .remove(&(metal_type, burn_type, ButtonState::Pressed));
-            self.metal_events
-                .insert((metal_type, burn_type, ButtonState::Released));
         }
     }
 

@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use super::{
-    enums::metal_type::{BurnType, ButtonState, MetalType},
-    metals::{iron::Iron, pewter::Pewter, steel::Steel, tin::Tin, copper::Copper, bronze::Bronze},
+    enums::metal_type::MetalType,
+    metals::{iron::Iron, pewter::Pewter, steel::Steel},
     player::Player,
     traits::metal::Metal,
 };
@@ -143,7 +143,29 @@ impl MetalManager {
     /// Updates every metal that the player has access to.
     pub fn update_metals(&mut self) {
         for metal in &mut self.metals {
-            metal.1.as_mut().update();
+            let metal = metal.1;
+            metal.update_low_burn();
+            metal.update_burn();
+
+            if metal.low_burning() {
+                metal.low_burn();
+            }
+
+            if metal.burning() {
+                metal.burn();
+            }
+
+            if metal.current_reserve() != metal.previous_reserve() {
+                let metal_type = metal.metal_type();
+                let metal_type = metal_type.as_str();
+                let current_reserve = metal.current_reserve();
+
+                metal
+                    .get_player()
+                    .set_metal_reserve_amount(metal_type, current_reserve);
+            }
+
+            metal.set_previous_reserve(metal.current_reserve());
         }
     }
 
