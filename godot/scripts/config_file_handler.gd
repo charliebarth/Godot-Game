@@ -4,7 +4,9 @@ var config = ConfigFile.new()
 const SETTINGS_FILE_PATH = "user://settings.ini"
 
 var resolutions = [Vector2i(1920, 1080), Vector2i(1920,1200), 
-						Vector2i(1080,960), Vector2i(1280, 720), Vector2i(800,600)]
+				Vector2i(1080,960), Vector2i(1280, 720), Vector2i(800,600)]
+var events = ["jump", "sprint", "roll", "attack", "throw", "low_burn", 
+				"pewter", "iron", "steel"]
 
 ## Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -99,8 +101,9 @@ func load_ui_settings():
 		
 	return ui_settings
 
+## UNUSED 
+## 
 func save_keybind_settings():
-	var events = ["jump", "roll", "sprint", "iron", "pewter"]
 	for i in 8:
 		for event in events:
 			print(event + "   "+ InputMap.action_get_events(event)[0].as_text())
@@ -110,17 +113,29 @@ func save_keybind_settings():
 				#InputMap.action_get_events(event).as_text()
 			#)
 
+## Gets the keybind settings for a player based on id 
+## 
+## id (int) - Represents the id of a player (Player 1 has an id of 0) 
 func load_keybind_settings(id: int):
 	print("loading keybindings for player %s" %[id])
 	var keybind_settings = {}
-	var events = ["jump", "sprint", "roll", "attack", "throw", "low_burn", "pewter", "iron", "steel"]
 
 	for event in events: 
+		var key_name = null
+		var backup = null
+		
 		for key in InputMap.action_get_events(event):
 			#print("E: %s\tK: %s\tI: %s" %[event, key, key.device])
-			if key.device == id or key.device == -1:
-				keybind_settings[event] = key.as_text()
+			if key.device == id:
+				key_name = key.as_text()
+			elif key.device == -1: # Defaults to all devices
+				backup = key.as_text()
 
+		if key_name != null:
+			keybind_settings[event] = key_name
+		elif backup != null:
+			keybind_settings[event] = backup 
+					
 	return keybind_settings
 
 	
