@@ -4,6 +4,7 @@ use godot::global::JoyAxis;
 use godot::obj::WithBaseField;
 use godot::prelude::*;
 
+use crate::metal_object::MetalObject;
 use crate::player::enums::force::Force;
 use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
@@ -33,11 +34,9 @@ pub struct Steel {
     /// The push value for the steel ability.
     /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
     burn_direction: f32,
-
-    /// The location of the metal object that the player is currently pushing or pulling.
+    /// The the metal object that the player is currently pushing or pulling.
+    object: Option<Gd<MetalObject>>,
     object_location: Vector2,
-    /// The object that is closest to the line selector
-    closest_object: Vector2,
     /// A flag to determine if the player is low burning.
     low_burn: bool,
     /// A flag to determine if the player is burning.
@@ -58,15 +57,19 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the force can be modified.
     fn burn(&mut self) {
-        if self.object_location == Vector2::ZERO {
-            godot_print!("zero");
+        if self.object.is_none() {
             return;
         }
 
         self.update_reserve(-self.burn_rate);
 
+        let metal_object = self.object.as_ref().unwrap();
         let mut player_clone = self.player.clone();
         let mut player = player_clone.bind_mut();
+
+        if !player.is_metal_object_in_range(metal_object) {
+            return;
+        }
 
         // TODO: Make constant
         let max_acceleration: f32 = 700.0;
@@ -91,10 +94,15 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the metal line can be modified.
     fn low_burn(&mut self) {
+        if !self.burn {
+            self.object = None;
+            self.object_location = Vector2::ZERO;
+        }
+
         // Mark that the player is low burning and decrease the reserve.
         self.was_low_burn = true;
         self.update_reserve(-self.low_burn_rate);
-        self.closest_object = Vector2::ZERO;
+        let mut closest_object_location = Vector2::ZERO;
 
         let mut player_clone = self.player.clone();
         let mut player = player_clone.bind_mut();
@@ -134,9 +142,13 @@ impl Metal for Steel {
             );
 
             if let Some((metal_object_dir, angle_diff)) = closest_metal_object {
-                self.closest_object = metal_object_dir;
+                closest_object_location = metal_object_dir;
                 closest_obj_angle_diff = angle_diff;
                 index_closest_metal_object = index;
+                if !self.burn {
+                    self.object = Some(metal_object.clone());
+                    self.object_location = closest_object_location;
+                };
             }
         }
 
@@ -175,9 +187,7 @@ impl Metal for Steel {
     fn set_burning(&mut self, burning: bool) {
         self.burn = burning;
 
-        if self.burn {
-            self.object_location = self.closest_object;
-        } else {
+        if !self.burn {
             self.cleanup_burn();
         }
     }
@@ -220,9 +230,8 @@ impl Steel {
             low_burn_rate,
             was_low_burn: false,
             burn_direction: PUSH_BURN_DIRECTION,
-
+            object: None,
             object_location: Vector2::ZERO,
-            closest_object: Vector2::ZERO,
             low_burn: false,
             burn: false,
             player,
@@ -271,7 +280,9 @@ impl Steel {
     /// When the player stops low burning, hide the steel particles
     /// and clean remaining metal lines from the screen
     fn cleanup_low_burn(&mut self) {
-        self.closest_object = Vector2::ZERO;
+        self.object_location = Vector2::ZERO;
+        self.object = None;
+
         let mut player = self.player.bind_mut();
         player
             .get_metal_particles(self.metal_type)
