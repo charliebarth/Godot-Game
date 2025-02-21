@@ -4,7 +4,7 @@
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
 [ext_resource type="Script" path="res://scripts/audio_slider.gd" id="4_u10kp"]
 [ext_resource type="Script" path="res://scripts/graphics.gd" id="4_vq3k8"]
-[ext_resource type="Script" path="res://scenes/player_choice.gd" id="5_iw8m6"]
+[ext_resource type="Script" path="res://scenes/controls.gd" id="5_rfcmx"]
 [ext_resource type="Script" path="res://ui_placement.gd" id="6_ijgpl"]
 [ext_resource type="Script" path="res://ui_size.gd" id="7_5uhj3"]
 [ext_resource type="PackedScene" uid="uid://hiu0jooun71c" path="res://scenes/player_ui.tscn" id="8_wmhrj"]
@@ -65,7 +65,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
-current_tab = 3
+current_tab = 2
 
 [node name="Sound" type="TabBar" parent="TabContainer"]
 visible = false
@@ -473,10 +473,10 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [node name="Controls" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
+script = ExtResource("5_rfcmx")
 metadata/_tab_index = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Controls"]
@@ -500,7 +500,6 @@ theme_override_constants/separation = 64
 
 [node name="Player Choice" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
-script = ExtResource("5_iw8m6")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Player Choice"]
 layout_mode = 0
@@ -523,6 +522,7 @@ theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
 theme_override_styles/pressed = SubResource("StyleBoxFlat_bb2bd")
 toggle_mode = true
+button_pressed = true
 action_mode = 0
 text = "Player 1"
 
@@ -640,36 +640,65 @@ text = "Jump
 [node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump/HBoxContainer"]
+[node name="jump" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
-[node name="Dash" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+[node name="Sprint" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Dash"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Dash/HBoxContainer"]
+[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 60
-text = "Dash / Dodge
-"
+text = "Sprint"
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Dash/HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Dash/HBoxContainer"]
+[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
+
+[node name="Roll" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 60
+text = "Roll"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
 [node name="Melee" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -694,8 +723,37 @@ custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
+
+[node name="Throw" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 60
+text = "Throw"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
 [node name="Flare" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare"]
@@ -742,8 +800,11 @@ custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
 [node name="Move" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Move"]
@@ -769,6 +830,7 @@ theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
 
 [node name="Line Selector" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Line Selector"]
@@ -793,6 +855,7 @@ theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
 
 [node name="Metal Selctor Wheel" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal Selctor Wheel"]
@@ -840,6 +903,8 @@ custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
 [node name="Metal 2" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -864,6 +929,8 @@ custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
 [node name="Metal 3" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -888,8 +955,11 @@ custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
+toggle_mode = true
+action_mode = 0
 
 [node name="Metal 4" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 4"]
@@ -914,6 +984,7 @@ theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
 
 [node name="UI Customization" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
