@@ -59,6 +59,8 @@ enum CachedNode {
     TinParticles,
     BronzeParticles,
     MetalLine,
+    SteelLines,
+    IronLines,
     LineSelector,
     MetalReserveBarManager,
     InputManager,
@@ -1111,8 +1113,14 @@ impl Player {
     ///
     /// # Returns
     /// * `MetalLine` - The MetalLine node
-    pub fn get_metal_line(&mut self) -> Gd<MetalLine> {
-        self.get_cached_node(CachedNode::MetalLine, "MetalLine")
+    pub fn get_metal_line(&mut self, metal_type: MetalType) -> Gd<MetalLine> {
+        let search_key = if metal_type == MetalType::Iron {
+            (CachedNode::IronLines, "IronLines")
+        } else {
+            (CachedNode::SteelLines, "SteelLines")
+        };
+
+        self.get_cached_node(search_key.0, search_key.1)
     }
 
     /// Getter for the LineSelector node
