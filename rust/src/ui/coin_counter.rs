@@ -65,17 +65,7 @@ impl ILabel for CoinCounter {
     fn process(&mut self, _delta: f64) {
         if self.charging && Time::singleton().get_ticks_msec() - self.charge_start >= 3000 {
             godot_print!("HIT MAX\n");
-            // Check if player has coins to throw
-            if self.remove_coin() {
-                // Get the last coin from the coin holder
-                let length = self.coin_holder.len();
-                let mut coin = self.coin_holder.remove(length - 1);
-
-                // Throw a coin
-                coin.bind_mut()
-                    .throw(self.charge_start, Time::singleton().get_ticks_msec());
-                self.charging = false;
-            }
+            self.throw();
         }
     }
 
@@ -151,8 +141,8 @@ impl CoinCounter {
     /// Processes the coin event that happened
     /// # Arguments
     /// * `coin_event` (CoinEvents) - The coin event that took place
-    /// * `event` (`Gd<InputEvent>`) - The input event that took place
-    fn process_coin_events(&mut self, coin_event: CoinEvents, event: Gd<InputEvent>) {
+    /// * `event` (Gd<InputEvent>) - The input event that took place
+    fn process_coin_events(&mut self, _coin_event: CoinEvents, event: Gd<InputEvent>) {
         if event.is_action_pressed(StringName::from("throw")) {
             if !self.charging {
                 self.charge_start = Time::singleton().get_ticks_msec();
@@ -160,17 +150,21 @@ impl CoinCounter {
             }
         }
         if event.is_action_released(StringName::from("throw")) && self.charging {
-            // Check if player has coins to throw
-            if self.remove_coin() {
-                // Get the last coin from the coin holder
-                let length = self.coin_holder.len();
-                let mut coin = self.coin_holder.remove(length - 1);
+            self.throw();
+        }
+    }
 
-                // Throw a coin
-                coin.bind_mut()
-                    .throw(self.charge_start, Time::singleton().get_ticks_msec());
-                self.charging = false;
-            }
+    fn throw(&mut self) {
+        // Check if player has coins to throw
+        if self.remove_coin() {
+            // Get the last coin from the coin holder
+            let length = self.coin_holder.len();
+            let mut coin = self.coin_holder.remove(length - 1);
+
+            // Throw a coin
+            coin.bind_mut()
+                .throw(self.charge_start, Time::singleton().get_ticks_msec());
+            self.charging = false;
         }
     }
 
