@@ -1,4 +1,5 @@
 use std::ffi::c_void;
+use std::os::unix::raw::gid_t;
 use godot::obj::Gd;
 
 use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
@@ -61,10 +62,10 @@ impl Tin {
     /// Function that update if the player is low burning tin
     fn cleanup_lowburn(&mut self) {
         self.low_burning = false;
-        self.player
-            .bind_mut()
-            .get_tin_particles()
-            .set_visible(false);
+        // self.player
+        //     .bind_mut()
+        //     .get_tin_particles()
+        //     .set_visible(false);
     }
 }
 
@@ -101,7 +102,6 @@ impl Metal for Tin {
         // Need to update the player's light radius
         // This could be done by updating the player_light I think?
         // Or make a new light node for the player to just deal with the visibility radius
-
         // Emit the signal to do a regular burn
         self.player.bind_mut().emit_tin_signal(1.0, 3.0);
     }
@@ -145,6 +145,26 @@ impl Metal for Tin {
             && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
         {
             self.cleanup_lowburn();
+        }
+    }
+
+    /// Updates the value for if the player is burning tin.
+    ///
+    /// # Arguments
+    /// * `input_manager` - The input manager that checks for events
+    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
+        let mut input_manager = input_manager.bind_mut();
+        let burn_type = BurnType::Burn;
+
+        if !self.burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+        {
+            self.burn();
+            self.burning = true;
+        } else if self.burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+        {
+            self.cleanup_burn();
         }
     }
 }

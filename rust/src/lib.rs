@@ -45,6 +45,7 @@ pub mod player {
         pub mod iron;
         pub mod pewter;
         pub mod steel;
+        pub mod tin;
     }
 }
 

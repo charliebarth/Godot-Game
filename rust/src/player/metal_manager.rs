@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::{
     enums::metal_type::{BurnType, ButtonState, MetalType},
-    metals::{iron::Iron, pewter::Pewter, steel::Steel},
+    metals::{iron::Iron, pewter::Pewter, steel::Steel, tin::Tin},
     player::Player,
     traits::metal::Metal,
 };
@@ -103,6 +103,17 @@ impl MetalManager {
                 0.01,
                 player.clone(),
                 MetalType::Iron,
+            )),
+        );
+        self.metals.insert(
+            MetalType::Tin,
+            Box::new(Tin::new(
+                100.0,
+                100.0,
+                0.15,
+                0.08,
+                player.clone(),
+                MetalType::Tin,
             )),
         );
     }
