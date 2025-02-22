@@ -1024,10 +1024,10 @@ shadow_item_cull_mask = 524288
 texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")
 
-[node name="PlayerTinLight" type="PlayerLight" parent="."]
+[node name="PlayerTinLight" type="PlayerTinLight" parent="."]
 position = Vector2(-1.08248e-05, -425.425)
 scale = Vector2(1971.56, 512.33)
-energy = 0.1
+energy = 0.01
 shadow_item_cull_mask = 524288
 texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")

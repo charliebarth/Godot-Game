@@ -1,6 +1,6 @@
+use godot::obj::Gd;
 use std::ffi::c_void;
 use std::os::unix::raw::gid_t;
-use godot::obj::Gd;
 
 use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
 use crate::player::input_manager::InputManager;
@@ -11,45 +11,44 @@ use crate::player::traits::metal::Metal;
 /// This ability allows the player to see better in the dark.
 pub struct Tin {
     // The maximum amount of tin the player can store.
-    capacity : f64,
+    capacity: f64,
     // The current amount of tin the player has.
-    current_reserve : f64,
+    current_reserve: f64,
     // The rate at which the player burns tin.
-    burn_rate : f64,
+    burn_rate: f64,
     // The rate at which the player burns tin when using the low burn ability.
-    low_burn_rate : f64,
+    low_burn_rate: f64,
     // A reference to the player.
-    player : Gd<Player>,
+    player: Gd<Player>,
     // The type of metal.
-    metal_type : MetalType,
+    metal_type: MetalType,
     // A flag to determine if the player is currently burning tin.
-    burning : bool,
+    burning: bool,
     // A flag to determine if the player is currently low burning tin.
-    low_burning : bool,
+    low_burning: bool,
     // The previous amount of tin the player had.
-    previous_reserve : f64,
+    previous_reserve: f64,
 }
 
 impl Tin {
     pub fn new(
-        capacity : f64,
-        current_reserve : f64,
-        burn_rate : f64,
-        low_burn_rate : f64,
-        player : Gd<Player>,
-        metal_type : MetalType,
+        capacity: f64,
+        current_reserve: f64,
+        burn_rate: f64,
+        low_burn_rate: f64,
+        player: Gd<Player>,
+        metal_type: MetalType,
     ) -> Self {
-
         Self {
             capacity,
             current_reserve,
-            previous_reserve : 0.0,
+            previous_reserve: 0.0,
             burn_rate,
             low_burn_rate,
             player,
             metal_type,
-            burning : false,
-            low_burning : false,
+            burning: false,
+            low_burning: false,
         }
     }
 
@@ -103,21 +102,21 @@ impl Metal for Tin {
         // This could be done by updating the player_light I think?
         // Or make a new light node for the player to just deal with the visibility radius
         // Emit the signal to do a regular burn
-        self.player.bind_mut().emit_tin_signal(1.0, 3.0);
+        self.player.bind_mut().emit_tin_signal(10.0, 3.0);
     }
 
     /// The low burn function for tin.
     /// This ability will allow players to see easier when the night cycle occurs, but
     /// not as well as they would if they were burning tin regularly.
     fn low_burn(&mut self) {
-        self.player.bind_mut().emit_tin_signal(0.5, 3.0);
+        self.player.bind_mut().emit_tin_signal(5.0, 3.0);
     }
 
     /// This function will update the total metal reserve for tin.
     ///
     /// # Arguments
     /// * `amount` - The amount to update the reserve by
-    fn update_reserve(&mut self, amount : f64) {
+    fn update_reserve(&mut self, amount: f64) {
         // update the amount of tin the player has
         self.current_reserve += amount;
         // clamp the amount of tin the player has to the capacity
@@ -132,7 +131,7 @@ impl Metal for Tin {
     ///
     /// # Arguments
     /// * `input_manager` - The input manager to check for the event of a pressed button
-    fn update_low_burn(&mut self, input_manager : &mut Gd<InputManager>) {
+    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
         let mut input_manager = input_manager.bind_mut();
         let burn_type = BurnType::LowBurn;
 
