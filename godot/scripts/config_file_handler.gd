@@ -22,6 +22,9 @@ func _ready() -> void:
 		config.set_value("graphics", "borderless", false)
 		config.set_value("graphics", "vsync", false)
 		config.set_value("graphics", "fps", 60)
+		
+		config.set_value("ui", "size", 1)
+		config.set_value("ui", "opacity", 1)
 	
 		config.save(SETTINGS_FILE_PATH)
 	else:
@@ -72,12 +75,7 @@ func save_graphics_setting():
 	print("saved graphics settings")
 		
 func load_graphics_settings():
-	var graphics_settings = {}
-	
-	for key in config.get_section_keys("graphics"):
-		graphics_settings[key] = config.get_value("graphics", key)
-	
-	return graphics_settings
+	return load_settings_helper("graphics")
 	
 func save_ui_settings(size: float, opacity: float):
 	config.set_value(
@@ -95,23 +93,33 @@ func save_ui_settings(size: float, opacity: float):
 	print("saved ui settings")
 
 func load_ui_settings():
-	var ui_settings = {}
-	for key in config.get_section_keys("ui"):
-		ui_settings[key] = config.get_value("ui", key)
-		
-	return ui_settings
+	return load_settings_helper("ui")
 
 ## UNUSED 
 ## 
 func save_keybind_settings():
+	for i in 8: # There are 8 players
+		for event in events:	# Go through the list of events 
+			for key in InputMap.action_get_events(event): # Thru bound keys 
+				if key.device == i:		# Find devices bound key
+					config.set_value(
+						str("keybinds", i),
+						event,
+						key.as_text()
+					)
+	
+
+func load_settings_helper(type: String):
+	var settings = {}
+	for key in config.get_section_keys(type):
+		settings[key] = config.get_value(type, key)
+	return settings
+
+func load_all_keybind_settings():
+	var keybind_settings = []
 	for i in 8:
-		for event in events:
-			print(event + "   "+ InputMap.action_get_events(event)[0].as_text())
-			#config.set_value(
-				#"keybinds",
-				#event,
-				#InputMap.action_get_events(event).as_text()
-			#)
+		keybind_settings[i] = load_settings_helper(str("keybinds", i))
+		
 
 ## Gets the keybind settings for a player based on id 
 ## 
@@ -135,6 +143,8 @@ func load_keybind_settings(id: int):
 			keybind_settings[event] = key_name
 		elif backup != null:
 			keybind_settings[event] = backup 
+		else:
+			keybind_settings[event] = "Unbound"
 					
 	return keybind_settings
 

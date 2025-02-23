@@ -1,12 +1,13 @@
-[gd_scene load_steps=19 format=3 uid="uid://sk7urw8x5b6t"]
+[gd_scene load_steps=20 format=3 uid="uid://sk7urw8x5b6t"]
 
 [ext_resource type="Script" path="res://scripts/settings_tab_menu.gd" id="1_0wp7c"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
 [ext_resource type="Script" path="res://scripts/audio_slider.gd" id="4_u10kp"]
 [ext_resource type="Script" path="res://scripts/graphics.gd" id="4_vq3k8"]
-[ext_resource type="Script" path="res://scenes/controls.gd" id="5_rfcmx"]
-[ext_resource type="Script" path="res://ui_placement.gd" id="6_ijgpl"]
-[ext_resource type="Script" path="res://ui_size.gd" id="7_5uhj3"]
+[ext_resource type="Script" path="res://scripts/controls.gd" id="5_lubqm"]
+[ext_resource type="PackedScene" uid="uid://g5nc45q00y2r" path="res://scenes/rebind.tscn" id="6_a3whn"]
+[ext_resource type="Script" path="res://scripts/ui_placement.gd" id="6_hu06r"]
+[ext_resource type="Script" path="res://scripts/ui_size.gd" id="7_56emw"]
 [ext_resource type="PackedScene" uid="uid://hiu0jooun71c" path="res://scenes/player_ui.tscn" id="8_wmhrj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bb2bd"]
@@ -476,7 +477,7 @@ text = "Apply"
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
-script = ExtResource("5_rfcmx")
+script = ExtResource("5_lubqm")
 metadata/_tab_index = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Controls"]
@@ -621,367 +622,41 @@ text = "Player 8"
 custom_minimum_size = Vector2(25, 0)
 layout_mode = 2
 
-[node name="Jump" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+[node name="Rebind3" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
+action_name = "jump"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
+[node name="Rebind4" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Jump
-"
+action_name = "sprint"
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump/HBoxContainer"]
+[node name="Rebind" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
+action_name = "roll"
 
-[node name="jump" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Jump/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
+[node name="Rebind2" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
+action_name = "attack"
 
-[node name="Sprint" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+[node name="Rebind5" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
+action_name = "throw"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
+[node name="Rebind6" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Sprint"
+action_name = "low_burn"
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
+[node name="Rebind7" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
+action_name = "pewter"
 
-[node name="sprint" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Sprint/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
+[node name="Rebind8" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
+action_name = "iron"
 
-[node name="Roll" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+[node name="Rebind9" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Roll"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
-layout_mode = 2
-
-[node name="roll" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Roll/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Melee" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Melee Attack"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee/HBoxContainer"]
-layout_mode = 2
-
-[node name="melee" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Melee/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Throw" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Throw"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
-layout_mode = 2
-
-[node name="throw" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Throw/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Flare" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Flare Metal(s)"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare/HBoxContainer"]
-layout_mode = 2
-
-[node name="flare" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Flare/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-
-[node name="Low Burn" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Low Burn"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn/HBoxContainer"]
-layout_mode = 2
-
-[node name="low_burn" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Low Burn/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Move" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Move"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Move/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Move
-"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Move/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Move/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-
-[node name="Line Selector" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Line Selector"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Line Selector/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Line Selector"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Line Selector/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Line Selector/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-
-[node name="Metal Selctor Wheel" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal Selctor Wheel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal Selctor Wheel/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Metal Selector Wheel"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal Selctor Wheel/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal Selctor Wheel/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-
-[node name="Metal 1" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 1"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 1/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Metal 1
-"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 1/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 1/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Metal 2" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 2"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 2/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Metal 2"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 2/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 2/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Metal 3" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 3"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 3/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Metal 3"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 3/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 3/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
-toggle_mode = true
-action_mode = 0
-
-[node name="Metal 4" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 4"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 4/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 60
-text = "Metal 4"
-
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 4/HBoxContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Metal 4/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("1_6ekok")
-theme_override_font_sizes/font_size = 64
+action_name = "steel"
 
 [node name="UI Customization" type="TabBar" parent="TabContainer"]
 visible = false
@@ -1012,7 +687,7 @@ theme_override_constants/separation = 64
 [node name="UI_Placement" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(1240, 540)
 layout_mode = 2
-script = ExtResource("6_ijgpl")
+script = ExtResource("6_hu06r")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Placement"]
 layout_mode = 0
@@ -1091,7 +766,7 @@ layout_mode = 2
 [node name="UI_Size_Opacity" type="Control" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
-script = ExtResource("7_5uhj3")
+script = ExtResource("7_56emw")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity"]
 layout_mode = 0
