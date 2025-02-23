@@ -174,4 +174,9 @@ impl Coin {
             self.set_state(CoinState::Idle);
         }
     }
+
+    #[func]
+    fn is_metal(&self) -> bool {
+        true
+    }
 }

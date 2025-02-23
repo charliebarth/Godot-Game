@@ -33,7 +33,7 @@ pub struct Steel {
     /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
     burn_direction: f32,
     /// The the metal object that the player is currently pushing or pulling.
-    object: Option<Gd<MetalObject>>,
+    object: Option<Gd<Node2D>>,
     object_location: Vector2,
     /// A flag to determine if the player is low burning.
     low_burn: bool,

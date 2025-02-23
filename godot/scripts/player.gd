@@ -18,8 +18,7 @@ func _on_owner_vis_animation_finished() -> void:
 ## This function tracks nearby metal objects and adds them to the player's list of metal objects
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.has_method("is_metal"):
-		var metal = body as MetalObject
-		self.add_metal_object(metal)
+		self.add_metal_object(body)
 	elif body.has_method("get_player_id") && body != self:
 		var player = body as Player
 		nearby_players.append(player)
@@ -28,8 +27,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 ## This function removes nearby metal objects from the player's list of metal objects
 func _on_area_2d_body_exited(body: Node2D) -> void:
 	if body.has_method("is_metal"):
-		var metal = body as MetalObject
-		self.remove_metal_object(metal)
+		self.remove_metal_object(body)
 	elif body.has_method("get_player_id") && body != self:
 		var player = body as Player
 		player.make_player_invisible(self.get_player_id())

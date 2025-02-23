@@ -593,7 +593,7 @@ impl Player {
         sprite.set_speed_scale(speed);
     }
 
-    pub fn is_metal_object_in_range(&self, metal_object: &Gd<MetalObject>) -> bool {
+    pub fn is_metal_object_in_range(&self, metal_object: &Gd<Node2D>) -> bool {
         self.metal_objects.contains(&metal_object)
     }
 
@@ -827,6 +827,7 @@ impl Player {
                 base_velocity.x = x_velocity;
                 base_velocity.y = y_velocity;
             }
+            _ => {}
         }
 
         self.base_mut().set_velocity(base_velocity);
@@ -845,7 +846,7 @@ impl Player {
     ///
     /// # Arguments
     /// * `metal` - The metal object to add to the player's list of nearby metal objects
-    fn add_metal_object(&mut self, metal: Gd<MetalObject>) {
+    fn add_metal_object(&mut self, metal: Gd<Node2D>) {
         self.metal_objects.push(metal);
     }
 
@@ -854,7 +855,7 @@ impl Player {
     ///
     /// # Arguments
     /// * `metal` - The metal object to remove from the player's list of nearby metal objects
-    fn remove_metal_object(&mut self, metal: Gd<MetalObject>) {
+    fn remove_metal_object(&mut self, metal: Gd<Node2D>) {
         if let Some(pos) = self.metal_objects.iter().position(|x| *x == metal) {
             self.metal_objects.remove(pos);
         }
@@ -951,7 +952,7 @@ impl Player {
     ///
     /// # Returns
     /// * `Vec<Gd<MetalObject>>` - The vec of all nearby metal objects
-    pub fn get_metal_objects(&self) -> &Vec<Gd<MetalObject>> {
+    pub fn get_metal_objects(&self) -> &Vec<Gd<Node2D>> {
         &self.metal_objects
     }
 

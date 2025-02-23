@@ -55,7 +55,7 @@ radius = 8.0
 radius = 8.0
 
 [node name="Coin" type="Coin"]
-collision_layer = 2
+collision_layer = 130
 physics_material_override = SubResource("PhysicsMaterial_7qo2g")
 can_sleep = false
 lock_rotation = true
