@@ -15,7 +15,6 @@ use godot::classes::Sprite2D;
 use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
-use godot::global::JoyAxis;
 use godot::prelude::*;
 
 use crate::game::Game;
