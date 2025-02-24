@@ -52,6 +52,7 @@ enum CachedNode {
     Disconnected,
     Camera,
     PewterParticles,
+    TinParticles,
     MetalLine,
     LineSelector,
     MetalReserveBarManager,
@@ -948,6 +949,10 @@ impl Player {
     /// * `GpuParticles2D` - The SteelParticles node
     pub fn get_steel_particles(&mut self) -> Gd<GpuParticles2D> {
         self.get_cached_node(CachedNode::SteelParticles, "SteelParticles")
+    }
+
+    pub fn get_tin_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::TinParticles, "TinParticles")
     }
 
     /// Getter for the Disconnected node

@@ -55,16 +55,12 @@ impl Tin {
     /// Function that updates if the player is burning tin
     fn cleanup_burn(&mut self) {
         self.burning = false;
-        // Remove movement buff from player
     }
 
     /// Function that update if the player is low burning tin
     fn cleanup_lowburn(&mut self) {
         self.low_burning = false;
-        // self.player
-        //     .bind_mut()
-        //     .get_tin_particles()
-        //     .set_visible(false);
+        self.player.bind_mut().get_tin_particles().set_visible(false);
     }
 }
 
@@ -106,6 +102,7 @@ impl Metal for Tin {
     /// This ability will allow players to see easier when the night cycle occurs, but
     /// not as well as they would if they were burning tin regularly.
     fn low_burn(&mut self) {
+        self.player.bind_mut().get_tin_particles().set_visible(true);
         // Emit the signal to do a low burn
         self.player.bind_mut().emit_tin_signal(5.0, 3.0);
     }
