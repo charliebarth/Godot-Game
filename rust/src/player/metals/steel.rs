@@ -65,15 +65,22 @@ impl Metal for Steel {
         let mut player = player_clone.bind_mut();
 
         // TODO: Make constant
-        let max_acceleration: f32 = 700.0;
+        let max_acceleration: f32 = 850.0;
+        let trigger = if self.metal_type == MetalType::Steel {
+            JoyAxis::TRIGGER_RIGHT
+        } else {
+            JoyAxis::TRIGGER_LEFT
+        };
+
+        let strength = Input::singleton().get_joy_axis(player.get_device_id(), trigger);
 
         if !player.base().is_on_floor() {
             player.add_force(Force::NormalForce { magnitude: -1.0 });
         }
 
         // Use the x and y components directly since 'direction' is normalized.
-        let x_velocity = max_acceleration * self.object_location.x * self.burn_direction;
-        let y_velocity = max_acceleration * self.object_location.y * self.burn_direction;
+        let x_velocity = max_acceleration * self.object_location.x * self.burn_direction * strength;
+        let y_velocity = max_acceleration * self.object_location.y * self.burn_direction * strength;
 
         player.add_force(Force::SteelPush {
             x_velocity,
