@@ -65,7 +65,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
-current_tab = 3
+current_tab = 2
 
 [node name="Sound" type="TabBar" parent="TabContainer"]
 visible = false
@@ -473,7 +473,6 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [node name="Controls" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
@@ -622,6 +621,36 @@ text = "Player 8"
 custom_minimum_size = Vector2(25, 0)
 layout_mode = 2
 
+[node name="ControllerType" type="Control" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/ControllerType"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/ControllerType/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 60
+text = "Controller Type"
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/ControllerType/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="OptionButton" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/ControllerType/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+item_count = 3
+popup/item_0/text = "Xbox"
+popup/item_1/text = "PlayStation"
+popup/item_1/id = 1
+popup/item_2/text = "Nintendo"
+popup/item_2/id = 2
+
 [node name="Rebind3" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
 action_name = "jump"
@@ -659,6 +688,7 @@ layout_mode = 2
 action_name = "steel"
 
 [node name="UI Customization" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
@@ -790,7 +820,7 @@ custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
 size_flags_vertical = 1
 min_value = 1.0
-max_value = 5.0
+max_value = 3.0
 step = 0.1
 value = 1.0
 

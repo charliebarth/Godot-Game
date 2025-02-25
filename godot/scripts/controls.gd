@@ -40,6 +40,7 @@ func on_button_press(button: BaseButton):
 	print("button pressed %s %s" %[button.name, button.name.to_int()])
 	# The buttons are name 1-8 but the id's go 0-7 
 	load_keybinds_for_device(button.name.to_int() - 1) 
+	print(Input.get_joy_name(0))
 	
  
 ## Finds the keybind currently mapped to an action for a specified device. 

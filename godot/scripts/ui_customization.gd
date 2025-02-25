@@ -44,7 +44,8 @@ func _ready():
 
 func scale_UI_size(val: float) -> void:
 	size_label.text = str(val);
-	player_ui.scale = Vector2(val, val);
+	# scale the UI elements to show up the same as they will in game
+	player_ui.scale = Vector2(2 * val + 1, 2 * val + 1);
 	ui_size = val;
 	
 func scale_UI_opacity(val: float) -> void:
