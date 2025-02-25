@@ -11,14 +11,14 @@ func _ready() -> void:
 		if child is TileMapLayer:
 			var layer = 2
 			for i in range(4):
-				var duplicate: TileMapLayer = child.duplicate()
+				var duplicate_layer: TileMapLayer = child.duplicate()
 
-				duplicate.visibility_layer = (1 << layer)
-				duplicate.light_mask = (1 << layer | 1)
+				duplicate_layer.visibility_layer = (1 << layer)
+				duplicate_layer.light_mask = (1 << layer | 1)
 
 				# Optional: Give each duplicate a unique name for easier debugging
-				duplicate.name = child.name + "_duplicate_" + str(i + 1)
+				duplicate_layer.name = child.name + "_duplicate_" + str(i + 1)
 				
-				self.add_child(duplicate)
+				self.add_child(duplicate_layer)
 				
 				layer += 2

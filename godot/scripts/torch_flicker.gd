@@ -8,12 +8,6 @@ func _ready() -> void:
 	if self.is_visible_in_tree():
 		new_energy = randf_range(4.0, 6.5)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
 func _on_frame_changed() -> void:
 	if self.frame != 0 && self.frame % 10 == 0:
 		new_energy = randf_range(4.0, 6.5)
