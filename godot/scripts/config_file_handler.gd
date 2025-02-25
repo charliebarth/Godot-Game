@@ -143,9 +143,13 @@ func load_keybind_settings(id: int):
 		var backup = null
 		
 		for key in InputMap.action_get_events(event):
-			#print("E: %s\tK: %s\tI: %s" %[event, key, key.device])
+			print("E: %s\tK: %s\tI: %s" %[event, key, key.device])
 			if key.device == id:
 				key_name = key.as_text()
+				#if key is InputEventJoypadButton:
+					#var button_name = InputEventJoypadButton.get_joy_button_string(key.button_index)
+					#print("Generic button name: %s" % button_name)
+
 			elif key.device == -1: # Defaults to all devices
 				backup = key.as_text()
 
