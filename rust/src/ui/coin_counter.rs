@@ -9,6 +9,7 @@ use godot::{
 
 use crate::{
     items::coin::Coin,
+    metal_object::MetalObject,
     player::{
         enums::coin_events::{CoinEvents, CoinState},
         input_manager::InputManager,
@@ -28,7 +29,7 @@ pub struct CoinCounter {
     /// The amount of coins
     coins: i32,
     /// Holds Coins
-    coin_holder: Vec<Gd<Coin>>,
+    coin_holder: Vec<Gd<MetalObject>>,
     charging: bool,
     charge_start: u64,
 }
@@ -87,12 +88,14 @@ impl CoinCounter {
     /// Increments the number of coins
     /// # Arguments
     /// * `coin` (Coin) - the coin to add to the coin counter
-    pub fn add_coin(&mut self, coin: &mut Coin) {
+    pub fn add_coin(&mut self, mut coin: Gd<MetalObject>) {
         let new_coins = self.coins + 1; // Find how many coins to change to
         self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
 
         // Update coin counter
         self.coins = new_coins;
+
+        coin.set_visible(true);
 
         // Change the position to outside the map
         let pos = Vector2::new(100000., -100000.);
@@ -103,11 +106,8 @@ impl CoinCounter {
         coin.to_gd()
             .call_deferred("set_freeze_enabled", &[true.to_variant()]);
 
-        let real_pos = coin.to_gd().get_global_position();
-
         // Add the coin to the coin holder
-        self.coin_holder
-            .insert(self.coin_holder.len(), coin.to_gd());
+        self.coin_holder.insert(self.coin_holder.len(), coin);
     }
 
     /// Setter method for the text
@@ -170,7 +170,7 @@ impl CoinCounter {
         for i in 0..STARTING_COIN_COUNT {
             // Get the coin scene and instantiate it
             let coin_scene = load::<PackedScene>("res://scenes/coin.tscn");
-            let mut coin = coin_scene.instantiate_as::<Coin>().clone();
+            let mut coin_object = coin_scene.instantiate_as::<MetalObject>().clone();
 
             // Set the name of the coin
             let coin_id = i as i32 + 1;
@@ -203,8 +203,20 @@ impl CoinCounter {
                 .insert(self.coin_holder.len(), coin.clone());
 
             // Add the coin to the map (this calls the coin ready method)
-            let mut map = player.get_parent().unwrap();
-            map.add_child(&coin);
+            let player = self.base().get_node_as::<Player>("../../");
+            let mut map = player.get_parent().expect("Failed to add coin");
+            map.add_child(&coin_object);
+
+            let mut coin = coin_object.get_node_as::<Coin>("Coin");
+
+            // Get the player and set the coins current player
+            let mut bound_coin = coin.bind_mut();
+            bound_coin.set_curr_player(player.to_godot());
+
+            // Set initial state
+            bound_coin.set_state(CoinState::PickedUp);
+
+            self.add_coin(coin_object);
         }
     }
 }

@@ -32,8 +32,6 @@ impl IMarker2D for MetalPickup {
         timer.set_wait_time(WAIT_TIME);
         timer.set_one_shot(false);
         timer.start();
-
-        // godot_print!("TIMER START");
     }
 }
 
