@@ -985,10 +985,10 @@ position = Vector2(0, 1)
 [node name="PlayerUI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -480.0
-offset_top = -272.0
-offset_right = -480.0
-offset_bottom = -272.0
+offset_left = -475.0
+offset_top = -270.0
+offset_right = -475.0
+offset_bottom = -270.0
 
 [node name="HealthBar" type="TextureProgressBar" parent="PlayerUI"]
 z_index = 20

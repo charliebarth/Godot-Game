@@ -7,7 +7,7 @@ extends Control
 var latest_event: InputEvent = null
 
 func _ready():
-	set_process_unhandled_input(false)
+	set_process_unhandled_input(false) 
 	set_action_label()
 	
 	
@@ -44,7 +44,7 @@ func set_button_text(keybind_settings, event: InputEvent) -> void:
 func _on_button_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		button.text = "Press a new key"
-		set_process_unhandled_input(true)
+		set_process_unhandled_input(true) # Catches input other nodes didn't handle
 		
 	for i in get_tree().get_nodes_in_group("keybind_btns"):
 		if i.action_name != self.action_name:
@@ -55,10 +55,12 @@ func _on_button_toggled(toggled_on: bool) -> void:
 ## When we press a key it will untoggle the button
 func _unhandled_input(event: InputEvent) -> void:
 	print("UNHANDLED: %s DEVICE: %s" %[event, event.device])
+	
 	if ((event is InputEventJoypadButton or 
 		event is InputEventJoypadMotion or 
 		event is InputEventKey) and 
 		latest_event.device == event.device): 
+			
 		rebind_action_key(event)
 		button.button_pressed = false
 
@@ -66,8 +68,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func rebind_action_key(event) -> void:
 	print("REBIND TO: ", event)
 	if latest_event != null: 
-		InputMap.action_erase_event(action_name, latest_event)
+		InputMap.action_erase_event(action_name, latest_event) # Not working?
+	
+	# Add a check that unbinds if u double bind a key
 	InputMap.action_add_event(action_name, event)
 	set_process_unhandled_input(false) 
 	button.text = event.as_text()
-	## set action name 

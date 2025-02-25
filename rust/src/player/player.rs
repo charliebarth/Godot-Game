@@ -196,9 +196,9 @@ impl ICharacterBody2D for Player {
         let mut player_ui = self.base().get_node_as::<Control>("PlayerUI");
 
         let mut config = ConfigFile::new_gd();
-        let err = config.load(GString::from("user://settings.ini"));
-        // let ui_settings = config.get_section_keys(GString::from("ui"));
-        // godot_print!("{}", ui_settings);
+        let err = config.load(GString::from("user://settings.ini")); // TODO Check Error
+
+        // Get the UI settings
         let size = config
             .get_value(GString::from("ui"), GString::from("size"))
             .to_string()
@@ -209,11 +209,27 @@ impl ICharacterBody2D for Player {
             .to_string()
             .parse::<f32>()
             .expect("Failed to parse to f32");
+        let pos_x = config
+            .get_value(GString::from("ui"), GString::from("pos_x"))
+            .to_string()
+            .parse::<f32>()
+            .expect("Failed to parse to f32");
+        let pos_y = config
+            .get_value(GString::from("ui"), GString::from("pos_y"))
+            .to_string()
+            .parse::<f32>()
+            .expect("Failed to parse to f32");
+
+        // Set the scale (size) of the UI elements
         player_ui.set_scale(Vector2::new(size, size));
 
+        // Set the opacity of the UI elements
         let mut color = player_ui.get_modulate();
         color.a = opacity;
         player_ui.set_modulate(color);
+
+        // Set the position of the UI elements
+        player_ui.set_global_position(self.base().to_local(Vector2::new(pos_x, pos_y)));
     }
 
     /// The Godot method called every physics frame
