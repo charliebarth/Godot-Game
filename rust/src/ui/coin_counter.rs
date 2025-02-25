@@ -69,7 +69,6 @@ impl ILabel for CoinCounter {
         }
     }
 
-
     /// On an input event, calls the process_coin_events method if the event is a CoinEvent
     /// # Arguments
     /// * `event` (Gd<InputEvent>) - the input event that took place
