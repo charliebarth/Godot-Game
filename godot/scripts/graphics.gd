@@ -11,7 +11,7 @@ var resolutions = [Vector2i(1920, 1080), Vector2i(1920,1200),
 						Vector2i(1080,960), Vector2i(1280, 720), Vector2i(800,600)]
 						
 func _ready():
-	var graphics_settings = ConfigFileHandler.load_graphics_settings()
+	var graphics_settings = ConfigFileHandler.load_settings_helper("graphics")
 	
 	set_window_mode(1 if graphics_settings["fullscreen"] else 0)
 	display_mode_btn.selected = graphics_settings["fullscreen"]

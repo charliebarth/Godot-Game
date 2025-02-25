@@ -29,7 +29,7 @@ func _ready():
 	button_group.connect("pressed", on_button_press)
 	
 	# Load in the UI settings and set 
-	var UI_settings = ConfigFileHandler.load_ui_settings()
+	var UI_settings = ConfigFileHandler.load_settings_helper("ui")
 	print(UI_settings["size"], UI_settings["opacity"])
 	
 	scale_UI_size(UI_settings["size"])

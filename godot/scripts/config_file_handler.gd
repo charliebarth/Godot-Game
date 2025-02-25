@@ -25,24 +25,24 @@ func _ready() -> void:
 		
 		config.set_value("ui", "size", 1)
 		config.set_value("ui", "opacity", 1)
+		config.set_value("ui", "pos_x", -475)
+		config.set_value("ui", "pos_y", -270)
 	
 		config.save(SETTINGS_FILE_PATH)
 	else:
 		config.load(SETTINGS_FILE_PATH)
 
+## Loads the setting based on the string passed in, for example "audio" or "ui".
+func load_settings_helper(type: String):
+	var settings = {}
+	for key in config.get_section_keys(type):
+		settings[key] = config.get_value(type, key)
+	return settings
+
 ## Save the audio setting to the config file.
 func save_audio_setting(key: String, value: float) -> void:
 	config.set_value("audio", key, value)
 	config.save(SETTINGS_FILE_PATH)
-
-## Load the audio settings from the config file.
-func load_audio_settings():
-	var audio_settings = {}
-	
-	for key in config.get_section_keys("audio"):
-		audio_settings[key] = config.get_value("audio", key)
-	
-	return audio_settings
 
 func save_graphics_setting():
 	config.set_value(
@@ -73,9 +73,7 @@ func save_graphics_setting():
 
 	config.save(SETTINGS_FILE_PATH)
 	print("saved graphics settings")
-		
-func load_graphics_settings():
-	return load_settings_helper("graphics")
+
 	
 func save_ui_settings(size: float, opacity: float, pos_x, pos_y):
 	config.set_value(
@@ -102,9 +100,6 @@ func save_ui_settings(size: float, opacity: float, pos_x, pos_y):
 	config.save(SETTINGS_FILE_PATH)
 	print("saved ui settings")
 
-func load_ui_settings():
-	return load_settings_helper("ui")
-
 ## UNUSED 
 ## 
 func save_keybind_settings():
@@ -115,51 +110,44 @@ func save_keybind_settings():
 					config.set_value(
 						str("keybinds", i),
 						event,
-						key.as_text()
+						JSON.stringify(serialize_keybind(key))
 					)
+	config.save(SETTINGS_FILE_PATH)
+	print("saved keybind settings")
+
+## Takes in an InputEvent and parses it into a storable dictionary 
+func serialize_keybind(key: InputEvent) -> Dictionary:
+	if key is InputEventJoypadButton:
+		return {"JoypadButton": key.button_index}
+	elif key is InputEventJoypadMotion:
+		return {"JoypadMotion": key.axis}
+	elif key is InputEventKey:
+		return {"Key": key.keycode}
+	return {"Unknown": 0}
+
+## Takes in a stringified dictionary, parses it into a string, then creates an 
+## input event with the information stored. 
+func parse_keybind(data: String, device: int) -> InputEvent:
+	var input = "UNBOUND"
+	var json = JSON.parse_string(data) 
+	if json.has("JoypadButton"):
+		input = InputEventJoypadButton.new()
+		input.button_index = json["JoypadButton"]
+	elif json.has("JoypadMotion"):
+		input = InputEventJoypadMotion.new()
+		input.axis = json["JoypadMotion"]
+	elif json.has("InputEventKey"):
+		input = InputEventKey.new()
+		input.keycode = json["InputEventKey"]
 	
-
-func load_settings_helper(type: String):
-	var settings = {}
-	for key in config.get_section_keys(type):
-		settings[key] = config.get_value(type, key)
-	return settings
-
+	if typeof(input) == TYPE_OBJECT : input.device = device 
+	return input
+		
+		
 func load_all_keybind_settings():
 	var keybind_settings = []
 	for i in 8:
-		keybind_settings[i] = load_settings_helper(str("keybinds", i))
-		
-
-## Gets the keybind settings for a player based on id 
-## 
-## id (int) - Represents the id of a player (Player 1 has an id of 0) 
-func load_keybind_settings(id: int):
-	print("loading keybindings for player %s" %[id])
-	var keybind_settings = {}
-
-	for event in events: 
-		var key_name = null
-		var backup = null
-		
-		for key in InputMap.action_get_events(event):
-			print("E: %s\tK: %s\tI: %s" %[event, key, key.device])
-			if key.device == id:
-				key_name = key.as_text()
-				#if key is InputEventJoypadButton:
-					#var button_name = InputEventJoypadButton.get_joy_button_string(key.button_index)
-					#print("Generic button name: %s" % button_name)
-
-			elif key.device == -1: # Defaults to all devices
-				backup = key.as_text()
-
-		if key_name != null:
-			keybind_settings[event] = key_name
-		elif backup != null:
-			keybind_settings[event] = backup 
-		else:
-			keybind_settings[event] = "Unbound"
-					
-	return keybind_settings
-
-	
+		keybind_settings.append(load_settings_helper(str("keybinds", i)))
+		for action in keybind_settings[i]:
+			keybind_settings[i][action] = parse_keybind(keybind_settings[i][action], i)
+	return keybind_settings 
