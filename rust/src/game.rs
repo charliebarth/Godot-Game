@@ -207,7 +207,10 @@ impl Game {
 
     #[func]
     pub fn start_game(&mut self) {
-        if self.get_number_of_players() < 2 && !self.settings.bind().is_debug_mode() {
+        let debug_mode = self.settings.bind().is_debug_mode();
+        if self.get_number_of_players() < 2 && !debug_mode
+            || (debug_mode && self.get_number_of_players() < 1)
+        {
             let notification = "Not enough players to start game.".to_string();
 
             self.get_main_menu()
@@ -215,6 +218,9 @@ impl Game {
                 .add_notification(notification);
             return;
         }
+
+        // TODO - make this actually set the right game mode
+        self.set_game_mode("last_player_standing".to_string());
 
         // First remove the main menu
         let main_menu = self.get_main_menu();

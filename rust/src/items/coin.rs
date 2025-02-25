@@ -5,26 +5,28 @@ use godot::classes::{IRigidBody2D, RigidBody2D};
 /// Date: Fall 2024
 use godot::prelude::*;
 
+use crate::metal_object::{self, MetalObject};
 use crate::player::enums::coin_events::CoinState;
 use crate::player::player::Player;
 
 #[derive(GodotClass)]
-#[class(base=RigidBody2D)]
+#[class(base=Node2D)]
 /// Represents a coin
 pub struct Coin {
     // The base node of the Coin
-    base: Base<RigidBody2D>,
+    base: Base<Node2D>,
     /// The state of a Coin
     state: CoinState,
     /// The weight of the coin
     weight: i32,
     /// The current player whose coin counter the coin is in
     curr_player: Option<Gd<Player>>,
+    metal_object: Option<Gd<MetalObject>>,
 }
 
 #[godot_api]
 /// Godot methods for the Coin
-impl IRigidBody2D for Coin {
+impl INode2D for Coin {
     /// The Godot contructor for the Coin class node
     ///
     /// # Arguments
@@ -32,12 +34,13 @@ impl IRigidBody2D for Coin {
     ///
     /// # Returns
     /// * `Coin` - The Coin node
-    fn init(base: Base<RigidBody2D>) -> Self {
+    fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
             state: CoinState::Idle, // Initial state
             weight: 10,
             curr_player: None, // Initialy no player
+            metal_object: None,
         }
     }
 
@@ -46,15 +49,24 @@ impl IRigidBody2D for Coin {
     ///
     /// Sets coin freeze mode to true, and allows collsions.
     fn ready(&mut self) {
+        self.metal_object = Some(self.base().get_node_as::<MetalObject>(".."));
         self.base_mut().show(); // Show the coin
 
-        self.base_mut().set_freeze_enabled(true); // Make the coin stay still
+        let metal_object = self.metal_object.as_mut().expect("metal object missing");
+
+        metal_object.set_freeze_enabled(true); // Make the coin stay still
 
         // Emits signals when it collides with another physics body
-        self.base_mut().set_contact_monitor(true);
+        metal_object.set_contact_monitor(true);
         // By default this is set to 0, if we want to record contacts it needs to be greater
-        self.base_mut().set_max_contacts_reported(1);
+        metal_object.set_max_contacts_reported(1);
     }
+
+    // fn process(&mut self, _delta: f64) {
+    //     let metal_object = self.metal_object.as_ref().unwrap();
+    //     let position = self.base().to_local(metal_object.get_position());
+    //     self.base_mut().set_position(position);
+    // }
 }
 
 #[godot_api]
@@ -87,15 +99,13 @@ impl Coin {
         } else if self.state == CoinState::Idle {
             // If in state idle and it hits something
 
-            let body_name = body.get_name();
-
             // See if what entered the coin was a player
             if let Ok(mut player) = body.try_cast::<Player>() {
                 // Update state
                 self.set_state(CoinState::PickedUp);
 
                 // Adjust Players coins
-                player.bind_mut().adjust_coins(1, self);
+                player.bind_mut().adjust_coins(1, self.get_metal_obejct());
 
                 // Keep track of this coins player
                 self.set_curr_player(player);
@@ -122,19 +132,16 @@ impl Coin {
                 pos = pos + Vector2::new(20., -15.); // Adjust pos for throwing right
             }
 
-            self.base_mut().set_freeze_enabled(false);
-            self.base_mut().set_global_position(pos); // Set position to the player
-            self.base_mut().set_visible(true); // Ensure visible
-            self.base_mut().set_sleeping(false); // Ensure awake
-
-            // Debugging
-            let real_pos = self.base_mut().get_global_position();
+            let metal_object = self.metal_object.as_mut().expect("metal object missing");
+            metal_object.set_freeze_enabled(false);
+            metal_object.set_global_position(pos); // Set position to the player
+            metal_object.set_visible(true); // Ensure visible
+            metal_object.set_sleeping(false); // Ensure awake
 
             // Apply impluse
-
-            self.base_mut().set_linear_velocity(Vector2::ZERO);
-            self.base_mut().set_angular_velocity(0.);
-            self.base_mut().apply_impulse(force);
+            metal_object.set_linear_velocity(Vector2::ZERO);
+            metal_object.set_angular_velocity(0.);
+            metal_object.apply_impulse(force);
 
             // Update state
             self.set_state(CoinState::Thrown);
@@ -162,5 +169,9 @@ impl Coin {
     #[func]
     fn is_metal(&self) -> bool {
         true
+    }
+
+    pub fn get_metal_obejct(&self) -> Gd<MetalObject> {
+        self.metal_object.clone().unwrap()
     }
 }

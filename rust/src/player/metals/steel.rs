@@ -33,7 +33,7 @@ pub struct Steel {
     /// -1.0 when its a push, 1.0 when its a pull, and 0.0 when its not being used
     burn_direction: f32,
     /// The the metal object that the player is currently pushing or pulling.
-    object: Option<Gd<Node2D>>,
+    object: Option<Gd<MetalObject>>,
     object_location: Vector2,
     /// A flag to determine if the player is low burning.
     low_burn: bool,
@@ -79,12 +79,14 @@ impl Metal for Steel {
         }
 
         // Use the x and y components directly since 'direction' is normalized.
-        let x_velocity = max_acceleration * self.object_location.x * self.burn_direction * strength;
-        let y_velocity = max_acceleration * self.object_location.y * self.burn_direction * strength;
+        let x_acceleration =
+            max_acceleration * self.object_location.x * self.burn_direction * strength;
+        let y_acceleration =
+            max_acceleration * self.object_location.y * self.burn_direction * strength;
 
         player.add_force(Force::SteelPush {
-            x_velocity,
-            y_velocity,
+            x_acceleration,
+            y_acceleration,
         });
     }
 
