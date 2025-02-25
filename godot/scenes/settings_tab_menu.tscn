@@ -626,6 +626,7 @@ visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/ControllerType"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -686,6 +687,18 @@ action_name = "iron"
 [node name="Rebind9" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_a3whn")]
 layout_mode = 2
 action_name = "steel"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+
+[node name="Apply" type="Button" parent="TabContainer/Controls/MarginContainer/HBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../../ScrollContainer/VBoxContainer/WorldSFX/HBoxContainer/HSlider")
+theme_override_fonts/font = ExtResource("1_6ekok")
+theme_override_font_sizes/font_size = 64
+text = "Apply"
 
 [node name="UI Customization" type="TabBar" parent="TabContainer"]
 visible = false
@@ -895,6 +908,7 @@ text = "Apply"
 [connection signal="value_changed" from="TabContainer/Graphics/MarginContainer/VBoxContainer/FPS cap/HBoxContainer/HSlider" to="TabContainer/Graphics" method="set_fps"]
 [connection signal="toggled" from="TabContainer/Graphics/MarginContainer/VBoxContainer/VsyncMode/HBoxContainer/VsyncModeBtn" to="TabContainer/Graphics" method="set_vsync"]
 [connection signal="pressed" from="TabContainer/Graphics/MarginContainer/HBoxContainer/Apply" to="TabContainer/Graphics" method="_on_apply_pressed"]
+[connection signal="pressed" from="TabContainer/Controls/MarginContainer/HBoxContainer/Apply" to="TabContainer/Controls" method="_on_apply_pressed"]
 [connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer/HSlider" to="TabContainer/UI Customization" method="scale_UI_size"]
 [connection signal="value_changed" from="TabContainer/UI Customization/MarginContainer/ScrollContainer/VBoxContainer/UI_Size_Opacity/HBoxContainer/VBoxContainer/HBoxContainer2/HSlider" to="TabContainer/UI Customization" method="scale_UI_opacity"]
 [connection signal="pressed" from="TabContainer/UI Customization/MarginContainer/HBoxContainer/Apply" to="TabContainer/UI Customization" method="_on_apply_pressed"]
