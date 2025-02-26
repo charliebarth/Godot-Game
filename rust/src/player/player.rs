@@ -1004,7 +1004,7 @@ impl Player {
     /// A signal that is emitted by the player when it's id is changed
     /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
-    pub fn id_changed();
+    fn id_changed();
 
     /// A signal that is emitted by the player when it is using tin
     #[signal]

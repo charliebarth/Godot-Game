@@ -1,11 +1,10 @@
-use godot::classes::{IRigidBody2D, RigidBody2D};
 /// Represents a coin.
 ///
 /// Author: Trinity Pittman
 /// Date: Fall 2024
 use godot::prelude::*;
 
-use crate::metal_object::{self, MetalObject};
+use crate::metal_object::MetalObject;
 use crate::player::enums::coin_events::CoinState;
 use crate::player::player::Player;
 
