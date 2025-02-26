@@ -75,7 +75,7 @@ func save_graphics_setting():
 	print("saved graphics settings")
 
 	
-func save_ui_settings(size: float, opacity: float, pos_x, pos_y):
+func save_ui_settings(size: float, opacity: float, pos: int,):
 	config.set_value(
 		"ui",
 		"size",
@@ -88,14 +88,14 @@ func save_ui_settings(size: float, opacity: float, pos_x, pos_y):
 	)
 	config.set_value(
 		"ui",
-		"pos_x",
-		pos_x
+		"pos",
+		pos
 	)
-	config.set_value(
-		"ui",
-		"pos_y",
-		pos_y
-	)
+	#config.set_value(
+		#"ui",
+		#"pos_y",
+		#pos_y
+	#)
 	
 	config.save(SETTINGS_FILE_PATH)
 	print("saved ui settings")

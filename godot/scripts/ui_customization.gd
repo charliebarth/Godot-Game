@@ -14,11 +14,7 @@ var button_group = ButtonGroup.new()
 
 var ui_size = null; 
 var ui_opacity = null;
-var pos_x = null;
-var pos_y = null;
-
-var positions = [Vector2(-475, -270), Vector2(-65, -270), Vector2(350, -270),
-				 Vector2(-475, 170), Vector2(-65, 170), Vector2(350, 170)]
+var pos = null;
 
 func _ready():
 	# Create the button group for the ui placement 
@@ -38,8 +34,8 @@ func _ready():
 	scale_UI_opacity(UI_settings["opacity"])
 	opacity_slider.value = UI_settings["opacity"]
 	
-	var pos = positions.find(Vector2(UI_settings["pos_x"], UI_settings["pos_y"]))
-	button_group.get_buttons()[1 if pos == -1 else pos].button_pressed = true
+	pos = UI_settings["pos"]
+	button_group.get_buttons()[0 if pos == null else pos].button_pressed = true
 	
 
 func scale_UI_size(val: float) -> void:
@@ -57,15 +53,13 @@ func scale_UI_opacity(val: float) -> void:
 # When a UI placement button is pressed
 func on_button_press(button: BaseButton):
 	print("button pressed %s" %[button.name])
+	pos = button.name.to_int()
 
-	pos_x = positions[button.name.to_int()].x
-	pos_y = positions[button.name.to_int()].y
 
 ## When the apply button is pressed, save the ui setting.
 func _on_apply_pressed() -> void:
-	print("POS: %s %s" %[pos_x, pos_y] )
 	ConfigFileHandler.save_ui_settings(
 		1 if ui_size == null else ui_size, 
 		1 if ui_opacity == null else ui_opacity, 
-		-475 if pos_x == null else pos_x,
-		-270 if pos_y == null else pos_y);
+		0 if pos == null else pos,
+		);

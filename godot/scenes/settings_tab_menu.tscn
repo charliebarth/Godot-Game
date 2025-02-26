@@ -65,7 +65,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
-current_tab = 2
+current_tab = 3
 
 [node name="Sound" type="TabBar" parent="TabContainer"]
 visible = false
@@ -473,6 +473,7 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [node name="Controls" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
@@ -701,7 +702,6 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [node name="UI Customization" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
