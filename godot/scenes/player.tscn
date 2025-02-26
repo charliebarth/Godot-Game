@@ -1014,11 +1014,14 @@ zoom = Vector2(2, 2)
 
 [node name="PlayerUI" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 0
-offset_left = 350.0
-offset_top = 170.0
-offset_right = 350.0
-offset_bottom = 170.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -479.0
+offset_top = -269.0
+offset_right = -479.0
+offset_bottom = -269.0
+grow_horizontal = 0
 
 [node name="HealthBar" type="TextureProgressBar" parent="PlayerUI"]
 z_index = 20

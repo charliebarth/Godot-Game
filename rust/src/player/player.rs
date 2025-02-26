@@ -193,14 +193,10 @@ impl ICharacterBody2D for Player {
                                         GString::from("opacity"))
                                         .to_string()
                                         .parse::<f32>().expect("Failed to parse to f32");
-        let pos_x = config.get_value(GString::from("ui"), 
-                                        GString::from("pos_x"))
+        let pos_i = config.get_value(GString::from("ui"), 
+                                        GString::from("pos"))
                                         .to_string().parse::<f32>()
                                         .expect("Failed to parse to f32");
-        let pos_y = config.get_value(GString::from("ui"), 
-                                        GString::from("pos_y"))
-                                        .to_string()
-                                        .parse::<f32>().expect("Failed to parse to f32");
         
         // Set the scale (size) of the UI elements
         player_ui.set_scale(Vector2::new(size, size));
@@ -211,7 +207,26 @@ impl ICharacterBody2D for Player {
         player_ui.set_modulate(color);
 
         // Set the position of the UI elements 
-        player_ui.set_global_position(self.base().to_local(Vector2::new(pos_x, pos_y)));
+        let positions = [
+                        Vector2::new(-479., -269.),     // Top Left
+                        Vector2::new(-62., -269.),      // Top Center
+                        Vector2::new(355., -269.),      // Top Right
+                        Vector2::new(-479., 201.),      // Bottom Left
+                        Vector2::new(-62., 201.),       // Bottom Center
+                        Vector2::new(355., 201.),       // Bottom Right
+        ];
+        let pivot_offset = [
+                        Vector2::new(0., 0.),           // Top Left
+                        Vector2::new(62., 0.),          // Top Center
+                        Vector2::new(124., -0.),        // Top Right
+                        Vector2::new(0., 70.),         // Bottom Left
+                        Vector2::new(62., 70.),        // Bottom Center
+                        Vector2::new(124., 70.),       // Bottom Right
+
+        ];
+
+        player_ui.set_global_position(self.base().to_local(positions[pos_i as usize]));
+        player_ui.set_pivot_offset(pivot_offset[pos_i as usize]);
         
     }
 
