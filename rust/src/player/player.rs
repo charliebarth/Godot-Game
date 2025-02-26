@@ -804,7 +804,7 @@ impl Player {
     /// A signal that is emmited by the player when it's id is changed
     /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
-    pub fn id_changed();
+    fn id_changed();
 
     /// If passed true, the player turns on its timer to count down before the player is removed from the game
     /// If passed false, the player turns off its timer meaning it is no longer disconnected

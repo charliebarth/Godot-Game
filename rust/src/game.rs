@@ -420,8 +420,8 @@ impl Game {
     }
 
     #[signal]
-    pub fn change_cycle_map(&self, light_level: f32, transition_time: f64, scale: f32);
+    fn change_cycle_map(light_level: f32, transition_time: f64, scale: f32);
 
     #[signal]
-    pub fn change_cycle_player(&self, light_level: f32, transition_time: f64);
+    fn change_cycle_player(light_level: f32, transition_time: f64);
 }
