@@ -28,11 +28,12 @@ func _ready():
 	var UI_settings = ConfigFileHandler.load_settings_helper("ui")
 	print(UI_settings["size"], UI_settings["opacity"])
 	
-	scale_UI_size(UI_settings["size"])
 	size_slider.value = UI_settings["size"]
+	scale_UI_size(UI_settings["size"])
 	
-	scale_UI_opacity(UI_settings["opacity"])
+	
 	opacity_slider.value = UI_settings["opacity"]
+	scale_UI_opacity(UI_settings["opacity"])
 	
 	pos = UI_settings["pos"]
 	button_group.get_buttons()[0 if pos == null else pos].button_pressed = true
@@ -42,6 +43,8 @@ func scale_UI_size(val: float) -> void:
 	size_label.text = str(val);
 	# scale the UI elements to show up the same as they will in game
 	player_ui.scale = Vector2(2 * val + 1, 2 * val + 1);
+	print("UI SCALE UPDATED TO ", val, "\t ", player_ui.scale)
+	player_ui.queue_redraw()
 	ui_size = val;
 	
 func scale_UI_opacity(val: float) -> void:
