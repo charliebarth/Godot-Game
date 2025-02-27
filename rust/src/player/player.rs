@@ -16,7 +16,6 @@ use godot::classes::{AnimatedSprite2D, Area2D};
 use godot::prelude::*;
 
 use crate::game::Game;
-use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
 use crate::settings::Settings;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
@@ -70,6 +69,8 @@ pub struct Player {
     direction: f32,
     /// The gravity of the player
     gravity: f64,
+    /// The default gravity (Comes from the Settings singleton)
+    default_gravity: f64,
     /// The health of the player
     health: f64,
     /// The amount of time that has passed since the last frame
@@ -131,6 +132,7 @@ impl ICharacterBody2D for Player {
             direction: 1.0,
             health: MAX_HEALTH,
             delta: 0.0,
+            default_gravity: gravity,
             gravity,
             current_state: PlayerStates::Jump,
             previous_state: PlayerStates::Fall,
@@ -181,6 +183,9 @@ impl ICharacterBody2D for Player {
             self.die();
         }
 
+        // Reset the player to their default values such as animation speed, run speed, and jump force
+        self.reset_player();
+
         // If the die button is pressed, the player dies
         // This is used for testing as a quick way to simulate player death
         // This will be either removed or disabled during playtesting
@@ -194,6 +199,13 @@ impl ICharacterBody2D for Player {
 
         self.set_delta(delta);
 
+        // Update the current state of the player
+        self.current_state.update_state(self);
+        self.set_animation_direction();
+
+        // Check for any timeout events that have expired
+        self.expire_timeout_events();
+
         self.add_force(Force::Gravity {
             acceleration: self.gravity,
         });
@@ -201,16 +213,6 @@ impl ICharacterBody2D for Player {
         if self.base().is_on_floor() {
             self.add_force(Force::NormalForce { magnitude: -1.0 });
         }
-
-        // Reset the player to their default values such as animation speed, run speed, and jump force
-        self.reset_player();
-
-        // Update the current state of the player
-        self.current_state.update_state(self);
-        self.set_animation_direction();
-
-        // Check for any timeout events that have expired
-        self.expire_timeout_events();
 
         // Make the player move and slide based on their velocity
         self.apply_forces();
@@ -436,6 +438,15 @@ impl Player {
         self.gravity
     }
 
+    /// Gets the default gravity of the game
+    /// This value originally comes from the Settings singleton and this is just a cached version
+    ///
+    /// # Returns
+    /// * `f64` - The default gravity of the game
+    pub fn get_default_gravity(&self) -> f64 {
+        self.default_gravity
+    }
+
     /// Set the gravity of the player
     ///
     /// # Arguments
@@ -652,6 +663,7 @@ impl Player {
         sprite.set_speed_scale(1.0);
         self.set_run_speed(DEFAULT_RUN_SPEED);
         self.set_jump_force(DEFAULT_JUMP_FORCE);
+        self.set_gravity(self.default_gravity);
     }
 
     /// Adds a force to the player's forces queue

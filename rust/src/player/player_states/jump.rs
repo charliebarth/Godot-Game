@@ -7,15 +7,11 @@ use crate::player::{
     traits::player_state::PlayerState,
 };
 
-const JUMP_GRAVITY: f64 = 980.0;
-
 #[derive(Clone, Copy)]
 pub struct Jump;
 
 impl PlayerState for Jump {
     fn enter(player: &mut Player) {
-        player.set_gravity(JUMP_GRAVITY);
-
         let jump_force = player.get_jump_force() * 0.5;
         player.add_force(Force::Jump {
             acceleration: -jump_force,
