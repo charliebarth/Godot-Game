@@ -518,6 +518,7 @@ text = "Choose your player: "
 layout_mode = 2
 
 [node name="1" type="Button" parent="TabContainer/Controls/MarginContainer/ScrollContainer/VBoxContainer/Player Choice/HBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64

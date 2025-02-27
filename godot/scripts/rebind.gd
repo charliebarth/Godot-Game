@@ -69,8 +69,13 @@ func rebind_action_key(event) -> void:
 	print("REBIND TO: ", event)
 	if latest_event != null: 
 		InputMap.action_erase_event(action_name, latest_event) # Not working?
+
 	
 	# Add a check that unbinds if u double bind a key
 	InputMap.action_add_event(action_name, event)
 	set_process_unhandled_input(false) 
 	button.text = event.as_text()
+	
+	for rebind in get_tree().get_nodes_in_group("keybind_btns"):
+		if rebind.button.text == button.text and rebind.button != button:
+			rebind.button.emit_signal("toggled", true)
