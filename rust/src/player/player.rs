@@ -7,10 +7,12 @@ use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
 use godot::classes::ConfigFile;
 use godot::classes::Control;
+use godot::classes::CollisionShape2D;
 use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
+use godot::classes::RayCast2D;
 use godot::classes::Sprite2D;
 use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
@@ -65,6 +67,11 @@ enum CachedNode {
     MetalManager,
     Sprite,
     IronParticles,
+    RayCastDown,
+    RayCastUp,
+    RayCastLeft,
+    RayCastRight,
+    CollisionShape,
 }
 
 #[derive(GodotClass)]
@@ -1031,6 +1038,27 @@ impl Player {
         let mut disconnected_node = self.get_disconnected();
         disconnected_node.set_visible(disconnected);
     }
+
+    pub fn rotate(&mut self, dir: Vector2) {
+        if self.base().get_up_direction() == dir {
+            return;
+        }
+
+        let mut rotation_degrees = 0.0;
+        if dir == Vector2::new(1.0, 0.0) {
+            rotation_degrees = 90.0;
+        } else if dir == Vector2::new(0.0, 1.0) {
+            rotation_degrees = 180.0;
+        } else if dir == Vector2::new(-1.0, 0.0) {
+            rotation_degrees = -90.0;
+        }
+
+        self.get_sprite().set_rotation_degrees(rotation_degrees);
+        self.get_collision_shape()
+            .set_rotation_degrees(rotation_degrees);
+
+        self.base_mut().set_up_direction(dir);
+    }
 }
 /// Getters for nodes
 impl Player {
@@ -1207,5 +1235,25 @@ impl Player {
             MetalType::Steel => self.get_steel_particles(),
             MetalType::Iron => self.get_iron_particles(),
         }
+    }
+
+    pub fn get_ray_cast_down(&mut self) -> Gd<RayCast2D> {
+        self.get_cached_node(CachedNode::RayCastDown, "RayCastDown")
+    }
+
+    pub fn get_ray_cast_up(&mut self) -> Gd<RayCast2D> {
+        self.get_cached_node(CachedNode::RayCastUp, "RayCastUp")
+    }
+
+    pub fn get_ray_cast_left(&mut self) -> Gd<RayCast2D> {
+        self.get_cached_node(CachedNode::RayCastLeft, "RayCastLeft")
+    }
+
+    pub fn get_ray_cast_right(&mut self) -> Gd<RayCast2D> {
+        self.get_cached_node(CachedNode::RayCastRight, "RayCastRight")
+    }
+
+    pub fn get_collision_shape(&mut self) -> Gd<CollisionShape2D> {
+        self.get_cached_node(CachedNode::CollisionShape, "CollisionShape2D")
     }
 }

@@ -56,6 +56,7 @@ impl Metal for Steel {
     /// * `player` - A mutable reference to the player so that the force can be modified.
     fn burn(&mut self) {
         if self.object.is_none() {
+            self.set_burning(false);
             return;
         }
 
@@ -74,11 +75,20 @@ impl Metal for Steel {
 
         let strength = Input::singleton().get_joy_axis(player.get_device_id(), trigger);
 
+        // If the player is not on the floor, try to update their up direction based on nearby surfaces.
         if !player.base().is_on_floor() {
+            let up_direction = player.base().get_up_direction();
+            self.update_player_direction(&mut player);
             player.add_force(Force::NormalForce { magnitude: -1.0 });
+            let new_up_direction = player.base().get_up_direction();
+
+            if up_direction != new_up_direction {
+                player.rotate(new_up_direction);
+            }
         }
 
         // Use the x and y components directly since 'direction' is normalized.
+
         let x_acceleration =
             max_acceleration * self.object_location.x * self.burn_direction * strength;
         let y_acceleration =
@@ -248,6 +258,8 @@ impl Steel {
 
         // Get the player position and the index of the closest metal object.
         let mut index_closest_metal_object = usize::MAX;
+        let mut points = PackedVector2Array::new();
+        let mut colors = PackedColorArray::new();
 
         for (index, metal_object) in player.get_metal_objects().iter().enumerate() {
             let color = Color::from_rgba(0.0, 0.4, 0.9, 0.1);
@@ -255,7 +267,8 @@ impl Steel {
                 .base()
                 .to_local(metal_object.get_global_position());
 
-            bound_metal_line.add_line_segment(metal_object_position, color);
+            points.push(metal_object_position);
+            colors.push(color);
 
             if metal_object == &selected_metal_object {
                 if player_position.distance_to(metal_object_position) < 10.0 {
@@ -270,11 +283,10 @@ impl Steel {
         }
 
         if index_closest_metal_object != usize::MAX {
-            bound_metal_line.update_color(
-                Color::from_rgba(0.0, 0.6, 2.3, 1.0),
-                index_closest_metal_object,
-            );
+            colors[index_closest_metal_object] = Color::from_rgba(0.0, 0.6, 2.3, 1.0);
         }
+
+        bound_metal_line.replace_lines(points, colors);
     }
 
     fn update_line_selection(&mut self) {
@@ -303,6 +315,8 @@ impl Steel {
 
         // Get the player position and the index of the closest metal object.
         let mut index_closest_metal_object = usize::MAX;
+        let mut points = PackedVector2Array::new();
+        let mut colors = PackedColorArray::new();
 
         for (index, metal_object) in player.get_metal_objects().iter().enumerate() {
             let color = Color::from_rgba(0.0, 0.4, 0.9, 0.1);
@@ -310,7 +324,8 @@ impl Steel {
                 .base()
                 .to_local(metal_object.get_global_position());
 
-            bound_metal_line.add_line_segment(metal_object_position, color);
+            points.push(metal_object_position);
+            colors.push(color);
 
             let closest_metal_object = self.get_closest_metal_object(
                 player_position,
@@ -330,11 +345,10 @@ impl Steel {
         }
 
         if index_closest_metal_object != usize::MAX {
-            bound_metal_line.update_color(
-                Color::from_rgba(0.0, 0.6, 2.3, 1.0),
-                index_closest_metal_object,
-            );
+            colors[index_closest_metal_object] = Color::from_rgba(0.0, 0.6, 2.3, 1.0);
         }
+
+        bound_metal_line.replace_lines(points, colors);
     }
 
     /// When the player stops low burning, hide the steel particles
@@ -351,6 +365,7 @@ impl Steel {
         // This will tell the metal line to stop drawing lines and then queue a redraw to clear remaining lines from the screen
         let mut metal_line = player.get_metal_line(self.metal_type);
         let mut bound_metal_line = metal_line.bind_mut();
+        bound_metal_line.replace_lines(PackedVector2Array::new(), PackedColorArray::new());
         bound_metal_line.set_should_show(false);
         drop(bound_metal_line);
 
@@ -360,6 +375,7 @@ impl Steel {
     fn cleanup_burn(&mut self) {
         self.object_location = Vector2::ZERO;
         self.object = None;
+        self.player.bind_mut().rotate(Vector2::new(0.0, -1.0));
     }
 
     pub fn set_burn_direction(&mut self, direction: f32) {
@@ -368,5 +384,94 @@ impl Steel {
 
     pub fn set_metal_type(&mut self, metal_type: MetalType) {
         self.metal_type = metal_type;
+    }
+
+    fn update_player_direction(&mut self, player: &mut GdMut<'_, Player>) {
+        let mut new_up_direction: Option<Vector2> = None;
+        let push_or_pull = if self.metal_type == MetalType::Steel {
+            -1.0
+        } else {
+            1.0
+        };
+
+        let x_dir = self.object_location.x * push_or_pull;
+        let y_dir = self.object_location.y * push_or_pull;
+        let abs_x = x_dir.abs();
+        let abs_y = y_dir.abs();
+
+        let right_collider = player.get_ray_cast_right().get_collider();
+        let left_collider = player.get_ray_cast_left().get_collider();
+        let up_collider = player.get_ray_cast_up().get_collider();
+        let down_collider = player.get_ray_cast_down().get_collider();
+
+        // Prioritize the dominant component.
+        if abs_x >= abs_y {
+            // Horizontal is dominant.
+            if x_dir > 0.0 {
+                // Check right wall.
+                if right_collider.is_some() && right_collider.unwrap().is_class("TileMapLayer") {
+                    // Assume the right wall's collision normal is (-1, 0).
+                    new_up_direction = Some(Vector2::new(-1.0, 0.0));
+                }
+            } else {
+                // Check left wall.
+                if left_collider.is_some() && left_collider.unwrap().is_class("TileMapLayer") {
+                    // Assume the left wall's collision normal is (1, 0).
+                    new_up_direction = Some(Vector2::new(1.0, 0.0));
+                }
+            }
+
+            // If no collision on the horizontal axis, check vertically.
+            if new_up_direction.is_none() {
+                if y_dir < 0.0 {
+                    // Check ceiling.
+                    if up_collider.is_some() && up_collider.unwrap().is_class("TileMapLayer") {
+                        // Assume the ceiling's collision normal is (0, 1).
+                        new_up_direction = Some(Vector2::new(0.0, 1.0));
+                    }
+                } else if y_dir > 0.0 {
+                    // Check ground.
+                    if down_collider.is_some() && down_collider.unwrap().is_class("TileMapLayer") {
+                        // Assume the ground's collision normal is (0, -1).
+                        new_up_direction = Some(Vector2::new(0.0, -1.0));
+                    }
+                }
+            }
+        } else {
+            // Vertical is dominant.
+            if y_dir < 0.0 {
+                // Check ceiling.
+                if up_collider.is_some() && up_collider.unwrap().is_class("TileMapLayer") {
+                    new_up_direction = Some(Vector2::new(0.0, 1.0));
+                }
+            } else if y_dir > 0.0 {
+                // Check ground.
+                if down_collider.is_some() && down_collider.unwrap().is_class("TileMapLayer") {
+                    new_up_direction = Some(Vector2::new(0.0, -1.0));
+                }
+            }
+
+            // If no collision on the vertical axis, check horizontally.
+            if new_up_direction.is_none() {
+                if x_dir > 0.0 {
+                    if right_collider.is_some() && right_collider.unwrap().is_class("TileMapLayer")
+                    {
+                        new_up_direction = Some(Vector2::new(-1.0, 0.0));
+                    }
+                } else if x_dir < 0.0 {
+                    if left_collider.is_some() && left_collider.unwrap().is_class("TileMapLayer") {
+                        new_up_direction = Some(Vector2::new(1.0, 0.0));
+                    }
+                }
+            }
+        }
+
+        let direction = if let Some(up_direction) = new_up_direction {
+            up_direction
+        } else {
+            Vector2::new(0.0, -1.0)
+        };
+
+        player.rotate(direction);
     }
 }
