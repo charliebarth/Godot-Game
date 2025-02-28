@@ -56,7 +56,6 @@ impl MetalVial {
     #[func]
     fn metal_pickup(&mut self, body: Gd<Node2D>) {
         let body_name = body.get_name();
-        godot_print!("Metal entered by {body_name}"); // Prints who picked up the coin
 
         if let Ok(mut player) = body.try_cast::<Player>() {
             player.bind_mut().adjust_metals(self.get_metals(), self.amt); // Dereference and call the method
@@ -68,8 +67,6 @@ impl MetalVial {
             self.base_mut().set_global_position(OFF_MAP);
 
             // self.base_mut().queue_free(); // Remove the vial from the scene
-        } else {
-            godot_print!("Something other than player entered the coin.");
         }
     }
 

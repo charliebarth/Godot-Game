@@ -4,7 +4,7 @@ use godot::prelude::*;
 use crate::game::Game;
 use crate::items::metal_vial::MetalVial;
 
-const WAIT_TIME: f64 = 5.;
+const WAIT_TIME: f64 = 30.0;
 const OFF_MAP: Vector2 = Vector2::new(-100000., 100000.);
 
 #[derive(GodotClass)]
@@ -49,12 +49,10 @@ impl MetalPickup {
 
         if mode == "last_player_standing".to_string() {
             //TODO set what we want the vials to incr
-            godot_print!("GAME MODE LAST PLAYER STANDING");
             new_metals.push("pewter");
-        } else {
-            godot_print!("GAME MODE SMTH ELSE");
             new_metals.push("iron");
             new_metals.push("steel");
+        } else {
         }
 
         metal.bind_mut().set_metals(new_metals);
@@ -81,13 +79,9 @@ impl MetalPickup {
 
     #[func]
     fn on_timer_timeout(&mut self) {
-        godot_print!("TIMER TIMEOUT");
-
         if self.get_metal_vial().get_global_position() == OFF_MAP {
             self.get_metal_vial()
                 .set_global_position(self.base().get_global_position());
-        } else {
-            godot_print!("MetalVial still exists, skipping respawn.\n");
         }
     }
 }
