@@ -16,6 +16,8 @@ pub enum MetalType {
     Steel,
     Iron,
     Tin,
+    Copper,
+    Bronze,
 }
 
 impl MetalType {
@@ -25,6 +27,8 @@ impl MetalType {
             "steel" => Some(MetalType::Steel),
             "iron" => Some(MetalType::Iron),
             "tin" => Some(MetalType::Tin),
+            "copper" => Some(MetalType::Copper),
+            "bronze" => Some(MetalType::Bronze),
             _ => None,
         }
     }
@@ -35,6 +39,8 @@ impl MetalType {
             MetalType::Steel => "steel",
             MetalType::Iron => "iron",
             MetalType::Tin => "tin",
+            MetalType::Copper => "copper",
+            MetalType::Bronze => "bronze",
         }
     }
 }

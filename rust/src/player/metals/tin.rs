@@ -1,6 +1,6 @@
 use godot::obj::Gd;
 use std::ffi::c_void;
-use std::os::unix::raw::gid_t;
+//use std::os::unix::raw::gid_t;
 
 use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
 use crate::player::input_manager::InputManager;
@@ -66,10 +66,10 @@ impl Tin {
 
 impl Metal for Tin {
     /// The update function for tin.
-    /// This function check to see if the input manager has a tin event.
+    /// This function checks to see if the input manager has a tin event.
     /// If the event is found then the burn function is called.
     /// If the low burn variant is found then the low burn function is called.
-    /// TODO: This will also toggle the tin particles on and off.
+    /// This will also toggle the tin particles on and off.
     fn update(&mut self) {
         let mut input_manager = self.player.bind_mut().get_input_manager();
         self.update_burn(&mut input_manager);
