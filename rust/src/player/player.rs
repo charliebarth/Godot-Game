@@ -582,18 +582,14 @@ impl Player {
     fn set_animation_direction(&mut self) {
         let mut sprite = self.get_sprite();
         let mut scale = sprite.get_scale();
-        let mut pos = sprite.get_position();
 
         if self.direction < 0.0 && scale.x != -1.3 {
             scale.x = -1.3;
-            pos.x -= 9.0;
         } else if self.direction > 0.0 && scale.x != 1.3 {
             scale.x = 1.3;
-            pos.x += 9.0;
         }
 
         sprite.set_scale(scale);
-        sprite.set_position(pos);
     }
 
     /// Sets the speed of the player's animations
