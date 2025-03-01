@@ -55,15 +55,18 @@ impl Metal for Steel {
     /// # Arguments
     /// * `player` - A mutable reference to the player so that the force can be modified.
     fn burn(&mut self) {
+        let mut player_clone = self.player.clone();
+        let mut player = player_clone.bind_mut();
+
         if self.object.is_none() {
-            self.set_burning(false);
+            return;
+        } else if !player.is_metal_object_in_range(self.object.as_ref().unwrap()) {
+            self.object = None;
+            self.object_location = Vector2::ZERO;
             return;
         }
 
         self.update_reserve(-self.burn_rate);
-
-        let mut player_clone = self.player.clone();
-        let mut player = player_clone.bind_mut();
 
         // TODO: Make constant
         let max_acceleration: f32 = 850.0;
@@ -229,20 +232,7 @@ impl Steel {
     }
 
     fn update_selected_object_location(&mut self) {
-        // If there is no object to push on stop
-        if self.object.is_none() {
-            return;
-        }
-
         let mut player = self.player.bind_mut();
-
-        // If the metal object is no longer is range stop
-        let selected_metal_object = self.object.clone().unwrap();
-        if !player.is_metal_object_in_range(&selected_metal_object) {
-            self.object = None;
-            self.object_location = Vector2::ZERO;
-            return;
-        }
 
         // Get the metal line and show it.
         let mut metal_line = player.get_metal_line(self.metal_type);
@@ -264,7 +254,7 @@ impl Steel {
             points.push(metal_object_position);
             colors.push(color);
 
-            if metal_object == &selected_metal_object {
+            if self.object.is_some() && metal_object == self.object.as_ref().unwrap() {
                 if player_position.distance_to(metal_object_position) < 10.0 {
                     self.object = None;
                     self.object_location = Vector2::ZERO;
