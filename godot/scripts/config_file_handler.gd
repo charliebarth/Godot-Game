@@ -174,7 +174,7 @@ func parse_keybind(data: String, device: int) -> InputEvent:
 ## Loads the keybind settings from the config file
 ##
 ## @returns A dictionary of the keybind settings 
-func load_all_keybind_settings() -> Dictionary:
+func load_all_keybind_settings() -> Array:
 	var keybind_settings = []
 	for i in 8:
 		keybind_settings.append(load_settings_helper(str("keybinds", i)))
