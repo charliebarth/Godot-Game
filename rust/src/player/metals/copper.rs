@@ -83,32 +83,60 @@ impl Copper {
         /// It does the same as low_burn because copper has static performance.
         fn burn(&mut self) {
             self.low_burning = true;
-            self.player.bind_mut().get_copper_particles().set_visible(true);
         }
 
         /// The low burn function for copper.
-        /// Sets the low_burning flag to true and shows the copper particles.
+        /// Sets the low_burning flag to true. No particles are shown for copper.
         fn low_burn(&mut self) {
             self.low_burning = true;
-            self.player.bind_mut().get_copper_particles().set_visible(true);
         }
 
+        /// This function will update the total metal reserve for copper.
+        ///
+        /// # Arguments
+        /// * `amount` - The amount to update the reserve by.
         fn update_reserve(&mut self, amount: f64) {
-            todo!()
+            // update the amount of tin the player has
+            self.current_reserve += amount;
+            // clamp the amount of tin the player has to the capacity
+            self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
         }
 
+        /// This function will return the type of metal.
+        ///
+        /// # Returns
+        /// The type of metal.
         fn metal_type(&self) -> MetalType {
-            todo!()
+            self.metal_type
         }
 
+        /// This function will update the low burn ability for copper.
+        ///
+        /// # Arguments
+        /// * `input_manager` - The input manager for the player.
         fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-            todo!()
+            let mut input_manager = input_manager.bind_mut();
+            let burn_type = BurnType::LowBurn;
+
+            if !self.low_burning
+                && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+            {
+                self.low_burn();
+                self.low_burning = true;
+            } else if self.low_burning
+                && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+            {
+                self.cleanup_lowburn();
+            }
         }
 
+        /// This function will update the burn ability for copper. (Which is the same as low burn)
+        ///
+        /// # Arguments
+        /// * `input_manager` - The input manager for the player.
         fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
             self.update_low_burn(input_manager);
         }
-
     }
 
 
