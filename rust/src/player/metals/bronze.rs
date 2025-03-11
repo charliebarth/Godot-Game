@@ -39,7 +39,7 @@ impl Bronze {
         Self {
             capacity,
             current_reserve,
-            previous_reserve,
+            previous_reserve: 0.0,
             low_burn_rate,
             low_burning: false,
             burning: false,
@@ -54,7 +54,6 @@ impl Bronze {
         self.player.bind_mut().get_bronze_particles().set_visible(false);
     }
 }
-
 
 impl Metal for Bronze {
     /// The update function for bronze.
@@ -94,22 +93,42 @@ impl Metal for Bronze {
         self.player.bind_mut().get_bronze_particles().set_visible(true);
     }
 
+    /// This function will update the total metal reserve for bronze.
+    ///
+    /// # Arguments
+    /// * `amount` - The amount to update the reserve by.
     fn update_reserve(&mut self, amount: f64) {
-        todo!()
+        self.current_reserve += amount;
+        self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
     }
 
+    /// This function will return the type of metal.
     fn metal_type(&self) -> MetalType {
-        todo!()
+        self.metal_type
     }
 
+    /// This function will update the burn rate of the metal.
+    ///
+    /// # Arguments
+    /// * `input_manager` - The input manager to check for events.
     fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        todo!()
+        let mut input_manager = input_manager.bind_mut();
+        let burn_type = BurnType::LowBurn;
+
+        if !self.low_burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
+        {
+            self.low_burn();
+        }
     }
 
+    /// This function will update the burn rate for bronze. (Which is the same as low burn)
+    ///
+    /// # Arguments
+    /// * `input_manager` - The input manager to check for events.
     fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
         self.update_low_burn(input_manager);
     }
-
 }
 
 
