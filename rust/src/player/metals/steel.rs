@@ -90,9 +90,11 @@ impl Metal for Steel {
         let y_acceleration =
             max_acceleration * self.object_location.y * self.burn_direction * strength;
 
-        player.add_force(Force::SteelPush {
-            x_acceleration,
-            y_acceleration,
+        let metal_object = self.object.as_mut().unwrap();
+        let mut bound_metal = metal_object.bind_mut();
+        bound_metal.add_force(Force::PlayerSteelPush {
+            acceleration: Vector2::new(x_acceleration, y_acceleration),
+            player: self.player.clone(),
         });
     }
 

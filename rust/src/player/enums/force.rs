@@ -1,5 +1,16 @@
+use godot::{builtin::Vector2, obj::Gd};
+
+use crate::player::player::Player;
+
 /// An enum that represents the different forces that can be applied to the player
 /// Forces are used to move the player around the map
+///
+/// NOTE:
+/// acceleration is meant to be multiplied by delta as it is a force to be applied over multiple frames
+/// impulse is not effected by delta because it is a one time occurence
+///
+/// Jump is an example of both. It has an impulse which is an instant application of force that creates a minimum jump height
+/// There is also an acceleration which is effect by gravity because it is applied every frame the player is still holding the jump button.
 #[derive(PartialEq)]
 pub enum Force {
     /// Gravity
@@ -9,7 +20,10 @@ pub enum Force {
     },
     /// Jump force applied when the player jumps
     Jump {
-        acceleration: f32,
+        /// applied every frame the player holds the jump button
+        acceleration: Vector2,
+        /// the initial instant upwards force which is only meant to be applied once
+        impulse: Vector2,
     },
     /// Normal force applied when the player is on the floor
     /// The normal force is a force that is proportional to gravity and counteracts it's effect
@@ -39,5 +53,9 @@ pub enum Force {
     },
     AirResistance {
         acceleration: f32,
+    },
+    PlayerSteelPush {
+        acceleration: Vector2,
+        player: Gd<Player>,
     },
 }
