@@ -5,7 +5,7 @@ use godot::{
     prelude::*,
 };
 
-use crate::player::enums::force::Force;
+use crate::player::{enums::force::Force, player::Player};
 
 /// This is a Node for immovable metal objects.
 #[derive(GodotClass)]
@@ -63,28 +63,32 @@ impl MetalObject {
 
     pub fn apply_forces(&mut self, delta: f64) {
         let len_forces = self.forces.len();
+        let mut expected_force: VecDeque<Force> = VecDeque::new();
         for _ in 0..len_forces {
             let force = self.forces.pop_front().unwrap();
-            self.apply_force(force, delta);
+            self.apply_force(force, delta, &mut expected_force);
         }
     }
 
-    pub fn apply_force(&mut self, force: Force, delta: f64) {
+    pub fn apply_force(&mut self, force: Force, delta: f64, expected_forces: &mut VecDeque<Force>) {
+        // This is a queue of pushes and pulls that we will iterate through after all forces have been resolved.
+        // We check each acceleration against the actual acceleration of the object to see how much
+        // resistance was experienced or how much of the force was used.
+        // Unused force will be returned to the player associated with the push/pull
+
         let mut base_velocity = self.base().get_linear_velocity();
 
         match force {
-            Force::Gravity { acceleration } => {
-                base_velocity.y += (acceleration * delta) as f32;
-            }
-            Force::NormalForce { magnitude } => {
-                base_velocity.y += (self.gravity * magnitude * delta) as f32;
-            }
-            Force::SteelPush {
-                x_acceleration,
-                y_acceleration,
+            Force::PlayerSteelPush {
+                acceleration,
+                player,
             } => {
-                base_velocity.x = x_acceleration;
-                base_velocity.y = y_acceleration;
+                expected_forces.push_back(Force::PlayerSteelPush {
+                    acceleration: acceleration.clone(),
+                    player,
+                });
+
+                base_velocity += acceleration;
             }
             _ => {}
         }
