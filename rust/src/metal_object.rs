@@ -1,11 +1,14 @@
 use std::collections::VecDeque;
 
 use godot::{
-    classes::{IRigidBody2D, RigidBody2D},
+    classes::{Engine, IRigidBody2D, PhysicsDirectBodyState2D, RigidBody2D},
     prelude::*,
 };
 
-use crate::player::{enums::force::Force, player::Player};
+use crate::{
+    player::{enums::force::Force, player::Player},
+    settings::Settings,
+};
 
 /// This is a Node for immovable metal objects.
 #[derive(GodotClass)]
@@ -31,18 +34,40 @@ impl IRigidBody2D for MetalObject {
     /// # Returns
     /// * `MetalObject` - A new instance of the MetalObject class.
     fn init(base: Base<RigidBody2D>) -> Self {
+        let settings = Engine::singleton()
+            .get_singleton("Settings")
+            .expect("settings singleton missing")
+            .try_cast::<Settings>()
+            .expect("settings is not a Settings");
+
+        let settings_bound = settings.bind();
+        let gravity: f64 = settings_bound.get_gravity() as f64;
+        drop(settings_bound);
+
         Self {
             base,
             forces: VecDeque::new(),
             delta: 0.0,
-            gravity: 0.0,
+            gravity,
             air_resistance: 0.0,
             friction: 0.0,
         }
     }
 
+    fn ready(&mut self) {
+        self.base_mut().set_use_custom_integrator(true);
+    }
+
     fn physics_process(&mut self, delta: f64) {
         self.delta = delta;
+    }
+
+    fn integrate_forces(&mut self, physics_body: Option<Gd<PhysicsDirectBodyState2D>>) {
+        if let Some(mut body) = physics_body {
+            let mut base_velocity = body.get_linear_velocity();
+            base_velocity.y += (self.gravity * self.delta) as f32;
+            body.set_linear_velocity(base_velocity);
+        }
     }
 }
 
@@ -64,10 +89,15 @@ impl MetalObject {
     pub fn apply_forces(&mut self, delta: f64) {
         let len_forces = self.forces.len();
         let mut expected_force: VecDeque<Force> = VecDeque::new();
+
         for _ in 0..len_forces {
             let force = self.forces.pop_front().unwrap();
             self.apply_force(force, delta, &mut expected_force);
         }
+
+        let mut base_velocity = self.base().get_linear_velocity();
+
+        base_velocity.y += (self.gravity * delta) as f32;
     }
 
     pub fn apply_force(&mut self, force: Force, delta: f64, expected_forces: &mut VecDeque<Force>) {

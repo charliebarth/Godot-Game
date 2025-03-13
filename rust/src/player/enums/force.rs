@@ -21,9 +21,7 @@ pub enum Force {
     /// Jump force applied when the player jumps
     Jump {
         /// applied every frame the player holds the jump button
-        acceleration: Vector2,
-        /// the initial instant upwards force which is only meant to be applied once
-        impulse: Vector2,
+        acceleration: f32,
     },
     /// Normal force applied when the player is on the floor
     /// The normal force is a force that is proportional to gravity and counteracts it's effect

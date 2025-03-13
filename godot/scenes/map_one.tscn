@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=24 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://crbuuc3thgs0g" path="res://scenes/metal_pickup.tscn" id="10_5bopr"]
 [ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
 [ext_resource type="PackedScene" uid="uid://b26ws836bp20r" path="res://scenes/fire.tscn" id="10_y0ce3"]
+[ext_resource type="Script" path="res://scripts/metal_object.gd" id="11_bjfqy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
@@ -227,6 +228,7 @@ position = Vector2(-12, -299)
 
 [node name="MetalObject3" parent="MetalObjects" instance=ExtResource("2_3yakd")]
 position = Vector2(211, -167)
+script = ExtResource("11_bjfqy")
 
 [node name="MetalObject4" parent="MetalObjects" instance=ExtResource("2_3yakd")]
 position = Vector2(-22, 354)
