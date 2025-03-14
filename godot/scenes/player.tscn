@@ -1120,7 +1120,7 @@ lifetime = 2.0
 
 [node name="BronzeParticles" type="GPUParticles2D" parent="."]
 visible = false
-self_modulate = Color(1, 0.427451, 32.1216, 1)
+self_modulate = Color(17, 1, 17, 1)
 show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 6)

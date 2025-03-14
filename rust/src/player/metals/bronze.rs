@@ -1,6 +1,6 @@
 use godot::obj::Gd;
 use std::ffi::c_void;
-
+use godot::prelude::godot_print;
 use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
 use crate::player::input_manager::InputManager;
 use crate::player::player::Player;
@@ -119,6 +119,10 @@ impl Metal for Bronze {
             && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
         {
             self.low_burn();
+        } else if self.low_burning
+            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
+        {
+            self.cleanup_lowburn();
         }
     }
 
