@@ -842,6 +842,20 @@ impl Player {
         self.base_mut().set_velocity(base_velocity);
     }
 
+    /// This is called when an object impacts the player.
+    /// It will calculate if the player should be damaged and if they should be moved.
+    /// It returns an impact force which is how much force is returned to the object.
+    ///
+    /// # Arguments
+    /// * `impact_force` - The force of the impact which is roughly calulated using the speed of the object and its weight
+    ///
+    /// # Returns
+    /// * `Force` - A Force::Impact which is how much energy/force is returned to the object,
+    /// again roughly calculated using the speed of the player and their weight.
+    pub fn impact(&mut self, impact_force: Force) -> Force {
+        Force::NormalForce { magnitude: -1.0 }
+    }
+
     /// The permanent minimum run speed of the player
     ///
     /// # Returns
