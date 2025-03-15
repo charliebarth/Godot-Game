@@ -97,6 +97,8 @@ pub struct Player {
     forces: VecDeque<Force>,
     /// A vec of nearby metal objects that can be used by steel and iron
     metal_objects: Vec<Gd<MetalObject>>,
+    /// A vec of nearby players that is used for copper and bronze functionality
+    nearby_players: Vec<Gd<Player>>,
     /// The mass of the player in kilograms
     mass: f32,
     /// If the player is attacking or not
@@ -143,6 +145,7 @@ impl ICharacterBody2D for Player {
             timeout_events: HashMap::new(),
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
+            nearby_players: Vec::new(),
             mass: 70.0,
             is_attacking: false,
             cached_nodes: HashMap::new(),
@@ -758,6 +761,26 @@ impl Player {
     fn remove_metal_object(&mut self, metal: Gd<MetalObject>) {
         if let Some(pos) = self.metal_objects.iter().position(|x| *x == metal) {
             self.metal_objects.remove(pos);
+        }
+    }
+
+    #[func]
+    /// Adds a player to the player's vec of nearby players
+    ///
+    /// # Arguments
+    /// * `player` - The player to add to the current player's vector of nearby players
+    fn add_nearby_player(&mut self, player: Gd<Player>) {
+        self.nearby_players.push(player);
+    }
+
+    #[func]
+    /// Removes a player from the player's vec of nearby players
+    ///
+    /// # Arguments
+    /// * `player` - The player to remove from the current player's vector of nearby players
+    fn remove_nearby_player(&mut self, player: Gd<Player>) {
+        if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
+            self.nearby_players.remove(pos);
         }
     }
 

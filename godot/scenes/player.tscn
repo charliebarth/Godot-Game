@@ -1,4 +1,4 @@
-[gd_scene load_steps=159 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=160 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -813,6 +813,9 @@ fill = 2
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.821101, 0.119266)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_shv24"]
+size = Vector2(947, 530)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_indkr"]
 size = Vector2(958, 540)
 
@@ -1032,6 +1035,12 @@ shadow_item_cull_mask = 524288
 texture = SubResource("GradientTexture2D_dokqc")
 script = ExtResource("26_f1f48")
 
+[node name="PlayerRange" type="Area2D" parent="."]
+
+[node name="PlayerRangeShape" type="CollisionShape2D" parent="PlayerRange"]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_shv24")
+
 [node name="SteelRange" type="Area2D" parent="."]
 visible = false
 collision_mask = 129
@@ -1195,6 +1204,8 @@ collision_mask = 3072
 [connection signal="animation_changed" from="PlayerAnimation" to="PlayerAnimation" method="_on_animation_changed"]
 [connection signal="animation_finished" from="PlayerAnimation" to="." method="_on_owner_vis_animation_finished"]
 [connection signal="animation_finished" from="PlayerAnimation" to="PlayerAnimation" method="_on_animation_finished"]
+[connection signal="body_entered" from="PlayerRange" to="." method="_on_player_range_body_entered"]
+[connection signal="body_exited" from="PlayerRange" to="." method="_on_player_range_body_exited"]
 [connection signal="body_entered" from="SteelRange" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_exited" from="SteelRange" to="." method="_on_area_2d_body_exited"]
 [connection signal="area_entered" from="HurtBox" to="HurtBox" method="_on_area_entered"]
