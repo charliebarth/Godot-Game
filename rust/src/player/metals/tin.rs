@@ -55,11 +55,15 @@ impl Tin {
     /// Function that updates if the player is burning tin
     fn cleanup_burn(&mut self) {
         self.burning = false;
+        // remove tin from the player's active metals vec
+        self.player.bind_mut().remove_active_metal(self.metal_type);
     }
 
     /// Function that update if the player is low burning tin
     fn cleanup_lowburn(&mut self) {
         self.low_burning = false;
+        // remove tin from the player's active metals vec
+        self.player.bind_mut().remove_active_metal(self.metal_type);
         self.player.bind_mut().get_tin_particles().set_visible(false);
     }
 }
@@ -94,6 +98,11 @@ impl Metal for Tin {
     /// The burn function for tin.
     /// This ability will allow players to see easier when the night cycle occurs.
     fn burn(&mut self) {
+        // Add tin to the player's active metals vec
+        self.player.bind_mut().add_active_metal(self.metal_type);
+        // Update the player's current particles
+        let particles = self.player.bind_mut().get_tin_particles();
+        self.player.bind_mut().set_particles(particles);
         // Emit the signal to do a regular burn
         self.player.bind_mut().emit_tin_signal(10.0, 3.0);
     }
@@ -102,6 +111,12 @@ impl Metal for Tin {
     /// This ability will allow players to see easier when the night cycle occurs, but
     /// not as well as they would if they were burning tin regularly.
     fn low_burn(&mut self) {
+        // Add tin to the player's active metals vec
+        self.player.bind_mut().add_active_metal(self.metal_type);
+        // Update the player's current particles
+        let particles = self.player.bind_mut().get_tin_particles();
+        self.player.bind_mut().set_particles(particles);
+        // Set the tin particles to be visible
         self.player.bind_mut().get_tin_particles().set_visible(true);
         // Emit the signal to do a low burn
         self.player.bind_mut().emit_tin_signal(5.0, 3.0);

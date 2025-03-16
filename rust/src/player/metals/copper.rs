@@ -51,6 +51,8 @@ impl Copper {
     /// Function that updates if the player is low burning copper
     pub fn cleanup_lowburn(&mut self) {
         self.low_burning = false;
+        // remove copper from the player's active metals vec
+        self.player.bind_mut().remove_active_metal(self.metal_type);
     }
 }
 
@@ -82,12 +84,16 @@ impl Metal for Copper {
     /// It does the same as low_burn because copper has static performance.
     fn burn(&mut self) {
         self.low_burning = true;
+        // add copper to the player's active metals vec
+        self.player.bind_mut().add_active_metal(self.metal_type);
     }
 
     /// The low burn function for copper.
     /// Sets the low_burning flag to true. No particles are shown for copper.
     fn low_burn(&mut self) {
         self.low_burning = true;
+        // add copper to the player's active metals vec
+        self.player.bind_mut().add_active_metal(self.metal_type);
     }
 
     /// This function will update the total metal reserve for copper.

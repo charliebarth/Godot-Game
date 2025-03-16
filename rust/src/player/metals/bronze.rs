@@ -51,7 +51,20 @@ impl Bronze {
     /// Function that updates if the player is low burning bronze
     pub fn cleanup_lowburn(&mut self) {
         self.low_burning = false;
+        // remove bronze from the player's active metals vec
+        self.player.bind_mut().remove_active_metal(self.metal_type);
         self.player.bind_mut().get_bronze_particles().set_visible(false);
+    }
+
+    /// Function that updates particle visibility for nearby players
+    fn update_particle_visibility(&mut self) {
+        let player = self.player.bind();
+        let mut nearby_players = player.get_nearby_players().clone();
+        let visibility_mask = 1 << self.player.bind().get_player_id();
+        for other_player in nearby_players.iter_mut() {
+            let mut other_player = other_player.bind_mut();
+            other_player.reveal_particles(visibility_mask);
+        }
     }
 }
 
@@ -77,12 +90,20 @@ impl Metal for Bronze {
                 .set_metal_reserve_amount(self.metal_type.as_str(), self.current_reserve);
         }
         self.previous_reserve = self.current_reserve;
+
+        self.update_particle_visibility();
     }
 
     /// The burn function for bronze.
     /// It does the same as low_burn because copper has static performance.
     fn burn(&mut self) {
         self.low_burning = true;
+        // add bronze to the player's active metals vec
+        self.player.bind_mut().add_active_metal(self.metal_type);
+        // update the player's current particles
+        let particles = self.player.bind_mut().get_bronze_particles();
+        self.player.bind_mut().set_particles(particles);
+        // show the bronze particles
         self.player.bind_mut().get_bronze_particles().set_visible(true);
     }
 
@@ -90,6 +111,12 @@ impl Metal for Bronze {
     /// Sets the low_burning flag to true and shows the copper particles.
     fn low_burn(&mut self) {
         self.low_burning = true;
+        // add bronze to the player's active metals vec
+        self.player.bind_mut().add_active_metal(self.metal_type);
+        // update the player's current particles
+        let particles = self.player.bind_mut().get_bronze_particles();
+        self.player.bind_mut().set_particles(particles);
+        // show the bronze particles
         self.player.bind_mut().get_bronze_particles().set_visible(true);
     }
 

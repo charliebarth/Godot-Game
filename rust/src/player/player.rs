@@ -19,6 +19,7 @@ use godot::prelude::*;
 use crate::game::Game;
 use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
+use crate::player::enums::metal_type::MetalType;
 use crate::player::player_tin_light::PlayerTinLight;
 use crate::settings::Settings;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
@@ -99,6 +100,10 @@ pub struct Player {
     metal_objects: Vec<Gd<MetalObject>>,
     /// A vec of nearby players that is used for copper and bronze functionality
     nearby_players: Vec<Gd<Player>>,
+    /// A vec of the player's currently actively burning metals
+    active_metals: Vec<MetalType>,
+    /// The player's current particles
+    current_particles: Option<Gd<GpuParticles2D>>,
     /// The mass of the player in kilograms
     mass: f32,
     /// If the player is attacking or not
@@ -146,6 +151,8 @@ impl ICharacterBody2D for Player {
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
             nearby_players: Vec::new(),
+            active_metals: Vec::new(),
+            current_particles: None,
             mass: 70.0,
             is_attacking: false,
             cached_nodes: HashMap::new(),
@@ -782,6 +789,71 @@ impl Player {
         if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
             self.nearby_players.remove(pos);
         }
+    }
+
+    /// Gets the vec of all nearby players
+    ///
+    /// # Returns
+    /// * `Vec<Gd<Player>>` - The vec of all nearby players
+    pub fn get_nearby_players(&self) -> &Vec<Gd<Player>> {
+        &self.nearby_players
+    }
+
+    /// Reveals the particles of the player if the player is not burning copper
+    ///
+    /// # Arguments
+    /// * `visibility_layer` - The visibility layer to set for the particles
+    pub fn reveal_particles(&mut self, visibility_layer: u32) {
+        if !self.is_burning_metal(MetalType::Copper) {
+            let mut particles = self.get_particles();
+            let current_layer = particles.get_visibility_layer();
+            // bitwise OR the current layer with the visibility layer to reveal the particles
+            particles.set_visibility_layer(current_layer | visibility_layer);
+        }
+    }
+
+    /// Updates the particles of the player to the current particles
+    pub fn set_particles(&mut self, particles: Gd<GpuParticles2D>) {
+        self.current_particles = Some(particles);
+    }
+
+    /// Gets the current particles of the player
+    ///
+    /// # Returns
+    /// * `Gd<GpuParticles2D>` - The current particles of the player
+    fn get_particles(&self) -> Gd<GpuParticles2D> {
+        self.current_particles.clone().expect("No current particles set for player")
+    }
+
+    /// Adds a metal to the active burning metals
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to add to the active burning metals
+    pub fn add_active_metal(&mut self, metal: MetalType) {
+        if !self.active_metals.contains(&metal) {
+            self.active_metals.push(metal);
+        }
+    }
+
+    /// Removes a metal from the active burning metals
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to remove from the active burning metals
+    pub fn remove_active_metal(&mut self, metal: MetalType) {
+        if let Some(pos) = self.active_metals.iter().position(|x| *x == metal) {
+            self.active_metals.remove(pos);
+        }
+    }
+
+    /// Checks if the player is burning a specific metal
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to check if the player is burning
+    ///
+    /// # Returns
+    /// * `bool` - True if the player is burning the metal, false otherwise
+    pub fn is_burning_metal(&self, metal: MetalType) -> bool {
+        self.active_metals.contains(&metal)
     }
 
     /// Gets the vec of all nearby metal objects
