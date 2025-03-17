@@ -56,4 +56,7 @@ pub enum Force {
         acceleration: Vector2,
         player: Gd<Player>,
     },
+    Impact {
+        acceleration: Vector2,
+    },
 }
