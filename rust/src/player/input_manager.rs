@@ -65,16 +65,6 @@ impl INode2D for InputManager {
         if button_name == "" {
             return;
         }
-
-        if !self.button_released.contains_key(&button_name) {
-            self.button_released.insert(button_name.clone(), true);
-        }
-
-        if let Some(player_event) = PlayerEvents::from_string(&button_name) {
-            self.process_player_events(player_event, event, button_name);
-        } else if let Some(metal_type) = MetalType::from_string(&button_name) {
-            self.process_metal_events(metal_type, event, button_name);
-        }
     }
 
     /// This is a built in method for Godot that is called every physics frame.
@@ -95,7 +85,20 @@ impl INode2D for InputManager {
     }
 }
 
+#[godot_api]
 impl InputManager {
+    pub fn handle_input(&mut self, button_name: String, is_pressed: bool, is_released: bool) {
+        if !self.button_released.contains_key(&button_name) {
+            self.button_released.insert(button_name.clone(), true);
+        }
+
+        if let Some(player_event) = PlayerEvents::from_string(&button_name) {
+            self.process_player_events(player_event, is_pressed, is_released, button_name);
+        } else if let Some(metal_type) = MetalType::from_string(&button_name) {
+            self.process_metal_events(metal_type, is_pressed, is_released, button_name);
+        }
+    }
+
     /// Fetching the events checks if the event is in the hashmap and if it is it removes it and returns true otherwise it returns false.
     ///
     /// Arguments:
@@ -150,6 +153,11 @@ impl InputManager {
         "".to_string()
     }
 
+    #[func]
+    pub fn get_button_name(&mut self, event: Gd<InputEvent>) -> String {
+        InputManager::event_to_input_name(event)
+    }
+
     /// This function takes a MetalEvent and determines if it should be stored, removed, or toggled.
     ///
     /// Arguments:
@@ -159,7 +167,8 @@ impl InputManager {
     fn process_metal_events(
         &mut self,
         metal_type: MetalType,
-        event: Gd<InputEvent>,
+        is_pressed: bool,
+        is_released: bool,
         button_name: String,
     ) {
         let burn_type = if self.player_events.contains_key(&PlayerEvents::LowBurn) {
@@ -169,7 +178,7 @@ impl InputManager {
         };
 
         // If the button is pressed
-        if event.is_action_pressed(button_name.as_str()) {
+        if is_pressed {
             // If the player is holding down the low burn button then this is a low burn event
             if burn_type == BurnType::LowBurn {
                 // If the low burn event is already in the set then remove it to stop the low burn
@@ -195,7 +204,7 @@ impl InputManager {
             }
 
         // If the button is released
-        } else if burn_type != BurnType::LowBurn && event.is_action_released(button_name.as_str()) {
+        } else if burn_type != BurnType::LowBurn && is_released {
             self.metal_events
                 .remove(&(metal_type, burn_type, ButtonState::Pressed));
             self.metal_events
@@ -232,16 +241,17 @@ impl InputManager {
     fn process_player_events(
         &mut self,
         player_event: PlayerEvents,
-        event: Gd<InputEvent>,
+        is_pressed: bool,
+        is_released: bool,
         button_name: String,
     ) {
-        if event.is_pressed()
+        if is_pressed
             && !self.player_events.contains_key(&player_event)
             && *self.button_released.get(&button_name).unwrap()
         {
             self.button_released.insert(button_name, false);
             self.player_events.insert(player_event, 0);
-        } else if event.is_released() {
+        } else if is_released {
             self.button_released.insert(button_name, true);
             self.player_events.remove(&player_event);
         }

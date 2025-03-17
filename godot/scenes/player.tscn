@@ -1,4 +1,4 @@
-[gd_scene load_steps=158 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=160 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -26,6 +26,7 @@
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="22_33rpo"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
+[ext_resource type="Script" path="res://scripts/input_manager.gd" id="23_encyr"]
 [ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="Texture2D" uid="uid://b5lf080mspvgn" path="res://assets/navigation_e.png" id="29_a80li"]
 [ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
@@ -978,6 +979,7 @@ shape = SubResource("CapsuleShape2D_bajs7")
 position = Vector2(0, 1)
 
 [node name="InputManager" type="InputManager" parent="."]
+script = ExtResource("23_encyr")
 
 [node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
 physics_interpolation_mode = 0

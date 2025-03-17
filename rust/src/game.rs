@@ -6,7 +6,10 @@ use godot::{
 };
 
 use crate::{
-    main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
+    main_menu::MainMenu,
+    map::Map,
+    player::{input_manager, player::Player},
+    settings::Settings,
     split_screen::SplitScreen,
 };
 
@@ -118,6 +121,20 @@ impl INode2D for Game {
 
 #[godot_api]
 impl Game {
+    #[func]
+    pub fn handle_input(
+        &mut self,
+        player_id: i32,
+        button_name: String,
+        is_pressed: bool,
+        is_released: bool,
+    ) {
+        let mut player = self.players[(player_id - 1) as usize].clone();
+        let mut input_manager = player.bind_mut().get_input_manager();
+        input_manager
+            .bind_mut()
+            .handle_input(button_name, is_pressed, is_released);
+    }
     /// Reference viewport size for a single player pane at zoom 1.0
     /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen
     const REFERENCE_VIEWPORT: Vector2 = Vector2::new(960.0, 540.0);
@@ -140,8 +157,6 @@ impl Game {
 
         let mut main_menu = self.get_main_menu();
         main_menu.bind_mut().add_player(self.current_player_id);
-
-        godot_print!("Num players: {}", self.players.len());
     }
 
     fn disconnect_player(&mut self, device_id: i32) {
@@ -206,7 +221,7 @@ impl Game {
             player.set_name(format!("Player{}", player_id).as_str());
 
             let mut bound_player = player.bind_mut();
-            bound_player.set_device_id(self.devices[index]);
+            //bound_player.set_device_id(self.devices[index]);
             bound_player.set_player_id(player_id);
         }
 
