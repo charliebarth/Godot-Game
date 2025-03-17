@@ -64,7 +64,7 @@ impl IRigidBody2D for MetalObject {
         base_mut.set_use_custom_integrator(true);
         base_mut.set_contact_monitor(true);
         base_mut.set_max_contacts_reported(16);
-        //base_mut.set_continuous_collision_detection_mode(CcdMode::CAST_RAY);
+        base_mut.set_continuous_collision_detection_mode(CcdMode::CAST_RAY);
         base_mut.set_mass(mass);
     }
 
@@ -76,6 +76,8 @@ impl IRigidBody2D for MetalObject {
         if let Some(mut body) = physics_body {
             let mut base_velocity = body.get_linear_velocity();
             base_velocity.y += (self.gravity * self.delta) as f32;
+            let result = self.apply_forces(base_velocity);
+            base_velocity = result.0;
 
             let body_position = self.base().get_position();
             for i in 0..body.get_contact_count() {
@@ -84,6 +86,7 @@ impl IRigidBody2D for MetalObject {
                 base_velocity = self.handle_collision(&body, base_velocity, i, direction);
             }
 
+            self.apply_push_back(result.1, base_velocity);
             body.set_linear_velocity(base_velocity);
         }
     }
@@ -202,15 +205,62 @@ impl MetalObject {
         self.forces.push_back(force);
     }
 
-    pub fn apply_forces(&mut self, delta: f64, base_velocity: Vector2) {
+    pub fn apply_forces(&mut self, base_velocity: Vector2) -> (Vector2, VecDeque<Force>) {
+        let mut base_velocity = base_velocity;
         let mut expected_forces: VecDeque<Force> = VecDeque::new();
         let len_forces = self.forces.len();
         for _ in 0..len_forces {
             let force = self.forces.pop_front().unwrap();
-            self.apply_force(force, &mut expected_forces, base_velocity);
+            base_velocity = self.apply_force(force, &mut expected_forces, base_velocity);
         }
 
-        for force in expected_forces {}
+        (base_velocity, expected_forces)
+    }
+
+    fn apply_push_back(&mut self, expected_forces: VecDeque<Force>, base_velocity: Vector2) {
+        for force in expected_forces {
+            if let Force::PlayerSteelPush {
+                acceleration,
+                mut player,
+            } = force
+            {
+                let mut remaining_force = Vector2::ZERO;
+
+                // Compare expected acceleration with actual movement
+                // Same direction, but not all force used
+                if base_velocity.x.signum() == acceleration.x.signum()
+                    && base_velocity.x.abs() < acceleration.x.abs()
+                {
+                    remaining_force.x = acceleration.x - base_velocity.x;
+                }
+                // Overcompensation (opposite direction)
+                else if base_velocity.x.signum() != acceleration.x.signum() {
+                    remaining_force.x = acceleration.x.abs() + base_velocity.x.abs();
+                }
+
+                // Same direction, but not all force used
+                if base_velocity.y.signum() == acceleration.y.signum()
+                    && base_velocity.y.abs() < acceleration.y.abs()
+                {
+                    remaining_force.y = acceleration.y - base_velocity.y;
+                }
+                // Overcompensation (opposite direction)
+                else if base_velocity.y.signum() != acceleration.y.signum() {
+                    remaining_force.y = acceleration.y.abs() + base_velocity.y.abs();
+                }
+
+                remaining_force.x = remaining_force.x * acceleration.x.signum();
+                remaining_force.y = remaining_force.y * acceleration.y.signum();
+
+                // If any force remains, push it back to the player's force queue
+                if remaining_force.length() > 0.0 {
+                    player.bind_mut().add_force(Force::SteelPush {
+                        x_acceleration: -remaining_force.x * 4.0,
+                        y_acceleration: -remaining_force.y * 4.0,
+                    });
+                }
+            }
+        }
     }
 
     pub fn apply_force(

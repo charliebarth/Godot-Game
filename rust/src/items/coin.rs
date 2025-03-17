@@ -123,11 +123,11 @@ impl Coin {
 
             if player.bind().get_dir() < 0. {
                 // Throw left
-                force = Vector2::new(-500., -400.);
+                force = Vector2::new(-30., -15.);
                 pos = pos + Vector2::new(0., -5.); // Adjust pos to be higher
             } else {
                 // Throw right
-                force = Vector2::new(500., -400.);
+                force = Vector2::new(30., -15.);
                 pos = pos + Vector2::new(20., -15.); // Adjust pos for throwing right
             }
 

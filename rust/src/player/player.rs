@@ -808,7 +808,9 @@ impl Player {
     /// # Arguments
     /// * `metal` - The metal object to add to the player's list of nearby metal objects
     fn add_metal_object(&mut self, metal: Gd<MetalObject>) {
-        self.metal_objects.push(metal);
+        if !metal.is_freeze_enabled() {
+            self.metal_objects.push(metal);
+        }
     }
 
     #[func]
