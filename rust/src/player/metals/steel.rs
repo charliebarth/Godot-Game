@@ -10,7 +10,7 @@ use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
-const PUSH_BURN_DIRECTION: f32 = -1.0;
+const PUSH_BURN_DIRECTION: f32 = 1.0;
 
 /// The steel player ability.
 /// This ability allows the player to push and pull on metal objects.
@@ -69,7 +69,7 @@ impl Metal for Steel {
         self.update_reserve(-self.burn_rate);
 
         // TODO: Make constant
-        let max_acceleration: f32 = 850.0;
+        let max_acceleration: f32 = 200.0;
         let trigger = if self.metal_type == MetalType::Steel {
             JoyAxis::TRIGGER_RIGHT
         } else {

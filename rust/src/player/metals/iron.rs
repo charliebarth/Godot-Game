@@ -4,7 +4,7 @@ use crate::player::{enums::metal_type::MetalType, player::Player, traits::metal:
 
 use super::steel::Steel;
 
-const PULL_BURN_DIRECTION: f32 = 1.0;
+const PULL_BURN_DIRECTION: f32 = -1.0;
 
 pub struct Iron {
     steel: Steel,
