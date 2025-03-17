@@ -89,13 +89,13 @@ impl INode2D for Game {
     }
 
     fn ready(&mut self) {
-        Input::singleton().connect(
-            "joy_connection_changed",
-            &Callable::from_object_method(
-                &self.base().get_node_as::<Game>("/root/Game"),
-                "device_changed",
-            ),
-        );
+        // Input::singleton().connect(
+        //     "joy_connection_changed",
+        //     &Callable::from_object_method(
+        //         &self.base().get_node_as::<Game>("/root/Game"),
+        //         "device_changed",
+        //     ),
+        // );
 
         let map_one = load::<PackedScene>("res://scenes/map_one.tscn");
         self.maps.insert("MapOne".to_string(), map_one);
@@ -114,34 +114,6 @@ impl INode2D for Game {
         self.base_mut().add_child(&split_screen_one);
         self.base_mut().add_child(&split_screen_two);
     }
-
-    /// This listens for a specific button press (jump by default)
-    /// When the button is pressed if it is the first time that device has pressed the button
-    /// the device id will be saved and a player will be created and assigned that device id.
-    ///
-    /// Note: This does not spawn players or start the game simply tracks players and their device ids.
-    /// Players can be spawned with the start method.
-    ///
-    /// Arguments:
-    /// * `event` - The input event that triggered this method.
-    fn input(&mut self, event: Gd<InputEvent>) {
-        let device_id = event.get_device();
-
-        let input_map = InputMap::singleton();
-        let register_button = self.register_button.clone();
-        let disconnect_button = "roll";
-        if !self.started && event.is_pressed() {
-            if !self.devices.contains(&device_id)
-                && input_map.event_is_action(&event, &register_button)
-            {
-                self.register_player(device_id);
-            } else if self.devices.contains(&device_id)
-                && input_map.event_is_action(&event, disconnect_button)
-            {
-                self.disconnect_player(device_id);
-            }
-        }
-    }
 }
 
 #[godot_api]
@@ -159,15 +131,17 @@ impl Game {
         Vector2::new(zoom, zoom)
     }
 
-    fn register_player(&mut self, device_id: i32) {
-        self.devices.push(device_id);
-        self.current_player_id = self.devices.len() as i32;
+    #[func]
+    pub fn register_player(&mut self) {
+        self.current_player_id = self.players.len() as i32 + 1;
 
         let player = self.player_scene.instantiate_as::<Player>();
         self.players.push(player.clone());
 
         let mut main_menu = self.get_main_menu();
         main_menu.bind_mut().add_player(self.current_player_id);
+
+        godot_print!("Num players: {}", self.players.len());
     }
 
     fn disconnect_player(&mut self, device_id: i32) {
@@ -338,6 +312,7 @@ impl Game {
         }
     }
 
+    #[func]
     pub fn get_number_of_players(&self) -> i32 {
         self.players.len() as i32
     }

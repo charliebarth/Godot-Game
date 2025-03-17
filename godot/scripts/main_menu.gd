@@ -1,16 +1,16 @@
 extends Control
 
-@onready var game = get_node("/root/Game") as Game
+@onready var game = get_node("/root/Game") as GameGD
 @onready var main_menu = $".." as MainMenu
 @onready var play: Button = $MarginContainer/HBoxContainer/VBoxContainer/Play
 
 ## When the play button is pressed, attempt to start the game
 func _on_play_pressed() -> void:
-	game.start_game()
+	game.host()
 
 ## When the settings button is pressed, swap to the settings menu
 func _on_settings_pressed() -> void:
-	main_menu.swap_to_settings()
+	game.join()
 
 ## When the quit button is pressed, quit the game
 func _on_quit_pressed() -> void:
