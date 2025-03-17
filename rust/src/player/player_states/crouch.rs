@@ -16,6 +16,7 @@ impl PlayerState for Crouch {
     fn update(player: &mut Player) {
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
+        let horizontal_movement = input_manager.get_left_right_value();
 
         if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);
@@ -24,7 +25,7 @@ impl PlayerState for Crouch {
         } else if !player.base().is_on_floor() {
             player.set_state(PlayerStates::Fall);
         } else if input_manager.fetch_player_event(PlayerEvents::Roll) {
-            if player.get_horizontal_movement() != 0.0 {
+            if horizontal_movement != 0.0 {
                 player.set_state(PlayerStates::Roll);
             } else {
                 player.set_state(PlayerStates::CrouchEnd);
@@ -32,7 +33,7 @@ impl PlayerState for Crouch {
         } else if input_manager.fetch_player_event(PlayerEvents::Sprint) {
             player.set_state(PlayerStates::Run);
         } else {
-            Crouch::run(player);
+            Crouch::run(player, horizontal_movement);
         }
     }
 }
@@ -42,9 +43,7 @@ impl Crouch {
     ///
     /// # Arguments
     /// * `player` - The player
-    fn run(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
-
+    fn run(player: &mut Player, horizontal_dir: f32) {
         player.set_dir(horizontal_dir);
         player.apply_horizontal_velocity(horizontal_dir, CROUCH_SPEED);
 

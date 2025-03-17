@@ -16,7 +16,6 @@ impl PlayerState for Land {
     }
 
     fn update(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let input_manager = input_manager_unbound.bind_mut();
 
@@ -24,7 +23,7 @@ impl PlayerState for Land {
             player.set_state(PlayerStates::Jump);
         } else if !player.base().is_on_floor() {
             player.set_state(PlayerStates::Fall);
-        } else if horizontal_dir != 0.0 {
+        } else if input_manager.get_left_right_value() != 0.0 {
             player.set_state(PlayerStates::Run);
         } else {
             player.set_state(PlayerStates::Idle);

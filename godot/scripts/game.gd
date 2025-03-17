@@ -40,7 +40,8 @@ func receive_input(input_data: Dictionary):
 	self.handle_input(int(input_data["player_id"]), 
 		input_data["button_name"], 
 		input_data["is_pressed"], 
-		input_data["is_released"])
+		input_data["is_released"],
+		float(input_data["action_strength"]))
 		
 	if multiplayer.is_server():
 		for pid in multiplayer.get_peers():

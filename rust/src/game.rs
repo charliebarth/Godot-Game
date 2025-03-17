@@ -128,12 +128,16 @@ impl Game {
         button_name: String,
         is_pressed: bool,
         is_released: bool,
+        action_strength: f32,
     ) {
         let mut player = self.players[(player_id - 1) as usize].clone();
         let mut input_manager = player.bind_mut().get_input_manager();
-        input_manager
-            .bind_mut()
-            .handle_input(button_name, is_pressed, is_released);
+        input_manager.bind_mut().handle_input(
+            button_name,
+            is_pressed,
+            is_released,
+            action_strength,
+        );
     }
     /// Reference viewport size for a single player pane at zoom 1.0
     /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen

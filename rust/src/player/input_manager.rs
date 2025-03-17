@@ -1,13 +1,9 @@
 use godot::classes::InputMap;
-use godot::global::{JoyAxis, JoyButton};
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::{HashMap, HashSet};
 
 use super::enums::metal_type::{BurnType, ButtonState, MetalType};
 use super::enums::player_events::PlayerEvents;
-use super::metal_manager::MetalManager;
-use super::player::Player;
-use super::traits::metal::Metal;
 
 /// The input manager is responsible for handling all input events for a given player and device.
 /// It will convert button presses into player events and metal events.
@@ -29,6 +25,7 @@ pub struct InputManager {
     button_released: HashMap<String, bool>,
     /// The device id that the input manager is listening for.
     device_id: i32,
+    left_right: HashMap<&'static str, f32>,
 }
 
 #[godot_api]
@@ -41,11 +38,16 @@ impl INode2D for InputManager {
     /// # Returns
     /// * `InputManager` - A new instance of the InputManager class.
     fn init(base: Base<Node2D>) -> Self {
+        let mut left_right: HashMap<&'static str, f32> = HashMap::new();
+        left_right.insert("move_left", 0.0);
+        left_right.insert("move_right", 0.0);
+
         Self {
             base,
             player_events: HashMap::new(),
             metal_events: HashSet::new(),
             button_released: HashMap::new(),
+            left_right,
             device_id: -1,
         }
     }
@@ -87,12 +89,22 @@ impl INode2D for InputManager {
 
 #[godot_api]
 impl InputManager {
-    pub fn handle_input(&mut self, button_name: String, is_pressed: bool, is_released: bool) {
+    pub fn handle_input(
+        &mut self,
+        button_name: String,
+        is_pressed: bool,
+        is_released: bool,
+        action_strength: f32,
+    ) {
         if !self.button_released.contains_key(&button_name) {
             self.button_released.insert(button_name.clone(), true);
         }
 
-        if let Some(player_event) = PlayerEvents::from_string(&button_name) {
+        if button_name.contains("move_left") {
+            self.left_right.insert("move_left", action_strength);
+        } else if button_name.contains("move_right") {
+            self.left_right.insert("move_right", action_strength);
+        } else if let Some(player_event) = PlayerEvents::from_string(&button_name) {
             self.process_player_events(player_event, is_pressed, is_released, button_name);
         } else if let Some(metal_type) = MetalType::from_string(&button_name) {
             self.process_metal_events(metal_type, is_pressed, is_released, button_name);
@@ -263,5 +275,9 @@ impl InputManager {
     /// * `device_id` - The device id to set
     pub fn set_device_id(&mut self, device_id: i32) {
         self.device_id = device_id;
+    }
+
+    pub fn get_left_right_value(&self) -> f32 {
+        -self.left_right.get("move_left").unwrap() + self.left_right.get("move_right").unwrap()
     }
 }

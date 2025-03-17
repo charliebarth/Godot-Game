@@ -7,11 +7,13 @@ func _input(event: InputEvent) -> void:
 	var button_name: String = self.get_button_name(event)
 	if button_name == "" || event.device != 0:
 		return
+		
 	var input_data = {
 			"player_id": player.get_player_id(),
 			"button_name": button_name,
 			"is_pressed": event.is_action_pressed(button_name),
 			"is_released": event.is_action_released(button_name),
+			"action_strength": event.get_action_strength(button_name),
 		}
 		
 	if !multiplayer.is_server():

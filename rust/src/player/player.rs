@@ -387,17 +387,6 @@ impl Player {
             .set_metal_amount(metal, amt);
     }
 
-    /// Represents the direction the player is trying to move
-    /// Returns 1 when the move right button is pressed, -1 when the move left button is pressed, and 0 if neither is pressed
-    ///
-    /// # Returns
-    /// * `f32` - The direction the player is trying to move as well as the magnitude of the movement
-    pub fn get_horizontal_movement(&mut self) -> f32 {
-        let move_left = StringName::from(format!("move_left{}", self.device_id));
-        let move_right = StringName::from(format!("move_right{}", self.device_id));
-        Input::singleton().get_axis(&move_left, &move_right)
-    }
-
     /// Sets the player's velocity to the speed passed * the magnitude of the direction passed
     /// NOTE: This is deprecated and will be removed. This has been replaced with the player's forces queue and
     /// the Force enum

@@ -13,9 +13,9 @@ impl PlayerState for Idle {
     fn enter(_player: &mut Player) {}
 
     fn update(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
+        let horizontal_dir = input_manager.get_left_right_value();
 
         if input_manager.check_for_player_event(PlayerEvents::Jump) && player.jump_available() {
             player.set_state(PlayerStates::Jump);

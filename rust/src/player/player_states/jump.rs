@@ -40,7 +40,8 @@ impl PlayerState for Jump {
         if next_state != PlayerStates::Jump {
             Jump::exit(player, next_state);
         } else {
-            Jump::run(player);
+            let run_strength: f32 = input_manager.get_left_right_value();
+            Jump::run(player, run_strength);
             Jump::jump(player, input_manager);
         }
     }
@@ -51,9 +52,7 @@ impl Jump {
     ///
     /// # Arguments
     /// * `player` - The player
-    fn run(player: &mut Player) {
-        let run_strength = player.get_horizontal_movement();
-
+    fn run(player: &mut Player, run_strength: f32) {
         if run_strength == 0.0 {
             return;
         }

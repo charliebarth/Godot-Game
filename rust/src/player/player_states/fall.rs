@@ -33,7 +33,8 @@ impl PlayerState for Fall {
         } else if input_manager.fetch_player_event(PlayerEvents::Attack) {
             player.set_state(PlayerStates::Attack);
         } else {
-            Fall::run(player);
+            let horizontal_movement = input_manager.get_left_right_value();
+            Fall::run(player, horizontal_movement);
             Fall::fall(player);
         }
     }
@@ -41,9 +42,7 @@ impl PlayerState for Fall {
 
 impl Fall {
     /// Applies horizontal velocity to the player so they can move while falling
-    fn run(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
-
+    fn run(player: &mut Player, horizontal_dir: f32) {
         if horizontal_dir == 0.0 {
             return;
         }
