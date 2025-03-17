@@ -122,6 +122,7 @@ pub struct Player {
     settings: Gd<Settings>,
     /// The number of eliminations the player has
     eliminations: i32,
+    previous_velocity: Vector2,
 }
 
 #[godot_api]
@@ -164,11 +165,12 @@ impl ICharacterBody2D for Player {
             nearby_players: Vec::new(),
             active_metals: Vec::new(),
             current_particles: None,
-            mass: 70.0,
+            mass: 500.0,
             is_attacking: false,
             cached_nodes: HashMap::new(),
             settings,
             eliminations: 0,
+            previous_velocity: Vector2::ZERO,
         }
     }
 
@@ -780,6 +782,11 @@ impl Player {
             let force = self.forces.pop_front().unwrap();
             self.apply_force(force);
         }
+
+        let base_velocity = self.base().get_velocity();
+        if base_velocity != Vector2::ZERO {
+            self.previous_velocity = base_velocity;
+        }
     }
 
     /// This method takes a force and then applies it to the player
@@ -828,6 +835,7 @@ impl Player {
             } => {
                 base_velocity.x = if horizontal { 0.0 } else { base_velocity.x };
                 base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
+                self.previous_velocity = Vector2::ZERO;
             }
             Force::SteelPush {
                 x_acceleration,
@@ -852,8 +860,39 @@ impl Player {
     /// # Returns
     /// * `Force` - A Force::Impact which is how much energy/force is returned to the object,
     /// again roughly calculated using the speed of the player and their weight.
-    pub fn impact(&mut self, impact_force: Force) -> Force {
-        Force::NormalForce { magnitude: -1.0 }
+    // pub fn impact(&mut self, impact_force: Force) -> Force {
+    //     Force::NormalForce { magnitude: -1.0 }
+    // }
+    pub fn impact(&mut self, body_mass: f32, body_velocity: Vector2) -> Vector2 {
+        let player_velocity = self.previous_velocity;
+
+        // Compute new velocities using momentum equations
+        let mut new_player_velocity = ((self.mass - body_mass) * player_velocity
+            + 2.0 * body_mass * body_velocity)
+            / (self.mass + body_mass);
+
+        let mut new_body_velocity = ((body_mass - self.mass) * body_velocity
+            + 5.0 * self.mass * player_velocity)
+            / (self.mass + body_mass);
+
+        // Prevent slowing down in the same direction for the player
+        if new_player_velocity.dot(player_velocity) > 0.0 {
+            if new_player_velocity.length() < player_velocity.length() {
+                new_player_velocity = player_velocity;
+            }
+        }
+
+        // Prevent slowing down in the same direction for the body
+        if new_body_velocity.dot(body_velocity) > 0.0 {
+            if new_body_velocity.length() < body_velocity.length() {
+                new_body_velocity = body_velocity;
+            }
+        }
+
+        self.base_mut().set_velocity(new_player_velocity);
+
+        // Return the new velocity for the body
+        new_body_velocity
     }
 
     /// The permanent minimum run speed of the player
