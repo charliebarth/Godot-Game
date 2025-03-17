@@ -202,7 +202,16 @@ impl MetalObject {
         self.forces.push_back(force);
     }
 
-    pub fn apply_forces(&mut self, delta: f64) {}
+    pub fn apply_forces(&mut self, delta: f64, base_velocity: Vector2) {
+        let mut expected_forces: VecDeque<Force> = VecDeque::new();
+        let len_forces = self.forces.len();
+        for _ in 0..len_forces {
+            let force = self.forces.pop_front().unwrap();
+            self.apply_force(force, &mut expected_forces, base_velocity);
+        }
+
+        for force in expected_forces {}
+    }
 
     pub fn apply_force(
         &mut self,
