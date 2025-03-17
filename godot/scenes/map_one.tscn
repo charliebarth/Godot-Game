@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=23 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" uid="uid://doggl7ot00nb8" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" uid="uid://crbuuc3thgs0g" path="res://scenes/metal_pickup.tscn" id="10_5bopr"]
 [ext_resource type="PackedScene" uid="uid://1w02eaq142mt" path="res://scenes/Platforms/wooden_platform_5.tscn" id="10_xpb1e"]
 [ext_resource type="PackedScene" uid="uid://b26ws836bp20r" path="res://scenes/fire.tscn" id="10_y0ce3"]
-[ext_resource type="Script" path="res://scripts/metal_object.gd" id="11_bjfqy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_iw8d6"]
 shader = ExtResource("1_y7bd1")
@@ -216,19 +215,11 @@ position = Vector2(-2, -843)
 
 [node name="MetalObjects" type="Node" parent="."]
 
-[node name="MetalObject" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-z_index = 1
-position = Vector2(-369, -19)
-
-[node name="MetalObject2" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(-12, -299)
-
 [node name="MetalObject3" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(211, -167)
-script = ExtResource("11_bjfqy")
+position = Vector2(705, -123)
 
 [node name="MetalObject4" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(-22, 354)
+position = Vector2(763, -101)
 
 [node name="PointLight2D" type="PlayerLight" parent="."]
 position = Vector2(-144.5, -331)
@@ -237,7 +228,7 @@ energy = 0.1
 texture = SubResource("GradientTexture2D_pfm4w")
 
 [node name="UiLighting" type="PointLight2D" parent="."]
-position = Vector2(-144.5, -331)
+position = Vector2(239, -321)
 scale = Vector2(108.453, 38.875)
 energy = 0.25
 range_item_cull_mask = 524288
