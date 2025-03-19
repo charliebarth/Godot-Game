@@ -1,6 +1,6 @@
 [gd_scene load_steps=66 format=4 uid="uid://c1l6h04x8ew74"]
 
-[ext_resource type="Shader" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
+[ext_resource type="Shader" uid="uid://kr2r58sickni" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="2_dfsnj"]
 [ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="3_bcs41"]
 [ext_resource type="Texture2D" uid="uid://c6krlpbe7xhmd" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Extra.png" id="4_2hlxg"]
@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://djgj8feyaey46" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props Animation.png" id="11_x43ck"]
 [ext_resource type="Texture2D" uid="uid://delk3457diwxa" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Idle.png" id="12_074oe"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="13_k8rir"]
-[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="15_e22v7"]
+[ext_resource type="Shader" uid="uid://doggl7ot00nb8" path="res://shader scripts/fog.gdshader" id="15_e22v7"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="16_7qcqk"]
 [ext_resource type="PackedScene" uid="uid://ku6hvdegx5ws" path="res://scenes/settings.tscn" id="17_ugvbt"]
 [ext_resource type="PackedScene" uid="uid://cq384dq4edi6l" path="res://scenes/menu.tscn" id="17_wwnru"]
@@ -8868,9 +8868,9 @@ noise = SubResource("FastNoiseLite_7x6h1")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_w7wye"]
 shader = ExtResource("15_e22v7")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_u576d")
 shader_parameter/density = 0.6
 shader_parameter/speed = Vector2(0.001, 0.001)
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_u576d")
 
 [sub_resource type="Theme" id="Theme_2phby"]
 default_font_size = 20
@@ -8908,8 +8908,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_30skv"]
 _data = {
-"RESET": SubResource("Animation_lb51x"),
-"fade_out": SubResource("Animation_crg34")
+&"RESET": SubResource("Animation_lb51x"),
+&"fade_out": SubResource("Animation_crg34")
 }
 
 [node name="MainMenu" type="MainMenu"]
@@ -8990,7 +8990,7 @@ bbcode_enabled = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="NotificationBox"]
 libraries = {
-"": SubResource("AnimationLibrary_30skv")
+&"": SubResource("AnimationLibrary_30skv")
 }
 
 [node name="MainMenuUI" parent="." instance=ExtResource("17_wwnru")]

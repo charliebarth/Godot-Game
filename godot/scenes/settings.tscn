@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ku6hvdegx5ws"]
 
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6gviu"]
-[ext_resource type="Script" path="res://scripts/settings.gd" id="1_d0siu"]
+[ext_resource type="Script" uid="uid://xpgrf05ddoph" path="res://scripts/settings.gd" id="1_d0siu"]
 [ext_resource type="PackedScene" uid="uid://sk7urw8x5b6t" path="res://scenes/settings_tab_menu.tscn" id="3_sitx7"]
 
 [node name="Settings" type="Control"]
