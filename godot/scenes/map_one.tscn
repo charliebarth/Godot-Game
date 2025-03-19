@@ -71,17 +71,52 @@ position = Vector2(-2, -843)
 color = Color(0.703808, 0.703808, 0.703808, 1)
 
 [node name="MetalObject" parent="." instance=ExtResource("2_3yakd")]
-z_index = 1
-position = Vector2(-369, -19)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="MetalObject2" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-12, -299)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="MetalObject3" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(211, -167)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="MetalObject4" parent="." instance=ExtResource("2_3yakd")]
-position = Vector2(-22, 354)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="Fog" type="ColorRect" parent="."]
 visible = false
@@ -202,13 +237,40 @@ position = Vector2(451, -433)
 [node name="Metal Pickups" type="Node" parent="."]
 
 [node name="MetalPickup" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
-position = Vector2(35, -299)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="MetalPickup2" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
-position = Vector2(956, 373)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="MetalPickup3" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
-position = Vector2(-894, -763)
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
 
 [node name="LightOccluders" type="Node" parent="."]
 

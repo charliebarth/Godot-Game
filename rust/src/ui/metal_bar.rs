@@ -65,13 +65,13 @@ impl MetalBar {
         let under_path: &str = "res://assets/HealthMetalBars/HealthBar DARK.png";
 
         let texture_under: Gd<Texture2D> = self.load_texture(under_path);
-        self.base_mut().set_under_texture(texture_under); // Set to godot node 
+        self.base_mut().set_under_texture(&texture_under); // Set to godot node 
 
         // The progress texture is dependent on the type of metal and is passed into this function
         let path_str: String = format!("res://assets/HealthMetalBars/metal_bar_prog_{}.png", path);
 
         let texture_progress: Gd<Texture2D> = self.load_texture(path_str.as_str());
-        self.base_mut().set_progress_texture(texture_progress); // Set to godot node 
+        self.base_mut().set_progress_texture(&texture_progress); // Set to godot node 
 
         self.base_mut().set_texture_progress_offset(Vector2::new(0.0, 1.0)); // offset for prog
     }
@@ -85,7 +85,7 @@ impl MetalBar {
     fn load_texture(&mut self, path: &str) -> Gd<Texture2D>{
         let mut loader: Gd<ResourceLoader> = ResourceLoader::singleton(); 
 
-        let tex: Option<Gd<Resource>> = loader.load(path.into());
+        let tex: Option<Gd<Resource>> = loader.load(path);
 
         tex.unwrap().cast::<Texture2D>() 
     }
@@ -95,7 +95,7 @@ impl MetalBar {
     /// * `name` (&str) - the name to set it to 
     pub fn set_name(&mut self, name: &str) {
         let name_g: GString = GString::from(name);   // Change the string to a GString for godot
-        self.base_mut().set_name(name_g);
+        self.base_mut().set_name(&name_g);
     }
 
     /// Gets the name of this metal bar 

@@ -42,7 +42,7 @@ impl MetalPickup {
     fn make_vial(&mut self) {
         let metal_scene = load::<PackedScene>("res://scenes/metal_vial.tscn");
         let mut metal = metal_scene.instantiate_as::<MetalVial>().clone();
-        metal.set_name("MetalVialPickup".into());
+        metal.set_name("MetalVialPickup");
         metal.set_visible(true);
 
         let mut new_metals = Vec::new();
@@ -65,7 +65,7 @@ impl MetalPickup {
 
         // Add metal vial to node tree
         let vial = self.get_metal_vial();
-        self.base_mut().add_child(vial);
+        self.base_mut().add_child(&vial);
     }
 
     fn get_metal_vial(&mut self) -> Gd<MetalVial> {

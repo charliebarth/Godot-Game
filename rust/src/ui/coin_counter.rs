@@ -57,7 +57,7 @@ impl ILabel for CoinCounter {
     /// Sets the base value of coins and adds coins to the player.
     fn ready(&mut self) {
         let coin_cnt = GString::from(format!("{}", self.coins));
-        self.base_mut().set_text(coin_cnt.into());
+        self.base_mut().set_text(&coin_cnt);
 
         self.add_starting_coins();
     }
@@ -89,7 +89,7 @@ impl CoinCounter {
     /// * `coin` (Coin) - the coin to add to the coin counter
     pub fn add_coin(&mut self, coin: &mut Coin) {
         let new_coins = self.coins + 1; // Find how many coins to change to
-        self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+        self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
 
         // Update coin counter
         self.coins = new_coins;
@@ -98,11 +98,11 @@ impl CoinCounter {
         let pos = Vector2::new(100000., -100000.);
         let args = &[pos.to_variant()];
         coin.to_gd()
-            .call_deferred(StringName::from("set_global_position"), args);
+            .call_deferred("set_global_position", args);
 
         // Enable freeze mode
         coin.to_gd()
-            .call_deferred(StringName::from("set_freeze_enabled"), &[true.to_variant()]);
+            .call_deferred("set_freeze_enabled", &[true.to_variant()]);
 
         // let real_pos = coin.to_gd().get_global_position();
         // godot_print!(
@@ -123,7 +123,7 @@ impl CoinCounter {
     /// * `text` (String) - The text to set the label to
     fn set_text(&mut self, text: String) {
         let text_g = GString::from(text); // Change the string to a GString for godot
-        self.base_mut().set_text(text_g); // set label text
+        self.base_mut().set_text(&text_g); // set label text
     }
 
     /// Removes coins from this Coin Counter, returns false if we cannot carry this out
@@ -136,7 +136,7 @@ impl CoinCounter {
             // If we dont have enough coins
             false
         } else {
-            self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+            self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
             self.coins = new_coins;
             true
         }
@@ -147,13 +147,13 @@ impl CoinCounter {
     /// * `coin_event` (CoinEvents) - The coin event that took place
     /// * `event` (Gd<InputEvent>) - The input event that took place
     fn process_coin_events(&mut self, _coin_event: CoinEvents, event: Gd<InputEvent>) {
-        if event.is_action_pressed(StringName::from("throw")) {
+        if event.is_action_pressed("throw") {
             if !self.charging {
                 self.charge_start = Time::singleton().get_ticks_msec();
                 self.charging = true;
             } 
         } 
-        if event.is_action_released(StringName::from("throw")) && self.charging{
+        if event.is_action_released("throw") && self.charging{
             self.throw();
         }
     }
@@ -182,8 +182,8 @@ impl CoinCounter {
 
             // Set the name of the coin
             let coin_id = i as i32 + 1;
-            coin.set_name(format!("Coin{}", coin_id).into());
-
+            coin.set_name(&format!("Coin{}", coin_id).to_string());
+            
             // Get the player and set the coins current player
             let player = self.base().get_node_as::<Player>("../../../");
             coin.bind_mut().set_curr_player(player.to_godot());
@@ -194,7 +194,7 @@ impl CoinCounter {
 
             // Add to coin counter
             let new_coins = self.coins + 1; // Find how many coins to change to
-            self.base_mut().set_text(new_coins.to_string().into()); // Changes the label text
+            self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
 
             // Update coin counter
             self.coins = new_coins;
@@ -219,7 +219,7 @@ impl CoinCounter {
 
             // Add the coin to the map (this calls the coin ready method)
             let mut map = player.get_parent().unwrap();
-            map.add_child(coin);
+            map.add_child(&coin);
         }
     }
 }

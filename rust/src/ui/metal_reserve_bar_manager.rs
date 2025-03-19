@@ -69,11 +69,11 @@ impl IVBoxContainer for MetalReserveBarManager {
 
                 // Set name of godot object
                 self.get_metal_bar(metal_name.clone())
-                    .set_name(metal_name.clone().to_string().into());
+                    .set_name(&metal_name.clone().to_string());
 
                 // Add the bar to VBox
                 let metal = self.get_metal_bar(metal_name.clone());
-                self.base_mut().add_child(metal);
+                self.base_mut().add_child(&metal);
 
                 // Set the texture of the bar
                 self.get_metal_bar(metal_name.clone())
@@ -107,7 +107,7 @@ impl MetalReserveBarManager {
             if PATHS.contains(&input.to_string().as_str()) {
                 godot_print!("{}", input);
                 let events: Array<Gd<godot::classes::InputEvent>> =
-                    input_map.action_get_events(input.clone());
+                    input_map.action_get_events(&input.clone());
 
                 let mut max = 0;
                 // If something is keybound to the event and not reached max metals, show the bar

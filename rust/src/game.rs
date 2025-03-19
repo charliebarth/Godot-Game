@@ -80,8 +80,8 @@ impl INode2D for Game {
     /// It also loads the maps that can be used in the game.
     fn ready(&mut self) {
         Input::singleton().connect(
-            "joy_connection_changed".into(),
-            Callable::from_object_method(
+            "joy_connection_changed",
+            &Callable::from_object_method(
                 &self.base().get_node_as::<Game>("/root/Game"),
                 "device_changed",
             ),
@@ -105,14 +105,14 @@ impl INode2D for Game {
 
         let input_map = InputMap::singleton();
         let register_button = self.register_button.clone();
-        let disconnect_button = "roll".into();
+        let disconnect_button = "roll";
         if !self.started && event.is_pressed() {
             if !self.devices.contains(&device_id)
-                && input_map.event_is_action(event.clone(), register_button)
+                && input_map.event_is_action(&event.clone(), &register_button)
             {
                 self.register_player(device_id);
             } else if self.devices.contains(&device_id)
-                && input_map.event_is_action(event.clone(), disconnect_button)
+                && input_map.event_is_action(&event.clone(), disconnect_button)
             {
                 self.disconnect_player(device_id);
             }
@@ -220,7 +220,7 @@ impl Game {
     pub fn start_game(&mut self) {
         // First remove the main menu
         let main_menu = self.get_main_menu();
-        self.base_mut().remove_child(main_menu);
+        self.base_mut().remove_child(&main_menu);
 
         // Next instantiate the map, add it to the tree, and trigger it's camera pan (might make the map auto camera pan on ready/load)
         // Note: Currently defaulting to MapOne
@@ -238,7 +238,7 @@ impl Game {
         let mut players = self.players.clone();
         for (index, player) in players.iter_mut().enumerate() {
             let player_id = index as i32 + 1;
-            player.set_name(format!("Player{}", player_id).into());
+            player.set_name(format!("Player{}", player_id).as_str());
 
             let mut bound_player = player.bind_mut();
             bound_player.set_device_id(self.devices[index]);
@@ -271,7 +271,7 @@ impl Game {
         // Show a winner screen
         // Next add the main menu back
         let mut main_menu = self.get_main_menu();
-        self.base_mut().add_child(main_menu.clone());
+        self.base_mut().add_child(&main_menu.clone());
         main_menu
             .bind_mut()
             .add_notification(format!("Player {} wins!", self.winning_player));
@@ -332,7 +332,7 @@ impl Game {
             let mut player = self.player_scene.instantiate_as::<Player>();
             player.bind_mut().set_device_id(device_id.clone());
             player.bind_mut().set_player_id(self.current_player_id);
-            player.set_name(format!("Player{}", self.current_player_id).into());
+            player.set_name(format!("Player{}", self.current_player_id).as_str());
             self.players.push(player);
         }
     }
@@ -374,7 +374,7 @@ impl Game {
         let spawn_point = self.base().get_node_as::<Marker2D>(format!(
             "SplitScreenOne/PlayerOneContainer/PlayerOneViewport/MapOne/{}",
             spawn_point_name
-        ));
+        ).as_str());
 
         spawn_point.get_position()
     }
@@ -412,7 +412,7 @@ impl Game {
 
         subviewport
             .set_canvas_cull_mask(1 << player_id as u32 * 2 | 1 | 1 << player_id as u32 * 2 - 1); // player_id * 2, player_id * 2 + 1, and layer 1
-        subviewport.add_child(player);
+        subviewport.add_child(&player);
     }
 
     /// This will adjust the camera zoom for a player based on the number of players and thus size of each split screen pane.
@@ -486,14 +486,14 @@ impl Game {
         p1_viewport.set_use_hdr_2d(true);
         p1_viewport.set_as_audio_listener_2d(true);
 
-        split_screen_one.set_name("SplitScreenOne".into());
-        p1_container.set_name("PlayerOneContainer".into());
-        p1_viewport.set_name("PlayerOneViewport".into());
+        split_screen_one.set_name("SplitScreenOne");
+        p1_container.set_name("PlayerOneContainer");
+        p1_viewport.set_name("PlayerOneViewport");
         p1_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
 
-        p1_container.add_child(p1_viewport);
-        split_screen_one.add_child(p1_container);
-        self.base_mut().add_child(split_screen_one);
+        p1_container.add_child(&p1_viewport);
+        split_screen_one.add_child(&p1_container);
+        self.base_mut().add_child(&split_screen_one);
 
         self.reparent_level();
         self.assign_one_player_screen_sizes();
@@ -526,16 +526,16 @@ impl Game {
         p2_viewport.set_use_hdr_2d(true);
         p2_viewport.set_as_audio_listener_2d(true);
 
-        split_screen_two.set_name("SplitScreenTwo".into());
-        p2_container.set_name("PlayerTwoContainer".into());
-        p2_viewport.set_name("PlayerTwoViewport".into());
+        split_screen_two.set_name("SplitScreenTwo");
+        p2_container.set_name("PlayerTwoContainer");
+        p2_viewport.set_name("PlayerTwoViewport");
         p2_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
-        p2_viewport.set_world_2d(p1_viewport.get_world_2d());
+        p2_viewport.set_world_2d(&p1_viewport.get_world_2d().unwrap());
         split_screen_two.set_position(Vector2::new(0.0, 542.0));
 
-        p2_container.add_child(p2_viewport);
-        split_screen_two.add_child(p2_container);
-        self.base_mut().add_child(split_screen_two);
+        p2_container.add_child(&p2_viewport);
+        split_screen_two.add_child(&p2_container);
+        self.base_mut().add_child(&split_screen_two);
 
         self.assign_two_player_screen_sizes();
     }
@@ -581,13 +581,13 @@ impl Game {
         p3_viewport.set_use_hdr_2d(true);
         p3_viewport.set_as_audio_listener_2d(true);
 
-        p3_container.set_name("PlayerThreeContainer".into());
-        p3_viewport.set_name("PlayerThreeViewport".into());
+        p3_container.set_name("PlayerThreeContainer");
+        p3_viewport.set_name("PlayerThreeViewport");
         p3_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
-        p3_viewport.set_world_2d(p1_viewport.get_world_2d());
+        p3_viewport.set_world_2d(&p1_viewport.get_world_2d().unwrap());
 
-        p3_container.add_child(p3_viewport);
-        split_screen_one.add_child(p3_container);
+        p3_container.add_child(&p3_viewport);
+        split_screen_one.add_child(&p3_container);
 
         self.assign_three_player_screen_sizes();
     }
@@ -639,13 +639,13 @@ impl Game {
         p4_viewport.set_use_hdr_2d(true);
         p4_viewport.set_as_audio_listener_2d(true);
 
-        p4_container.set_name("PlayerFourContainer".into());
-        p4_viewport.set_name("PlayerFourViewport".into());
+        p4_container.set_name("PlayerFourContainer");
+        p4_viewport.set_name("PlayerFourViewport");
         p4_viewport.set_default_canvas_item_texture_filter(DefaultCanvasItemTextureFilter::NEAREST);
-        p4_viewport.set_world_2d(p2_viewport.get_world_2d());
+        p4_viewport.set_world_2d(&p2_viewport.get_world_2d().unwrap());
 
-        p4_container.add_child(p4_viewport);
-        split_screen_two.add_child(p4_container);
+        p4_container.add_child(&p4_viewport);
+        split_screen_two.add_child(&p4_container);
 
         self.assign_four_player_screen_sizes();
     }
@@ -670,7 +670,7 @@ impl Game {
             let mut p1_viewport = self
                 .base()
                 .get_node_as::<SubViewport>("SplitScreenOne/PlayerOneContainer/PlayerOneViewport");
-            p1_viewport.add_child(map);
+            p1_viewport.add_child(&map);
         } else {
             godot_error!("Map not found. Unable to start game.");
             self.base().get_tree().expect("Tree not found").quit();
@@ -685,13 +685,13 @@ impl Game {
             .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
         let camera = overview_container.get_node_as::<Camera2D>("OverviewCamera");
 
-        overview_container.remove_child(camera);
+        overview_container.remove_child(&camera);
     }
 
     /// This will add a camera that provides an overview of the entire level.
     fn add_fourth_viewport_camera(&self) {
         let mut camera = Camera2D::new_alloc();
-        camera.set_name("OverviewCamera".into());
+        camera.set_name("OverviewCamera");
         camera.set_position(Vector2::new(20.0, -225.0));
         camera.set_zoom(Vector2::new(0.37, 0.37));
 
@@ -700,6 +700,6 @@ impl Game {
             .get_node_as::<SubViewport>("SplitScreenTwo/PlayerFourContainer/PlayerFourViewport");
 
         overview_container.set_canvas_cull_mask(1);
-        overview_container.add_child(camera);
+        overview_container.add_child(&camera);
     }
 }
