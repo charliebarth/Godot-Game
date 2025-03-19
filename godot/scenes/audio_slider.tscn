@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bqu8y8l213b60"]
 
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_ddrws"]
-[ext_resource type="Script" path="res://scripts/audio_slider.gd" id="1_qsoy8"]
+[ext_resource type="Script" uid="uid://d3chi5uyd35t6" path="res://scripts/audio_slider.gd" id="1_qsoy8"]
 
 [node name="AudioSlider" type="Control"]
 layout_mode = 3

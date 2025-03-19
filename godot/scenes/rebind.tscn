@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://g5nc45q00y2r"]
 
-[ext_resource type="Script" path="res://scripts/rebind.gd" id="1_urcey"]
+[ext_resource type="Script" uid="uid://cvh01oojf5ktk" path="res://scripts/rebind.gd" id="1_urcey"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="2_2sk2o"]
 
 [node name="Rebind" type="Control" groups=["keybind_btns"]]

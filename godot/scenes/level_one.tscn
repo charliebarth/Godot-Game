@@ -1,8 +1,8 @@
 [gd_scene load_steps=33 format=4 uid="uid://dynasqpbu3fut"]
 
-[ext_resource type="Script" path="res://scripts/level_one.gd" id="1_d210b"]
+[ext_resource type="Script" uid="uid://dl47dq56giuow" path="res://scripts/level_one.gd" id="1_d210b"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="1_vvury"]
-[ext_resource type="Shader" path="res://shader scripts/level_one.gdshader" id="2_glo1p"]
+[ext_resource type="Shader" uid="uid://kr2r58sickni" path="res://shader scripts/level_one.gdshader" id="2_glo1p"]
 [ext_resource type="Texture2D" uid="uid://cr8dtstnoy1tw" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Dirt.png" id="2_ok4e4"]
 [ext_resource type="Texture2D" uid="uid://c6krlpbe7xhmd" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground Extra.png" id="3_o44iu"]
 [ext_resource type="Texture2D" uid="uid://c8mm8fl55c4xf" path="res://assets/Maps/dungeon/Textures/TX Dungeon Wall Dirt.png" id="4_nkqjw"]
