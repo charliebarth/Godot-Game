@@ -97,14 +97,11 @@ impl CoinCounter {
         // Change the position to outside the map
         let pos = Vector2::new(100000., -100000.);
         let args = &[pos.to_variant()];
-        coin.to_gd()
-            .call_deferred(&StringName::from("set_global_position"), args);
+        coin.to_gd().call_deferred("set_global_position", args);
 
         // Enable freeze mode
-        coin.to_gd().call_deferred(
-            &StringName::from("set_freeze_enabled"),
-            &[true.to_variant()],
-        );
+        coin.to_gd()
+            .call_deferred("set_freeze_enabled", &[true.to_variant()]);
 
         let real_pos = coin.to_gd().get_global_position();
 
@@ -143,13 +140,13 @@ impl CoinCounter {
     /// * `coin_event` (CoinEvents) - The coin event that took place
     /// * `event` (Gd<InputEvent>) - The input event that took place
     fn process_coin_events(&mut self, _coin_event: CoinEvents, event: Gd<InputEvent>) {
-        if event.is_action_pressed(StringName::from("throw")) {
+        if event.is_action_pressed("throw") {
             if !self.charging {
                 self.charge_start = Time::singleton().get_ticks_msec();
                 self.charging = true;
             }
         }
-        if event.is_action_released(StringName::from("throw")) && self.charging {
+        if event.is_action_released("throw") && self.charging {
             self.throw();
         }
     }

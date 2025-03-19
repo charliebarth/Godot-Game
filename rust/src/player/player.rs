@@ -196,21 +196,21 @@ impl ICharacterBody2D for Player {
         let mut player_ui = self.base().get_node_as::<Control>("PlayerUI");
 
         let mut config = ConfigFile::new_gd();
-        let err = config.load(GString::from("user://settings.ini")); // TODO Check Error
+        let err = config.load("user://settings.ini"); // TODO Check Error
 
         // Get the UI settings
         let size = config
-            .get_value(GString::from("ui"), GString::from("size"))
+            .get_value("ui", "size")
             .to_string()
             .parse::<f32>()
             .expect("Failed to parse to f32");
         let opacity = config
-            .get_value(GString::from("ui"), GString::from("opacity"))
+            .get_value("ui", "opacity")
             .to_string()
             .parse::<f32>()
             .expect("Failed to parse to f32");
         let pos_i = config
-            .get_value(GString::from("ui"), GString::from("pos"))
+            .get_value("ui", "pos")
             .to_string()
             .parse::<f32>()
             .expect("Failed to parse to f32");

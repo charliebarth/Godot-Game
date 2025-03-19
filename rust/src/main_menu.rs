@@ -6,7 +6,6 @@ use godot::{
 /// The MainMenu class is responsible for managing the main menu UI.
 #[derive(GodotClass)]
 #[class(base=Node2D)]
-
 pub struct MainMenu {
     /// The base node of the MainMenu.
     base: Base<Node2D>,

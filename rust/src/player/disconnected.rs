@@ -56,7 +56,7 @@ impl ILabel for Disconnected {
             self.base_mut().set_text(&GString::from(format!(
                 "Disconnected\n{}",
                 remaining_time as i32
-            )));
+            ).as_str());
         }
     }
 }
