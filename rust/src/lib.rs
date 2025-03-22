@@ -9,6 +9,7 @@ pub mod player {
     pub mod metal_line;
     pub mod metal_manager;
     pub mod player;
+    pub mod player_tin_light;
 
     pub mod enums {
         pub mod coin_events;
@@ -44,6 +45,9 @@ pub mod player {
         pub mod iron;
         pub mod pewter;
         pub mod steel;
+        pub mod tin;
+        pub mod copper;
+        pub mod bronze;
     }
 }
 

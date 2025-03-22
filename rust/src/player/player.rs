@@ -19,6 +19,8 @@ use godot::prelude::*;
 use crate::game::Game;
 use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
+use crate::player::enums::metal_type::MetalType;
+use crate::player::player_tin_light::PlayerTinLight;
 use crate::settings::Settings;
 use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
@@ -51,6 +53,8 @@ enum CachedNode {
     Disconnected,
     Camera,
     PewterParticles,
+    TinParticles,
+    BronzeParticles,
     MetalLine,
     LineSelector,
     MetalReserveBarManager,
@@ -94,6 +98,12 @@ pub struct Player {
     forces: VecDeque<Force>,
     /// A vec of nearby metal objects that can be used by steel and iron
     metal_objects: Vec<Gd<MetalObject>>,
+    /// A vec of nearby players that is used for copper and bronze functionality
+    nearby_players: Vec<Gd<Player>>,
+    /// A vec of the player's currently actively burning metals
+    active_metals: Vec<MetalType>,
+    /// The player's current particles
+    current_particles: Option<Gd<GpuParticles2D>>,
     /// The mass of the player in kilograms
     mass: f32,
     /// If the player is attacking or not
@@ -140,6 +150,9 @@ impl ICharacterBody2D for Player {
             timeout_events: HashMap::new(),
             forces: VecDeque::new(),
             metal_objects: Vec::new(),
+            nearby_players: Vec::new(),
+            active_metals: Vec::new(),
+            current_particles: None,
             mass: 70.0,
             is_attacking: false,
             cached_nodes: HashMap::new(),
@@ -167,6 +180,13 @@ impl ICharacterBody2D for Player {
         self.get_metal_manager()
             .bind_mut()
             .set_player(self.base().get_node_as::<Player>("."));
+
+        // Connect the tin signal to the player
+        let tin_light = self.base().get_node_as::<PlayerTinLight>("PlayerTinLight");
+        self.base_mut().connect(
+            "tin_activated",
+            &Callable::from_object_method(&tin_light, "adjust_tin_light"),
+        );
     }
 
     /// The Godot method called every physics frame
@@ -751,6 +771,91 @@ impl Player {
         }
     }
 
+    #[func]
+    /// Adds a player to the player's vec of nearby players
+    ///
+    /// # Arguments
+    /// * `player` - The player to add to the current player's vector of nearby players
+    fn add_nearby_player(&mut self, player: Gd<Player>) {
+        self.nearby_players.push(player);
+    }
+
+    #[func]
+    /// Removes a player from the player's vec of nearby players
+    ///
+    /// # Arguments
+    /// * `player` - The player to remove from the current player's vector of nearby players
+    fn remove_nearby_player(&mut self, player: Gd<Player>) {
+        if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
+            self.nearby_players.remove(pos);
+        }
+    }
+
+    /// Gets the vec of all nearby players
+    ///
+    /// # Returns
+    /// * `Vec<Gd<Player>>` - The vec of all nearby players
+    pub fn get_nearby_players(&self) -> &Vec<Gd<Player>> {
+        &self.nearby_players
+    }
+
+    /// Reveals the particles of the player if the player is not burning copper
+    ///
+    /// # Arguments
+    /// * `visibility_layer` - The visibility layer to set for the particles
+    pub fn reveal_particles(&mut self, visibility_layer: u32) {
+        if !self.is_burning_metal(MetalType::Copper) {
+            let mut particles = self.get_particles();
+            let current_layer = particles.get_visibility_layer();
+            // bitwise OR the current layer with the visibility layer to reveal the particles
+            particles.set_visibility_layer(current_layer | visibility_layer);
+        }
+    }
+
+    /// Updates the particles of the player to the current particles
+    pub fn set_particles(&mut self, particles: Gd<GpuParticles2D>) {
+        self.current_particles = Some(particles);
+    }
+
+    /// Gets the current particles of the player
+    ///
+    /// # Returns
+    /// * `Gd<GpuParticles2D>` - The current particles of the player
+    fn get_particles(&self) -> Gd<GpuParticles2D> {
+        self.current_particles.clone().expect("No current particles set for player")
+    }
+
+    /// Adds a metal to the active burning metals
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to add to the active burning metals
+    pub fn add_active_metal(&mut self, metal: MetalType) {
+        if !self.active_metals.contains(&metal) {
+            self.active_metals.push(metal);
+        }
+    }
+
+    /// Removes a metal from the active burning metals
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to remove from the active burning metals
+    pub fn remove_active_metal(&mut self, metal: MetalType) {
+        if let Some(pos) = self.active_metals.iter().position(|x| *x == metal) {
+            self.active_metals.remove(pos);
+        }
+    }
+
+    /// Checks if the player is burning a specific metal
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to check if the player is burning
+    ///
+    /// # Returns
+    /// * `bool` - True if the player is burning the metal, false otherwise
+    pub fn is_burning_metal(&self, metal: MetalType) -> bool {
+        self.active_metals.contains(&metal)
+    }
+
     /// Gets the vec of all nearby metal objects
     ///
     /// # Returns
@@ -793,10 +898,26 @@ impl Player {
         hitbox.set_collision_layer(1 << 3);
     }
 
-    /// A signal that is emmited by the player when it's id is changed
+    /// Emit a signal to adjust the light for the player when they use tin
+    ///
+    /// # Arguments
+    /// * `light_level` - The target light level.
+    /// * `transition_time` - The time it takes to transition to the target light level.
+    pub fn emit_tin_signal(&mut self, light_level: f32, transition_time: f64) {
+        self.base_mut().emit_signal(
+            "tin_activated",
+            &[Variant::from(light_level), Variant::from(transition_time)],
+        );
+    }
+
+    /// A signal that is emitted by the player when it's id is changed
     /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
     pub fn id_changed();
+
+    /// A signal that is emitted by the player when it is using tin
+    #[signal]
+    pub fn tin_activated(&self, light_level: f32, transition_time: f64);
 
     /// If passed true, the player turns on its timer to count down before the player is removed from the game
     /// If passed false, the player turns off its timer meaning it is no longer disconnected
@@ -924,6 +1045,24 @@ impl Player {
     /// * `GpuParticles2D` - The SteelParticles node
     pub fn get_steel_particles(&mut self) -> Gd<GpuParticles2D> {
         self.get_cached_node(CachedNode::SteelParticles, "SteelParticles")
+    }
+
+    /// Getter for the TinParticles node
+    /// This effectively caches the TinParticles node so that it does not have to be found every time it is needed
+    ///
+    /// # Returns
+    /// * `GpuParticles2D` - The TinParticles node
+    pub fn get_tin_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::TinParticles, "TinParticles")
+    }
+
+    /// Getter for the IronParticles node
+    /// This effectively caches the IronParticles node so that it does not have to be found every time it is needed
+    ///
+    /// # Returns
+    /// * `GpuParticles2D` - The BronzeParticles node
+    pub fn get_bronze_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::BronzeParticles, "BronzeParticles")
     }
 
     /// Getter for the Disconnected node
