@@ -112,6 +112,8 @@ pub struct Player {
     cached_nodes: HashMap<CachedNode, Gd<Node>>,
     /// The settings for the game
     settings: Gd<Settings>,
+    /// The number of eliminations the player has
+    eliminations: i32,
 }
 
 #[godot_api]
@@ -157,6 +159,7 @@ impl ICharacterBody2D for Player {
             is_attacking: false,
             cached_nodes: HashMap::new(),
             settings,
+            eliminations: 0,
         }
     }
 
@@ -262,7 +265,7 @@ impl Player {
         self.base()
             .get_node_as::<Game>("/root/Game")
             .bind_mut()
-            .remove_player(self.player_id);
+            .remove_player(self.player_id, self.eliminations);
     }
 
     #[func]
@@ -323,12 +326,22 @@ impl Player {
         self.delta
     }
 
+    #[func]
     /// Get the health of the player
     ///
     /// # Returns
     /// * `f64` - The health of the player
     pub fn get_health(&self) -> f64 {
         self.health
+    }
+
+    #[func]
+    /// Get the eliminations of the player
+    ///
+    /// # Returns
+    /// * `i32` - The eliminations of the player
+    pub fn get_eliminations(&self) -> i32 {
+        self.eliminations
     }
 
     /// Get the direction the player is facing
@@ -368,6 +381,20 @@ impl Player {
 
         // Update the health bar of the player
         self.get_health_bar().set_value(self.get_health());
+    }
+
+    #[func]
+    /// Adjust the eliminations of the player
+    ///
+    /// # Arguments
+    /// * `attacker_id` - The id of the player who eliminated this player
+    pub fn increment_eliminations(&mut self, attacker_id: i32) {
+        self.eliminations += 1;
+        // update the eliminations counter for a player in game
+        self.base().get_node_as::<Game>("/root/Game")
+            .bind_mut()
+            .update_eliminations(attacker_id);
+
     }
 
     /// Adjusts the coins in this players coin_counter positively or negatively.
@@ -822,7 +849,9 @@ impl Player {
     /// # Returns
     /// * `Gd<GpuParticles2D>` - The current particles of the player
     fn get_particles(&self) -> Gd<GpuParticles2D> {
-        self.current_particles.clone().expect("No current particles set for player")
+        self.current_particles
+            .clone()
+            .expect("No current particles set for player")
     }
 
     /// Adds a metal to the active burning metals
