@@ -1,7 +1,7 @@
 [gd_scene load_steps=23 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
-[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
+[ext_resource type="Shader" uid="uid://doggl7ot00nb8" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
 [ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
 [ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
@@ -152,13 +152,10 @@ position = Vector2(451, -433)
 [node name="Metal Pickups" type="Node" parent="."]
 
 [node name="MetalPickup" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
-position = Vector2(35, -299)
 
 [node name="MetalPickup2" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
-position = Vector2(956, 373)
 
 [node name="MetalPickup3" parent="Metal Pickups" instance=ExtResource("10_5bopr")]
-position = Vector2(-894, -763)
 
 [node name="LightOccluders" type="Node" parent="."]
 

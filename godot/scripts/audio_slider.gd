@@ -26,7 +26,7 @@ func set_audio_num() -> void:
 
 ## This function sets the starting volume to the saved volume.
 func set_starting_volume() -> void:
-	var audio_settings = ConfigFileHandler.load_audio_settings()
+	var audio_settings = ConfigFileHandler.load_settings_helper("audio")
 	h_slider.value = audio_settings[bus_name]
 
 ## This function is called when the slider value is changed.

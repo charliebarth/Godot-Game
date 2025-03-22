@@ -105,20 +105,35 @@ impl Coin {
 
     /// Handles throwing of the coin, gets direction and applies impulse.
     #[func]
-    pub fn throw(&mut self) {
+    pub fn throw(&mut self, start: u64, end: u64) {
+        godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
+        godot_print!("COIN IN STATE {}", self.state);
+
         // If in PickedUp state
         if self.state == CoinState::PickedUp {
+            godot_print!("THROWING {}", self.base().get_name());
+
+            let max_charge = 1000.;
+            let min_charge_rate = 0.1;
+            let max_charge_power_time = 3000.;
+            // Calculate charge
+            let mut charge = ((end as f32 - start as f32) / max_charge_power_time);
+            if charge < min_charge_rate {
+                charge = min_charge_rate;
+            }
+            godot_print!("Charge: {}", charge);
+
             let force;
             let player = self.curr_player.as_mut().unwrap();
             let mut pos = player.get_global_position();
 
             if player.bind().get_dir() < 0. {
                 // Throw left
-                force = Vector2::new(-500., -400.);
+                force = Vector2::new(-1. * (max_charge * charge), -400.);
                 pos = pos + Vector2::new(0., -5.); // Adjust pos to be higher
             } else {
                 // Throw right
-                force = Vector2::new(500., -400.);
+                force = Vector2::new((max_charge * charge), -400.);
                 pos = pos + Vector2::new(20., -15.); // Adjust pos for throwing right
             }
 
@@ -134,6 +149,7 @@ impl Coin {
 
             self.base_mut().set_linear_velocity(Vector2::ZERO);
             self.base_mut().set_angular_velocity(0.);
+
             self.base_mut().apply_impulse(force);
 
             // Update state

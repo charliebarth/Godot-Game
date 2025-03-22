@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://di0fd86mwnv37" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallClimb.png" id="1_28re0"]
 [ext_resource type="Texture2D" uid="uid://delk3457diwxa" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Idle.png" id="1_gvuvu"]
 [ext_resource type="Texture2D" uid="uid://cy4tb3oa0pno2" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchAll.png" id="1_p0x36"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_pp08i"]
+[ext_resource type="Script" uid="uid://d18g007dnn3ne" path="res://scripts/player.gd" id="1_pp08i"]
 [ext_resource type="Texture2D" uid="uid://bnr6wnrrwmu4a" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Dash.png" id="1_u53jl"]
 [ext_resource type="Texture2D" uid="uid://bsawt36r1xwhf" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Attack.png" id="2_ybdal"]
 [ext_resource type="Texture2D" uid="uid://vjob0b0xbcr4" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Hit.png" id="3_1byn1"]
@@ -26,21 +26,21 @@
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="22_33rpo"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
-[ext_resource type="Script" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
+[ext_resource type="Script" uid="uid://5gr7o6vjk0sp" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="Texture2D" uid="uid://b5lf080mspvgn" path="res://assets/navigation_e.png" id="29_a80li"]
-[ext_resource type="Script" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
+[ext_resource type="Script" uid="uid://cm7e76346c1ls" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="32_j10vn"]
-[ext_resource type="Script" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
-[ext_resource type="Script" path="res://scripts/fps_counter.gd" id="32_sw38e"]
+[ext_resource type="Script" uid="uid://dewavowgomiht" path="res://scripts/hurt_box.gd" id="32_lkxkj"]
+[ext_resource type="Script" uid="uid://y7ok1ytpahlr" path="res://scripts/fps_counter.gd" id="32_sw38e"]
 [ext_resource type="Texture2D" uid="uid://df41jj4lm8ber" path="res://assets/Character/dust1.png" id="34_7k2wi"]
 [ext_resource type="Texture2D" uid="uid://dfrnpntq6dkd1" path="res://assets/Character/dust2.png" id="35_g71my"]
 [ext_resource type="Texture2D" uid="uid://cbvmhuwjhgvna" path="res://assets/Character/dust3.png" id="36_mr11a"]
 [ext_resource type="Texture2D" uid="uid://c01csxdo1tsg7" path="res://assets/Character/dust4.png" id="37_u8au1"]
-[ext_resource type="Script" path="res://scripts/dust.gd" id="38_1uxd6"]
+[ext_resource type="Script" uid="uid://dk4x2kg1jam8l" path="res://scripts/dust.gd" id="38_1uxd6"]
 [ext_resource type="AudioStream" uid="uid://rndlcmxnrckt" path="res://assets/SFX & Music/ES_Rock, Surface, Jump On - Epidemic Sound - 0000-0219.wav" id="38_gtvlb"]
 [ext_resource type="AudioStream" uid="uid://drjjxs8iebgqu" path="res://assets/SFX & Music/ES_Asphalt, Male, Walk - Epidemic Sound - 5878-6035.wav" id="38_rea0i"]
 [ext_resource type="AudioStream" uid="uid://dnpftf73dao0t" path="res://assets/SFX & Music/ES_Feet, Land, Jump, Ground - Epidemic Sound - 0040-0142.wav" id="39_6vh5j"]
-[ext_resource type="Shader" path="res://shader scripts/timer.gdshader" id="41_q8agc"]
+[ext_resource type="Shader" uid="uid://b0idc04gdhwlu" path="res://shader scripts/timer.gdshader" id="41_q8agc"]
 [ext_resource type="AudioStream" uid="uid://co25rq8uf2a23" path="res://assets/SFX & Music/metal_vial_sound_clipped.wav" id="42_vm06v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j7yn6"]
@@ -878,8 +878,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ffg0s"]
 _data = {
-"RESET": SubResource("Animation_gvpho"),
-"dust": SubResource("Animation_dw7p4")
+&"RESET": SubResource("Animation_gvpho"),
+&"dust": SubResource("Animation_dw7p4")
 }
 
 [sub_resource type="Curve" id="Curve_c3eya"]
@@ -904,6 +904,7 @@ emission_ring_axis = Vector3(0, 0, 1)
 emission_ring_height = 35.0
 emission_ring_radius = 35.0
 emission_ring_inner_radius = 20.0
+emission_ring_cone_angle = 90.0
 direction = Vector3(0, -1, 0)
 initial_velocity_min = 3.0
 initial_velocity_max = 8.0
@@ -937,6 +938,7 @@ emission_ring_axis = Vector3(0, 0, 1)
 emission_ring_height = 35.0
 emission_ring_radius = 35.0
 emission_ring_inner_radius = 20.0
+emission_ring_cone_angle = 90.0
 direction = Vector3(0, -1, 0)
 initial_velocity_min = 3.0
 initial_velocity_max = 8.0
@@ -982,36 +984,50 @@ position = Vector2(0, 1)
 
 [node name="InputManager" type="InputManager" parent="."]
 
-[node name="MetalReserveBarManager" parent="." instance=ExtResource("20_elmgo")]
-physics_interpolation_mode = 0
-light_mask = 524289
-offset_left = -468.0
-offset_top = -241.0
-offset_right = -405.0
-offset_bottom = -200.0
+[node name="PlayerUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -479.0
+offset_top = -269.0
+offset_right = -479.0
+offset_bottom = -269.0
+grow_horizontal = 0
 
-[node name="MetalManager" type="MetalManager" parent="."]
-
-[node name="Coin_Counter_Panel" parent="." instance=ExtResource("22_l2cmc")]
-light_mask = 524289
-offset_left = -385.0
-offset_top = -259.0
-offset_right = -352.0
-offset_bottom = -243.0
-
-[node name="HealthBar" type="TextureProgressBar" parent="."]
-light_mask = 524289
+[node name="HealthBar" type="TextureProgressBar" parent="PlayerUI"]
 z_index = 20
-offset_left = -475.0
-offset_top = -263.0
-offset_right = -390.0
-offset_bottom = -223.0
+layout_mode = 0
+offset_left = 5.0
+offset_top = 8.0
+offset_right = 90.0
+offset_bottom = 48.0
 texture_under = ExtResource("22_33rpo")
 texture_progress = ExtResource("23_0ycqf")
 texture_progress_offset = Vector2(20, 7)
 
+
+[node name="MetalReserveBarManager" parent="PlayerUI" instance=ExtResource("20_elmgo")]
+physics_interpolation_mode = 0
+layout_mode = 0
+offset_left = 20.0
+offset_top = 30.0
+offset_right = 83.0
+offset_bottom = 71.0
+
+[node name="Coin_Counter_Panel" parent="PlayerUI" instance=ExtResource("22_l2cmc")]
+offset_left = 87.0
+offset_top = 9.0
+offset_right = 120.0
+offset_bottom = 25.0
+
+[node name="MetalManager" type="MetalManager" parent="."]
+
 [node name="PointLight2D" type="PlayerLight" parent="."]
 position = Vector2(-2.38419e-07, -18)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(-4, 12)
 scale = Vector2(44.4023, 22.6347)
 energy = 0.05
 shadow_enabled = true
