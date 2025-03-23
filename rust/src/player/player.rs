@@ -999,7 +999,7 @@ impl Player {
 
     /// A signal that is emitted by the player when it is using tin
     #[signal]
-    pub fn tin_activated(&self, light_level: f32, transition_time: f64);
+    pub fn tin_activated(light_level: f32, transition_time: f64);
 
     /// If passed true, the player turns on its timer to count down before the player is removed from the game
     /// If passed false, the player turns off its timer meaning it is no longer disconnected

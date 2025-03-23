@@ -247,6 +247,7 @@ impl Game {
             self.start_round();
             return;
         }
+    }
 
     fn set_game_mode(&mut self, mode: String) {
         unsafe { GAME_MODE = Some(mode) }
@@ -259,7 +260,7 @@ impl Game {
         // First remove the main menu
         let main_menu = self.get_main_menu();
         if main_menu.is_inside_tree() {
-            self.base_mut().remove_child(main_menu);
+            self.base_mut().remove_child(&main_menu);
         }
 
         // Next instantiate the map
@@ -502,8 +503,8 @@ impl Game {
     }
 
     #[signal]
-    pub fn change_cycle_map(&self, light_level: f32, transition_time: f64, scale: f32);
+    pub fn change_cycle_map(light_level: f32, transition_time: f64, scale: f32);
 
     #[signal]
-    pub fn change_cycle_player(&self, light_level: f32, transition_time: f64);
+    pub fn change_cycle_player(light_level: f32, transition_time: f64);
 }
