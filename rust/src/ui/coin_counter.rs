@@ -100,11 +100,10 @@ impl CoinCounter {
         // Change the position to outside the map
         let pos = Vector2::new(100000., -100000.);
         let args = &[pos.to_variant()];
-        coin.to_gd().call_deferred("set_global_position", args);
+        coin.call_deferred("set_global_position", args);
 
         // Enable freeze mode
-        coin.to_gd()
-            .call_deferred("set_freeze_enabled", &[true.to_variant()]);
+        coin.call_deferred("set_freeze_enabled", &[true.to_variant()]);
 
         // Add the coin to the coin holder
         self.coin_holder.insert(self.coin_holder.len(), coin);
@@ -156,7 +155,8 @@ impl CoinCounter {
         if self.remove_coin() {
             // Get the last coin from the coin holder
             let length = self.coin_holder.len();
-            let mut coin = self.coin_holder.remove(length - 1);
+            let coin_object = self.coin_holder.remove(length - 1);
+            let mut coin = coin_object.get_node_as::<Coin>("Coin");
 
             // Throw a coin
             coin.bind_mut()
@@ -174,33 +174,7 @@ impl CoinCounter {
 
             // Set the name of the coin
             let coin_id = i as i32 + 1;
-            coin.set_name(&format!("Coin{}", coin_id));
-
-            // Get the player and set the coins current player
-            let player = self.base().get_node_as::<Player>("../../../");
-            coin.bind_mut().set_curr_player(player.to_godot());
-
-            // Set initial state
-            coin.bind_mut().set_state(CoinState::PickedUp);
-            coin.set_visible(true); // Set visible
-
-            // Add to coin counter
-            let new_coins = self.coins + 1; // Find how many coins to change to
-            self.base_mut().set_text(&new_coins.to_string()); // Changes the label text
-
-            // Update coin counter
-            self.coins = new_coins;
-
-            // Set position
-            let pos = Vector2::new(100000., -100000.);
-            coin.set_global_position(pos);
-
-            // Enable freeze mode
-            coin.set_freeze_enabled(true);
-
-            // Add the coin to the coin holder
-            self.coin_holder
-                .insert(self.coin_holder.len(), coin.clone());
+            coin_object.set_name(&format!("Coin{}", coin_id));
 
             // Add the coin to the map (this calls the coin ready method)
             let player = self.base().get_node_as::<Player>("../../");
