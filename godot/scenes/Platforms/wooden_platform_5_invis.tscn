@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://co4d1sgifj8ve"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yfdg0"]
+size = Vector2(30, 6)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_6jh8y"]
+polygon = PackedVector2Array(-15, 3, -15, -3, 15, -3, 15, 3)
+
+[node name="wooden_platform5" type="StaticBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_yfdg0")
+one_way_collision = true
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+occluder = SubResource("OccluderPolygon2D_6jh8y")
