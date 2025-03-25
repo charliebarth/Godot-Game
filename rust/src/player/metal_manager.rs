@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::{
     enums::metal_type::MetalType,
-    metals::{iron::Iron, pewter::Pewter, steel::Steel},
+    metals::{bronze::Bronze, copper::Copper, iron::Iron, pewter::Pewter, steel::Steel, tin::Tin},
     player::Player,
     traits::metal::Metal,
 };

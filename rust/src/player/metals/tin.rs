@@ -1,9 +1,6 @@
-use godot::obj::Gd;
-use std::ffi::c_void;
-//use std::os::unix::raw::gid_t;
+use godot::obj::{Gd, GdMut};
 
-use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
-use crate::player::input_manager::InputManager;
+use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
@@ -51,75 +48,20 @@ impl Tin {
             low_burning: false,
         }
     }
-
-    /// Function that updates if the player is burning tin
-    fn cleanup_burn(&mut self) {
-        self.burning = false;
-        // remove tin from the player's active metals vec
-        self.player.bind_mut().remove_active_metal(self.metal_type);
-    }
-
-    /// Function that update if the player is low burning tin
-    fn cleanup_lowburn(&mut self) {
-        self.low_burning = false;
-        // remove tin from the player's active metals vec
-        self.player.bind_mut().remove_active_metal(self.metal_type);
-        self.player.bind_mut().get_tin_particles().set_visible(false);
-    }
 }
 
 impl Metal for Tin {
-    /// The update function for tin.
-    /// This function checks to see if the input manager has a tin event.
-    /// If the event is found then the burn function is called.
-    /// If the low burn variant is found then the low burn function is called.
-    /// This will also toggle the tin particles on and off.
-    fn update(&mut self) {
-        let mut input_manager = self.player.bind_mut().get_input_manager();
-        self.update_burn(&mut input_manager);
-        self.update_low_burn(&mut input_manager);
-        if self.current_reserve <= 0.0 {
-            self.cleanup_burn();
-            self.cleanup_lowburn();
-        } else if self.burning {
-            self.update_reserve(-self.burn_rate);
-        } else if self.low_burning {
-            self.update_reserve(-self.low_burn_rate);
-        }
-
-        if self.current_reserve != self.previous_reserve {
-            self.player
-                .bind_mut()
-                .set_metal_reserve_amount(self.metal_type.as_str(), self.current_reserve);
-        }
-        self.previous_reserve = self.current_reserve;
-    }
-
     /// The burn function for tin.
     /// This ability will allow players to see easier when the night cycle occurs.
     fn burn(&mut self) {
-        // Add tin to the player's active metals vec
-        self.player.bind_mut().add_active_metal(self.metal_type);
-        // Update the player's current particles
-        let particles = self.player.bind_mut().get_tin_particles();
-        self.player.bind_mut().set_particles(particles);
-        // Emit the signal to do a regular burn
-        self.player.bind_mut().emit_tin_signal(10.0, 3.0);
+        return;
     }
 
     /// The low burn function for tin.
     /// This ability will allow players to see easier when the night cycle occurs, but
     /// not as well as they would if they were burning tin regularly.
     fn low_burn(&mut self) {
-        // Add tin to the player's active metals vec
-        self.player.bind_mut().add_active_metal(self.metal_type);
-        // Update the player's current particles
-        let particles = self.player.bind_mut().get_tin_particles();
-        self.player.bind_mut().set_particles(particles);
-        // Set the tin particles to be visible
-        self.player.bind_mut().get_tin_particles().set_visible(true);
-        // Emit the signal to do a low burn
-        self.player.bind_mut().emit_tin_signal(5.0, 3.0);
+        return;
     }
 
     /// This function will update the total metal reserve for tin.
@@ -137,43 +79,42 @@ impl Metal for Tin {
         self.metal_type
     }
 
-    /// Updates the value for if the player is low buring tin.
-    ///
-    /// # Arguments
-    /// * `input_manager` - The input manager to check for the event of a pressed button
-    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::LowBurn;
+    fn current_reserve(&self) -> f64 {
+        self.current_reserve
+    }
 
-        if !self.low_burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.low_burn();
-            self.low_burning = true;
-        } else if self.low_burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
-            self.cleanup_lowburn();
+    fn burning(&self) -> bool {
+        self.burning
+    }
+
+    fn low_burning(&self) -> bool {
+        self.low_burning
+    }
+
+    fn set_burning(&mut self, burning: bool) {
+        self.burning = burning;
+
+        if self.burning {
+            self.player.bind_mut().emit_tin_signal(10.0, 3.0);
+        }
+    }
+    fn set_low_burning(&mut self, low_burning: bool) {
+        self.low_burning = low_burning;
+
+        if self.low_burning {
+            self.player.bind_mut().emit_tin_signal(5.0, 3.0);
         }
     }
 
-    /// Updates the value for if the player is burning tin.
-    ///
-    /// # Arguments
-    /// * `input_manager` - The input manager that checks for events
-    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::Burn;
+    fn get_player(&mut self) -> GdMut<'_, Player> {
+        self.player.bind_mut()
+    }
 
-        if !self.burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.burn();
-            self.burning = true;
-        } else if self.burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
-            self.cleanup_burn();
-        }
+    fn previous_reserve(&self) -> f64 {
+        self.previous_reserve
+    }
+
+    fn set_previous_reserve(&mut self, amt: f64) {
+        self.previous_reserve = amt;
     }
 }

@@ -7,12 +7,10 @@ use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
 use godot::classes::ConfigFile;
 use godot::classes::Control;
-use godot::classes::CollisionShape2D;
 use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
 use godot::classes::PointLight2D;
-use godot::classes::RayCast2D;
 use godot::classes::Sprite2D;
 use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
@@ -28,7 +26,6 @@ use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::disconnected::Disconnected;
 use super::enums::force::Force;
-use super::enums::metal_type::MetalType;
 use super::enums::player_events::PlayerEvents;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
@@ -58,7 +55,6 @@ enum CachedNode {
     PewterParticles,
     TinParticles,
     BronzeParticles,
-    MetalLine,
     SteelLines,
     IronLines,
     LineSelector,
@@ -67,6 +63,7 @@ enum CachedNode {
     MetalManager,
     Sprite,
     IronParticles,
+    CopperParticles,
 }
 
 #[derive(GodotClass)]
@@ -941,7 +938,8 @@ impl Player {
     /// * `player` - The player to remove from the current player's vector of nearby players
     fn remove_nearby_player(&mut self, player: Gd<Player>) {
         if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
-            self.nearby_players.remove(pos);
+            let mut player = self.nearby_players.remove(pos);
+            player.bind_mut().hide_particles();
         }
     }
 
@@ -949,8 +947,8 @@ impl Player {
     ///
     /// # Returns
     /// * `Vec<Gd<Player>>` - The vec of all nearby players
-    pub fn get_nearby_players(&self) -> &Vec<Gd<Player>> {
-        &self.nearby_players
+    pub fn get_nearby_players(&mut self) -> &mut Vec<Gd<Player>> {
+        &mut self.nearby_players
     }
 
     /// Reveals the particles of the player if the player is not burning copper
@@ -958,11 +956,22 @@ impl Player {
     /// # Arguments
     /// * `visibility_layer` - The visibility layer to set for the particles
     pub fn reveal_particles(&mut self, visibility_layer: u32) {
+        let current_layer = 1 << (self.player_id * 2);
         if !self.is_burning_metal(MetalType::Copper) {
-            let mut particles = self.get_particles();
-            let current_layer = particles.get_visibility_layer();
-            // bitwise OR the current layer with the visibility layer to reveal the particles
-            particles.set_visibility_layer(current_layer | visibility_layer);
+            for metal in MetalType::iter() {
+                let mut particles = self.get_metal_particles(metal);
+                if particles.is_visible_in_tree() {
+                    particles.set_visibility_layer(current_layer | visibility_layer);
+                }
+            }
+        }
+    }
+
+    pub fn hide_particles(&mut self) {
+        let current_layer = 1 << (self.player_id * 2);
+        for metal in MetalType::iter() {
+            let mut particles = self.get_metal_particles(metal);
+            particles.set_visibility_layer(current_layer);
         }
     }
 
@@ -1008,8 +1017,9 @@ impl Player {
     ///
     /// # Returns
     /// * `bool` - True if the player is burning the metal, false otherwise
-    pub fn is_burning_metal(&self, metal: MetalType) -> bool {
-        self.active_metals.contains(&metal)
+    pub fn is_burning_metal(&mut self, metal: MetalType) -> bool {
+        let particles = self.get_metal_particles(metal);
+        particles.is_visible_in_tree()
     }
 
     /// Gets the vec of all nearby metal objects
@@ -1241,6 +1251,10 @@ impl Player {
         self.get_cached_node(CachedNode::IronParticles, "IronParticles")
     }
 
+    pub fn get_copper_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::CopperParticles, "CopperParticles")
+    }
+
     /// Getter for the Disconnected node
     /// This effectively caches the Disconnected node so that it does not have to be found every time it is needed
     ///
@@ -1259,6 +1273,9 @@ impl Player {
             MetalType::Pewter => self.get_pewter_particles(),
             MetalType::Steel => self.get_steel_particles(),
             MetalType::Iron => self.get_iron_particles(),
+            MetalType::Bronze => self.get_bronze_particles(),
+            MetalType::Copper => self.get_copper_particles(),
+            MetalType::Tin => self.get_tin_particles(),
         }
     }
 }

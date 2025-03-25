@@ -43,4 +43,16 @@ impl MetalType {
             MetalType::Bronze => "bronze",
         }
     }
+
+    pub fn iter() -> impl Iterator<Item = MetalType> {
+        [
+            MetalType::Pewter,
+            MetalType::Steel,
+            MetalType::Iron,
+            MetalType::Tin,
+            MetalType::Copper,
+            MetalType::Bronze,
+        ]
+        .into_iter()
+    }
 }

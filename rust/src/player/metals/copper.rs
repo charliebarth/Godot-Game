@@ -1,8 +1,6 @@
-use godot::obj::Gd;
-use std::ffi::c_void;
+use godot::obj::{Gd, GdMut};
 
-use crate::player::enums::metal_type::{BurnType, ButtonState, MetalType};
-use crate::player::input_manager::InputManager;
+use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
@@ -25,7 +23,7 @@ pub struct Copper {
     /// The type of metal.
     metal_type: MetalType,
     /// The previous amount of copper the player had.
-    previous_reserve: f64
+    previous_reserve: f64,
 }
 
 impl Copper {
@@ -47,53 +45,19 @@ impl Copper {
             metal_type,
         }
     }
-
-    /// Function that updates if the player is low burning copper
-    pub fn cleanup_lowburn(&mut self) {
-        self.low_burning = false;
-        // remove copper from the player's active metals vec
-        self.player.bind_mut().remove_active_metal(self.metal_type);
-    }
 }
 
 impl Metal for Copper {
-    /// The update function for copper.
-    /// This function checks to see if the input manager has a copper event.
-    /// If the event is found, the low burn function is called.
-    /// Will also toggle copper particles on and off.
-    fn update(&mut self) {
-        let mut input_manager = self.player.bind_mut().get_input_manager();
-        self.update_burn(&mut input_manager);
-        self.update_low_burn(&mut input_manager);
-        if self.current_reserve <= 0.0 {
-            // self.cleanup_burn();
-            self.cleanup_lowburn();
-        } else if self.low_burning {
-            self.update_reserve(-self.low_burn_rate);
-        }
-
-        if self.current_reserve != self.previous_reserve {
-            self.player
-                .bind_mut()
-                .set_metal_reserve_amount(self.metal_type.as_str(), self.current_reserve);
-        }
-        self.previous_reserve = self.current_reserve;
-    }
-
     /// The burn function for copper.
     /// It does the same as low_burn because copper has static performance.
     fn burn(&mut self) {
-        self.low_burning = true;
-        // add copper to the player's active metals vec
-        self.player.bind_mut().add_active_metal(self.metal_type);
+        return;
     }
 
     /// The low burn function for copper.
     /// Sets the low_burning flag to true. No particles are shown for copper.
     fn low_burn(&mut self) {
-        self.low_burning = true;
-        // add copper to the player's active metals vec
-        self.player.bind_mut().add_active_metal(self.metal_type);
+        return;
     }
 
     /// This function will update the total metal reserve for copper.
@@ -115,33 +79,34 @@ impl Metal for Copper {
         self.metal_type
     }
 
-    /// This function will update the low burn ability for copper.
-    ///
-    /// # Arguments
-    /// * `input_manager` - The input manager for the player.
-    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        let mut input_manager = input_manager.bind_mut();
-        let burn_type = BurnType::LowBurn;
-
-        if !self.low_burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Pressed))
-        {
-            self.low_burn();
-            self.low_burning = true;
-        } else if self.low_burning
-            && input_manager.fetch_metal_event((self.metal_type, burn_type, ButtonState::Released))
-        {
-            self.cleanup_lowburn();
-        }
+    fn current_reserve(&self) -> f64 {
+        self.current_reserve
     }
 
-    /// This function will update the burn ability for copper. (Which is the same as low burn)
-    ///
-    /// # Arguments
-    /// * `input_manager` - The input manager for the player.
-    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        self.update_low_burn(input_manager);
+    fn burning(&self) -> bool {
+        self.burning
+    }
+
+    fn low_burning(&self) -> bool {
+        self.low_burning
+    }
+
+    fn set_burning(&mut self, burning: bool) {
+        self.burning = burning;
+    }
+    fn set_low_burning(&mut self, low_burning: bool) {
+        self.low_burning = low_burning;
+    }
+
+    fn get_player(&mut self) -> GdMut<'_, Player> {
+        self.player.bind_mut()
+    }
+
+    fn previous_reserve(&self) -> f64 {
+        self.previous_reserve
+    }
+
+    fn set_previous_reserve(&mut self, amt: f64) {
+        self.previous_reserve = amt;
     }
 }
-
-
