@@ -22,7 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://bp24is0wwsbdv" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallSlide.png" id="15_h50qw"]
 [ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="18_wsmie"]
 [ext_resource type="PackedScene" uid="uid://b2cab082bt2gh" path="res://scenes/metal_reserve_bars.tscn" id="20_elmgo"]
-[ext_resource type="Script" path="res://scripts/animated_sprite_2d.gd" id="20_h83s5"]
+[ext_resource type="Script" uid="uid://jopw0bt7cl0y" path="res://scripts/animated_sprite_2d.gd" id="20_h83s5"]
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="22_33rpo"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
@@ -1005,7 +1005,6 @@ texture_under = ExtResource("22_33rpo")
 texture_progress = ExtResource("23_0ycqf")
 texture_progress_offset = Vector2(20, 7)
 
-
 [node name="MetalReserveBarManager" parent="PlayerUI" instance=ExtResource("20_elmgo")]
 physics_interpolation_mode = 0
 layout_mode = 0
@@ -1023,10 +1022,7 @@ offset_bottom = 25.0
 [node name="MetalManager" type="MetalManager" parent="."]
 
 [node name="PointLight2D" type="PlayerLight" parent="."]
-position = Vector2(-2.38419e-07, -18)
-
-[node name="PointLight2D" type="PointLight2D" parent="."]
-position = Vector2(-4, 12)
+position = Vector2(-2.38419e-07, -9)
 scale = Vector2(44.4023, 22.6347)
 energy = 0.05
 shadow_enabled = true
@@ -1125,7 +1121,7 @@ script = ExtResource("38_1uxd6")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Dust"]
 libraries = {
-"": SubResource("AnimationLibrary_ffg0s")
+&"": SubResource("AnimationLibrary_ffg0s")
 }
 
 [node name="PewterParticles" type="GPUParticles2D" parent="."]
@@ -1135,8 +1131,8 @@ show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, -3)
 amount = 6
-process_material = SubResource("ParticleProcessMaterial_jhvi2")
 lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_jhvi2")
 
 [node name="TinParticles" type="GPUParticles2D" parent="."]
 visible = false
@@ -1145,8 +1141,8 @@ show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 6)
 amount = 12
-process_material = SubResource("ParticleProcessMaterial_8cf5s")
 lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
 [node name="BronzeParticles" type="GPUParticles2D" parent="."]
 visible = false
@@ -1155,8 +1151,8 @@ show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 6)
 amount = 12
-process_material = SubResource("ParticleProcessMaterial_8cf5s")
 lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
 [node name="SteelParticles" type="GPUParticles2D" parent="."]
 visible = false
@@ -1165,8 +1161,8 @@ show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 3)
 amount = 12
-process_material = SubResource("ParticleProcessMaterial_8cf5s")
 lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
 [node name="IronParticles" type="GPUParticles2D" parent="."]
 visible = false
@@ -1175,8 +1171,8 @@ show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 3)
 amount = 12
-process_material = SubResource("ParticleProcessMaterial_8cf5s")
 lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
 [node name="Landing" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("38_gtvlb")
