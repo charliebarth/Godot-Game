@@ -38,7 +38,12 @@ func _ready() -> void:
 		config.set_value("ui", "opacity", 1)
 		config.set_value("ui", "pos", 0)
 		
-		#TODO set the values for keybinds 
+		var keybind = ["{\"JoypadButton\":0}", "{\"JoypadButton\":7}", "{\"JoypadMotion\":5}", 
+		"{\"JoypadButton\":2}", "{\"JoypadButton\":14}", "{\"JoypadButton\":3}", 
+				"{\"JoypadButton\":9}", "{\"JoypadMotion\":4}", "{\"JoypadMotion\":5}"]
+		for i in 8:
+			for j in 9:
+				config.set_value(str("keybinds", i), actions[j], keybind[j]);
 	
 		config.save(SETTINGS_FILE_PATH)
 	else:
