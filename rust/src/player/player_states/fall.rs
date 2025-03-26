@@ -64,9 +64,15 @@ impl Fall {
     /// # Arguments
     /// * `player` - The player
     fn fall(player: &mut Player) {
+        const FALL_GRAVITY_MULTIPLIER: f64 = 1.6;
         let vertical_velocity = player.base().get_velocity().y;
+
+        // If the player is actually falling then multiply the default gravity by a preset multiplier
+        // This is done so the player can jump satisfying heights while still returning to the ground quickly,
+        // resulting in the controls for the player feeling more responive
         if vertical_velocity >= 0.0 {
-            player.set_gravity(FALL_GRAVITY);
+            let gravity = player.get_default_gravity() * FALL_GRAVITY_MULTIPLIER;
+            player.set_gravity(gravity);
         }
     }
 }

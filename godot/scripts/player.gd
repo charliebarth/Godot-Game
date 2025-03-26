@@ -2,7 +2,7 @@ extends Player
 @onready var direct_sight: RayCast2D = $RayCast2D
 @onready var nearby_players = []
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	for player in nearby_players:
 		direct_sight.target_position = to_local(player.position)
 		if direct_sight.is_colliding() && direct_sight.get_collider() == player:
@@ -17,9 +17,8 @@ func _on_owner_vis_animation_finished() -> void:
 
 ## This function tracks nearby metal objects and adds them to the player's list of metal objects
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	if body.has_method("is_metal"):
-		var metal = body as MetalObject
-		self.add_metal_object(metal)
+	if body is MetalObject:
+		self.add_metal_object((body as MetalObject))
 	elif body.has_method("get_player_id") && body != self:
 		var player = body as Player
 		nearby_players.append(player)
@@ -28,8 +27,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 ## This function removes nearby metal objects from the player's list of metal objects
 func _on_area_2d_body_exited(body: Node2D) -> void:
 	if body.has_method("is_metal"):
-		var metal = body as MetalObject
-		self.remove_metal_object(metal)
+		self.remove_metal_object(body)
 	elif body.has_method("get_player_id") && body != self:
 		var player = body as Player
 		player.make_player_invisible(self.get_player_id())

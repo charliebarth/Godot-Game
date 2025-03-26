@@ -1,15 +1,10 @@
 use godot::obj::Gd;
 
-use crate::player::{
-    enums::metal_type::{ButtonState, MetalType},
-    input_manager::InputManager,
-    player::Player,
-    traits::metal::Metal,
-};
+use crate::player::{enums::metal_type::MetalType, player::Player, traits::metal::Metal};
 
 use super::steel::Steel;
 
-const PULL_BURN_DIRECTION: f32 = 1.0;
+const PULL_BURN_DIRECTION: f32 = -1.0;
 
 pub struct Iron {
     steel: Steel,
@@ -38,10 +33,6 @@ impl Iron {
 }
 
 impl Metal for Iron {
-    fn update(&mut self) {
-        self.steel.update();
-    }
-
     fn burn(&mut self) {
         self.steel.burn();
     }
@@ -58,11 +49,35 @@ impl Metal for Iron {
         self.steel.metal_type()
     }
 
-    fn update_low_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        self.steel.update_low_burn(input_manager);
+    fn burning(&self) -> bool {
+        self.steel.burning()
     }
 
-    fn update_burn(&mut self, input_manager: &mut Gd<InputManager>) {
-        self.steel.update_burn(input_manager);
+    fn current_reserve(&self) -> f64 {
+        self.steel.current_reserve()
+    }
+
+    fn get_player(&mut self) -> godot::prelude::GdMut<'_, Player> {
+        self.steel.get_player()
+    }
+
+    fn low_burning(&self) -> bool {
+        self.steel.low_burning()
+    }
+
+    fn previous_reserve(&self) -> f64 {
+        self.steel.previous_reserve()
+    }
+
+    fn set_burning(&mut self, burning: bool) {
+        self.steel.set_burning(burning);
+    }
+
+    fn set_low_burning(&mut self, low_burning: bool) {
+        self.steel.set_low_burning(low_burning);
+    }
+
+    fn set_previous_reserve(&mut self, amt: f64) {
+        self.steel.set_previous_reserve(amt);
     }
 }

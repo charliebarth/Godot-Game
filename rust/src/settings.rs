@@ -80,6 +80,10 @@ pub struct EnvironmentSettings {
     pub day_night_length: f32,
     pub day_night_transition_time: f32,
     pub gravity: f32,
+    pub static_friction: f32,
+    pub kinetic_friction: f32,
+    pub drag_coefficient: f32,
+    pub air_density: f32,
 }
 
 impl Default for EnvironmentSettings {
@@ -87,7 +91,11 @@ impl Default for EnvironmentSettings {
         Self {
             day_night_length: 10.0,
             day_night_transition_time: 1.0,
-            gravity: 9.81,
+            gravity: 980.0,
+            static_friction: 1.0,
+            kinetic_friction: 1.0,
+            drag_coefficient: 1.0,
+            air_density: 1.0,
         }
     }
 }
@@ -102,7 +110,7 @@ impl Default for MapSettings {
     fn default() -> Self {
         Self {
             maps: Vec::new(),
-            selected_map: "MapTwo".to_string(),
+            selected_map: "MapOne".to_string(),
         }
     }
 }

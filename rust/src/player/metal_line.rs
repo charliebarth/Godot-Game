@@ -11,9 +11,9 @@ pub struct MetalLine {
     /// The base node of the MetalLine.
     base: Base<Node2D>,
     /// The points that make up the line.
-    points: Option<PackedVector2Array>,
+    points: PackedVector2Array,
     /// The colors for each line segment.
-    colors: Option<PackedColorArray>,
+    colors: PackedColorArray,
     /// Whether the lines should be shown or not.
     should_show: bool,
 }
@@ -30,8 +30,8 @@ impl INode2D for MetalLine {
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
-            points: None,
-            colors: None,
+            points: PackedVector2Array::new(),
+            colors: PackedColorArray::new(),
             should_show: false,
         }
     }
@@ -39,16 +39,22 @@ impl INode2D for MetalLine {
     /// This is a build in method for Godot that is called when a node is first added to the scene.
     /// It can also be called in other circumstances such as when the node is made visible.
     fn draw(&mut self) {
-        if !self.should_show || self.points.is_none() {
+        if !self.should_show || self.points.is_empty() || self.colors.is_empty() {
             return;
         }
 
-        let points = self.points.take().unwrap();
-        let colors = self.colors.take().unwrap();
+        let points = self.points.clone();
+        let colors = self.colors.clone();
         self.base_mut()
             .draw_multiline_colors_ex(&points, &colors)
             .width(2.0)
             .done();
+    }
+
+    fn process(&mut self, _delta: f64) {
+        if self.should_show {
+            self.base_mut().queue_redraw();
+        }
     }
 }
 
@@ -60,26 +66,9 @@ impl MetalLine {
     /// # Arguments
     /// * `end` - The end point of the line segment.
     /// * `color` - The color of the line segment.
-    #[func]
-    pub fn add_line_segment(&mut self, end: Vector2, color: Color) {
-        let mut points: PackedVector2Array;
-        let mut colors: PackedColorArray;
-
-        if self.points.is_none() {
-            points = PackedVector2Array::new();
-            colors = PackedColorArray::new();
-        } else {
-            points = self.points.take().unwrap();
-            colors = self.colors.take().unwrap();
-        }
-
-        let start = self.base().to_local(self.base().get_global_position());
-        points.push(start);
-        points.push(end);
-        colors.push(color);
-
-        self.points = Some(points);
-        self.colors = Some(colors);
+    pub fn replace_lines(&mut self, points: PackedVector2Array, colors: PackedColorArray) {
+        self.points = points;
+        self.colors = colors;
     }
 
     /// Updates the MetalLine to determine if it should be shown or not.
@@ -92,10 +81,8 @@ impl MetalLine {
     }
 
     pub fn update_color(&mut self, color: Color, index: usize) {
-        if self.colors.is_none() {
-            return;
+        if self.colors.len() > index {
+            self.colors[index] = color;
         }
-
-        self.colors.as_mut().unwrap()[index] = color;
     }
 }

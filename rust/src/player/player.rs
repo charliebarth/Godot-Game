@@ -15,11 +15,9 @@ use godot::classes::Sprite2D;
 use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
-use godot::global::JoyAxis;
 use godot::prelude::*;
 
 use crate::game::Game;
-use crate::items::coin::Coin;
 use crate::metal_object::MetalObject;
 use crate::player::enums::metal_type::MetalType;
 use crate::player::player_tin_light::PlayerTinLight;
@@ -57,12 +55,15 @@ enum CachedNode {
     PewterParticles,
     TinParticles,
     BronzeParticles,
-    MetalLine,
+    SteelLines,
+    IronLines,
     LineSelector,
     MetalReserveBarManager,
     InputManager,
     MetalManager,
     Sprite,
+    IronParticles,
+    CopperParticles,
 }
 
 #[derive(GodotClass)]
@@ -74,6 +75,8 @@ pub struct Player {
     direction: f32,
     /// The gravity of the player
     gravity: f64,
+    /// The default gravity (Comes from the Settings singleton)
+    default_gravity: f64,
     /// The health of the player
     health: f64,
     /// The amount of time that has passed since the last frame
@@ -116,6 +119,7 @@ pub struct Player {
     settings: Gd<Settings>,
     /// The number of eliminations the player has
     eliminations: i32,
+    previous_velocity: Vector2,
 }
 
 #[godot_api]
@@ -143,6 +147,7 @@ impl ICharacterBody2D for Player {
             direction: 1.0,
             health: MAX_HEALTH,
             delta: 0.0,
+            default_gravity: gravity,
             gravity,
             current_state: PlayerStates::Jump,
             previous_state: PlayerStates::Fall,
@@ -157,11 +162,12 @@ impl ICharacterBody2D for Player {
             nearby_players: Vec::new(),
             active_metals: Vec::new(),
             current_particles: None,
-            mass: 70.0,
+            mass: 500.0,
             is_attacking: false,
             cached_nodes: HashMap::new(),
             settings,
             eliminations: 0,
+            previous_velocity: Vector2::ZERO,
         }
     }
 
@@ -255,6 +261,9 @@ impl ICharacterBody2D for Player {
             self.die();
         }
 
+        // Reset the player to their default values such as animation speed, run speed, and jump force
+        self.reset_player();
+
         // If the die button is pressed, the player dies
         // This is used for testing as a quick way to simulate player death
         // This will be either removed or disabled during playtesting
@@ -268,6 +277,13 @@ impl ICharacterBody2D for Player {
 
         self.set_delta(delta);
 
+        // Update the current state of the player
+        self.current_state.update_state(self);
+        self.set_animation_direction();
+
+        // Check for any timeout events that have expired
+        self.expire_timeout_events();
+
         self.add_force(Force::Gravity {
             acceleration: self.gravity,
         });
@@ -275,16 +291,6 @@ impl ICharacterBody2D for Player {
         if self.base().is_on_floor() {
             self.add_force(Force::NormalForce { magnitude: -1.0 });
         }
-
-        // Reset the player to their default values such as animation speed, run speed, and jump force
-        self.reset_player();
-
-        // Update the current state of the player
-        self.current_state.update_state(self);
-        self.set_animation_direction();
-
-        // Check for any timeout events that have expired
-        self.expire_timeout_events();
 
         // Make the player move and slide based on their velocity
         self.apply_forces();
@@ -454,7 +460,7 @@ impl Player {
     ///
     /// # Arguments
     /// * `pos_neg` (i8) - if -1, remove_coin    if +1, add_coin
-    pub fn adjust_coins(&mut self, pos_neg: i8, coin: &mut Coin) {
+    pub fn adjust_coins(&mut self, pos_neg: i8, coin: Gd<MetalObject>) {
         if pos_neg == -1 {
             // Dereference and call the method
             self.get_coin_counter().bind_mut().remove_coin();
@@ -534,6 +540,15 @@ impl Player {
         self.gravity
     }
 
+    /// Gets the default gravity of the game
+    /// This value originally comes from the Settings singleton and this is just a cached version
+    ///
+    /// # Returns
+    /// * `f64` - The default gravity of the game
+    pub fn get_default_gravity(&self) -> f64 {
+        self.default_gravity
+    }
+
     /// Set the gravity of the player
     ///
     /// # Arguments
@@ -566,18 +581,14 @@ impl Player {
     fn set_animation_direction(&mut self) {
         let mut sprite = self.get_sprite();
         let mut scale = sprite.get_scale();
-        let mut pos = sprite.get_position();
 
         if self.direction < 0.0 && scale.x != -1.3 {
             scale.x = -1.3;
-            pos.x -= 9.0;
         } else if self.direction > 0.0 && scale.x != 1.3 {
             scale.x = 1.3;
-            pos.x += 9.0;
         }
 
         sprite.set_scale(scale);
-        sprite.set_position(pos);
     }
 
     /// Sets the speed of the player's animations
@@ -587,6 +598,10 @@ impl Player {
     pub fn set_animation_speed(&mut self, speed: f32) {
         let mut sprite = self.get_sprite();
         sprite.set_speed_scale(speed);
+    }
+
+    pub fn is_metal_object_in_range(&self, metal_object: &Gd<MetalObject>) -> bool {
+        self.metal_objects.contains(&metal_object)
     }
 
     /// Get the previous state of the player
@@ -662,6 +677,7 @@ impl Player {
     ///
     /// # Returns
     /// * `i32` - The device ID of the player
+    #[func]
     pub fn get_device_id(&self) -> i32 {
         self.device_id
     }
@@ -745,6 +761,7 @@ impl Player {
         sprite.set_speed_scale(1.0);
         self.set_run_speed(DEFAULT_RUN_SPEED);
         self.set_jump_force(DEFAULT_JUMP_FORCE);
+        self.set_gravity(self.default_gravity);
     }
 
     /// Adds a force to the player's forces queue
@@ -761,6 +778,11 @@ impl Player {
         for _ in 0..len_forces {
             let force = self.forces.pop_front().unwrap();
             self.apply_force(force);
+        }
+
+        let base_velocity = self.base().get_velocity();
+        if base_velocity != Vector2::ZERO {
+            self.previous_velocity = base_velocity;
         }
     }
 
@@ -810,17 +832,64 @@ impl Player {
             } => {
                 base_velocity.x = if horizontal { 0.0 } else { base_velocity.x };
                 base_velocity.y = if vertical { 0.0 } else { base_velocity.y };
+                self.previous_velocity = Vector2::ZERO;
             }
             Force::SteelPush {
-                x_velocity,
-                y_velocity,
+                x_acceleration,
+                y_acceleration,
             } => {
-                base_velocity.x = x_velocity;
-                base_velocity.y = y_velocity;
+                base_velocity.x = x_acceleration;
+                base_velocity.y = y_acceleration;
             }
+            _ => {}
         }
 
         self.base_mut().set_velocity(base_velocity);
+    }
+
+    /// This is called when an object impacts the player.
+    /// It will calculate if the player should be damaged and if they should be moved.
+    /// It returns an impact force which is how much force is returned to the object.
+    ///
+    /// # Arguments
+    /// * `impact_force` - The force of the impact which is roughly calulated using the speed of the object and its weight
+    ///
+    /// # Returns
+    /// * `Force` - A Force::Impact which is how much energy/force is returned to the object,
+    /// again roughly calculated using the speed of the player and their weight.
+    // pub fn impact(&mut self, impact_force: Force) -> Force {
+    //     Force::NormalForce { magnitude: -1.0 }
+    // }
+    pub fn impact(&mut self, body_mass: f32, body_velocity: Vector2) -> Vector2 {
+        let player_velocity = self.previous_velocity;
+
+        // Compute new velocities using momentum equations
+        let mut new_player_velocity = ((self.mass - body_mass) * player_velocity
+            + 2.0 * body_mass * body_velocity)
+            / (self.mass + body_mass);
+
+        let mut new_body_velocity = ((body_mass - self.mass) * body_velocity
+            + 5.0 * self.mass * player_velocity)
+            / (self.mass + body_mass);
+
+        // Prevent slowing down in the same direction for the player
+        if new_player_velocity.dot(player_velocity) > 0.0 {
+            if new_player_velocity.length() < player_velocity.length() {
+                new_player_velocity = player_velocity;
+            }
+        }
+
+        // Prevent slowing down in the same direction for the body
+        if new_body_velocity.dot(body_velocity) > 0.0 {
+            if new_body_velocity.length() < body_velocity.length() {
+                new_body_velocity = body_velocity;
+            }
+        }
+
+        self.base_mut().set_velocity(new_player_velocity);
+
+        // Return the new velocity for the body
+        new_body_velocity
     }
 
     /// The permanent minimum run speed of the player
@@ -837,7 +906,9 @@ impl Player {
     /// # Arguments
     /// * `metal` - The metal object to add to the player's list of nearby metal objects
     fn add_metal_object(&mut self, metal: Gd<MetalObject>) {
-        self.metal_objects.push(metal);
+        if !metal.is_freeze_enabled() {
+            self.metal_objects.push(metal);
+        }
     }
 
     #[func]
@@ -867,7 +938,8 @@ impl Player {
     /// * `player` - The player to remove from the current player's vector of nearby players
     fn remove_nearby_player(&mut self, player: Gd<Player>) {
         if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
-            self.nearby_players.remove(pos);
+            let mut player = self.nearby_players.remove(pos);
+            player.bind_mut().hide_particles();
         }
     }
 
@@ -875,8 +947,8 @@ impl Player {
     ///
     /// # Returns
     /// * `Vec<Gd<Player>>` - The vec of all nearby players
-    pub fn get_nearby_players(&self) -> &Vec<Gd<Player>> {
-        &self.nearby_players
+    pub fn get_nearby_players(&mut self) -> &mut Vec<Gd<Player>> {
+        &mut self.nearby_players
     }
 
     /// Reveals the particles of the player if the player is not burning copper
@@ -884,11 +956,22 @@ impl Player {
     /// # Arguments
     /// * `visibility_layer` - The visibility layer to set for the particles
     pub fn reveal_particles(&mut self, visibility_layer: u32) {
+        let current_layer = 1 << (self.player_id * 2);
         if !self.is_burning_metal(MetalType::Copper) {
-            let mut particles = self.get_particles();
-            let current_layer = particles.get_visibility_layer();
-            // bitwise OR the current layer with the visibility layer to reveal the particles
-            particles.set_visibility_layer(current_layer | visibility_layer);
+            for metal in MetalType::iter() {
+                let mut particles = self.get_metal_particles(metal);
+                if particles.is_visible_in_tree() {
+                    particles.set_visibility_layer(current_layer | visibility_layer);
+                }
+            }
+        }
+    }
+
+    pub fn hide_particles(&mut self) {
+        let current_layer = 1 << (self.player_id * 2);
+        for metal in MetalType::iter() {
+            let mut particles = self.get_metal_particles(metal);
+            particles.set_visibility_layer(current_layer);
         }
     }
 
@@ -934,8 +1017,9 @@ impl Player {
     ///
     /// # Returns
     /// * `bool` - True if the player is burning the metal, false otherwise
-    pub fn is_burning_metal(&self, metal: MetalType) -> bool {
-        self.active_metals.contains(&metal)
+    pub fn is_burning_metal(&mut self, metal: MetalType) -> bool {
+        let particles = self.get_metal_particles(metal);
+        particles.is_visible_in_tree()
     }
 
     /// Gets the vec of all nearby metal objects
@@ -995,7 +1079,7 @@ impl Player {
     /// A signal that is emitted by the player when it's id is changed
     /// Children of the player can listen for the signal and then change their visibility layer based on the new id
     #[signal]
-    pub fn id_changed();
+    fn id_changed();
 
     /// A signal that is emitted by the player when it is using tin
     #[signal]
@@ -1104,8 +1188,14 @@ impl Player {
     ///
     /// # Returns
     /// * `MetalLine` - The MetalLine node
-    pub fn get_metal_line(&mut self) -> Gd<MetalLine> {
-        self.get_cached_node(CachedNode::MetalLine, "MetalLine")
+    pub fn get_metal_line(&mut self, metal_type: MetalType) -> Gd<MetalLine> {
+        let search_key = if metal_type == MetalType::Iron {
+            (CachedNode::IronLines, "IronLines")
+        } else {
+            (CachedNode::SteelLines, "SteelLines")
+        };
+
+        self.get_cached_node(search_key.0, search_key.1)
     }
 
     /// Getter for the LineSelector node
@@ -1144,13 +1234,25 @@ impl Player {
         self.get_cached_node(CachedNode::TinParticles, "TinParticles")
     }
 
-    /// Getter for the IronParticles node
-    /// This effectively caches the IronParticles node so that it does not have to be found every time it is needed
+    /// Getter for the BronzeParticles node
+    /// This effectively caches the BronzeParticles node so that it does not have to be found every time it is needed
     ///
     /// # Returns
     /// * `GpuParticles2D` - The BronzeParticles node
     pub fn get_bronze_particles(&mut self) -> Gd<GpuParticles2D> {
         self.get_cached_node(CachedNode::BronzeParticles, "BronzeParticles")
+    }
+
+    /// Getter for the IronParticles node
+    /// This effectively caches the IronParticles node so that it does not have to be found every time it is needed
+    ///
+    /// * `GpuParticles2D` - The IronParticles node
+    pub fn get_iron_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::IronParticles, "IronParticles")
+    }
+
+    pub fn get_copper_particles(&mut self) -> Gd<GpuParticles2D> {
+        self.get_cached_node(CachedNode::CopperParticles, "CopperParticles")
     }
 
     /// Getter for the Disconnected node
@@ -1164,5 +1266,16 @@ impl Player {
 
     pub fn get_camera(&mut self) -> Gd<Camera2D> {
         self.get_cached_node(CachedNode::Camera, "Camera2D")
+    }
+
+    pub fn get_metal_particles(&mut self, metal_type: MetalType) -> Gd<GpuParticles2D> {
+        match metal_type {
+            MetalType::Pewter => self.get_pewter_particles(),
+            MetalType::Steel => self.get_steel_particles(),
+            MetalType::Iron => self.get_iron_particles(),
+            MetalType::Bronze => self.get_bronze_particles(),
+            MetalType::Copper => self.get_copper_particles(),
+            MetalType::Tin => self.get_tin_particles(),
+        }
     }
 }

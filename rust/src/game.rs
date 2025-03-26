@@ -6,8 +6,11 @@ use godot::{
 };
 
 use crate::{
-    main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
-    split_screen::SplitScreen,
+    main_menu::MainMenu,
+    map::Map,
+    player::player::Player,
+    settings::Settings,
+    split_screen::{self, SplitScreen},
 };
 
 static mut GAME_MODE: Option<String> = None;
@@ -91,7 +94,6 @@ impl INode2D for Game {
             settings,
             eliminations: HashMap::new(),
             should_start_new_round: false,
-
         }
     }
 
@@ -109,6 +111,9 @@ impl INode2D for Game {
 
         let map_two = load::<PackedScene>("res://scenes/map_two.tscn");
         self.maps.insert("MapTwo".to_string(), map_two);
+
+        let map_three = load::<PackedScene>("res://scenes/map_three.tscn");
+        self.maps.insert("MapThree".to_string(), map_three);
 
         // Create the two split screens
         // Clone on a Gd is just a new ref not a new instance
@@ -242,11 +247,10 @@ impl Game {
     ///
     /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
     #[func]
-    pub fn attempt_start(&mut self, test_mode: bool) {
-        if !test_mode && self.players.len() >= 2 || (test_mode && self.players.len() == 1) {
-            self.start_round();
-            return;
-        }
+    pub fn start_game(&mut self) {
+        self.set_game_mode(String::from("last_player_standing"));
+        self.start_round();
+        return;
     }
 
     fn set_game_mode(&mut self, mode: String) {
@@ -422,8 +426,8 @@ impl Game {
         let eliminations = self.eliminations.get(&player_id).unwrap();
 
         // update the eliminations in the hashmap with the eliminations in this instance + the eliminations in the hashmap
-        self.eliminations.insert(player_id, eliminations + instance_elims);
-
+        self.eliminations
+            .insert(player_id, eliminations + instance_elims);
 
         self.players.remove(player_id as usize - 1);
 
@@ -443,13 +447,22 @@ impl Game {
     /// Returns:
     /// * `flag` - If a player has reached the required elimination count.
     fn check_win_condition(&mut self) -> bool {
+        if self.devices.len() == 1 {
+            return true;
+        }
+
         // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
         const REQUIRED_ELIMINATIONS: i32 = 2;
         // check if a player has reached the required number of eliminations by checking the hashmap
         for (_, eliminations) in self.eliminations.iter() {
             if *eliminations >= REQUIRED_ELIMINATIONS {
                 // set the winning player to the player with the required number of eliminations
-                self.winning_player = self.eliminations.iter().position(|(&k, &v)| v == REQUIRED_ELIMINATIONS).unwrap() as i32 + 1;
+                self.winning_player = self
+                    .eliminations
+                    .iter()
+                    .position(|(&k, &v)| v == REQUIRED_ELIMINATIONS)
+                    .unwrap() as i32
+                    + 1;
                 return true;
             }
         }
@@ -459,11 +472,10 @@ impl Game {
     /// This will start a new round. It will reset the players and start the game again.
     ///
     fn start_new_round(&mut self) {
-        for mut child in self.base_mut().get_children().iter_shared() {
-            if child.get_name().to_string().starts_with("SplitScreen") {
-                child.queue_free();
-            }
-        }
+        // Reset split screens to size 0,0
+        self.split_screen_one.bind_mut().reset();
+        self.split_screen_two.bind_mut().reset();
+
         self.reset_players();
         self.should_start_new_round = true;
     }

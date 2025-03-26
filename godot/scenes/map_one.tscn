@@ -215,18 +215,11 @@ position = Vector2(-2, -843)
 
 [node name="MetalObjects" type="Node" parent="."]
 
-[node name="MetalObject" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-z_index = 1
-position = Vector2(-369, -19)
-
-[node name="MetalObject2" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(-12, -299)
-
 [node name="MetalObject3" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(211, -167)
+position = Vector2(705, -123)
 
 [node name="MetalObject4" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(-22, 354)
+position = Vector2(763, -101)
 
 [node name="PointLight2D" type="PlayerLight" parent="."]
 position = Vector2(-144.5, -331)
@@ -235,7 +228,7 @@ energy = 0.1
 texture = SubResource("GradientTexture2D_pfm4w")
 
 [node name="UiLighting" type="PointLight2D" parent="."]
-position = Vector2(-144.5, -331)
+position = Vector2(239, -321)
 scale = Vector2(108.453, 38.875)
 energy = 0.25
 range_item_cull_mask = 524288
