@@ -177,7 +177,17 @@ impl CoinCounter {
             coin_object.set_name(&format!("Coin{}", coin_id));
 
             // Add the coin to the map (this calls the coin ready method)
-            let player = self.base().get_node_as::<Player>("../../");
+            let player = self
+                .base()
+                .get_parent()
+                .unwrap()
+                .get_parent()
+                .unwrap()
+                .get_parent()
+                .unwrap()
+                .try_cast::<Player>()
+                .unwrap();
+
             let mut map = player.get_parent().expect("Failed to add coin");
             map.add_child(&coin_object);
 
