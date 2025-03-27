@@ -971,11 +971,9 @@ impl Player {
         let current_layer = 1 << (self.player_id * 2);
         for metal in MetalType::iter() {
             let mut particles = self.get_metal_particles(metal);
-            let mut particles_layer = particles.get_visibility_layer();
             if particles.is_visible_in_tree() {
-                particles.set_visibility_layer(particles_layer & !current_layer);
+                particles.set_visibility_layer(current_layer);
             }
-            //particles.set_visibility_layer(current_layer);
         }
     }
 

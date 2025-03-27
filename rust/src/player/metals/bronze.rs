@@ -111,15 +111,35 @@ impl Metal for Bronze {
     fn set_burning(&mut self, burning: bool) {
         self.burning = burning;
 
+        // check if the player is burning or low burning and add to active metals if they are
+        if self.burning || self.low_burning {
+            // add the metal to the player's active metals
+            let mut player = self.player.bind_mut();
+            player.add_active_metal(self.metal_type);
+        }
+
         if !self.burning && !self.low_burning {
             self.hide_particle_visibility();
+            // remove the metal from the player's active metals
+            let mut player = self.player.bind_mut();
+            player.remove_active_metal(self.metal_type);
         }
     }
     fn set_low_burning(&mut self, low_burning: bool) {
         self.low_burning = low_burning;
 
+        // check if the player is burning or low burning and add to active metals if they are
+        if self.burning || self.low_burning {
+            // add the metal to the player's active metals
+            let mut player = self.player.bind_mut();
+            player.add_active_metal(self.metal_type);
+        }
+
         if !self.low_burning && !self.burning {
             self.hide_particle_visibility();
+            // remove the metal from the player's active metals
+            let mut player = self.player.bind_mut();
+            player.remove_active_metal(self.metal_type);
         }
     }
 
