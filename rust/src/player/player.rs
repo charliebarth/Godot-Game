@@ -971,7 +971,11 @@ impl Player {
         let current_layer = 1 << (self.player_id * 2);
         for metal in MetalType::iter() {
             let mut particles = self.get_metal_particles(metal);
-            particles.set_visibility_layer(current_layer);
+            let mut particles_layer = particles.get_visibility_layer();
+            if particles.is_visible_in_tree() {
+                particles.set_visibility_layer(particles_layer & !current_layer);
+            }
+            //particles.set_visibility_layer(current_layer);
         }
     }
 
@@ -997,6 +1001,9 @@ impl Player {
     pub fn add_active_metal(&mut self, metal: MetalType) {
         if !self.active_metals.contains(&metal) {
             self.active_metals.push(metal);
+            if metal == MetalType::Copper {
+                self.hide_particles();
+            }
         }
     }
 
