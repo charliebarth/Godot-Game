@@ -431,7 +431,19 @@ impl Player {
     ///
     /// # Arguments
     /// * `adjustment` - The amount to adjust the health by
-    pub fn adjust_health(&mut self, adjustment: f64) {
+    pub fn adjust_health(&mut self, mut adjustment: f64) {
+        if adjustment.signum() == -1.0 && self.is_burning_metal(MetalType::Pewter) {
+            if adjustment <= MAX_HEALTH * 0.05 {
+                adjustment = 0.0;
+            } else if adjustment <= MAX_HEALTH * 0.25 {
+                adjustment = adjustment * 0.5;
+            } else if adjustment <= MAX_HEALTH * 0.50 {
+                adjustment = adjustment * 0.7;
+            } else {
+                adjustment = adjustment * 0.9;
+            }
+        }
+
         // Adjust health by the specified amount
         self.health += adjustment;
 
@@ -1020,6 +1032,15 @@ impl Player {
     pub fn is_burning_metal(&mut self, metal: MetalType) -> bool {
         let particles = self.get_metal_particles(metal);
         particles.is_visible_in_tree()
+    }
+
+    pub fn is_burning_metal_from_string(&mut self, metal: String) -> bool {
+        if let Some(metal) = MetalType::from_string(&metal) {
+            let particles = self.get_metal_particles(metal);
+            return particles.is_visible_in_tree();
+        } else {
+            return false;
+        }
     }
 
     /// Gets the vec of all nearby metal objects
