@@ -43,7 +43,7 @@ vertical_alignment = 1
 
 [node name="Maps and Mode" parent="MarginContainer/VBoxContainer" instance=ExtResource("2_ht52o")]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
