@@ -236,9 +236,12 @@ impl Game {
             .clone()
     }
 
-    pub fn get_game_mode() -> String {
-        unsafe { GAME_MODE.clone().unwrap() }
+    
+    pub fn get_game_mode(&mut self) -> String {
+        self.settings.bind().get_selected_map()
+        // unsafe { GAME_MODE.clone().unwrap() }
     }
+    
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
     ///
@@ -254,7 +257,8 @@ impl Game {
     }
 
     fn set_game_mode(&mut self, mode: String) {
-        unsafe { GAME_MODE = Some(mode) }
+        self.settings.bind_mut().set_game_mode(mode);
+        // unsafe { GAME_MODE = Some(mode) }
     }
 
     /// This will start a round of the game.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=4 uid="uid://c1l6h04x8ew74"]
+[gd_scene load_steps=67 format=4 uid="uid://c1l6h04x8ew74"]
 
 [ext_resource type="Shader" uid="uid://kr2r58sickni" path="res://shader scripts/level_one.gdshader" id="1_0mkdf"]
 [ext_resource type="Texture2D" uid="uid://cpylrjheh74tq" path="res://assets/Maps/dungeon/Textures/TX Tileset - Dungeon Ground.png" id="2_dfsnj"]
@@ -17,6 +17,7 @@
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="16_7qcqk"]
 [ext_resource type="PackedScene" uid="uid://ku6hvdegx5ws" path="res://scenes/settings.tscn" id="17_ugvbt"]
 [ext_resource type="PackedScene" uid="uid://cq384dq4edi6l" path="res://scenes/menu.tscn" id="17_wwnru"]
+[ext_resource type="PackedScene" uid="uid://b4dbmjvvtcqfy" path="res://scenes/new_game.tscn" id="18_a8gd2"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ubq02"]
 shader = ExtResource("1_0mkdf")
@@ -9008,3 +9009,15 @@ offset_top = -557.0
 offset_right = 1588.0
 offset_bottom = 523.0
 scale = Vector2(0.35, 0.35)
+
+[node name="NewGame" parent="." instance=ExtResource("18_a8gd2")]
+visible = false
+z_index = 50
+offset_left = -290.0
+offset_top = -525.0
+offset_right = 1630.0
+offset_bottom = 555.0
+scale = Vector2(0.3, 0.3)
+
+[connection signal="tree_entered" from="NewGame" to="NewGame" method="_on_tree_entered"]
+[connection signal="tree_exited" from="NewGame" to="NewGame" method="_on_tree_exited"]
