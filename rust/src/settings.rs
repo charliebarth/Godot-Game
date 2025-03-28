@@ -45,6 +45,11 @@ impl Settings {
     }
 
     #[func]
+    pub fn set_map(&mut self, map: String) {
+        self.map.selected_map = map;
+    }
+
+    #[func]
     pub fn get_gravity(&self) -> f32 {
         self.environment.gravity
     }

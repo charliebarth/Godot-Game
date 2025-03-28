@@ -119,7 +119,7 @@ impl MainMenu {
             self.new_game_menu = Some(self.base().get_node_as::<Control>("NewGame"));
         }
 
-        self.main_menu
+        self.new_game_menu
             .as_ref()
             .expect("NewGameMenu node not found")
             .clone()

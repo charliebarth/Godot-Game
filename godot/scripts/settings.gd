@@ -8,10 +8,12 @@ func _on_exit_pressed() -> void:
 ## When the settings menu exits the tree, stop processing
 func _on_tree_exited() -> void:
 	set_process(false)
+	print("settings exit")
 
 ## When the settings menu enters the tree, start processing
 func _on_tree_entered() -> void:
 	set_process(true)
+	print("settings enter")
 
 ## When the settings menu is processed, check if the cancel button is pressed
 ## If the cancel button is pressed, swap to the main menu

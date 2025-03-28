@@ -9018,6 +9018,3 @@ offset_top = -525.0
 offset_right = 1630.0
 offset_bottom = 555.0
 scale = Vector2(0.3, 0.3)
-
-[connection signal="tree_entered" from="NewGame" to="NewGame" method="_on_tree_entered"]
-[connection signal="tree_exited" from="NewGame" to="NewGame" method="_on_tree_exited"]

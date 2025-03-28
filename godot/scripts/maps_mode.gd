@@ -10,6 +10,8 @@ extends Control
 const MAP_PRESSED = preload("res://assets/Maps/map_pressed.tres")
 const MAP_UNPRESSED = preload("res://assets/Maps/map_unpressed.tres")
 
+@onready var game = get_node("/root/Game") as Game
+
 var panels = []
 var map_button_group = ButtonGroup.new()
 
@@ -29,12 +31,13 @@ func on_button_press(button: BaseButton) -> void:
 	var map = ""
 	match button:
 		map_one:
-			map = "Map One"
+			map = "MapOne"
 		map_two:
-			map = "Map Two"
+			map = "MapTwo"
 		map_three:
-			map = "Map Three"
+			map = "MapThree"
 	
+	game.set_game_map(map)
 	for i in range(0, len(map_button_group.get_buttons())):
 		if map_button_group.get_buttons()[i].button_pressed:
 			panels[i].add_theme_stylebox_override("panel", MAP_PRESSED)

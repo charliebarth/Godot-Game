@@ -256,9 +256,16 @@ impl Game {
         return;
     }
 
+    #[func]
     fn set_game_mode(&mut self, mode: String) {
         self.settings.bind_mut().set_game_mode(mode);
         // unsafe { GAME_MODE = Some(mode) }
+    }
+
+    #[func]
+    fn set_game_map(&mut self, map: String) {
+        self.settings.bind_mut().set_map(map);
+        godot_print!("New map is {}", self.settings.bind().get_selected_map());
     }
 
     /// This will start a round of the game.

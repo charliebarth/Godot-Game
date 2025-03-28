@@ -14,10 +14,12 @@ func _on_start_game_pressed() -> void:
 ## When the new game menu exits the tree, stop processing
 func _on_tree_exited() -> void:
 	set_process(false)
+	print("new game exit")
 
 ## When the new game menu enters the tree, start processing
 func _on_tree_entered() -> void:
 	set_process(true)
+	print("new game enter")
 
 ## When the new game menu is processed, check if the cancel button is pressed
 ## If the cancel button is pressed, swap to the main menu
