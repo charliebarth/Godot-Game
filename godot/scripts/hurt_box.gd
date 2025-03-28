@@ -13,7 +13,7 @@ func _on_area_entered(area: Area2D):
 		if attacker != parent_player:
 			# Deal damage
 			var damage = -10.0
-			if self.is_burning_metal_from_string("pewter"):
+			if parent_player.is_burning_metal_from_string("pewter"):
 				damage = damage * 1.35
 			
 			parent_player.adjust_health(damage)
