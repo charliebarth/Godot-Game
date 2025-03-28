@@ -60,3 +60,41 @@ pub enum Force {
         acceleration: Vector2,
     },
 }
+
+/// These are modifiers which will be applied to incoming player forces before they are actually applied to the player themselves.
+/// For instance a pewter modifier will increase any run forces and jump forces by some percentage.
+#[derive(Hash, Eq, PartialEq, Debug)]
+pub enum ForceModifierTag {
+    Pewter,
+}
+
+#[derive(Debug)]
+pub enum ForceModifier {
+    Pewter { run_boost: f64, jump_boost: f64 },
+}
+
+impl ForceModifier {
+    pub fn tag(&self) -> ForceModifierTag {
+        match self {
+            ForceModifier::Pewter { .. } => ForceModifierTag::Pewter,
+        }
+    }
+
+    pub fn combine_modifiers(&self, other: ForceModifier) -> ForceModifier {
+        match (self, other) {
+            (
+                ForceModifier::Pewter {
+                    run_boost: a_run,
+                    jump_boost: a_jump,
+                },
+                ForceModifier::Pewter {
+                    run_boost: b_run,
+                    jump_boost: b_jump,
+                },
+            ) => ForceModifier::Pewter {
+                run_boost: 1.0 - (1.0 - a_run) * (1.0 - b_run),
+                jump_boost: 1.0 - (1.0 - a_jump) * (1.0 - b_jump),
+            },
+        }
+    }
+}

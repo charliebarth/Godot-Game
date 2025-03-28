@@ -1,5 +1,6 @@
 use godot::obj::{Gd, GdMut};
 
+use crate::player::enums::force::{ForceModifier, ForceModifierTag};
 use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
@@ -64,6 +65,16 @@ impl Pewter {
             low_burning: false,
         }
     }
+
+    fn adjust_force_modifer(&mut self, modifier: ForceModifier) {
+        if self.burning || self.low_burning {
+            self.player.bind_mut().replace_force_modifier(modifier);
+        } else {
+            self.player
+                .bind_mut()
+                .remove_force_modifier(ForceModifierTag::Pewter);
+        }
+    }
 }
 
 impl Metal for Pewter {
@@ -74,12 +85,6 @@ impl Metal for Pewter {
     /// * `player` - A mutable reference to the player so that the run speed and jump force can be modified.
     fn burn(&mut self) {
         self.update_reserve(-self.burn_rate);
-        let mut player = self.player.bind_mut();
-
-        let run_speed = player.get_run_speed();
-        let jump_force = player.get_jump_force();
-        player.set_run_speed(run_speed * 2.0);
-        player.set_jump_force(jump_force * 1.5);
     }
 
     /// The low burn function for pewter.
@@ -89,12 +94,6 @@ impl Metal for Pewter {
     /// * `player` - A mutable reference to the player so that the run speed and jump force can be modified.
     fn low_burn(&mut self) {
         self.update_reserve(-self.low_burn_rate);
-        let mut player = self.player.bind_mut();
-
-        let run_speed = player.get_run_speed();
-        let jump_force = player.get_jump_force();
-        player.set_run_speed(run_speed * 1.5);
-        player.set_jump_force(jump_force * 1.2);
     }
 
     fn update_reserve(&mut self, amount: f64) {
@@ -119,11 +118,35 @@ impl Metal for Pewter {
     }
 
     fn set_burning(&mut self, burning: bool) {
-        self.burning = burning
+        self.burning = burning;
+
+        if self.burning {
+            self.adjust_force_modifer(ForceModifier::Pewter {
+                run_boost: 0.9,
+                jump_boost: 0.5,
+            });
+        } else {
+            self.adjust_force_modifer(ForceModifier::Pewter {
+                run_boost: 0.5,
+                jump_boost: 0.2,
+            });
+        }
     }
 
     fn set_low_burning(&mut self, low_burning: bool) {
-        self.low_burning = low_burning
+        self.low_burning = low_burning;
+
+        if self.low_burning {
+            self.adjust_force_modifer(ForceModifier::Pewter {
+                run_boost: 0.5,
+                jump_boost: 0.2,
+            });
+        } else {
+            self.adjust_force_modifer(ForceModifier::Pewter {
+                run_boost: 0.9,
+                jump_boost: 0.5,
+            });
+        }
     }
 
     fn get_player(&mut self) -> GdMut<'_, Player> {
