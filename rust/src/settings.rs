@@ -68,6 +68,16 @@ impl Settings {
     pub fn set_game_mode(&mut self, mode: String) {
         self.game_mode.game_mode = mode;
     }
+
+    #[func]
+    pub fn get_team_game(&self) -> bool {
+        self.game_mode.team_game
+    }
+
+    #[func]
+    pub fn set_team_game(&mut self, team: bool) {
+        self.game_mode.team_game = team;
+    }
 }
 
 #[derive(Clone)]
@@ -147,10 +157,14 @@ impl Default for GeneralSettings {
 #[derive(Clone)]
 pub struct GameMode {
     pub game_mode: String,
+    pub team_game: bool,
 }
 
 impl Default for GameMode {
     fn default() -> Self {
-        Self { game_mode: "Last Player Standing".to_string() }
+        Self { game_mode: "Last Player Standing".to_string(),
+               team_game: false, 
+            }
+        
     }
 }

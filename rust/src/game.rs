@@ -241,6 +241,11 @@ impl Game {
         self.settings.bind().get_selected_map()
         // unsafe { GAME_MODE.clone().unwrap() }
     }
+
+    pub fn get_team_game(&mut self) -> bool {
+        self.settings.bind().get_team_game()
+        // unsafe { GAME_MODE.clone().unwrap() }
+    }
     
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
@@ -263,9 +268,13 @@ impl Game {
     }
 
     #[func]
+    fn set_team_game(&mut self, team_game: bool) {
+        self.settings.bind_mut().set_team_game(team_game);
+    }
+
+    #[func]
     fn set_game_map(&mut self, map: String) {
         self.settings.bind_mut().set_map(map);
-        godot_print!("New map is {}", self.settings.bind().get_selected_map());
     }
 
     /// This will start a round of the game.

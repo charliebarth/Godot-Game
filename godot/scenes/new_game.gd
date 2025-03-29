@@ -2,7 +2,12 @@ extends Control
 
 @onready var main_menu = $".." as MainMenu
 @onready var game = get_node("/root/Game") as Game
+@onready var start_game: Button = $"MarginContainer/VBoxContainer/HBoxContainer/Start Game"
 
+
+func _on_visibility_changed() -> void:
+	if self.visible:
+		start_game.grab_focus()
 
 ## When the exit button is pressed, swap to the main menu
 func _on_exit_pressed() -> void:

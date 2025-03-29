@@ -11,6 +11,7 @@ extends Control
 @onready var game_mode_2: Button = $PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer3/Button
 @onready var game_mode_3: Button = $PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/Button
 
+@onready var check_button: CheckButton = $PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer3/CheckButton
 
 const MAP_PRESSED = preload("res://assets/Maps/map_pressed.tres")
 const MAP_UNPRESSED = preload("res://assets/Maps/map_unpressed.tres")
@@ -37,6 +38,7 @@ func _ready() -> void:
 	panels.append(panel_2)
 	panels.append(panel_3)
 	
+	
 
 func on_map_button_press(button: BaseButton) -> void:
 	var map = ""
@@ -56,15 +58,20 @@ func on_map_button_press(button: BaseButton) -> void:
 			panels[i].add_theme_stylebox_override("panel", MAP_UNPRESSED)
 	
 	
-# TODO needs to be filled out with the game modes we will have 
+# NOTE - Remember that the other two game modes are currently disabled 
 func on_mode_button_press(button: BaseButton) -> void:
 	var mode = ""
 	match button:
 		game_mode_1:
 			mode = "Last Player Standing"
 		game_mode_2:
-			mode = ""
+			mode = "Head Hunters"
 		game_mode_3:
-			mode = ""
+			mode = "Capture the Flag"
 	game.set_game_mode(mode)
 		
+
+# Sets the game mode to solo or team based on whether the button is toggled off
+# or on. False = Solo, True = Team
+func _on_check_button_toggled(toggled_on: bool) -> void:
+	game.set_team_game(toggled_on)
