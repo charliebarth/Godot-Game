@@ -79,9 +79,11 @@ func load_keybind_settings(id: int) -> Dictionary:
 		for key in InputMap.action_get_events(action):
 			# Try to find the event for this device id
 			if key.device == id: 
-				key_name = key.as_text()
+				#key_name = key.as_text()
+				key_name = key
 			elif key.device == -1: # Defaults to all devices
-				backup = key.as_text()
+				#backup = key.as_text()
+				backup = key
 
 		if key_name != null: # If we found the right key for the specific device
 			keybind_settings[action] = key_name
