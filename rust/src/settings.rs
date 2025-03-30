@@ -102,7 +102,7 @@ impl Default for MapSettings {
     fn default() -> Self {
         Self {
             maps: Vec::new(),
-            selected_map: "MapTwo".to_string(),
+            selected_map: "MapOne".to_string(),
         }
     }
 }

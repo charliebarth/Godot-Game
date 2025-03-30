@@ -57,7 +57,7 @@ pub struct Game {
 #[godot_api]
 impl INode2D for Game {
     fn init(base: Base<Node2D>) -> Self {
-        const CYCLE_LENGTH: f64 = 10.0;
+        const CYCLE_LENGTH: f64 = 120.0;
         let mut day_night_timer = Timer::new_alloc();
         day_night_timer.set_wait_time(CYCLE_LENGTH);
         day_night_timer.set_autostart(true);
