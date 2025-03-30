@@ -17,4 +17,17 @@ impl TimeoutEvents {
             TimeoutEvents::CoyoteTime => Duration::from_millis(100),
         }
     }
+
+    pub fn serialize(&self) -> String {
+        match self {
+            TimeoutEvents::CoyoteTime => "coyote_time".to_string(),
+        }
+    }
+
+    pub fn deserialize(s: &str) -> Option<TimeoutEvents> {
+        match s {
+            "coyote_time" => Some(TimeoutEvents::CoyoteTime),
+            _ => None,
+        }
+    }
 }
