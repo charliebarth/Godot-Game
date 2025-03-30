@@ -8,12 +8,8 @@ use godot::classes::CharacterBody2D;
 use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
-use godot::classes::PointLight2D;
-use godot::classes::Sprite2D;
-use godot::classes::SubViewport;
 use godot::classes::TextureProgressBar;
 use godot::classes::{AnimatedSprite2D, Area2D};
-use godot::global::JoyAxis;
 use godot::prelude::*;
 
 use crate::game::Game;
@@ -46,13 +42,11 @@ const MIN_JUMP_FORCE: f32 = 300.0;
 enum CachedNode {
     HealthBar,
     CoinCounter,
-    PointLight,
     SteelParticles,
     Disconnected,
     Camera,
     PewterParticles,
     MetalLine,
-    LineSelector,
     MetalReserveBarManager,
     InputManager,
     MetalManager,
@@ -861,15 +855,6 @@ impl Player {
         self.get_cached_node(CachedNode::CoinCounter, "Coin_Counter_Panel/CoinCounter")
     }
 
-    /// Getter for the PointLight2D node
-    /// This effectively caches the PointLight2D node so that it does not have to be found every time it is needed
-    ///
-    /// # Returns
-    /// * `PointLight2D` - The PointLight2D node
-    pub fn get_point_light(&mut self) -> Gd<PointLight2D> {
-        self.get_cached_node(CachedNode::PointLight, "PointLight2D")
-    }
-
     /// Getter for the MetalLine node
     /// This effectively caches the MetalLine node so that it does not have to be found every time it is needed
     ///
@@ -877,15 +862,6 @@ impl Player {
     /// * `MetalLine` - The MetalLine node
     pub fn get_metal_line(&mut self) -> Gd<MetalLine> {
         self.get_cached_node(CachedNode::MetalLine, "MetalLine")
-    }
-
-    /// Getter for the LineSelector node
-    /// This effectively caches the LineSelector node so that it does not have to be found every time it is needed
-    ///
-    /// # Returns
-    /// * `Sprite2D` - The LineSelector node
-    pub fn get_line_selector(&mut self) -> Gd<Sprite2D> {
-        self.get_cached_node(CachedNode::LineSelector, "LineSelector")
     }
 
     /// Getter for the PewterParticles node
