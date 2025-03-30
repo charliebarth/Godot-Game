@@ -4,7 +4,7 @@
 [ext_resource type="StyleBox" uid="uid://dr2qhx0oklmpu" path="res://assets/Maps/map_pressed.tres" id="1_ieryi"]
 [ext_resource type="Texture2D" uid="uid://dpnvcedclgqec" path="res://assets/Maps/blur1.PNG" id="1_lbj2d"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_my32b"]
-[ext_resource type="Script" path="res://scripts/scroll_container.gd" id="2_43853"]
+[ext_resource type="Script" uid="uid://c4e21ncdjwx0l" path="res://scripts/scroll_container.gd" id="2_43853"]
 [ext_resource type="Texture2D" uid="uid://cq0y22vugp3wp" path="res://assets/Maps/clear1.png" id="2_u4iso"]
 [ext_resource type="Texture2D" uid="uid://bk03iimmx2384" path="res://assets/Maps/clear2.png" id="4_j1xba"]
 [ext_resource type="Texture2D" uid="uid://doi6vjlnsj44o" path="res://assets/Maps/blur2.PNG" id="4_u4iso"]

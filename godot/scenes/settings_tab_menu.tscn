@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dffbop3gkahf6" path="res://scripts/settings_tab_menu.gd" id="1_0wp7c"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
-[ext_resource type="Script" path="res://scripts/scroll_container.gd" id="3_cuevm"]
+[ext_resource type="Script" uid="uid://c4e21ncdjwx0l" path="res://scripts/scroll_container.gd" id="3_cuevm"]
 [ext_resource type="Script" uid="uid://d3chi5uyd35t6" path="res://scripts/audio_slider.gd" id="4_u10kp"]
 [ext_resource type="Script" uid="uid://bhmm1oko8vjtt" path="res://scripts/graphics.gd" id="4_vq3k8"]
 [ext_resource type="Script" uid="uid://b5ych0beskk8q" path="res://scripts/controls.gd" id="5_lubqm"]
