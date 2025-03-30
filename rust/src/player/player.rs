@@ -223,21 +223,6 @@ impl Player {
     /// This will clean up the player and the viewport they are in
     /// as well as notify the game that the player has died
     pub fn die(&mut self) {
-        let mut camera = Camera2D::new_alloc();
-        camera.set_name("OverviewCamera");
-        camera.set_position(Vector2::new(20.0, -225.0));
-        camera.set_zoom(Vector2::new(0.37, 0.37));
-
-        //overview_container.set_canvas_cull_mask(1);
-        let mut parent_viewport = self
-            .base()
-            .get_parent()
-            .unwrap()
-            .try_cast::<SubViewport>()
-            .unwrap();
-
-        parent_viewport.set_canvas_cull_mask(1);
-        parent_viewport.add_child(&camera);
         self.base_mut().queue_free();
         self.base()
             .get_node_as::<Game>("/root/Game")
@@ -796,6 +781,12 @@ impl Player {
         let mut disconnected_node = self.get_disconnected();
         disconnected_node.set_visible(disconnected);
     }
+
+    /// This is meant to be called on players who are not the player associated with this networking client instance.
+    /// For example if this client joins a server and is marked player 3 then players 1, 2, and 4 should all be marked as dummies on this
+    /// local instance of the game so non essential nodes can be removed to improve performance.
+    /// Nodes such as light sources, particles, and RayCasts will be removed.
+    pub fn mark_dummy(&mut self) {}
 }
 /// Getters for nodes
 impl Player {

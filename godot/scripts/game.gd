@@ -2,6 +2,7 @@ extends Game
 class_name GameGD
 
 var peer = ENetMultiplayerPeer.new()
+var num_peers = 0
 
 func _input(event: InputEvent) -> void:
 	pass
@@ -15,6 +16,8 @@ func host() -> void:
 			var num_players = self.get_number_of_players() + 1
 			self.create_player(num_players)
 			rpc("create_player", num_players)
+			rpc_id(pid, "set_peer_number", num_peers)
+			num_peers += 1
 			
 			if num_players >= 2:
 				self.start()
@@ -30,6 +33,10 @@ func create_player(num_players: int):
 	var num_players_to_create = num_players - self.get_number_of_players() 
 	for i in num_players_to_create:
 		self.register_player()
+
+@rpc("any_peer", "call_remote") 
+func set_peer_number(peer_num: int):
+	self.set_local_player(peer_num)
 
 @rpc("any_peer", "call_remote")
 func start():

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use godot::{
-    classes::{DisplayServer, Engine, InputEvent, InputMap, Timer},
+    classes::{DisplayServer, Engine, InputEvent, InputMap, MultiplayerApi, Timer},
     prelude::*,
 };
 
@@ -42,10 +42,6 @@ pub struct Game {
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
-    /// The first split screen for odd numbered players
-    split_screen_one: Gd<SplitScreen>,
-    /// The second split screen for even numbered players
-    split_screen_two: Gd<SplitScreen>,
     day: bool,
     /// The timer for the day/night cycle.
     day_night_timer: Gd<Timer>,
@@ -53,6 +49,9 @@ pub struct Game {
     screen_size: Vector2,
     /// The settings for the game
     settings: Gd<Settings>,
+    local_player: Option<Gd<Player>>,
+    remote_players: Vec<Gd<Player>>,
+    local_player_index: i32,
 }
 
 #[godot_api]
@@ -82,40 +81,22 @@ impl INode2D for Game {
             winning_player: 0,
             maps: HashMap::new(),
             main_menu: None,
-            split_screen_one: SplitScreen::new_alloc(),
-            split_screen_two: SplitScreen::new_alloc(),
             day: true,
             day_night_timer,
             screen_size: Vector2::new(screen_size.x as f32, screen_size.y as f32),
             settings,
+            local_player: None,
+            remote_players: Vec::new(),
+            local_player_index: 0,
         }
     }
 
     fn ready(&mut self) {
-        // Input::singleton().connect(
-        //     "joy_connection_changed",
-        //     &Callable::from_object_method(
-        //         &self.base().get_node_as::<Game>("/root/Game"),
-        //         "device_changed",
-        //     ),
-        // );
-
         let map_one = load::<PackedScene>("res://scenes/map_one.tscn");
         self.maps.insert("MapOne".to_string(), map_one);
 
         let map_two = load::<PackedScene>("res://scenes/map_two.tscn");
         self.maps.insert("MapTwo".to_string(), map_two);
-
-        // Create the two split screens
-        // Clone on a Gd is just a new ref not a new instance
-        let mut split_screen_one = self.split_screen_one.clone();
-        let mut split_screen_two = self.split_screen_two.clone();
-        split_screen_one.set_name("SplitScreenOne");
-        split_screen_two.set_name("SplitScreenTwo");
-        split_screen_two.set_position(Vector2::new(0.0, self.screen_size.y / 2.0));
-
-        self.base_mut().add_child(&split_screen_one);
-        self.base_mut().add_child(&split_screen_two);
     }
 }
 
@@ -161,6 +142,13 @@ impl Game {
 
         let mut main_menu = self.get_main_menu();
         main_menu.bind_mut().add_player(self.current_player_id);
+    }
+
+    #[func]
+    pub fn set_local_player(&mut self, local_player_index: i32) {
+        self.local_player = Some(self.players[local_player_index as usize].clone());
+        self.local_player_index = local_player_index;
+        godot_print!("Local player index: {}", local_player_index);
     }
 
     fn disconnect_player(&mut self, device_id: i32) {
@@ -210,14 +198,6 @@ impl Game {
         let main_menu = self.get_main_menu();
         self.base_mut().remove_child(&main_menu);
 
-        // Next instantiate the map
-        let map = self
-            .maps
-            .get(self.settings.bind().get_selected_map().as_str())
-            .expect("Map not found")
-            .instantiate_as::<Map>();
-        self.set_map(map);
-
         // Set the name, device id, and player id for each player
         let mut players = self.players.clone();
         for (index, player) in players.iter_mut().enumerate() {
@@ -229,37 +209,28 @@ impl Game {
             bound_player.set_player_id(player_id);
         }
 
-        // Get references to split screens
-        let mut split_screen_one = self.split_screen_one.clone();
-        let mut split_screen_two = self.split_screen_two.clone();
+        // Add level to scene tree
+        // Next instantiate the map
+        let map = self
+            .maps
+            .get(self.settings.bind().get_selected_map().as_str())
+            .expect("Map not found")
+            .instantiate_as::<Map>();
 
-        // Add level to first split screen, second will share world
-        split_screen_one.bind_mut().add_level(self.get_map());
-        split_screen_two
-            .bind_mut()
-            .add_world(split_screen_one.bind().get_world());
+        self.base_mut().add_child(&map);
+        self.set_map(map);
 
-        // Adjust split screen sizes based on player count
-        let mut odd_players = Vec::new();
-        let mut even_players = Vec::new();
-
-        for (i, player) in self.players.iter().enumerate() {
-            if (i + 1) % 2 == 0 {
-                even_players.push(player.clone());
-            } else {
-                odd_players.push(player.clone());
+        for (i, player) in self.players.clone().iter().enumerate() {
+            self.base_mut().add_child(player);
+            if i != self.local_player_index as usize {
+                player.get_node_as::<Camera2D>("Camera2D").queue_free();
             }
         }
 
-        // Set sizes and add players
         let zoom: Vector2 = self.determine_screen_size();
-
-        for player in self.players.iter_mut() {
-            player.bind_mut().set_zoom(zoom);
+        if let Some(mut local_player) = self.local_player.clone() {
+            local_player.bind_mut().set_zoom(zoom);
         }
-
-        split_screen_one.bind_mut().add_players(odd_players);
-        split_screen_two.bind_mut().add_players(even_players);
 
         // Set the position of the players to the spawn point
         for (index, player) in players.iter_mut().enumerate() {
@@ -272,18 +243,8 @@ impl Game {
     }
 
     pub fn determine_screen_size(&mut self) -> Vector2 {
-        let screen_size: Vector2;
-        if self.players.len() == 1 {
-            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y);
-        } else if self.players.len() == 2 {
-            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
-            self.split_screen_two.set_size(screen_size);
-        } else {
-            screen_size = Vector2::new(self.screen_size.x / 2.0, self.screen_size.y / 2.0);
-            self.split_screen_two.set_size(screen_size);
-        }
+        let screen_size: Vector2 = Vector2::new(self.screen_size.x, self.screen_size.y);
 
-        self.split_screen_one.set_size(screen_size);
         self.calculate_zoom(screen_size)
     }
 
@@ -296,10 +257,6 @@ impl Game {
         self.base_mut().remove_child(&day_night_timer);
         self.day = false;
         self.cycle_change();
-
-        // Reset split screens to size 0,0
-        self.split_screen_one.bind_mut().reset();
-        self.split_screen_two.bind_mut().reset();
 
         self.reset_players();
 
