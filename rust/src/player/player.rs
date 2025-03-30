@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::collections::VecDeque;
-use std::time::Duration;
 use std::time::Instant;
 
 use godot::classes::CanvasItem;
@@ -83,7 +82,7 @@ pub struct Player {
     /// A HashMap of timeout events that the player is currently tracking
     /// The key is the event and the value is a tuple of the start time and duration of the event
     /// When the time since the start time is greater than the duration, the event is removed from the HashMap
-    timeout_events: HashMap<TimeoutEvents, (Instant, Duration)>,
+    timeout_events: HashMap<TimeoutEvents, Instant>,
     /// A queue of forces to be applied to the player
     forces: VecDeque<Force>,
     /// A vec of nearby metal objects that can be used by steel and iron
@@ -96,6 +95,12 @@ pub struct Player {
     cached_nodes: HashMap<CachedNode, Gd<Node>>,
     /// The settings for the game
     settings: Gd<Settings>,
+    /// The previous serialized state of the player
+    previous_serialization: HashMap<String, String>,
+    /// The number of physics frames that have passed since the last serialization
+    physics_frame_count: i32,
+    /// Serialized data from the server to be applied to the player at the start of the next physics frame
+    data_to_apply: Option<Dictionary>,
 }
 
 #[godot_api]
@@ -138,6 +143,9 @@ impl ICharacterBody2D for Player {
             is_attacking: false,
             cached_nodes: HashMap::new(),
             settings,
+            previous_serialization: HashMap::new(),
+            physics_frame_count: 0,
+            data_to_apply: None,
         }
     }
 
@@ -169,6 +177,17 @@ impl ICharacterBody2D for Player {
     /// # Arguments
     /// * `delta` - The time since the last frame
     fn physics_process(&mut self, delta: f64) {
+        let is_server = self.base().get_multiplayer().unwrap().is_server();
+
+        if !is_server {
+            if let Some(data) = &self.data_to_apply {
+                let data = self.dictionary_to_hashmap(data);
+                self.forces.clear(); // Clear the forces queue to ensure no data conflicts
+                self.deserialize(data);
+                self.data_to_apply = None;
+            }
+        }
+
         if self.health <= 0.0 {
             self.die();
         }
@@ -207,6 +226,20 @@ impl ICharacterBody2D for Player {
         // Make the player move and slide based on their velocity
         self.apply_forces();
         self.base_mut().move_and_slide();
+
+        if is_server {
+            self.physics_frame_count += 1;
+            if self.physics_frame_count % 30 == 0 {
+                let serialization = self.serialize();
+                let mut game = self.base().get_node_as::<Game>("/root/Game");
+                game.call(
+                    "add_serialization",
+                    &[self.hashmap_to_dictionary(serialization).to_variant()],
+                );
+
+                self.physics_frame_count = 0;
+            }
+        }
     }
 }
 
@@ -542,8 +575,7 @@ impl Player {
     /// * `event` - The event to add
     pub fn add_timeout_event(&mut self, event: TimeoutEvents) {
         let duration = event.get_duration();
-        self.timeout_events
-            .insert(event, (Instant::now(), duration));
+        self.timeout_events.insert(event, Instant::now());
     }
 
     /// Check if the player is able to jump
@@ -567,9 +599,9 @@ impl Player {
 
     /// Check if any timeout events have expired and remove them from the timeout_events HashMap
     fn expire_timeout_events(&mut self) {
-        self.timeout_events.retain(|_event, time_tuple| {
-            let time_elapsed = Instant::now().duration_since(time_tuple.0);
-            time_elapsed <= time_tuple.1
+        self.timeout_events.retain(|event, start_time| {
+            let time_elapsed = Instant::now().duration_since(*start_time);
+            time_elapsed <= event.get_duration()
         });
     }
 
@@ -776,11 +808,268 @@ impl Player {
         disconnected_node.set_visible(disconnected);
     }
 
-    /// This is meant to be called on players who are not the player associated with this networking client instance.
-    /// For example if this client joins a server and is marked player 3 then players 1, 2, and 4 should all be marked as dummies on this
-    /// local instance of the game so non essential nodes can be removed to improve performance.
-    /// Nodes such as light sources, particles, and RayCasts will be removed.
-    pub fn mark_dummy(&mut self) {}
+    pub fn serialize(&mut self) -> HashMap<String, String> {
+        godot_print!("Serializing player data");
+
+        let mut serialization = HashMap::new();
+
+        // Basic player state
+        serialization.insert("player_id".to_string(), self.player_id.to_string());
+
+        if self
+            .previous_serialization
+            .get("health")
+            .map_or(true, |v| v != &self.health.to_string())
+        {
+            serialization.insert("health".to_string(), self.health.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("direction")
+            .map_or(true, |v| v != &self.direction.to_string())
+        {
+            serialization.insert("direction".to_string(), self.direction.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("run_speed")
+            .map_or(true, |v| v != &self.run_speed.to_string())
+        {
+            serialization.insert("run_speed".to_string(), self.run_speed.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("jump_force")
+            .map_or(true, |v| v != &self.jump_force.to_string())
+        {
+            serialization.insert("jump_force".to_string(), self.jump_force.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("mass")
+            .map_or(true, |v| v != &self.mass.to_string())
+        {
+            serialization.insert("mass".to_string(), self.mass.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("is_attacking")
+            .map_or(true, |v| v != &self.is_attacking.to_string())
+        {
+            serialization.insert("is_attacking".to_string(), self.is_attacking.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("device_id")
+            .map_or(true, |v| v != &self.device_id.to_string())
+        {
+            serialization.insert("device_id".to_string(), self.device_id.to_string());
+        }
+
+        // Current state
+        if self
+            .previous_serialization
+            .get("current_state")
+            .map_or(true, |v| v != &self.current_state.serialize())
+        {
+            serialization.insert("current_state".to_string(), self.current_state.serialize());
+        }
+        if self
+            .previous_serialization
+            .get("previous_state")
+            .map_or(true, |v| v != &self.previous_state.serialize())
+        {
+            serialization.insert(
+                "previous_state".to_string(),
+                self.previous_state.serialize(),
+            );
+        }
+
+        // Position and velocity
+        let base = self.base();
+        let position = base.get_position();
+        let velocity = base.get_velocity();
+
+        if self
+            .previous_serialization
+            .get("position_x")
+            .map_or(true, |v| v != &position.x.to_string())
+        {
+            serialization.insert("position_x".to_string(), position.x.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("position_y")
+            .map_or(true, |v| v != &position.y.to_string())
+        {
+            serialization.insert("position_y".to_string(), position.y.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("velocity_x")
+            .map_or(true, |v| v != &velocity.x.to_string())
+        {
+            serialization.insert("velocity_x".to_string(), velocity.x.to_string());
+        }
+        if self
+            .previous_serialization
+            .get("velocity_y")
+            .map_or(true, |v| v != &velocity.y.to_string())
+        {
+            serialization.insert("velocity_y".to_string(), velocity.y.to_string());
+        }
+
+        // Metal objects count
+        let metal_objects_count = self.metal_objects.len().to_string();
+        if self
+            .previous_serialization
+            .get("metal_objects_count")
+            .map_or(true, |v| v != &metal_objects_count)
+        {
+            serialization.insert("metal_objects_count".to_string(), metal_objects_count);
+        }
+
+        // Timeout events
+        for (event, start_time) in &self.timeout_events {
+            let event_key = event.serialize();
+            let elapsed = start_time.elapsed().as_secs().to_string();
+            if self
+                .previous_serialization
+                .get(&event_key)
+                .map_or(true, |v| v != &elapsed)
+            {
+                serialization.insert(event_key, elapsed);
+            }
+        }
+
+        // Update the previous serialization with the new values
+        for (key, value) in &serialization {
+            self.previous_serialization
+                .insert(key.clone(), value.clone());
+        }
+
+        serialization
+    }
+
+    /// Converts a HashMap to a Dictionary
+    ///
+    /// # Arguments
+    /// * `data` - The HashMap to convert to a Dictionary
+    ///
+    /// # Returns
+    /// * `Dictionary` - The Dictionary containing the player data
+    pub fn hashmap_to_dictionary(&self, data: HashMap<String, String>) -> Dictionary {
+        let mut dictionary = Dictionary::new();
+        for (key, value) in &data {
+            dictionary.set(key.as_str(), value.as_str());
+        }
+        dictionary
+    }
+
+    /// Converts a Dictionary to a HashMap
+    ///
+    /// # Arguments
+    /// * `data` - The Dictionary to convert to a HashMap
+    ///
+    /// # Returns
+    /// * `HashMap<String, String>` - The HashMap containing the player data
+    pub fn dictionary_to_hashmap(&self, data: &Dictionary) -> HashMap<String, String> {
+        let mut hashmap = HashMap::new();
+        for (key, value) in data.iter_shared() {
+            hashmap.insert(key.to_string(), value.to_string());
+        }
+        hashmap
+    }
+
+    /// Adds server data to the player
+    /// This method should only be called on the client side to update player state from server data
+    ///
+    /// # Arguments
+    /// * `data` - The Dictionary containing the player data to apply
+    pub fn add_server_data(&mut self, data: Dictionary) {
+        self.data_to_apply = Some(data);
+    }
+
+    /// Deserializes player data from a HashMap and applies it to the player
+    /// This method should only be called on the client side to update player state from server data
+    ///
+    /// # Arguments
+    /// * `data` - The HashMap containing the player data to apply
+    pub fn deserialize(&mut self, data: HashMap<String, String>) {
+        godot_print!("Deserializing player data");
+
+        // Basic player state
+        if let Some(health) = data.get("health").and_then(|v| v.parse::<f64>().ok()) {
+            self.health = health;
+            self.get_health_bar().set_value(health);
+        }
+        if let Some(direction) = data.get("direction").and_then(|v| v.parse::<f32>().ok()) {
+            self.direction = direction;
+        }
+        if let Some(run_speed) = data.get("run_speed").and_then(|v| v.parse::<f32>().ok()) {
+            self.run_speed = run_speed;
+        }
+        if let Some(jump_force) = data.get("jump_force").and_then(|v| v.parse::<f32>().ok()) {
+            self.jump_force = jump_force;
+        }
+        if let Some(mass) = data.get("mass").and_then(|v| v.parse::<f32>().ok()) {
+            self.mass = mass;
+        }
+        if let Some(is_attacking) = data
+            .get("is_attacking")
+            .and_then(|v| v.parse::<bool>().ok())
+        {
+            self.is_attacking = is_attacking;
+            if is_attacking {
+                self.enable_hitbox();
+            } else {
+                self.disable_hitbox();
+            }
+        }
+        if let Some(player_id) = data.get("player_id").and_then(|v| v.parse::<i32>().ok()) {
+            self.player_id = player_id;
+        }
+        if let Some(device_id) = data.get("device_id").and_then(|v| v.parse::<i32>().ok()) {
+            self.device_id = device_id;
+        }
+
+        // Current state
+        if let Some(current_state) = data.get("current_state") {
+            if let Some(state) = PlayerStates::deserialize(current_state) {
+                self.current_state = state;
+            }
+        }
+        if let Some(previous_state) = data.get("previous_state") {
+            if let Some(state) = PlayerStates::deserialize(previous_state) {
+                self.previous_state = state;
+            }
+        }
+
+        // Position and velocity
+        let mut base = self.base_mut();
+        let mut position = base.get_position();
+        let mut velocity = base.get_velocity();
+
+        if let Some(x) = data.get("position_x").and_then(|v| v.parse::<f32>().ok()) {
+            position.x = x;
+        }
+        if let Some(y) = data.get("position_y").and_then(|v| v.parse::<f32>().ok()) {
+            position.y = y;
+        }
+        if let Some(x) = data.get("velocity_x").and_then(|v| v.parse::<f32>().ok()) {
+            velocity.x = x;
+        }
+        if let Some(y) = data.get("velocity_y").and_then(|v| v.parse::<f32>().ok()) {
+            velocity.y = y;
+        }
+
+        base.set_position(position);
+        base.set_velocity(velocity);
+        drop(base);
+
+        // Update animation based on new state
+        self.set_animation_direction();
+    }
 }
 /// Getters for nodes
 impl Player {
