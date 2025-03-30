@@ -1,6 +1,6 @@
 [gd_scene load_steps=88 format=3 uid="uid://br15s755g66ki"]
 
-[ext_resource type="Script" path="res://scripts/torch_flicker.gd" id="1_ebyl2"]
+[ext_resource type="Script" uid="uid://db0q44xcuwj4d" path="res://scripts/torch_flicker.gd" id="1_ebyl2"]
 [ext_resource type="Texture2D" uid="uid://dnitp7tufs8qv" path="res://assets/Maps/dungeon/Textures/TX Dungeon Props.png" id="1_m1ylp"]
 [ext_resource type="AudioStream" uid="uid://wuethcq1hdw7" path="res://assets/SFX & Music/350757__aerror__campfire.wav" id="2_upxqn"]
 [ext_resource type="Texture2D" uid="uid://bf1r8xvjdj0sq" path="res://assets/Maps/dungeon/Textures/FX/TX FX Torch Flame.png" id="3_i3pp1"]

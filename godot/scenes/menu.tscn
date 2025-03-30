@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cq384dq4edi6l"]
 
-[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_pg3ey"]
+[ext_resource type="Script" uid="uid://wgxrhlj83p7u" path="res://scripts/main_menu.gd" id="1_pg3ey"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="2_whb88"]
 
 [node name="Menu" type="Control"]
