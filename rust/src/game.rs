@@ -366,4 +366,13 @@ impl Game {
 
     #[signal]
     pub fn change_cycle_player(&self, light_level: f32, transition_time: f64);
+
+    #[func]
+    pub fn update_player_data(&mut self, data: Dictionary, player_id: i32) {
+        let player = self
+            .players
+            .get_mut(player_id as usize - 1)
+            .expect("Player not found");
+        player.bind_mut().add_server_data(data);
+    }
 }

@@ -3,6 +3,7 @@ class_name GameGD
 
 var peer = ENetMultiplayerPeer.new()
 var num_peers = 0
+var serialized_data: Array[Dictionary] = []
 
 func _input(event: InputEvent) -> void:
 	pass
@@ -24,9 +25,23 @@ func host() -> void:
 				rpc("start")
 	)
 
+func add_serialization(data: Dictionary):
+	serialized_data.append(data)
+	
+	if len(serialized_data) == 2:
+		print("sending player data")
+		rpc("receive_server_data", serialized_data)
+		serialized_data.clear()
+
 func join() -> void:
 	peer.create_client("localhost", 25565)
 	multiplayer.multiplayer_peer = peer
+
+@rpc("any_peer", "call_remote")  
+func receive_server_data(data: Array[Dictionary]):
+	for player_data in data:
+		var player_id = player_data["player_id"] as int
+		self.update_player_data(player_data, player_id)
 
 @rpc("any_peer", "call_remote")  
 func create_player(num_players: int):
