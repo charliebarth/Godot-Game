@@ -229,7 +229,7 @@ impl ICharacterBody2D for Player {
 
         if is_server {
             self.physics_frame_count += 1;
-            if self.physics_frame_count % 30 == 0 {
+            if self.physics_frame_count % 3 == 0 {
                 let serialization = self.serialize();
                 let mut game = self.base().get_node_as::<Game>("/root/Game");
                 game.call(
