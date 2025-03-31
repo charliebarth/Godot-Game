@@ -809,8 +809,6 @@ impl Player {
     }
 
     pub fn serialize(&mut self) -> HashMap<String, String> {
-        godot_print!("Serializing player data");
-
         let mut serialization = HashMap::new();
 
         // Basic player state
@@ -996,8 +994,6 @@ impl Player {
     /// # Arguments
     /// * `data` - The HashMap containing the player data to apply
     pub fn deserialize(&mut self, data: HashMap<String, String>) {
-        godot_print!("Deserializing player data");
-
         // Basic player state
         if let Some(health) = data.get("health").and_then(|v| v.parse::<f64>().ok()) {
             self.health = health;

@@ -1,6 +1,6 @@
 [gd_scene load_steps=155 format=3 uid="uid://b8tbcvmn2x2"]
 
-[ext_resource type="Script" uid="uid://crnyod3h6v4yl" path="res://scripts/remote_player.gd" id="1_ku4vm"]
+[ext_resource type="Script" uid="uid://cww01gy1r6utk" path="res://scripts/remote_player.gd" id="1_ku4vm"]
 [ext_resource type="Texture2D" uid="uid://bsawt36r1xwhf" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Attack.png" id="2_hl8om"]
 [ext_resource type="Texture2D" uid="uid://di0fd86mwnv37" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallClimb.png" id="3_mbrul"]
 [ext_resource type="Texture2D" uid="uid://cy4tb3oa0pno2" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchAll.png" id="4_mklk4"]
@@ -22,7 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://boxa2y1loi11q" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallHang.png" id="20_0e14n"]
 [ext_resource type="Texture2D" uid="uid://bp24is0wwsbdv" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_WallSlide.png" id="21_q1i7o"]
 [ext_resource type="Script" uid="uid://jopw0bt7cl0y" path="res://scripts/animated_sprite_2d.gd" id="22_k6wuc"]
-[ext_resource type="Script" uid="uid://tlih2k11irxl" path="res://scripts/input_manager.gd" id="23_cyfnc"]
+[ext_resource type="Script" uid="uid://dofbj7mmy7avs" path="res://scripts/remote_input_manager.gd" id="23_ku4vm"]
 [ext_resource type="PackedScene" uid="uid://b2cab082bt2gh" path="res://scenes/metal_reserve_bars.tscn" id="24_t33c8"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="25_y0pcq"]
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="26_b6dkd"]
@@ -965,7 +965,7 @@ position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_bajs7")
 
 [node name="InputManager" type="InputManager" parent="."]
-script = ExtResource("23_cyfnc")
+script = ExtResource("23_ku4vm")
 
 [node name="MetalReserveBarManager" parent="." instance=ExtResource("24_t33c8")]
 physics_interpolation_mode = 0

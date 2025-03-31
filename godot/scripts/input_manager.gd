@@ -5,7 +5,7 @@ extends InputManager
 
 func _input(event: InputEvent) -> void:
 	var button_name: String = self.get_button_name(event)
-	if button_name == "" || event.device != 0:
+	if button_name == "":
 		return
 		
 	var input_data = {

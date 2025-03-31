@@ -15,9 +15,9 @@ func host() -> void:
 	multiplayer.peer_connected.connect(
 		func(pid):
 			var num_players = self.get_number_of_players() + 1
+			rpc_id(pid, "set_peer_number_godot", num_peers)
 			self.create_player(num_players)
 			rpc("create_player", num_players)
-			rpc_id(pid, "set_peer_number", num_peers)
 			num_peers += 1
 			
 			if num_players >= 2:
@@ -50,8 +50,8 @@ func create_player(num_players: int):
 		self.register_player()
 
 @rpc("any_peer", "call_remote") 
-func set_peer_number(peer_num: int):
-	self.set_local_player(peer_num)
+func set_peer_number_godot(peer_num: int):
+	self.set_peer_number(peer_num)
 
 @rpc("any_peer", "call_remote")
 func start():

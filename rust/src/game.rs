@@ -30,6 +30,8 @@ pub struct Game {
     register_button: StringName,
     /// The scene for the player node.
     player_scene: Gd<PackedScene>,
+    /// The remote scene for the player node.
+    remote_player_scene: Gd<PackedScene>,
     /// The ID of the next player to register.
     current_player_id: i32,
     /// Whether the game has started.
@@ -75,6 +77,7 @@ impl INode2D for Game {
             devices: Vec::new(),
             register_button: "jump".into(),
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
+            remote_player_scene: load::<PackedScene>("res://scenes/remote_player.tscn"),
             current_player_id: 0,
             started: false,
             map: None,
@@ -87,7 +90,7 @@ impl INode2D for Game {
             settings,
             local_player: None,
             remote_players: Vec::new(),
-            local_player_index: 0,
+            local_player_index: -1,
         }
     }
 
@@ -134,21 +137,28 @@ impl Game {
     }
 
     #[func]
+    pub fn set_peer_number(&mut self, peer_number: i32) {
+        self.local_player_index = peer_number;
+    }
+
+    #[func]
     pub fn register_player(&mut self) {
         self.current_player_id = self.players.len() as i32 + 1;
 
-        let player = self.player_scene.instantiate_as::<Player>();
+        let player: Gd<Player>;
+        if self.local_player_index == self.players.len() as i32
+            && !self.base().get_multiplayer().unwrap().is_server()
+        {
+            godot_print!("Local player index: {}", self.local_player_index);
+            player = self.player_scene.instantiate_as::<Player>();
+            self.local_player = Some(player.clone());
+        } else {
+            player = self.remote_player_scene.instantiate_as::<Player>();
+        }
         self.players.push(player.clone());
 
         let mut main_menu = self.get_main_menu();
         main_menu.bind_mut().add_player(self.current_player_id);
-    }
-
-    #[func]
-    pub fn set_local_player(&mut self, local_player_index: i32) {
-        self.local_player = Some(self.players[local_player_index as usize].clone());
-        self.local_player_index = local_player_index;
-        godot_print!("Local player index: {}", local_player_index);
     }
 
     fn disconnect_player(&mut self, device_id: i32) {
@@ -220,11 +230,8 @@ impl Game {
         self.base_mut().add_child(&map);
         self.set_map(map);
 
-        for (i, player) in self.players.clone().iter().enumerate() {
+        for player in self.players.clone().iter() {
             self.base_mut().add_child(player);
-            if i != self.local_player_index as usize {
-                player.get_node_as::<Camera2D>("Camera2D").queue_free();
-            }
         }
 
         let zoom: Vector2 = self.determine_screen_size();

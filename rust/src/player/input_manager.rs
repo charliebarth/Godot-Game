@@ -58,7 +58,7 @@ impl INode2D for InputManager {
     /// # Arguments
     /// * `event` - The input event that was detected.
     fn input(&mut self, event: Gd<InputEvent>) {
-        if self.device_id == -1 || event.get_device() != self.device_id || event.is_echo() {
+        if event.is_echo() {
             return;
         }
 
