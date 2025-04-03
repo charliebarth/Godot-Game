@@ -14,6 +14,8 @@ pub struct Settings {
     pub map: MapSettings,
     /// The general settings.
     pub general: GeneralSettings,
+    /// The game mode 
+    pub game_mode: GameMode,
 }
 
 #[godot_api]
@@ -25,6 +27,7 @@ impl IObject for Settings {
             environment: EnvironmentSettings::default(),
             map: MapSettings::default(),
             general: GeneralSettings::default(),
+            game_mode: GameMode::default(),
         }
     }
 }
@@ -42,6 +45,11 @@ impl Settings {
     }
 
     #[func]
+    pub fn set_map(&mut self, map: String) {
+        self.map.selected_map = map;
+    }
+
+    #[func]
     pub fn get_gravity(&self) -> f32 {
         self.environment.gravity
     }
@@ -49,6 +57,26 @@ impl Settings {
     #[func]
     pub fn is_debug_mode(&self) -> bool {
         self.general.debug_mode
+    }
+
+    #[func]
+    pub fn get_game_mode(&self) -> String {
+        self.game_mode.game_mode.clone()
+    }
+
+    #[func]
+    pub fn set_game_mode(&mut self, mode: String) {
+        self.game_mode.game_mode = mode;
+    }
+
+    #[func]
+    pub fn get_team_game(&self) -> bool {
+        self.game_mode.team_game
+    }
+
+    #[func]
+    pub fn set_team_game(&mut self, team: bool) {
+        self.game_mode.team_game = team;
     }
 }
 
@@ -123,5 +151,20 @@ pub struct GeneralSettings {
 impl Default for GeneralSettings {
     fn default() -> Self {
         Self { debug_mode: true }
+    }
+}
+
+#[derive(Clone)]
+pub struct GameMode {
+    pub game_mode: String,
+    pub team_game: bool,
+}
+
+impl Default for GameMode {
+    fn default() -> Self {
+        Self { game_mode: "Last Player Standing".to_string(),
+               team_game: false, 
+            }
+        
     }
 }

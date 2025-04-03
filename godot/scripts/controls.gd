@@ -10,6 +10,9 @@ class_name Controls
 ## The Vbox that contains the rebind control nodes
 @onready var v_box_container: VBoxContainer = $MarginContainer/ScrollContainer/VBoxContainer
 
+@onready var _1: Button = $"MarginContainer/ScrollContainer/VBoxContainer/Player Choice/HBoxContainer/1"
+
+
 ## Types of actions the keybind menu controls
 var actions = ["jump", "sprint", "roll", "attack", "throw", "low_burn", 
 				"pewter", "iron", "steel"]
@@ -76,9 +79,11 @@ func load_keybind_settings(id: int) -> Dictionary:
 		for key in InputMap.action_get_events(action):
 			# Try to find the event for this device id
 			if key.device == id: 
-				key_name = key.as_text()
+				#key_name = key.as_text()
+				key_name = key
 			elif key.device == -1: # Defaults to all devices
-				backup = key.as_text()
+				#backup = key.as_text()
+				backup = key
 
 		if key_name != null: # If we found the right key for the specific device
 			keybind_settings[action] = key_name
@@ -115,3 +120,7 @@ func get_action_event_keybound(action: String, id: int) -> InputEvent:
 ## When the apply button is pressed, save the graphics setting.
 func _on_apply_pressed() -> void:
 	ConfigFileHandler.save_keybind_settings()
+
+
+func _on_tab_clicked(tab: int) -> void:
+	_1.grab_focus()

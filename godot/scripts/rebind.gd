@@ -54,8 +54,34 @@ func set_action_label() -> void:
 ## single player
 ## @param event The last event that was keybound to the action 
 func set_button_text(keybind_settings, event: InputEvent) -> void:
-	button.text = keybind_settings[action_name]
+	button.text = controller_matcher(keybind_settings[action_name])
 	latest_event = event
+	
+func controller_matcher(event: InputEvent) -> String:
+	var name = event.as_text()	
+	
+	if event is InputEventJoypadMotion:
+			match event.axis:
+				4: name = "LT"
+				5: name = "RT"
+	elif event is InputEventJoypadButton:
+			match event.button_index:
+				0: name = "A"
+				1: name = "B"
+				2: name = "X"
+				3: name = "Y"
+				4: name = "Back"
+				5: name = "Home"
+				6: name = "Menu"
+				7: name = "LS"
+				9: name = "LB"
+				10: name = "RB"
+				11: name = "Up"
+				12: name = "Down"
+				13: name = "Left"
+				14: name = "Right"
+				15: name = "Share"
+	return name
 
 
 ## Called when a rebind button is pressed. This function will set the text for 
@@ -85,10 +111,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if ((event is InputEventJoypadButton or 
 		event is InputEventJoypadMotion or 
 		event is InputEventKey) and 
-		latest_event.device == event.device): 
-			
-		rebind_action_key(event)
-		button.button_pressed = false
+		latest_event.device == event.device):
+		
+		# Makes it so you cannot rebind the sticks 
+		if event is InputEventJoypadMotion and (event.axis in [0,1,2,3]):
+			print("cannot map to this button")
+		else:
+			rebind_action_key(event)
+			button.button_pressed = false
 
 ## Rebinds an action to a new key. 
 ## 
@@ -101,7 +131,7 @@ func rebind_action_key(event: InputEvent) -> void:
 	# Add the event and stop processing input
 	InputMap.action_add_event(action_name, event)
 	set_process_unhandled_input(false) 
-	button.text = event.as_text()
+	button.text = controller_matcher(event)
 	
 	# Check to make sure no other actions have the same event 
 	for rebind in get_tree().get_nodes_in_group("keybind_btns"):

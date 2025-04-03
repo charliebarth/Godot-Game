@@ -1,7 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://sk7urw8x5b6t"]
+[gd_scene load_steps=20 format=3 uid="uid://sk7urw8x5b6t"]
 
 [ext_resource type="Script" uid="uid://dffbop3gkahf6" path="res://scripts/settings_tab_menu.gd" id="1_0wp7c"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="1_6ekok"]
+[ext_resource type="Script" uid="uid://c4e21ncdjwx0l" path="res://scripts/scroll_container.gd" id="3_cuevm"]
 [ext_resource type="Script" uid="uid://d3chi5uyd35t6" path="res://scripts/audio_slider.gd" id="4_u10kp"]
 [ext_resource type="Script" uid="uid://bhmm1oko8vjtt" path="res://scripts/graphics.gd" id="4_vq3k8"]
 [ext_resource type="Script" uid="uid://b5ych0beskk8q" path="res://scripts/controls.gd" id="5_lubqm"]
@@ -65,7 +66,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
-current_tab = 3
+current_tab = 2
 
 [node name="Sound" type="TabBar" parent="TabContainer"]
 visible = false
@@ -89,6 +90,7 @@ theme_override_constants/margin_bottom = 24
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Sound/MarginContainer"]
 layout_mode = 2
+script = ExtResource("3_cuevm")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Sound/MarginContainer/ScrollContainer"]
 layout_mode = 2
@@ -346,6 +348,7 @@ theme_override_font_sizes/font_size = 64
 selected = 1
 item_count = 2
 popup/item_0/text = "Windowed"
+popup/item_0/id = 0
 popup/item_1/text = "Fullscreen"
 popup/item_1/id = 1
 
@@ -374,6 +377,7 @@ theme_override_font_sizes/font_size = 64
 selected = 0
 item_count = 5
 popup/item_0/text = "1920x1080"
+popup/item_0/id = 0
 popup/item_1/text = "1920x1200"
 popup/item_1/id = 1
 popup/item_2/text = "1080x960"
@@ -473,7 +477,6 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [node name="Controls" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
@@ -494,6 +497,7 @@ theme_override_constants/margin_bottom = 24
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Controls/MarginContainer"]
 layout_mode = 2
+script = ExtResource("3_cuevm")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Controls/MarginContainer/ScrollContainer"]
 layout_mode = 2
@@ -649,6 +653,7 @@ theme_override_fonts/font = ExtResource("1_6ekok")
 theme_override_font_sizes/font_size = 64
 item_count = 3
 popup/item_0/text = "Xbox"
+popup/item_0/id = 0
 popup/item_1/text = "PlayStation"
 popup/item_1/id = 1
 popup/item_2/text = "Nintendo"
@@ -703,6 +708,7 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [node name="UI Customization" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../Graphics")
 focus_neighbor_right = NodePath("../Sound")
@@ -723,6 +729,9 @@ theme_override_constants/margin_bottom = 24
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/UI Customization/MarginContainer"]
 layout_mode = 2
+follow_focus = true
+draw_focus_border = true
+script = ExtResource("3_cuevm")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/UI Customization/MarginContainer/ScrollContainer"]
 layout_mode = 2
@@ -893,7 +902,9 @@ theme_override_font_sizes/font_size = 64
 text = "Apply"
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="tab_changed" from="TabContainer" to="." method="_on_tab_container_tab_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master" method="_on_h_slider_value_changed"]
+[connection signal="visibility_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Master/HBoxContainer/HSlider" to="TabContainer/Graphics" method="_on_h_slider_visibility_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/Music" method="_on_h_slider_value_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/SFX" method="_on_h_slider_value_changed"]
 [connection signal="value_changed" from="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX/HBoxContainer/HSlider" to="TabContainer/Sound/MarginContainer/ScrollContainer/VBoxContainer/PlayerSFX" method="_on_h_slider_value_changed"]

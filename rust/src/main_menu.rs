@@ -13,6 +13,7 @@ pub struct MainMenu {
     settings_menu: Option<Gd<Control>>,
     /// A reference to the UI buttons of the main menu.
     main_menu: Option<Gd<Control>>,
+    new_game_menu: Option<Gd<Control>>,
 }
 
 #[godot_api]
@@ -29,6 +30,7 @@ impl INode2D for MainMenu {
             base,
             settings_menu: None,
             main_menu: None,
+            new_game_menu: None,
         }
     }
 }
@@ -108,6 +110,21 @@ impl MainMenu {
             .clone()
     }
 
+    /// This function returns the main menu node.
+    ///
+    /// # Returns
+    /// * `Control` - The main menu node.
+    fn get_new_game_menu(&mut self) -> Gd<Control> {
+        if self.new_game_menu.is_none() {
+            self.new_game_menu = Some(self.base().get_node_as::<Control>("NewGame"));
+        }
+
+        self.new_game_menu
+            .as_ref()
+            .expect("NewGameMenu node not found")
+            .clone()
+    }
+
     /// This function swaps the main menu with the settings menu.
     #[func]
     pub fn swap_to_settings(&mut self) {
@@ -119,11 +136,29 @@ impl MainMenu {
 
         settings_menu.set_process(true);
         settings_menu.set_visible(true);
+
+        godot_print!("Swapped to settings")
+    }
+
+
+    /// This function swaps the settings menu with the main menu.
+    #[func]
+    pub fn swap_to_main_menu_from_new_game(&mut self) {
+        let mut main_menu = self.get_main_menu();
+        let mut new_game_menu = self.get_new_game_menu();
+
+        main_menu.set_process(true);
+        main_menu.set_visible(true);
+
+        new_game_menu.set_process(false);
+        new_game_menu.set_visible(false);
+
+        godot_print!("Swapped to main menu n")
     }
 
     /// This function swaps the settings menu with the main menu.
     #[func]
-    pub fn swap_to_main_menu(&mut self) {
+    pub fn swap_to_main_menu_from_settings(&mut self) {
         let mut main_menu = self.get_main_menu();
         let mut settings_menu = self.get_settings_menu();
 
@@ -132,5 +167,22 @@ impl MainMenu {
 
         settings_menu.set_process(false);
         settings_menu.set_visible(false);
+
+        godot_print!("Swapped to main menu s")
+    }
+
+    /// This function swaps the settings menu with the main menu.
+    #[func]
+    pub fn swap_to_new_game_menu(&mut self) {
+        let mut main_menu = self.get_main_menu();
+        let mut new_game_menu = self.get_new_game_menu();
+
+        main_menu.set_process(false);
+        main_menu.set_visible(false);
+
+        new_game_menu.set_process(true);
+        new_game_menu.set_visible(true);    
+
+        godot_print!("Swapped to new game")
     }
 }

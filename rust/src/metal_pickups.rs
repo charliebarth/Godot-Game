@@ -1,8 +1,9 @@
-use godot::classes::{IMarker2D, Marker2D, Timer};
+use godot::classes::{Engine, IMarker2D, Marker2D, Timer};
 use godot::prelude::*;
 
 use crate::game::Game;
 use crate::items::metal_vial::MetalVial;
+use crate::settings::Settings;
 
 const WAIT_TIME: f64 = 30.0;
 const OFF_MAP: Vector2 = Vector2::new(-100000., 100000.);
@@ -72,7 +73,13 @@ impl MetalPickup {
     }
 
     fn find_game_mode(&mut self) -> String {
-        let mode = Game::get_game_mode();
+        let settings = Engine::singleton()
+            .get_singleton("Settings")
+            .expect("settings singleton missing")
+            .try_cast::<Settings>()
+            .expect("settings is not a Settings");
+
+        let mode = settings.bind().get_game_mode();
 
         mode
     }

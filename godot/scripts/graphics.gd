@@ -79,7 +79,6 @@ func set_fps(val: float) -> void:
 	fps_label.text = str(val)
 	print("set max fps to %s" %[Engine.max_fps])
 
-
 ## When the apply button is pressed, save the graphics setting.
 func _on_apply_pressed() -> void:
 	ConfigFileHandler.save_graphics_setting()
