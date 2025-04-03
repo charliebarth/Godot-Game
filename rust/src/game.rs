@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use godot::{
-    classes::{DisplayServer, Engine, InputEvent, InputMap, Timer},
+    classes::{class_macros::sys::known_virtual_hashes::Shader, AnimatedSprite2D, DisplayServer, Engine, InputEvent, InputMap, ResourceLoader, ShaderMaterial, Timer},
     prelude::*,
 };
 
@@ -236,35 +236,38 @@ impl Game {
             .clone()
     }
 
+    #[func]
+    fn set_player_team(&mut self, id: i32, blue: bool){
+        let mut path = "";
+        if blue {
+            path = "res://shaders/blue_outline.tres";
+        } else {
+            path = "res://shaders/red_outline.tres";
+        }
+
+        let shader = ResourceLoader::singleton().load(path);
+        if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
+            let player =  self.players[id as usize].clone();
+            let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
+            player_an.set_material(&shader);
+            godot_print!("TRIED TO SET MATERIAL OF {}'s {}", player.get_name(), player_an.get_name())
+        }
+
+    }
+
     
     pub fn get_game_mode(&mut self) -> String {
         self.settings.bind().get_selected_map()
-        // unsafe { GAME_MODE.clone().unwrap() }
     }
 
+    #[func]
     pub fn get_team_game(&mut self) -> bool {
         self.settings.bind().get_team_game()
-        // unsafe { GAME_MODE.clone().unwrap() }
-    }
-    
-    /// This will attempt to start the game.
-    /// It will check if the appropriate conditions are met to start the game.
-    ///
-    /// Arguments:
-    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
-    ///
-    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
-    #[func]
-    pub fn start_game(&mut self) {
-        self.set_game_mode(String::from("last_player_standing"));
-        self.start_round();
-        return;
     }
 
     #[func]
     fn set_game_mode(&mut self, mode: String) {
         self.settings.bind_mut().set_game_mode(mode);
-        // unsafe { GAME_MODE = Some(mode) }
     }
 
     #[func]
@@ -276,6 +279,20 @@ impl Game {
     fn set_game_map(&mut self, map: String) {
         self.settings.bind_mut().set_map(map);
     }
+    
+    /// This will attempt to start the game.
+    /// It will check if the appropriate conditions are met to start the game.
+    ///
+    /// Arguments:
+    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
+    ///
+    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
+    #[func]
+    pub fn start_game(&mut self) {
+        self.start_round();
+        return;
+    }
+
 
     /// This will start a round of the game.
     /// Note: This will remove the main menu and instantiate the map.
