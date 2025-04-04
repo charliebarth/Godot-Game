@@ -36,30 +36,6 @@ impl INode2D for MainMenu {
         }
     }
 
-    
-    fn input(&mut self, event: Gd<InputEvent>) {
-
-        if self.get_team_choice_menu().is_visible(){
-            let device_id = event.get_device();
-            let mut player = self.base()
-                .get_node_as::<AnimatedSprite2D>(format!("Player{}", device_id + 1).as_str());
-            
-            if event.is_action("blue"){
-                let shader = ResourceLoader::singleton().load("res://shaders/blue_outline.tres");
-                if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
-                    player.set_material(&shader);
-                    // godot_print!("TRIED TO SET MATERIAL OF {}'s to blue", player.get_name())
-                }
-                
-            } else if event.is_action("red"){
-                let shader = ResourceLoader::singleton().load("res://shaders/red_outline.tres");
-                if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
-                    player.set_material(&shader);
-                    // godot_print!("TRIED TO SET MATERIAL OF {}'s to red", player.get_name())
-                }
-            }
-        }
-    }
 
 }
 
@@ -91,6 +67,27 @@ impl MainMenu {
         self.base()
             .get_node_as::<AnimatedSprite2D>(format!("Player{}", player_id).as_str())
             .set_visible(false);
+    }
+
+    #[func]
+    fn set_player_team(&self, id: i32, blue: bool){
+        let mut path = "";
+        if blue {
+            path = "res://shaders/blue_outline.tres";
+        } else {
+            path = "res://shaders/red_outline.tres";
+        }
+
+        let shader = ResourceLoader::singleton().load(path);
+        if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
+            let mut player = self.base()
+                .get_node_as::<AnimatedSprite2D>(
+                    format!("Player{}", id + 1).as_str()
+                );
+
+            player.set_material(&shader);
+            godot_print!("TRIED TO SET MATERIAL OF {}'s", player.get_name())
+        }
     }
 
     /// This function adds a notification to the notification box.

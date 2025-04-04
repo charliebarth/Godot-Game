@@ -5,12 +5,20 @@ extends Control
 @onready var start_game: Button = $"MarginContainer/VBoxContainer/HBoxContainer/Start Game"
 @onready var player_1: AnimatedSprite2D = $"../Player1"
 
-
+func _input(event: InputEvent) -> void:
+	if self.is_visible_in_tree():
+		var device_id = event.device
+		if event.is_action("blue"):
+			main_menu.set_player_team(device_id, true)
+			game.set_player_team(device_id, true)
+		elif event.is_action("red"):
+			main_menu.set_player_team(device_id, false)
+			game.set_player_team(device_id, false)
+		
 
 func _on_visibility_changed() -> void:
 	if self.visible:
 		start_game.grab_focus()
-		game.set_player_team(0, false)
 
 ## When the exit button is pressed, swap to the main menu
 func _on_exit_pressed() -> void:
