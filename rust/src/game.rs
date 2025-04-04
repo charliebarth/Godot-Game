@@ -24,6 +24,9 @@ pub struct Game {
     base: Base<Node2D>,
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
+
+    team_tracker: Vec<String>,
+
     /// A list of connected input devices.
     devices: Vec<i32>,
     /// The name of the button that players must press to register.
@@ -77,6 +80,7 @@ impl INode2D for Game {
         Self {
             base,
             players: Vec::new(),
+            team_tracker: Vec::new(),
             devices: Vec::new(),
             register_button: "jump".into(),
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
@@ -167,7 +171,7 @@ impl INode2D for Game {
     }
 }
 
-#[godot_api]
+#[godot_api]<'a>
 impl Game {
     /// Reference viewport size for a single player pane at zoom 1.0
     /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen
@@ -237,9 +241,22 @@ impl Game {
     }
 
     #[func]
-    fn set_player_team(&mut self, id: i32, blue: bool){
+    fn get_team_tracker(&mut self) -> & mut Vec<String> {
+        if self.team_tracker.is_empty(){
+            self.team_tracker = vec!["".to_string(); self.players.len()]
+        } 
+        while self.team_tracker.len() != self.players.len(){
+            self.team_tracker.push("".to_string());
+        }
+        &mut self.team_tracker
+    }
+
+    #[func]
+    fn set_player_team(&mut self, id: i32, team: String){
+        self.get_team_tracker()[id as usize] = team.clone();
+
         let mut path = "";
-        if blue {
+        if team == "Blue" {
             path = "res://shaders/blue_outline.tres";
         } else {
             path = "res://shaders/red_outline.tres";
@@ -431,6 +448,7 @@ impl Game {
         }
     }
 
+    #[func]
     pub fn get_number_of_players(&self) -> i32 {
         self.players.len() as i32
     }
