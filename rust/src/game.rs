@@ -289,7 +289,13 @@ impl Game {
     /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
     #[func]
     pub fn start_game(&mut self) {
-        self.start_round();
+        if self.players.len() > 0{
+            self.start_round();
+        } else {
+            self.get_main_menu()
+                .bind()
+                .add_notification("More players needed to start the game".to_string());
+        }
         return;
     }
 

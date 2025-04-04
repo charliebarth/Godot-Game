@@ -8981,10 +8981,10 @@ offset_bottom = 202.0
 color = Color(0.725, 0.725, 0.725, 0.535)
 
 [node name="NotificationBox" type="RichTextLabel" parent="."]
-offset_left = -154.0
-offset_top = -246.0
-offset_right = 154.0
-offset_bottom = -181.0
+offset_left = -258.0
+offset_top = -183.0
+offset_right = 258.0
+offset_bottom = -148.0
 theme = SubResource("Theme_2phby")
 theme_override_fonts/normal_font = ExtResource("16_7qcqk")
 theme_override_font_sizes/normal_font_size = 32
