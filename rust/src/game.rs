@@ -251,38 +251,31 @@ impl Game {
 
     #[func]
     fn set_player_team(&mut self, id: i32, team: String){
-        // self.get_team_tracker()[id as usize] = team.clone();
-
         let path: &str;
+        let add: &str;
+        let rem: &str;
 
         if team == "Blue" {
             path = "res://shaders/blue_outline.tres";
-            let add_to = self.get_team_tracker().get_mut("Blue").expect("Failed to get Key Blue");
-            if !add_to.contains(&id){
-                add_to.push(id)
-            }
-
-            let remove_from = self.get_team_tracker().get_mut("Red").expect("Failed to get Key Red");
-            if let Some(i)  = remove_from.iter().position(|&el| el == id){
-                remove_from.remove(i);
-            }
-
-            
+            add = "Blue";
+            rem = "Red";
         } else {
             path = "res://shaders/red_outline.tres";
-            let add_to = self.get_team_tracker().get_mut("Red").expect("Failed to get Key Red");
-            if !add_to.contains(&id){
-                add_to.push(id)
-            }
-
-            let remove_from = self.get_team_tracker().get_mut("Blue").expect("Failed to get Key Blue");
-            if let Some(i)  = remove_from.iter().position(|&el| el == id){
-                remove_from.remove(i);
-            }
-
+            add = "Red";
+            rem = "Blue";
         }
 
-        godot_print!("TEAMS: {:?}", self.get_team_tracker());
+        let add_to = self.get_team_tracker().get_mut(add).expect(("Failed to get Key"));
+        if !add_to.contains(&id){
+            add_to.push(id)
+        }
+
+        let remove_from = self.get_team_tracker().get_mut(rem).expect("Failed to get Key");
+        if let Some(i)  = remove_from.iter().position(|&el| el == id){
+            remove_from.remove(i);
+        }
+
+        godot_print!("{:?}", self.get_team_tracker());
 
         let shader = ResourceLoader::singleton().load(path);
         if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
