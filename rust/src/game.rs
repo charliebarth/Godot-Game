@@ -25,7 +25,7 @@ pub struct Game {
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
 
-    team_tracker: Vec<String>,
+    team_tracker: HashMap<String, Vec<i32>>,
 
     /// A list of connected input devices.
     devices: Vec<i32>,
@@ -80,7 +80,7 @@ impl INode2D for Game {
         Self {
             base,
             players: Vec::new(),
-            team_tracker: Vec::new(),
+            team_tracker: HashMap::new(),
             devices: Vec::new(),
             register_button: "jump".into(),
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
@@ -171,7 +171,7 @@ impl INode2D for Game {
     }
 }
 
-#[godot_api]<'a>
+#[godot_api]
 impl Game {
     /// Reference viewport size for a single player pane at zoom 1.0
     /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen
@@ -240,27 +240,49 @@ impl Game {
             .clone()
     }
 
-    #[func]
-    fn get_team_tracker(&mut self) -> & mut Vec<String> {
-        if self.team_tracker.is_empty(){
-            self.team_tracker = vec!["".to_string(); self.players.len()]
+    fn get_team_tracker(&mut self) -> & mut HashMap<String, Vec<i32>> {
+        if self.team_tracker.is_empty() {
+            self.team_tracker.insert("Red".to_string(), vec![]);
+            self.team_tracker.insert("Blue".to_string(), vec![]);
         } 
-        while self.team_tracker.len() != self.players.len(){
-            self.team_tracker.push("".to_string());
-        }
+        
         &mut self.team_tracker
     }
 
     #[func]
     fn set_player_team(&mut self, id: i32, team: String){
-        self.get_team_tracker()[id as usize] = team.clone();
+        // self.get_team_tracker()[id as usize] = team.clone();
 
-        let mut path = "";
+        let path: &str;
+
         if team == "Blue" {
             path = "res://shaders/blue_outline.tres";
+            let add_to = self.get_team_tracker().get_mut("Blue").expect("Failed to get Key Blue");
+            if !add_to.contains(&id){
+                add_to.push(id)
+            }
+
+            let remove_from = self.get_team_tracker().get_mut("Red").expect("Failed to get Key Red");
+            if let Some(i)  = remove_from.iter().position(|&el| el == id){
+                remove_from.remove(i);
+            }
+
+            
         } else {
             path = "res://shaders/red_outline.tres";
+            let add_to = self.get_team_tracker().get_mut("Red").expect("Failed to get Key Red");
+            if !add_to.contains(&id){
+                add_to.push(id)
+            }
+
+            let remove_from = self.get_team_tracker().get_mut("Blue").expect("Failed to get Key Blue");
+            if let Some(i)  = remove_from.iter().position(|&el| el == id){
+                remove_from.remove(i);
+            }
+
         }
+
+        godot_print!("TEAMS: {:?}", self.get_team_tracker());
 
         let shader = ResourceLoader::singleton().load(path);
         if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
