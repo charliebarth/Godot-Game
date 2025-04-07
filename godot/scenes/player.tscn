@@ -1152,9 +1152,19 @@ amount = 12
 lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
-[node name="BronzeParticles" type="GPUParticles2D" parent="."]
+[node name="CopperParticles" type="GPUParticles2D" parent="."]
 visible = false
 self_modulate = Color(17, 1, 17, 1)
+show_behind_parent = true
+light_mask = 524289
+position = Vector2(0, 12)
+amount = 12
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+
+[node name="BronzeParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(0, 17, 17, 1)
 show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 6)

@@ -96,6 +96,15 @@ impl Metal for Tin {
 
         if self.burning {
             self.player.bind_mut().emit_tin_signal(10.0, 3.0);
+            //add to the player's active metals
+            let mut player = self.player.bind_mut();
+            player.add_active_metal(self.metal_type);
+        }
+
+        if !self.burning && !self.low_burning {
+            //remove the metal from the player's active metals
+            let mut player = self.player.bind_mut();
+            player.remove_active_metal(self.metal_type);
         }
     }
     fn set_low_burning(&mut self, low_burning: bool) {
@@ -103,6 +112,15 @@ impl Metal for Tin {
 
         if self.low_burning {
             self.player.bind_mut().emit_tin_signal(5.0, 3.0);
+            //add to the player's active metals
+            let mut player = self.player.bind_mut();
+            player.add_active_metal(self.metal_type);
+        }
+
+        if !self.low_burning && !self.burning {
+            //remove the metal from the player's active metals
+            let mut player = self.player.bind_mut();
+            player.remove_active_metal(self.metal_type);
         }
     }
 
