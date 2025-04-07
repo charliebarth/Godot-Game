@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dowm3lcngx6fx" path="res://scenes/Platforms/wooden_platform2.tscn" id="11_y4dgq"]
 [ext_resource type="PackedScene" uid="uid://qa3m7u8pg211" path="res://scenes/Platforms/wooden_platform3.tscn" id="12_atqcb"]
 [ext_resource type="PackedScene" uid="uid://bcmac4mal51c3" path="res://scenes/Platforms/wooden_platform4.tscn" id="13_7e3wc"]
-[ext_resource type="Shader" path="res://shader scripts/fog.gdshader" id="14_7bhro"]
+[ext_resource type="Shader" uid="uid://doggl7ot00nb8" path="res://shader scripts/fog.gdshader" id="14_7bhro"]
 [ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="15_076fl"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="16_vu8gn"]
 [ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="17_c5hcy"]
@@ -11543,9 +11543,9 @@ noise = SubResource("FastNoiseLite_17kim")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plphe"]
 shader = ExtResource("14_7bhro")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_6ugtl")
 shader_parameter/density = 1.0
 shader_parameter/speed = Vector2(0.001, 0.001)
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_6ugtl")
 
 [sub_resource type="Gradient" id="Gradient_867xu"]
 offsets = PackedFloat32Array(1)

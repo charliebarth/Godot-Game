@@ -1044,11 +1044,23 @@ impl Player {
     /// * `owner` - A reference to the node for the hitbox of the player
     pub fn enable_hitbox(&mut self) {
         self.is_attacking = true;
+
         // Get the hitbox of the player
-        let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
-        // Enable the hitbox of the player
-        hitbox.set_monitoring(true);
-        hitbox.set_collision_layer(1 << 2);
+        let mut right_hitbox = self.base().get_node_as::<Area2D>("RightHitbox");
+        let mut left_hitbox = self.base().get_node_as::<Area2D>("LeftHitbox");
+
+        // Enable the hitbox of the player depending on the direction they are facing
+        if self.direction > 0.0 {
+            right_hitbox.set_monitoring(true);
+            right_hitbox.set_collision_layer(1 << 2);
+            left_hitbox.set_monitoring(false);
+            left_hitbox.set_collision_layer(1 << 3);   // TODO: this layer could be wrong
+        } else {
+            left_hitbox.set_monitoring(true);
+            left_hitbox.set_collision_layer(1 << 2);
+            right_hitbox.set_monitoring(false);
+            right_hitbox.set_collision_layer(1 << 3);   // TODO: this layer could be wrong
+        }
     }
 
     /// Disable the hitbox of the player when they are not attacking
@@ -1058,10 +1070,14 @@ impl Player {
     pub fn disable_hitbox(&mut self) {
         self.is_attacking = false;
         // Get the hitbox of the player
-        let mut hitbox = self.base().get_node_as::<Area2D>("Hitbox");
-        // Disable the hitbox of the player
-        hitbox.set_monitoring(false);
-        hitbox.set_collision_layer(1 << 3);
+        let mut right_hitbox = self.base().get_node_as::<Area2D>("RightHitbox");
+        let mut left_hitbox = self.base().get_node_as::<Area2D>("LeftHitbox");
+
+        // Disable the hitboxes of the player
+        right_hitbox.set_monitoring(false);
+        right_hitbox.set_collision_layer(1 << 3);
+        left_hitbox.set_monitoring(false);
+        left_hitbox.set_collision_layer(1 << 3);
     }
 
     /// Emit a signal to adjust the light for the player when they use tin
