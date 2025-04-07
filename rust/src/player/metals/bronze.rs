@@ -48,7 +48,7 @@ impl Bronze {
     /// Function that updates particle visibility for nearby players
     fn update_particle_visibility(&mut self) {
         let mut player = self.player.bind_mut();
-        let visibility_mask = 1 << player.get_player_id();
+        let visibility_mask = 1 << player.get_player_id() * 2;
         let nearby_players = player.get_nearby_players();
         for other_player in nearby_players.iter_mut() {
             let mut other_player = other_player.bind_mut();
@@ -58,11 +58,12 @@ impl Bronze {
 
     fn hide_particle_visibility(&mut self) {
         let mut player = self.player.bind_mut();
+        let visibility_mask = 1 << player.get_player_id() * 2;
 
         let nearby_players = player.get_nearby_players();
         for other_player in nearby_players.iter_mut() {
             let mut other_player = other_player.bind_mut();
-            other_player.hide_particles();
+            other_player.hide_particles(visibility_mask);
         }
     }
 }
