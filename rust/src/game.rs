@@ -14,6 +14,10 @@ use crate::{
 };
 
 static mut GAME_MODE: Option<String> = None;
+// The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
+const REQUIRED_ELIMINATIONS: i32 = 5;
+// The number of rounds required to win the game
+const REQUIRED_ROUNDS: i32 = 3;
 
 /// The Game class is responsible for managing the game state such as players, maps, and the main menu.
 /// This is also the root node of the scene tree.
@@ -53,9 +57,11 @@ pub struct Game {
     screen_size: Vector2,
     /// The settings for the game
     settings: Gd<Settings>,
-    /// The number of kills for each player.
+    /// The number of kills for each player
     eliminations: HashMap<i32, i32>,
-    // A flag to determine if a new round should be started
+    /// The number of round wins each player has
+    round_wins: HashMap<i32, i32>,
+    /// A flag to determine if a new round should be started
     should_start_new_round: bool,
 }
 
@@ -93,6 +99,7 @@ impl INode2D for Game {
             screen_size: Vector2::new(screen_size.x as f32, screen_size.y as f32),
             settings,
             eliminations: HashMap::new(),
+            round_wins: HashMap::new(),
             should_start_new_round: false,
         }
     }
@@ -238,7 +245,7 @@ impl Game {
 
     
     pub fn get_game_mode(&mut self) -> String {
-        self.settings.bind().get_selected_map()
+        self.settings.bind().get_game_mode()
         // unsafe { GAME_MODE.clone().unwrap() }
     }
 
@@ -256,7 +263,7 @@ impl Game {
     /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
     #[func]
     pub fn start_game(&mut self) {
-        self.set_game_mode(String::from("last_player_standing"));
+        // self.set_game_mode(String::from("last_player_standing"));
         self.start_round();
         return;
     }
@@ -440,12 +447,19 @@ impl Game {
     /// * `player_id` - The id of the player to disconnect.
     /// * `instance_elims` - The number of eliminations the player got in this instance.
     pub fn remove_player(&mut self, player_id: i32, instance_elims: i32) {
-        // before removing the player, update the eliminations for the player associated with the player_id in the hashmap
+        // before removing the player, update the eliminations and round wins for the player
+        // associated with the player_id in the hashmap
+        if self.players.len() == 1 {
+            let last_player_id = self.players[0].bind().get_player_id();
+            let wins = self.round_wins.entry(last_player_id).or_insert(0);
+            *wins += 1;
+        }
 
         // get the number of eliminations for the player in the hashmap
         let eliminations = self.eliminations.get(&player_id).unwrap();
 
-        // update the eliminations in the hashmap with the eliminations in this instance + the eliminations in the hashmap
+        // update the eliminations in the hashmap with the eliminations in this instance + the
+        // eliminations in the hashmap
         self.eliminations
             .insert(player_id, eliminations + instance_elims);
 
@@ -471,19 +485,33 @@ impl Game {
             return true;
         }
 
-        // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
-        const REQUIRED_ELIMINATIONS: i32 = 2;
-        // check if a player has reached the required number of eliminations by checking the hashmap
-        for (_, eliminations) in self.eliminations.iter() {
-            if *eliminations >= REQUIRED_ELIMINATIONS {
-                // set the winning player to the player with the required number of eliminations
-                self.winning_player = self
-                    .eliminations
-                    .iter()
-                    .position(|(&k, &v)| v == REQUIRED_ELIMINATIONS)
-                    .unwrap() as i32
-                    + 1;
-                return true;
+        if self.get_game_mode() == "Head Hunters" {
+            // check if a player has reached the required number of eliminations by checking the hashmap
+            for (_, eliminations) in self.eliminations.iter() {
+                if *eliminations >= REQUIRED_ELIMINATIONS {
+                    // set the winning player to the player with the required number of eliminations
+                    self.winning_player = self
+                        .eliminations
+                        .iter()
+                        .position(|(&k, &v)| v == REQUIRED_ELIMINATIONS)
+                        .unwrap() as i32
+                        + 1;
+                    return true;
+                }
+            }
+        } else if self.get_game_mode() == "Last Player Standing" {
+            // check if a player has reached the required number of round wins
+            for (_, round_wins) in self.round_wins.iter() {
+                if *round_wins >= REQUIRED_ROUNDS {
+                    // set the winning player to the player with the required number of round wins
+                    self.winning_player = self
+                        .round_wins
+                        .iter()
+                        .position(|(&k, &v)| v == REQUIRED_ROUNDS)
+                        .unwrap() as i32
+                        + 1;
+                    return true;
+                }
             }
         }
         false
