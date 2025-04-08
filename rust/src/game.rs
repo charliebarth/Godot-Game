@@ -240,6 +240,10 @@ impl Game {
             .clone()
     }
 
+    /// Gets the hashmap that stores which team each player is on, if the 
+    /// hashmap is empty, initializes it with the teams Red and Blue
+    /// # Returns
+    /// * a hasmap of strings (team names) maped to vectors of i32 (player ids)
     fn get_team_tracker(&mut self) -> & mut HashMap<String, Vec<i32>> {
         if self.team_tracker.is_empty() {
             self.team_tracker.insert("Red".to_string(), vec![]);
@@ -249,64 +253,85 @@ impl Game {
         &mut self.team_tracker
     }
 
+    /// Given the players Id and chosen team, adds a player to the correct 
+    /// hashmap and sets the players outline to the correct color of their team.
     #[func]
     fn set_player_team(&mut self, id: i32, team: String){
         let path: &str;
-        let add: &str;
-        let rem: &str;
+        let add: &str = &team; // The team to add the player to 
+        let rem: &str; // The team to remove the player from 
 
         if team == "Blue" {
             path = "res://shaders/blue_outline.tres";
-            add = "Blue";
             rem = "Red";
         } else {
             path = "res://shaders/red_outline.tres";
-            add = "Red";
             rem = "Blue";
         }
 
-        let add_to = self.get_team_tracker().get_mut(add).expect(("Failed to get Key"));
+        // Add the player to the correct team if they aren't already on it
+        let add_to = self.get_team_tracker()
+                                        .get_mut(add)
+                                        .expect(("Failed to get Key"));
         if !add_to.contains(&id){
             add_to.push(id)
         }
 
-        let remove_from = self.get_team_tracker().get_mut(rem).expect("Failed to get Key");
+        // Removes the player from the other team if they were on it 
+        let remove_from = self.get_team_tracker()
+                                             .get_mut(rem)
+                                             .expect("Failed to get Key");
         if let Some(i)  = remove_from.iter().position(|&el| el == id){
             remove_from.remove(i);
         }
 
-        godot_print!("{:?}", self.get_team_tracker());
-
+        // Sets the players outline to the team color
         let shader = ResourceLoader::singleton().load(path);
         if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>(){
             let player =  self.players[id as usize].clone();
             let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
             player_an.set_material(&shader);
-            godot_print!("TRIED TO SET MATERIAL OF {}'s {}", player.get_name(), player_an.get_name())
         }
 
     }
 
-    
+    /// Gets the selected game mode from the settings 
+    /// # Returns 
+    /// * A string representing the game mode (see options below)
+    ///     - "Last Player Standing" 
+    ///     - "Head Hunters" 
     pub fn get_game_mode(&mut self) -> String {
-        self.settings.bind().get_selected_map()
+        self.settings.bind().get_game_mode()
     }
 
+    /// Gets whether the game is a team game or not from the settings 
+    /// # Returns 
+    /// * true if team game false if solo
     #[func]
     pub fn get_team_game(&mut self) -> bool {
         self.settings.bind().get_team_game()
     }
 
+    /// Sets the game mode for this game in the settings 
+    /// # Paramaters 
+    /// * `mode` - The new game mode
     #[func]
     fn set_game_mode(&mut self, mode: String) {
         self.settings.bind_mut().set_game_mode(mode);
     }
 
+    /// Sets whether this game is a team game or not in the settings 
+    /// # Parameters 
+    /// * `team_game` - true if team game false if solo
     #[func]
     fn set_team_game(&mut self, team_game: bool) {
         self.settings.bind_mut().set_team_game(team_game);
     }
 
+    /// Sets the map for this game in the settings 
+    /// # Parameters
+    /// * `map` - a string representing the map to play on, should be entered 
+    ///           based on the name of the map node in godot ex. `MapOne`
     #[func]
     fn set_game_map(&mut self, map: String) {
         self.settings.bind_mut().set_map(map);
@@ -314,20 +339,40 @@ impl Game {
     
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
-    ///
-    /// Arguments:
-    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
-    ///
-    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
+    /// # Conditions 
+    /// * there must be at least one player 
+    /// * in team games each player must be on a team
+    /// * in team games each team must have at least one player
     #[func]
     pub fn start_game(&mut self) {
-        if self.players.len() > 0{
-            self.start_round();
-        } else {
+        if self.get_team_game(){
+
+            let red_num = self.get_team_tracker()
+                                    .get("Red")
+                                    .expect("Couldn't get value").len();
+            let blue_num = self.get_team_tracker()
+                                    .get("Blue")
+                                    .expect("Couldn't get value").len();
+            let team_players =  red_num + blue_num;
+
+            if team_players != self.players.len() {
+                self.get_main_menu()
+                .bind()
+                .add_notification("All players must choose a team".to_string());
+            } else if blue_num == 0 || red_num == 0 {
+                self.get_main_menu()
+                .bind()
+                .add_notification("Each team must have at least one player".to_string());
+            }
+
+        } else if self.players.len() <= 0{
             self.get_main_menu()
                 .bind()
                 .add_notification("More players needed to start the game".to_string());
+        } else {
+            self.start_round();
         }
+    
         return;
     }
 
@@ -463,6 +508,9 @@ impl Game {
         }
     }
 
+    /// Gets the number of players currently in this game as an i32
+    /// # Returns 
+    /// * The number of players currently connected 
     #[func]
     pub fn get_number_of_players(&self) -> i32 {
         self.players.len() as i32

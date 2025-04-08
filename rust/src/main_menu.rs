@@ -13,7 +13,9 @@ pub struct MainMenu {
     settings_menu: Option<Gd<Control>>,
     /// A reference to the UI buttons of the main menu.
     main_menu: Option<Gd<Control>>,
+    /// A reference to the new game menu. 
     new_game_menu: Option<Gd<Control>>,
+    /// A reference to the team choice menu. 
     team_choice_menu: Option<Gd<Control>>,
 }
 
@@ -69,6 +71,11 @@ impl MainMenu {
             .set_visible(false);
     }
 
+    /// This function sets the outline of the player animation on the main menu
+    /// to be based on the chosen team of the specified player. 
+    /// # Paramaters 
+    /// * `id` - The id of the player to set the outline of.
+    /// * `blue` - true if we are setting it to blue, false if red. 
     #[func]
     fn set_player_team(&self, id: i32, blue: bool){
         let mut path = "";
@@ -139,10 +146,10 @@ impl MainMenu {
             .clone()
     }
 
-    /// This function returns the main menu node.
+    /// This function returns the new gam menu node.
     ///
     /// # Returns
-    /// * `Control` - The main menu node.
+    /// * `Control` - The new game menu node.
     fn get_new_game_menu(&mut self) -> Gd<Control> {
         if self.new_game_menu.is_none() {
             self.new_game_menu = Some(self.base().get_node_as::<Control>("NewGame"));
@@ -154,10 +161,10 @@ impl MainMenu {
             .clone()
     }
 
-    /// This function returns the main menu node.
+    /// This function returns the team choice menu node.
     ///
     /// # Returns
-    /// * `Control` - The main menu node.
+    /// * `Control` - The team choice menu node.
     fn get_team_choice_menu(&mut self) -> Gd<Control> {
         if self.team_choice_menu.is_none() {
             self.team_choice_menu = Some(self.base().get_node_as::<Control>("TeamChoice"));
@@ -180,12 +187,11 @@ impl MainMenu {
 
         settings_menu.set_process(true);
         settings_menu.set_visible(true);
-
-        godot_print!("Swapped to settings")
     }
 
-
-    /// This function swaps the current menu with the main menu.
+    /// This function swaps the current menu with the main menu. The menu could
+    /// either be on the new game menu or settings menu before being swapped to 
+    /// the settings menu. 
     #[func]
     pub fn swap_to_main_menu(&mut self) {
         let mut main_menu = self.get_main_menu();
@@ -204,7 +210,8 @@ impl MainMenu {
 
 
 
-    /// This function swaps the settings menu with the main menu.
+    /// This function swaps the current menu with the new game menu. The current
+    /// menu could either be the main menu or team choice menu. 
     #[func]
     pub fn swap_to_new_game_menu(&mut self) {
         let mut main_menu = self.get_main_menu();
@@ -222,7 +229,9 @@ impl MainMenu {
 
     }
 
-    /// This function swaps the settings menu with the main menu.
+    /// This function swaps the new game menu with the team choice menu. Also 
+    /// brings the players shown in the main menu to the foreground to be used 
+    /// in choosing player teams. 
     #[func]
     pub fn swap_to_team_choice_menu(&mut self) {
         let mut new_game_menu = self.get_new_game_menu();
@@ -236,7 +245,9 @@ impl MainMenu {
 
         // TODO - needs to change if we ever support more players on local 
         // Makes the on screen players visible in front of the menu UI
-        for i in 1..5{
+        const MIN_PLAYER_ID: i32 = 1;
+        const MAX_PLAYER_ID: i32 = 5;
+        for i in MIN_PLAYER_ID..MAX_PLAYER_ID{
             let mut player = self.base_mut()
             .get_node_as::<AnimatedSprite2D>(format!("Player{}", i).as_str());
 
