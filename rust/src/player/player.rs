@@ -1059,12 +1059,12 @@ impl Player {
             right_hitbox.set_monitoring(true);
             right_hitbox.set_collision_layer(1 << 2);
             left_hitbox.set_monitoring(false);
-            left_hitbox.set_collision_layer(1 << 3);   // TODO: this layer could be wrong
+            left_hitbox.set_collision_layer(1 << 3);
         } else {
             left_hitbox.set_monitoring(true);
             left_hitbox.set_collision_layer(1 << 2);
             right_hitbox.set_monitoring(false);
-            right_hitbox.set_collision_layer(1 << 3);   // TODO: this layer could be wrong
+            right_hitbox.set_collision_layer(1 << 3);
         }
     }
 
