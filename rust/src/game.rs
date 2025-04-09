@@ -39,8 +39,8 @@ pub struct Game {
     started: bool,
     /// The current map.
     map: Option<Gd<Map>>,
-    /// The ID of the winning player.
-    winning_player: i32,
+    /// The ID of the winning player as a string.
+    winner: String,
     /// A collection of maps/levels that can be loaded.
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
@@ -87,7 +87,7 @@ impl INode2D for Game {
             current_player_id: 0,
             started: false,
             map: None,
-            winning_player: 0,
+            winner: "0".to_string(),
             maps: HashMap::new(),
             main_menu: None,
             split_screen_one: SplitScreen::new_alloc(),
@@ -483,9 +483,16 @@ impl Game {
         // Show winner screen
         let mut main_menu = self.get_main_menu();
         self.base_mut().add_child(&main_menu);
-        main_menu
-            .bind_mut()
-            .add_notification(format!("Player {} wins!", self.winning_player));
+
+        if self.get_team_game(){
+            main_menu
+                .bind_mut()
+                .add_notification(format!("Team {} wins!", self.winner));
+        } else {
+            main_menu
+                .bind_mut()
+                .add_notification(format!("Player {} wins!", self.winner));
+        }
     }
 
     #[func]
@@ -566,6 +573,21 @@ impl Game {
         }
     }
 
+    fn get_team_eliminations(&mut self, team: &str) -> i32{
+        
+        let red = self.team_tracker
+                                    .get(team)
+                                    .expect("Couldn't get value");
+        
+        let elims = &self.eliminations;
+        let mut team_elims: i32 = 0;
+        for el in red {
+            team_elims += elims.get(el).unwrap();
+        }
+
+        team_elims
+    }
+
     /// This will check if a player has reached the required elimination count.
     ///
     /// Returns:
@@ -577,16 +599,31 @@ impl Game {
 
         // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
         const REQUIRED_ELIMINATIONS: i32 = 2;
+
+        if self.get_team_game() {
+            let red = self.get_team_eliminations("Red");
+            let blue = self.get_team_eliminations("Blue");
+
+            if red == REQUIRED_ELIMINATIONS {
+                self.winner = "Red".to_string();
+                return true;
+            } else if blue == REQUIRED_ELIMINATIONS {
+                self.winner = "Blue".to_string();
+                return true;
+            }
+            return false;
+        }
+
         // check if a player has reached the required number of eliminations by checking the hashmap
         for (_, eliminations) in self.eliminations.iter() {
             if *eliminations >= REQUIRED_ELIMINATIONS {
                 // set the winning player to the player with the required number of eliminations
-                self.winning_player = self
+                self.winner = (self
                     .eliminations
                     .iter()
                     .position(|(&k, &v)| v == REQUIRED_ELIMINATIONS)
                     .unwrap() as i32
-                    + 1;
+                    + 1).to_string();
                 return true;
             }
         }

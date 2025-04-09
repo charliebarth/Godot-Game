@@ -30,9 +30,9 @@ func _on_visibility_changed() -> void:
 func _on_exit_pressed() -> void:
 	main_menu.swap_to_new_game_menu()
 
+## Starts the game
 func _on_start_game_pressed() -> void:
-	#if game.get_number_of_players() == game.
-		game.start_game()
+	game.start_game()
 
 ## When the team choice menu exits the tree, stop processing
 func _on_tree_exited() -> void:
