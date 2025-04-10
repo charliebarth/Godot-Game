@@ -104,6 +104,8 @@ impl INode2D for Game {
         }
     }
 
+    /// This is a builtin method for Godot that is called when the node is added to the scene tree.
+    /// This is where the signals are connected and the maps are loaded.
     fn ready(&mut self) {
         Input::singleton().connect(
             "joy_connection_changed",
@@ -180,8 +182,14 @@ impl Game {
     /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen
     const REFERENCE_VIEWPORT: Vector2 = Vector2::new(960.0, 540.0);
 
-    /// Calculates the appropriate zoom factor based on viewport size
-    /// Uses the minimum zoom value to maintain aspect ratio
+    /// Calculates the appropriate zoom factor based on viewport size.
+    /// Uses the minimum zoom value to maintain aspect ratio.
+    ///
+    /// Arguments:
+    /// * `viewport_size` - The size of the viewport to calculate the zoom for.
+    ///
+    /// Returns:
+    /// * Vector2 - The zoom factor for the viewport.
     fn calculate_zoom(&self, viewport_size: Vector2) -> Vector2 {
         let zoom_x = viewport_size.x / Self::REFERENCE_VIEWPORT.x;
         let zoom_y = viewport_size.y / Self::REFERENCE_VIEWPORT.y;
@@ -189,6 +197,11 @@ impl Game {
         Vector2::new(zoom, zoom)
     }
 
+    /// This will register a player to the game by adding them to the devices vector
+    /// and creating a new player instance. The player will then be added to the main menu.
+    ///
+    /// Arguments:
+    /// * `device_id` - The device id of the player to register.
     fn register_player(&mut self, device_id: i32) {
         self.devices.push(device_id);
         self.current_player_id = self.devices.len() as i32;
@@ -233,6 +246,10 @@ impl Game {
         self.current_player_id = self.devices.len() as i32;
     }
 
+    /// This will return the main menu node.
+    ///
+    /// Returns:
+    /// * Gd<MainMenu> - The main menu node.
     fn get_main_menu(&mut self) -> Gd<MainMenu> {
         if self.main_menu.is_none() {
             self.main_menu = Some(self.base().get_node_as::<MainMenu>("MainMenu"));
@@ -243,42 +260,59 @@ impl Game {
             .clone()
     }
 
-    
+    /// This will return the game mode from the settings.
+    ///
+    /// Returns:
+    /// * String - The name of the game mode.
     pub fn get_game_mode(&mut self) -> String {
         self.settings.bind().get_game_mode()
-        // unsafe { GAME_MODE.clone().unwrap() }
     }
 
+    /// This will return the team game from the settings.
+    ///
+    /// Returns:
+    /// * bool - If the game is a team game or not.
     pub fn get_team_game(&mut self) -> bool {
         self.settings.bind().get_team_game()
-        // unsafe { GAME_MODE.clone().unwrap() }
     }
     
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
     ///
     /// Arguments:
-    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
+    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1
+    ///                 player.
     ///
-    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
+    /// Note: If test mode is true the game will only start if there is exactly 1 player.
+    /// Otherwise the game will start only if there are at least 2 players.
     #[func]
     pub fn start_game(&mut self) {
-        // self.set_game_mode(String::from("last_player_standing"));
         self.start_round();
         return;
     }
 
+    /// This will set the game mode.
+    ///
+    /// Arguments:
+    /// * `mode` - The name of the game mode to set.
     #[func]
     fn set_game_mode(&mut self, mode: String) {
         self.settings.bind_mut().set_game_mode(mode);
-        // unsafe { GAME_MODE = Some(mode) }
     }
 
+    /// This will set the game mode to team game or not.
+    ///
+    /// Arguments:
+    /// * `team_game` - A boolean that determines if the game is a team game or not.
     #[func]
     fn set_team_game(&mut self, team_game: bool) {
         self.settings.bind_mut().set_team_game(team_game);
     }
 
+    /// This will set the game map.
+    ///
+    /// Arguments:
+    /// * `map` - The name of the map to set.
     #[func]
     fn set_game_map(&mut self, map: String) {
         self.settings.bind_mut().set_map(map);
@@ -355,6 +389,10 @@ impl Game {
         self.day_night_cycle();
     }
 
+    /// This will determine the screen size based on the number of players.
+    ///
+    /// Returns:
+    /// * Vector2 - The size of the screen.
     pub fn determine_screen_size(&mut self) -> Vector2 {
         let screen_size: Vector2;
         if self.players.len() == 1 {
@@ -371,6 +409,7 @@ impl Game {
         self.calculate_zoom(screen_size)
     }
 
+    /// This will end the game, end the day/night cycle, and show the winner screen.
     #[func]
     pub fn end_game(&mut self) {
         self.started = false;
@@ -395,6 +434,11 @@ impl Game {
             .add_notification(format!("Player {} wins!", self.winning_player));
     }
 
+    /// This will be called when a device is connected or disconnected.
+    ///
+    /// Arguments:
+    /// * `device_id` - The id of the device that was connected or disconnected.
+    /// * `connected` - A boolean that determines if the device is connected or disconnected.
     #[func]
     pub fn device_changed(&mut self, device_id: i32, connected: bool) {
         if self.devices.contains(&device_id) && self.started {
@@ -415,18 +459,31 @@ impl Game {
         }
     }
 
+    /// This will return the number of players in the game.
+    ///
+    /// Returns:
+    /// * i32 - The number of players in the game.
     pub fn get_number_of_players(&self) -> i32 {
         self.players.len() as i32
     }
 
+    /// This will set the map for the game.
+    ///
+    /// Arguments:
+    /// * `map` - The map to set.
     pub fn set_map(&mut self, map: Gd<Map>) {
         self.map = Some(map);
     }
 
+    /// This will return the current map.
+    ///
+    /// Returns:
+    /// * Gd<Map> - The current map.
     pub fn get_map(&self) -> Gd<Map> {
         self.map.as_ref().expect("Map not found").clone()
     }
 
+    /// This will reset the players by clearing the players vector and re-adding them.
     fn reset_players(&mut self) {
         self.players.clear();
         self.current_player_id = 0;
@@ -481,7 +538,7 @@ impl Game {
     /// This will check if a player has reached the required elimination count.
     ///
     /// Returns:
-    /// * `flag` - If a player has reached the required elimination count.
+    /// * bool - If a player has reached the required elimination count.
     fn check_win_condition(&mut self) -> bool {
         if self.devices.len() == 1 {
             return true;
@@ -520,7 +577,6 @@ impl Game {
     }
 
     /// This will start a new round. It will reset the players and start the game again.
-    ///
     fn start_new_round(&mut self) {
         // Reset split screens to size 0,0
         self.split_screen_one.bind_mut().reset();
@@ -530,6 +586,7 @@ impl Game {
         self.should_start_new_round = true;
     }
 
+    /// This will start the day/night cycle.
     fn day_night_cycle(&mut self) {
         let game = self.base().get_node_as::<Game>(".");
         self.day_night_timer.connect(
@@ -541,6 +598,7 @@ impl Game {
         self.base_mut().add_child(&day_night_timer);
     }
 
+    /// This will change the day/night cycle.
     #[func]
     pub fn cycle_change(&mut self) {
         const TRANSITION_TIME: f64 = 3.0;
