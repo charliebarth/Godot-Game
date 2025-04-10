@@ -469,8 +469,6 @@ impl Game {
             *wins += 1;
         }
 
-        godot_print!("The player's wins: {:?}", self.round_wins);
-
         if player_length <= 1 {
             if !self.check_win_condition() {
                 self.start_new_round();
