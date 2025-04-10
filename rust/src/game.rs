@@ -447,13 +447,8 @@ impl Game {
     /// * `player_id` - The id of the player to disconnect.
     /// * `instance_elims` - The number of eliminations the player got in this instance.
     pub fn remove_player(&mut self, player_id: i32, instance_elims: i32) {
-        // before removing the player, update the eliminations and round wins for the player
+        // before removing the player, update the eliminations for the player
         // associated with the player_id in the hashmap
-        if self.players.len() == 1 {
-            let last_player_id = self.players[0].bind().get_player_id();
-            let wins = self.round_wins.entry(last_player_id).or_insert(0);
-            *wins += 1;
-        }
 
         // get the number of eliminations for the player in the hashmap
         let eliminations = self.eliminations.get(&player_id).unwrap();
@@ -466,6 +461,15 @@ impl Game {
         self.players.remove(player_id as usize - 1);
 
         let player_length = self.players.len();
+
+        // if there is only one player left in the game, they are the winner of that round
+        if player_length == 1 {
+            let last_player_id = self.players[0].bind().get_player_id();
+            let wins = self.round_wins.entry(last_player_id).or_insert(0);
+            *wins += 1;
+        }
+
+        godot_print!("The player's wins: {:?}", self.round_wins);
 
         if player_length <= 1 {
             if !self.check_win_condition() {
