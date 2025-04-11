@@ -11,10 +11,10 @@ use godot::prelude::*;
 pub use crate::ui::metal_bar::MetalBar;
 
 // The maximum number of bars to display on a players screen at a time
-const MAX_BARS_ON_SCREEN: u8 = 4;
+const MAX_BARS_ON_SCREEN: u8 = 3;
 
 // Change this to account for how many we currently support
-const TOTAL_BARS: u8 = 3;
+const TOTAL_BARS: u8 = 6;
 
 // Represents the order of supported metals (simply reorder these based on implementation)
 const PATHS: [&str; 10] = [
@@ -96,6 +96,7 @@ impl MetalReserveBarManager {
         let mut input_map: Gd<InputMap> = InputMap::singleton();
         let inputs: Array<StringName> = input_map.get_actions();
 
+        let mut max = 0;
         let length: usize = inputs.len();
         for i in (0..length).rev() {
             let input: StringName = inputs.get(i).unwrap();
@@ -105,7 +106,7 @@ impl MetalReserveBarManager {
                 let events: Array<Gd<godot::classes::InputEvent>> =
                     input_map.action_get_events(&input);
 
-                let mut max = 0;
+    
                 // If something is keybound to the event and not reached max metals, show the bar
                 if events.len() > 0 && max != MAX_BARS_ON_SCREEN {
                     self.get_metal_bar(input).show();
@@ -165,9 +166,9 @@ impl MetalReserveBarManager {
 
     // Adds and removes a metal bar from displaying on the screen
     #[func]
-    pub fn add_remove(&mut self, unbind: String, bind: String) {
-        if PATHS.contains(&unbind.as_str()){
-            self.get_metal_bar(unbind.to_lowercase().into()).hide();
+    pub fn add_remove(&mut self, unbind: StringName, bind: String) {
+        if PATHS.contains(&unbind.to_string().as_str()){
+            self.get_metal_bar(unbind.to_string().to_lowercase().into()).hide();
             self.get_metal_bar(bind.to_lowercase().into()).show();
         } else {
             godot_print!("Could not rebind !!! ")
