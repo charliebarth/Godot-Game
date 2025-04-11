@@ -166,13 +166,18 @@ impl MetalReserveBarManager {
 
     // Adds and removes a metal bar from displaying on the screen
     #[func]
-    pub fn add_remove(&mut self, unbind: StringName, bind: String) {
-        if PATHS.contains(&unbind.to_string().as_str()){
-            self.get_metal_bar(unbind.to_string().to_lowercase().into()).hide();
-            self.get_metal_bar(bind.to_lowercase().into()).show();
-        } else {
-            godot_print!("Could not rebind !!! ")
-        }
+    pub fn add_remove(&mut self, unbind: String, bind: String) -> bool{
+        if PATHS.contains(&unbind.as_str()){
+            let mut unbind_bar = self.get_metal_bar(unbind.to_lowercase().into());
+            let mut bind_bar = self.get_metal_bar(bind.to_lowercase().into());
+            if bind_bar.is_visible(){
+                return false // If the bar is already on screen 
+            } else {
+                unbind_bar.hide();
+                bind_bar.show();
+            } 
+        } 
+        true
     }
 
     /// Sets the amount of a metal in the reserve bar

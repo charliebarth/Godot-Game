@@ -98,7 +98,7 @@ func _process(_delta: float) -> void:
 
 		
 		
-func close():
+func close() -> String:
 	hide()
 	return options[selected_index]
 
