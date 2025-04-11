@@ -5,5 +5,6 @@ func _process(delta: float) -> void:
 		$SelectionWheel.show()
 	elif Input.is_action_just_released("metal_selector"):
 		var metal = $SelectionWheel.close()
-		$Label.text = "Player Equipped Metal: " + metal
+		print("SELECTED: ", metal)
+		
 		

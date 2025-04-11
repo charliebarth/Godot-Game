@@ -9,4 +9,4 @@
 script = ExtResource("1_pqj8a")
 
 [node name="SelectionWheel" parent="CanvasLayer" instance=ExtResource("1_5gye8")]
-highlight_color = Color(0, 0, 0, 1)
+visible = false

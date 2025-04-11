@@ -11,7 +11,7 @@ extends Control
 @export var options: Array[String]
 @export var section_colors: Array[Color]
 
-#@onready var player: Player = $"."
+@onready var player: Player = $"."
 
 var selected_index: int = 0
 
@@ -77,66 +77,25 @@ func _draw():
 			
 
 func _process(delta: float) -> void:
-	var lerp_speed = 15.0
-	var radius = 256
-
-
-	# Get the joystick direction
-	var joystick_x = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
-	var joystick_y = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
-	
-	# Calculate the direction vector and invert y-axis
-	var direction = Vector2(joystick_x, joystick_y) # Negate y for intuitive direction
-
-	# Only update if the joystick is being pushed
-	if direction.length() > 0.9:
-		# Normalize direction to maintain consistent radius
-		direction = direction.normalized()
-		print("Dir: ", direction)
+	if is_visible_in_tree():
+		# Get the joystick direction
+		var joystick_x = Input.get_joy_axis(player.get_device_id(), JOY_AXIS_RIGHT_X)
+		var joystick_y = Input.get_joy_axis(player.get_device_id(), JOY_AXIS_RIGHT_Y)
 		
-		# Calculate the current direction of the arrow relative to the player
-		var current_direction = self.position.normalized()
-		print("Curr dir: ", current_direction)
-		
-		# Smoothly interpolate the direction
-		var smooth_direction = current_direction.lerp(direction, lerp_speed * delta).normalized()
-		print("Smooth dir: ", smooth_direction)
-		
-		# Set the arrow's position to always be at the fixed radius distance
-		#self.position = smooth_direction * radius
-		#
-		## Calculate the angle for the arrow to face the direction smoothly
-		#var angle = smooth_direction.angle()
-		#self.rotation = lerp_angle(self.rotation, angle, lerp_speed * delta)
-	#var move_delay = 500  # Time in seconds before allowing another movement
-	#var time_since_last_move = 700  # Timer to track movement delay
-	#
-	#var controller_input = 0 
-	## Get the joystick direction
-	#var joystick_x = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
-	#var joystick_y = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
-#
-	## Calculate the direction vector and invert y-axis
-	#var direction = Vector2(joystick_x, joystick_y) # Negate y for intuitive direction
-#
-	## Only update if the joystick is being pushed
-	#if direction.length() > 0.0:
-		#if time_since_last_move > move_delay:  # Check if the delay has passed
-			#print("X: ", joystick_x)
-			#print("Y: ", joystick_y)
-			#if joystick_x < -0.9:
-				#controller_input = -1 
-			#elif joystick_x > 0.9:
-				#controller_input = 1
-		#time_since_last_move = 0.0
-			#
-	## Scroll through the options based on input
-	#if controller_input != 0:
-		#selected_index = (selected_index + controller_input) % len(options)
-		#
-	#time_since_last_move += delta
-	## Redraw the wheel
-	queue_redraw()
+		# Calculate the direction vector and invert y-axis
+		var direction = Vector2(joystick_x, joystick_y) # Negate y for intuitive direction
+
+		# Only update if the joystick is being pushed
+		if direction.length() > 0.1:
+			# Normalize direction to maintain consistent radius
+			direction = direction.normalized()
+			var angle_deg = rad_to_deg(direction.angle())
+			if angle_deg > 0: # Because degrees 180 to 360 are 180 to 0
+				angle_deg = abs(angle_deg - 180) + 180 
+			else: # Because degrees 0 to 180 are 0 to -180
+				angle_deg = abs(angle_deg)
+			selected_index = ((int(angle_deg / (360 / len(options)))) + 1) % len(options)
+		queue_redraw()
 
 		
 		
