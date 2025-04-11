@@ -4,7 +4,8 @@ use godot::{
     classes::{DisplayServer, Engine, InputEvent, InputMap, Timer},
     prelude::*,
 };
-
+use godot::classes::Label;
+use godot::global::HorizontalAlignment;
 use crate::{
     main_menu::MainMenu,
     map::Map,
@@ -63,6 +64,10 @@ pub struct Game {
     round_wins: HashMap<i32, i32>,
     /// A flag to determine if a new round should be started
     should_start_new_round: bool,
+    /// Timer for round transition
+    round_transition_timer: Gd<Timer>,
+    /// Label to display the winner message
+    winner_label: Option<Gd<Label>>,
 }
 
 #[godot_api]
@@ -72,6 +77,13 @@ impl INode2D for Game {
         let mut day_night_timer = Timer::new_alloc();
         day_night_timer.set_wait_time(CYCLE_LENGTH);
         day_night_timer.set_autostart(true);
+
+        const ROUND_TRANSITION_TIME: f64 = 3.0;
+        let mut round_transition_timer = Timer::new_alloc();
+        // set the transition time to 3 seconds
+        round_transition_timer.set_wait_time(ROUND_TRANSITION_TIME);
+        // set the timer to be one shot so it doesn't repeat
+        round_transition_timer.set_one_shot(true);
 
         let screen_size = DisplayServer::singleton().screen_get_size();
         let settings = Engine::singleton()
@@ -101,6 +113,8 @@ impl INode2D for Game {
             eliminations: HashMap::new(),
             round_wins: HashMap::new(),
             should_start_new_round: false,
+            round_transition_timer,
+            winner_label: None,
         }
     }
 
@@ -134,6 +148,22 @@ impl INode2D for Game {
 
         self.base_mut().add_child(&split_screen_one);
         self.base_mut().add_child(&split_screen_two);
+
+        // Add the round transition timer to the scene tree
+        self.base_mut().add_child(&self.round_transition_timer);
+        self.round_transition_timer.connect(
+            "timeout",
+            &Callable::from_object_method(
+                &self.base(), "round_transition"),
+        );
+
+        // Create the winner label
+        let mut winner_label = Label::new_alloc();
+        winner_label.set_visible(false);
+        winner_label.set_position(Vector2::new(self.screen_size.x / 2.0, 50.0));
+        winner_label.set_horizontal_alignment(HorizontalAlignment::CENTER);    // TODO: Might have to look into this
+        self.base_mut().add_child(&winner_label);
+        self.winner_label = Some(winner_label);
     }
 
     /// This listens for a specific button press (jump by default)
@@ -583,6 +613,24 @@ impl Game {
         self.split_screen_two.bind_mut().reset();
 
         self.reset_players();
+
+        // Display the winner message
+        if let Some(winner_label) = &mut self.winner_label {
+            winner_label.bind_mut().set_text(format!("Player {} wins!", self.winning_player).as_str());
+            winner_label.bind_mut().set_visible(true);
+        }
+
+        // self.should_start_new_round = true;
+    }
+
+    /// This starts the round transition and removes the winner message.
+    fn round_transition(&mut self) {
+        // Hide the winner label
+        if let Some(winner_label) = &mut self.winner_label {
+            winner_label.bind_mut().set_visible(false);
+        }
+
+        // Start the new round
         self.should_start_new_round = true;
     }
 
