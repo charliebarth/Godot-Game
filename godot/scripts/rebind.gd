@@ -40,11 +40,11 @@ func set_action_label() -> void:
 		"low_burn":
 			label.text = "Low Burn"
 		"pewter":
-			label.text = "Pewter"
+			label.text = "Metal 1"
 		"iron":
-			label.text = "Iron"
+			label.text = "Metal 2"
 		"steel":
-			label.text = "Steel"
+			label.text = "Metal 3"
 	
 
 ## Sets the button text given the keybind settings, also recieves the latest 

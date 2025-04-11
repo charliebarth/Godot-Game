@@ -10,8 +10,7 @@ extends Control
 
 @export var options: Array[String]
 @export var section_colors: Array[Color]
-
-@onready var player: Player = $"."
+@onready var player = self.get_parent().get_parent().get_parent() as Player
 
 var selected_index: int = 0
 
@@ -43,7 +42,7 @@ func _draw():
 			
 			var font: Font = preload("res://assets/pixelated-times-new-roman.ttf")
 			
-			var size := font.get_string_size(options[i]) 
+			var size = font.get_string_size(options[i]) 
 			
 			# Draw highlight color 
 			if selected_index == i:
@@ -76,7 +75,7 @@ func _draw():
 			
 			
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if is_visible_in_tree():
 		# Get the joystick direction
 		var joystick_x = Input.get_joy_axis(player.get_device_id(), JOY_AXIS_RIGHT_X)
@@ -102,9 +101,6 @@ func _process(delta: float) -> void:
 func close():
 	hide()
 	return options[selected_index]
-	
-func choose_option():
-	print("Selected: ", options[selected_index])  # You can perform any action here
-	#You can also trigger events or actions when an option is selected.
+
 	
 	

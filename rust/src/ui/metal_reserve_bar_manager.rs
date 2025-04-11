@@ -88,6 +88,7 @@ impl IVBoxContainer for MetalReserveBarManager {
 }
 
 /// Methods for MetalReserveBarManager
+#[godot_api]
 impl MetalReserveBarManager {
     /// Sets the metals currently on screen based on the keybindings set
     fn setup_keybinds(&mut self) {
@@ -163,7 +164,15 @@ impl MetalReserveBarManager {
     }
 
     // Adds and removes a metal bar from displaying on the screen
-    pub fn add_remove(&mut self, unbind: Gd<MetalBar>, bind: String) {}
+    #[func]
+    pub fn add_remove(&mut self, unbind: String, bind: String) {
+        if PATHS.contains(&unbind.as_str()){
+            self.get_metal_bar(unbind.to_lowercase().into()).hide();
+            self.get_metal_bar(bind.to_lowercase().into()).show();
+        } else {
+            godot_print!("Could not rebind !!! ")
+        }
+    }
 
     /// Sets the amount of a metal in the reserve bar
     ///
