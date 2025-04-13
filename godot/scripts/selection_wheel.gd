@@ -71,7 +71,6 @@ func _draw():
 			# Draw the color 
 			var colors = [section_colors[1], section_colors[0], section_colors[5], section_colors[4], section_colors[3], section_colors[2]]
 			draw_arc(Vector2.ZERO, outer_radius, start_rads, end_rads, 128, colors[i], line_width, true)
-			#draw_arc(Vector2.ZERO, outer_radius, start_rads, end_rads, 128, section_colors[i], 8)
 			
 			
 

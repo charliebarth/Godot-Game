@@ -23,7 +23,7 @@ func _input(event: InputEvent) -> void:
 ## When the visibility of this scene changes to visible, grab the foucs of a 
 ## button on screen so controllers can navigate the menu. 
 func _on_visibility_changed() -> void:
-	if self.visible:
+	if self.is_visible_in_tree():
 		start_game.grab_focus()
 
 ## When the exit button is pressed, swap to the new game menu (previous menu)
