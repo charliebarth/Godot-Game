@@ -150,11 +150,14 @@ impl INode2D for Game {
         self.base_mut().add_child(&split_screen_two);
 
         // Add the round transition timer to the scene tree
-        self.base_mut().add_child(&self.round_transition_timer);
-        self.round_transition_timer.connect(
+        let mut timer = self.round_transition_timer.clone();
+        self.base_mut().add_child(&timer);
+
+        let target = self.base().clone();
+         timer.connect(
             "timeout",
             &Callable::from_object_method(
-                &self.base(), "round_transition"),
+                &target, "round_transition"),
         );
 
         // Create the winner label
@@ -616,18 +619,22 @@ impl Game {
 
         // Display the winner message
         if let Some(winner_label) = &mut self.winner_label {
-            winner_label.bind_mut().set_text(format!("Player {} wins!", self.winning_player).as_str());
-            winner_label.bind_mut().set_visible(true);
+            let winner_text = format!("Player {} wins!", self.winning_player);
+            winner_label.set_text(&winner_text);
+            winner_label.set_visible(true);
         }
+
+        self.round_transition_timer.start();
 
         // self.should_start_new_round = true;
     }
 
+    #[func]
     /// This starts the round transition and removes the winner message.
     fn round_transition(&mut self) {
         // Hide the winner label
         if let Some(winner_label) = &mut self.winner_label {
-            winner_label.bind_mut().set_visible(false);
+            winner_label.set_visible(false);
         }
 
         // Start the new round
