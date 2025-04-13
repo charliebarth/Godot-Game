@@ -1107,6 +1107,7 @@ impl Player {
         particles.is_visible_in_tree()
     }
 
+    #[func]
     pub fn is_burning_metal_from_string(&mut self, metal: String) -> bool {
         if let Some(metal) = MetalType::from_string(&metal) {
             let particles = self.get_metal_particles(metal);

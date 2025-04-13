@@ -236,7 +236,6 @@ impl Game {
             .clone()
     }
 
-    
     pub fn get_game_mode(&mut self) -> String {
         self.settings.bind().get_selected_map()
         // unsafe { GAME_MODE.clone().unwrap() }
@@ -246,7 +245,7 @@ impl Game {
         self.settings.bind().get_team_game()
         // unsafe { GAME_MODE.clone().unwrap() }
     }
-    
+
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
     ///
@@ -356,7 +355,7 @@ impl Game {
             screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
             self.split_screen_two.set_size(screen_size);
         } else {
-            screen_size = Vector2::new(self.screen_size.x / 2.0, self.screen_size.y / 2.0);
+            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
             self.split_screen_two.set_size(screen_size);
         }
 
