@@ -9027,7 +9027,6 @@ position = Vector2(811, -367)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TutorialOneSuccess"]
 z_index = 1
 position = Vector2(360.5, -1191)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_ckvwl")
 
 [node name="TutorialTwoSuccess" type="Area2D" parent="."]
@@ -9037,7 +9036,6 @@ scale = Vector2(1.17871, 0.812288)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TutorialTwoSuccess"]
 z_index = 1
 position = Vector2(1263.07, -683.833)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_nlqja")
 
 [node name="Label" type="Label" parent="."]
