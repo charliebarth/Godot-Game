@@ -24,7 +24,8 @@ func _on_visibility_changed() -> void:
 	if self.is_visible_in_tree():
 		start_game.grab_focus()
 
-## When the exit button is pressed, swap to the new game menu (previous menu)
+## When the exit button is pressed, swap to the new game menu (previous menu) 
+## and reset players so they are no longer on a team. 
 func _on_exit_pressed() -> void:
 	main_menu.swap_to_new_game_menu()
 	game.reset_team_players()

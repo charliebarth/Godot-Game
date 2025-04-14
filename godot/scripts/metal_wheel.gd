@@ -1,6 +1,7 @@
 extends CanvasLayer
 @onready var player = self.get_parent().get_parent() as Player
 @onready var metal_reserve_bar_manager: MetalReserveBarManager = player.get_node("PlayerUI/MetalReserveBarManager")
+#@onready var input_manager: InputManager = $InputManager
 
 # The name of the metal we are removing 
 var prev_metal = null
