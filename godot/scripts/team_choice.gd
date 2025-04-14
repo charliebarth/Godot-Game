@@ -13,10 +13,8 @@ func _input(event: InputEvent) -> void:
 	if self.is_visible_in_tree():
 		var device_id = event.device
 		if event.is_action("blue"):
-			main_menu.set_player_team(device_id, true)
 			game.set_player_team(device_id, "Blue")
 		elif event.is_action("red"):
-			main_menu.set_player_team(device_id, false)
 			game.set_player_team(device_id, "Red")
 		
 
@@ -29,6 +27,7 @@ func _on_visibility_changed() -> void:
 ## When the exit button is pressed, swap to the new game menu (previous menu)
 func _on_exit_pressed() -> void:
 	main_menu.swap_to_new_game_menu()
+	game.reset_team_players()
 
 ## Starts the game
 func _on_start_game_pressed() -> void:

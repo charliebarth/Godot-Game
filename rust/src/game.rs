@@ -2,8 +2,7 @@ use std::collections::HashMap;
 
 use godot::{
     classes::{
-        class_macros::sys::known_virtual_hashes::Shader, AnimatedSprite2D, DisplayServer, Engine,
-        InputEvent, InputMap, ResourceLoader, ShaderMaterial, Timer,
+        class_macros::sys::known_virtual_hashes::Shader, AnimatedSprite2D, DisplayServer, Engine, InputEvent, InputMap, Material, ResourceLoader, ShaderMaterial, Timer
     },
     prelude::*,
 };
@@ -256,25 +255,34 @@ impl Game {
         &mut self.team_tracker
     }
 
+    #[func]
+    fn reset_team_players(&mut self) {
+        self.get_team_tracker().clear();
+        for i in 0..self.players.len(){
+            let player = self.players[i].clone();
+            let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
+            player_an.set_use_parent_material(true);
+            self.get_main_menu().bind_mut().set_player_team(i as i32, "clear".to_string());
+        }        
+    }
+
     /// Given the players Id and chosen team, adds a player to the correct
     /// hashmap and sets the players outline to the correct color of their team.
     #[func]
     fn set_player_team(&mut self, id: i32, team: String) {
+        self.get_main_menu().bind_mut().set_player_team(id, team.clone());
         let position = self.devices.iter().position(|&el| el == id);
         if position.is_none() {
             return;
         }
 
         let id = position.expect("id missing") as i32;
-        let path: &str;
         let add: &str = &team; // The team to add the player to
         let rem: &str; // The team to remove the player from
 
         if team == "Blue" {
-            path = "res://shaders/blue_outline.tres";
             rem = "Red";
         } else {
-            path = "res://shaders/red_outline.tres";
             rem = "Blue";
         }
 
@@ -296,11 +304,32 @@ impl Game {
             remove_from.remove(i);
         }
 
+    }
+
+    /// Given the players Id and chosen team, adds a player to the correct
+    /// hashmap and sets the players outline to the correct color of their team.
+    fn set_player_team_outline(&mut self, id: i32, team: String) {
+        // let position = self.devices.iter().position(|&el| el == id);
+        // if position.is_none() {
+        //     return;
+        // }
+
+        // let id = position.expect("id missing") as i32;
+        let path: &str;
+
+        if team == "Blue" {
+            path = "res://shaders/blue_outline.tres";
+        } else {
+            path = "res://shaders/red_outline.tres";
+        }
+
+        
         // Sets the players outline to the team color
         let shader = ResourceLoader::singleton().load(path);
         if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>() {
             let player = self.players[id as usize].clone();
             let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
+            player_an.set_use_parent_material(false);
             player_an.set_material(&shader);
         }
     }
@@ -422,13 +451,13 @@ impl Game {
 
         // If its a team game, set the players outline colors  
         if self.get_team_game(){
-            let red_team = self.team_tracker.get("Red").expect("Couldn't get value").clone();
+            let red_team = self.get_team_tracker().get("Red").expect("Couldn't get value").clone();
             for id in red_team{
-                self.set_player_team(id, "Red".to_string());
+                self.set_player_team_outline(id, "Red".to_string());
             }
-            let blue_team = self.team_tracker.get("Blue").expect("Couldn't get value").clone();
+            let blue_team = self.get_team_tracker().get("Blue").expect("Couldn't get value").clone();
             for id in blue_team{
-                self.set_player_team(id, "Blue".to_string());
+                self.set_player_team_outline(id, "Blue".to_string());
             }
         }
 
@@ -601,11 +630,12 @@ impl Game {
     }
 
     fn get_team_eliminations(&mut self, team_color: &str) -> i32 {
-        let team = self.team_tracker.get(team_color).expect("Couldn't get value");
+        let team_tracker = self.get_team_tracker().clone();
+        let team = team_tracker.get(team_color).expect("Couldn't get value");
 
         let elims = &self.eliminations;
         let mut team_elims: i32 = 0;
-        for id in team {
+        for id in team.clone() {
             team_elims += elims.get(&(id + 1)).unwrap();
         }
 

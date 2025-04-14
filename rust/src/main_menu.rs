@@ -76,13 +76,19 @@ impl MainMenu {
     /// # Paramaters 
     /// * `id` - The id of the player to set the outline of.
     /// * `blue` - true if we are setting it to blue, false if red. 
-    #[func]
-    fn set_player_team(&self, id: i32, blue: bool){
-        let mut path = "";
-        if blue {
+    pub fn set_player_team(&self, id: i32, &team: String){
+        let path: &str;
+        if team == "Blue" {
             path = "res://shaders/blue_outline.tres";
-        } else {
+        } else if team == "Red" {
             path = "res://shaders/red_outline.tres";
+        } else {
+            let mut player = self.base()
+                .get_node_as::<AnimatedSprite2D>(
+                    format!("Player{}", id + 1).as_str()
+                );
+            player.set_use_parent_material(true);
+            return;
         }
 
         let shader = ResourceLoader::singleton().load(path);
@@ -91,7 +97,7 @@ impl MainMenu {
                 .get_node_as::<AnimatedSprite2D>(
                     format!("Player{}", id + 1).as_str()
                 );
-
+            player.set_use_parent_material(false);
             player.set_material(&shader);
             godot_print!("TRIED TO SET MATERIAL OF {}'s", player.get_name())
         }
