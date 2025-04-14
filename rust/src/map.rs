@@ -36,6 +36,7 @@ impl INode2D for Map {
 impl Map {
     #[func]
     pub fn get_spawn_point(&self, name: String) -> Vector2 {
+        godot_print!("Spawn point: {:?}", self.spawn_points);
         self.spawn_points
             .get(&name)
             .expect("Spawn point not found")

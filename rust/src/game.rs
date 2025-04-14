@@ -49,6 +49,10 @@ pub struct Game {
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
     main_menu: Option<Gd<MainMenu>>,
+    /// The tutorial scene.
+    tutorial_scene: Gd<PackedScene>,
+    /// The tutorial level.
+    tutorial_level: Option<Gd<Map>>,
     /// The first split screen for odd numbered players
     split_screen_one: Gd<SplitScreen>,
     /// The second split screen for even numbered players
@@ -107,6 +111,8 @@ impl INode2D for Game {
             winner: "0".to_string(),
             maps: HashMap::new(),
             main_menu: None,
+            tutorial_scene: load::<PackedScene>("res://scenes/tutorial.tscn"),
+            tutorial_level: None,
             split_screen_one: SplitScreen::new_alloc(),
             split_screen_two: SplitScreen::new_alloc(),
             day: true,
@@ -314,6 +320,16 @@ impl Game {
         }
 
         &mut self.team_tracker
+    }
+
+    fn get_tutorial_level(&mut self) -> Gd<Map> {
+        if self.tutorial_level.is_none() {
+            self.tutorial_level = Some(self.base().get_node_as::<Map>("Tutorial"));
+        }
+        self.tutorial_level
+            .as_ref()
+            .expect("Tutorial level not found")
+            .clone()
     }
 
     /// Resets the team players hashmap and clears each players outline
@@ -888,4 +904,80 @@ impl Game {
 
     #[signal]
     pub fn change_cycle_player(light_level: f32, transition_time: f64);
+
+    #[func]
+    pub fn start_tutorial(&mut self) {
+        // First remove the main menu
+        let main_menu = self.get_main_menu();
+        if main_menu.is_inside_tree() {
+            self.base_mut().remove_child(&main_menu);
+        }
+
+        let tutorial_level = self.tutorial_scene.instantiate_as::<Map>();
+        self.set_map(tutorial_level);
+
+        // Set the name, device id, and player id for each player
+        let mut players = self.players.clone();
+        for (index, player) in players.iter_mut().enumerate() {
+            let player_id = index as i32 + 1;
+            player.set_name(format!("Player{}", player_id).as_str());
+
+            let mut bound_player = player.bind_mut();
+            bound_player.set_device_id(self.devices[index]);
+            bound_player.set_player_id(player_id);
+        }
+
+        // Get references to split screens
+        let mut split_screen_one = self.split_screen_one.clone();
+        let mut split_screen_two = self.split_screen_two.clone();
+
+        // Add level to first split screen, second will share world
+        split_screen_one.bind_mut().add_level(self.get_map());
+        split_screen_two
+            .bind_mut()
+            .add_world(split_screen_one.bind().get_world());
+
+        // Adjust split screen sizes based on player count
+        let mut odd_players = Vec::new();
+        let mut even_players = Vec::new();
+
+        for (i, player) in self.players.iter().enumerate() {
+            if (i + 1) % 2 == 0 {
+                even_players.push(player.clone());
+            } else {
+                odd_players.push(player.clone());
+            }
+        }
+
+        // Set sizes and add players
+        let zoom: Vector2 = self.determine_screen_size();
+
+        for player in self.players.iter_mut() {
+            player.bind_mut().set_zoom(zoom);
+        }
+
+        split_screen_one.bind_mut().add_players(odd_players);
+        split_screen_two.bind_mut().add_players(even_players);
+
+        // Set the position of the players to the spawn point
+        for (index, player) in players.iter_mut().enumerate() {
+            let player_id = index as i32 + 1;
+            player.set_position(self.get_map().bind().get_spawn_point(player_id.to_string()));
+        }
+
+        self.started = true;
+    }
+
+    #[func]
+    pub fn end_tutorial(&mut self) {
+        self.started = false;
+
+        self.split_screen_one.bind_mut().reset();
+        self.split_screen_two.bind_mut().reset();
+
+        self.reset_players();
+
+        let main_menu = self.get_main_menu();
+        self.base_mut().add_child(&main_menu);
+    }
 }

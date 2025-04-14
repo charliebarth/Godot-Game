@@ -33,3 +33,7 @@ func _on_visibility_changed() -> void:
 func _on_ready() -> void:
 	if self.visible:
 		play.grab_focus.call_deferred()
+
+
+func _on_tutorial_pressed() -> void:
+	game.start_tutorial()
