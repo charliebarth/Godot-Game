@@ -164,7 +164,7 @@ impl INode2D for Game {
         let mut winner_label = Label::new_alloc();
         winner_label.set_visible(false);
         winner_label.set_position(Vector2::new(self.screen_size.x / 2.0, 50.0));
-        winner_label.set_horizontal_alignment(HorizontalAlignment::CENTER);    // TODO: Might have to look into this
+        winner_label.set_horizontal_alignment(HorizontalAlignment::CENTER);
         self.base_mut().add_child(&winner_label);
         self.winner_label = Some(winner_label);
     }
@@ -625,8 +625,6 @@ impl Game {
         }
 
         self.round_transition_timer.start();
-
-        // self.should_start_new_round = true;
     }
 
     #[func]
