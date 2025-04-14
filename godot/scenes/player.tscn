@@ -995,6 +995,7 @@ offset_bottom = -269.0
 grow_horizontal = 0
 
 [node name="HealthBar" type="TextureProgressBar" parent="PlayerUI"]
+light_mask = 524289
 z_index = 20
 layout_mode = 0
 offset_left = 5.0

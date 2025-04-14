@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://b2cab082bt2gh"]
 
 [node name="MetalReserveBarManager" type="MetalReserveBarManager"]
+light_mask = 524289
 offset_left = -40.0
 offset_top = -36.0
 offset_right = 23.0

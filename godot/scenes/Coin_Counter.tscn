@@ -10,12 +10,14 @@ outline_size = 14
 outline_color = Color(0.168627, 0.109804, 0.0862745, 1)
 
 [node name="Coin_Counter_Panel" type="Control"]
+light_mask = 524289
 layout_mode = 3
 anchors_preset = 0
 offset_right = 33.0
 offset_bottom = 16.0
 
 [node name="TextureRect2" type="TextureRect" parent="."]
+light_mask = 524289
 layout_mode = 0
 offset_right = 34.0
 offset_bottom = 34.0
@@ -23,6 +25,7 @@ texture = ExtResource("1_d5fik")
 stretch_mode = 4
 
 [node name="CoinCounter" type="CoinCounter" parent="."]
+light_mask = 524289
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
