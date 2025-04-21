@@ -802,8 +802,6 @@ impl Game {
         //             return true;
         //         }
 
-
-        
         false
     }
 
