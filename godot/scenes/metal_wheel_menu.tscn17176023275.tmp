@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://c20hnjcoph2e0"]
+
+[ext_resource type="PackedScene" uid="uid://b418op3ebod5c" path="res://scenes/selection_wheel.tscn" id="1_5gye8"]
+[ext_resource type="Script" uid="uid://bh3p536yba6ef" path="res://scripts/metal_wheel.gd" id="1_pqj8a"]
+[ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="2_dox0o"]
+
+[node name="MetalWheel" type="Node"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = ExtResource("1_pqj8a")
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -273.0
+offset_bottom = -189.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_dox0o")
+theme_override_font_sizes/font_size = 128
+text = "HIIIIIIIIIIII"
+horizontal_alignment = 1
+
+[node name="SelectionWheel" parent="CanvasLayer" instance=ExtResource("1_5gye8")]
+visible = false

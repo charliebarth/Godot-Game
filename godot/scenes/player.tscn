@@ -1,4 +1,4 @@
-[gd_scene load_steps=160 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=161 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
 [ext_resource type="Script" uid="uid://5gr7o6vjk0sp" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
+[ext_resource type="PackedScene" uid="uid://c20hnjcoph2e0" path="res://scenes/metal_wheel_menu.tscn" id="27_fdfoy"]
 [ext_resource type="Texture2D" uid="uid://b5lf080mspvgn" path="res://assets/navigation_e.png" id="29_a80li"]
 [ext_resource type="Script" uid="uid://cm7e76346c1ls" path="res://scripts/sprite_2d.gd" id="31_hw5a7"]
 [ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="32_j10vn"]
@@ -1020,6 +1021,8 @@ offset_top = 9.0
 offset_right = 120.0
 offset_bottom = 25.0
 
+[node name="MetalWheel" parent="." instance=ExtResource("27_fdfoy")]
+
 [node name="MetalManager" type="MetalManager" parent="."]
 
 [node name="PointLight2D" type="PlayerLight" parent="."]
@@ -1183,6 +1186,16 @@ amount = 12
 lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
+[node name="CopperParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(1, 1, 17, 1)
+show_behind_parent = true
+light_mask = 524289
+position = Vector2(0, 3)
+amount = 12
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+
 [node name="IronParticles" type="GPUParticles2D" parent="."]
 visible = false
 self_modulate = Color(1, 10, 10, 1)
@@ -1240,10 +1253,6 @@ offset_right = 128.263
 offset_bottom = 85.4783
 
 [node name="Timer" type="Timer" parent="Disconnected"]
-
-[node name="RayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(34, -31)
-collision_mask = 3072
 
 [connection signal="id_changed" from="." to="PointLight2D" method="_on_player_id_changed"]
 [connection signal="id_changed" from="." to="PointLight2D2" method="_on_player_id_changed"]

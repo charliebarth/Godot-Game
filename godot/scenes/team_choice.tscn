@@ -1,0 +1,74 @@
+[gd_scene load_steps=4 format=3 uid="uid://dstn680ilodlv"]
+
+[ext_resource type="Script" uid="uid://bym56rwv7jhpk" path="res://scripts/team_choice.gd" id="1_u45dy"]
+[ext_resource type="FontFile" uid="uid://dnom70gse18ib" path="res://assets/pixelated-times-new-roman.ttf" id="2_u45dy"]
+[ext_resource type="PackedScene" uid="uid://iq7ixdam81df" path="res://scenes/team_choice_menu.tscn" id="3_u45dy"]
+
+[node name="TeamChoice" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_u45dy")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 24
+theme_override_fonts/font = ExtResource("2_u45dy")
+theme_override_font_sizes/font_size = 144
+text = "Choose your teams"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TeamChoiceMenu" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_u45dy")]
+custom_minimum_size = Vector2(1896, 1000)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 64
+
+[node name="Exit" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_fonts/font = ExtResource("2_u45dy")
+theme_override_font_sizes/font_size = 128
+text = "Exit"
+
+[node name="Start Game" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_fonts/font = ExtResource("2_u45dy")
+theme_override_font_sizes/font_size = 128
+text = "Start Game"
+
+[connection signal="tree_entered" from="." to="." method="_on_tree_entered"]
+[connection signal="tree_exited" from="." to="." method="_on_tree_exited"]
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Start Game" to="." method="_on_start_game_pressed"]
