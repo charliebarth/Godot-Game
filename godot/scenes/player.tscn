@@ -996,6 +996,7 @@ offset_bottom = -269.0
 grow_horizontal = 0
 
 [node name="HealthBar" type="TextureProgressBar" parent="PlayerUI"]
+light_mask = 524289
 z_index = 20
 layout_mode = 0
 offset_left = 5.0
@@ -1083,12 +1084,20 @@ scale = Vector2(0.360352, 0.360352)
 texture = ExtResource("29_a80li")
 script = ExtResource("31_hw5a7")
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="RightHitbox" type="Area2D" parent="."]
 collision_layer = 8
 collision_mask = 2
 
-[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
+[node name="HitboxShape" type="CollisionShape2D" parent="RightHitbox"]
 position = Vector2(19.75, -1)
+shape = SubResource("RectangleShape2D_fcwur")
+
+[node name="LeftHitbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 2
+
+[node name="HitboxShape" type="CollisionShape2D" parent="LeftHitbox"]
+position = Vector2(-20, -1)
 shape = SubResource("RectangleShape2D_fcwur")
 
 [node name="HurtBox" type="Area2D" parent="."]
@@ -1147,9 +1156,19 @@ amount = 12
 lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
-[node name="BronzeParticles" type="GPUParticles2D" parent="."]
+[node name="CopperParticles" type="GPUParticles2D" parent="."]
 visible = false
 self_modulate = Color(17, 1, 17, 1)
+show_behind_parent = true
+light_mask = 524289
+position = Vector2(0, 12)
+amount = 12
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+
+[node name="BronzeParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(0, 17, 17, 1)
 show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 6)
@@ -1158,16 +1177,6 @@ lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
 [node name="SteelParticles" type="GPUParticles2D" parent="."]
-visible = false
-self_modulate = Color(1, 1, 17, 1)
-show_behind_parent = true
-light_mask = 524289
-position = Vector2(0, 3)
-amount = 12
-lifetime = 2.0
-process_material = SubResource("ParticleProcessMaterial_8cf5s")
-
-[node name="CopperParticles" type="GPUParticles2D" parent="."]
 visible = false
 self_modulate = Color(1, 1, 17, 1)
 show_behind_parent = true

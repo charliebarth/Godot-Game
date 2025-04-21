@@ -319,7 +319,8 @@ bronze={
 }
 copper={
 "deadzone": 0.5,
-"events": []
+"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":4,"pressure":0.0,"pressed":false,"script":null)
+]
 }
 duralumin={
 "deadzone": 0.5,

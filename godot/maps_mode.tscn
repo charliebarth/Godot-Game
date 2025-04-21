@@ -245,7 +245,6 @@ theme_override_fonts/font = ExtResource("1_my32b")
 theme_override_font_sizes/font_size = 64
 theme_override_styles/pressed = ExtResource("11_x2y8e")
 theme_override_styles/normal = ExtResource("12_43853")
-disabled = true
 toggle_mode = true
 text = "Head Hunters"
 
