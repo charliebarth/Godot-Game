@@ -714,7 +714,7 @@ impl Game {
         }
     }
 
-    fn get_team_eliminations(&mut self, team_color: &str, wins_check: HashMap<i32, i32>) -> i32 {
+    fn get_team_eliminations(&mut self, team_color: &str, wins_check: &HashMap<i32, i32>) -> i32 {
         let team_tracker = self.get_team_tracker().clone();
         let team = team_tracker.get(team_color).expect("Couldn't get value");
 
@@ -741,31 +741,30 @@ impl Game {
 
         if self.get_game_mode() == "Head Hunters" {
             end_condition = REQUIRED_ELIMINATIONS;
-            wins_check = self.eliminations;
+            wins_check = self.eliminations.clone();
         } else  { // Last Player Standing
             end_condition = REQUIRED_ROUNDS;
-            wins_check = self.round_wins;
+            wins_check = self.round_wins.clone();
         } 
         
         if self.get_team_game() {
-            let red = self.get_team_eliminations("Red", wins_check);
-            let blue = self.get_team_eliminations("Blue", wins_check);
+            let red = self.get_team_eliminations("Red", &wins_check);
+            let blue = self.get_team_eliminations("Blue", &wins_check);
 
             if red == end_condition {
                 self.winner = "Red".to_string();
                 return true;
-            } else if blue == wins_check {
+            } else if blue == end_condition {
                 self.winner = "Blue".to_string();
                 return true;
             }
             return false;
         } else {
             // check if a player has reached the required number of eliminations by checking the hashmap
-            for (_, eliminations) in self.wins_check.iter() {
+            for (_, eliminations) in wins_check.iter() {
                 if *eliminations >= end_condition {
                     // set the winning player to the player with the required number of eliminations
-                    self.winner = (self
-                        .wins_check
+                    self.winner = (wins_check
                         .iter()
                         .position(|(&k, &v)| v == end_condition)
                         .unwrap() as i32
@@ -818,7 +817,7 @@ impl Game {
 
         // Display the winner message
         if let Some(winner_label) = &mut self.winner_label {
-            let winner_text = format!("Player {} wins!", self.winning_player);
+            let winner_text = format!("Player {} wins!", self.winner);
             winner_label.set_text(&winner_text);
             winner_label.set_visible(true);
         }

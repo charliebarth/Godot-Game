@@ -1082,9 +1082,10 @@ impl Player {
     pub fn add_active_metal(&mut self, metal: MetalType) {
         if !self.active_metals.contains(&metal) {
             self.active_metals.push(metal);
-            if metal == MetalType::Copper {
-                self.hide_particles();
-            }
+            // TODO is this supposed to be here??
+            // if metal == MetalType::Copper {
+            //     self.hide_particles();
+            // } 
         }
     }
 
