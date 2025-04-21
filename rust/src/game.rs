@@ -511,7 +511,7 @@ impl Game {
             screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
             self.split_screen_two.set_size(screen_size);
         } else {
-            screen_size = Vector2::new(self.screen_size.x / 2.0, self.screen_size.y / 2.0);
+            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
             self.split_screen_two.set_size(screen_size);
         }
 

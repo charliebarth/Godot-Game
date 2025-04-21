@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
@@ -26,6 +27,8 @@ use crate::ui::metal_reserve_bar_manager::MetalReserveBarManager;
 
 use super::disconnected::Disconnected;
 use super::enums::force::Force;
+use super::enums::force::ForceModifier;
+use super::enums::force::ForceModifierTag;
 use super::enums::player_events::PlayerEvents;
 use super::enums::player_states::PlayerStates;
 use super::enums::timeout_events::TimeoutEvents;
@@ -120,6 +123,9 @@ pub struct Player {
     /// The number of eliminations the player has
     eliminations: i32,
     previous_velocity: Vector2,
+    /// This is collection of modifier meant to be applied to forces before they're applied
+    /// to the player
+    force_modifiers: HashMap<ForceModifierTag, ForceModifier>,
 }
 
 #[godot_api]
@@ -168,6 +174,7 @@ impl ICharacterBody2D for Player {
             settings,
             eliminations: 0,
             previous_velocity: Vector2::ZERO,
+            force_modifiers: HashMap::new(),
         }
     }
 
@@ -431,7 +438,19 @@ impl Player {
     ///
     /// # Arguments
     /// * `adjustment` - The amount to adjust the health by
-    pub fn adjust_health(&mut self, adjustment: f64) {
+    pub fn adjust_health(&mut self, mut adjustment: f64) {
+        if adjustment.signum() == -1.0 && self.is_burning_metal(MetalType::Pewter) {
+            if adjustment <= MAX_HEALTH * 0.05 {
+                adjustment = 0.0;
+            } else if adjustment <= MAX_HEALTH * 0.25 {
+                adjustment = adjustment * 0.5;
+            } else if adjustment <= MAX_HEALTH * 0.50 {
+                adjustment = adjustment * 0.7;
+            } else {
+                adjustment = adjustment * 0.9;
+            }
+        }
+
         // Adjust health by the specified amount
         self.health += adjustment;
 
@@ -772,6 +791,36 @@ impl Player {
         self.forces.push_back(force);
     }
 
+    /// Adds a foce modifier to the player's hashmap
+    /// These modifiers are not automatically removed by the player.
+    ///
+    /// If the modifier already exists in the set a default merging of the current modifier and
+    /// the provided modifier will be attempted. This behavior comes from the combine_modifiers function
+    /// in the ForceModifier implementaion
+    ///
+    ///  Note: Modifiers MUST BE REMOVED MANUALLY
+    ///
+    ///
+    /// # Arguments
+    /// * `modifier_value` - The force modifier to add the player's hashmap
+    pub fn add_force_modifer(&mut self, mut modifier: ForceModifier) {
+        let tag = modifier.tag();
+
+        if let Some(current_modifier) = self.force_modifiers.get(&tag) {
+            modifier = current_modifier.combine_modifiers(modifier);
+        }
+
+        self.force_modifiers.insert(tag, modifier);
+    }
+
+    pub fn remove_force_modifier(&mut self, modifier: ForceModifierTag) {
+        self.force_modifiers.remove(&modifier);
+    }
+
+    pub fn replace_force_modifier(&mut self, modifier: ForceModifier) {
+        self.force_modifiers.insert(modifier.tag(), modifier);
+    }
+
     /// This iterates through the forces queue and applies each force to the player
     fn apply_forces(&mut self) {
         let len_forces = self.forces.len();
@@ -804,27 +853,61 @@ impl Player {
                 base_velocity.y += (self.gravity * magnitude * self.delta) as f32;
             }
             Force::Jump { acceleration } => {
-                base_velocity.y += acceleration;
+                let mut multiplier = 1.0;
+                match self.force_modifiers.get(&ForceModifierTag::Pewter) {
+                    Some(ForceModifier::Pewter { jump_boost, .. }) => {
+                        multiplier += *jump_boost;
+                    }
+                    _ => {}
+                }
+
+                base_velocity.y += acceleration * multiplier as f32;
             }
             Force::Run { acceleration } => {
                 let max_run_speed = self.get_run_speed();
-                if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
-                    base_velocity.x += acceleration * self.delta as f32;
-                } else if acceleration == 0.0 {
-                    base_velocity.x = 0.0;
+                let mut multiplier = 1.0;
+                match self.force_modifiers.get(&ForceModifierTag::Pewter) {
+                    Some(ForceModifier::Pewter { run_boost, .. }) => {
+                        multiplier += *run_boost;
+                    }
+                    _ => {}
                 }
 
-                base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+                if base_velocity.x.signum() != max_run_speed.signum()
+                    || base_velocity.x.abs() < max_run_speed
+                {
+                    base_velocity.x += acceleration * (self.delta * multiplier) as f32;
+                }
+
+                let horizontal_movement = self.get_horizontal_movement();
+                if horizontal_movement.abs() != 1.0
+                    || acceleration.signum() != base_velocity.x.signum()
+                {
+                    base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+                }
             }
             Force::AirRun { acceleration } => {
                 let max_run_speed = self.get_run_speed();
-                if base_velocity.x.abs() < max_run_speed && acceleration != 0.0 {
-                    base_velocity.x += acceleration * self.delta as f32;
-                } else if acceleration == 0.0 {
-                    base_velocity.x = 0.0;
+                let mut multiplier = 1.0;
+                match self.force_modifiers.get(&ForceModifierTag::Pewter) {
+                    Some(ForceModifier::Pewter { run_boost, .. }) => {
+                        multiplier += *run_boost;
+                    }
+                    _ => {}
                 }
 
-                base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+                if base_velocity.x.signum() != max_run_speed.signum()
+                    || base_velocity.x.abs() < max_run_speed
+                {
+                    base_velocity.x += acceleration * (self.delta * multiplier) as f32;
+                }
+
+                let horizontal_movement = self.get_horizontal_movement();
+                if horizontal_movement.abs() != 1.0
+                    || acceleration.signum() != base_velocity.x.signum()
+                {
+                    base_velocity.x = base_velocity.x.clamp(-max_run_speed, max_run_speed);
+                }
             }
             Force::Stop {
                 horizontal,
@@ -939,7 +1022,8 @@ impl Player {
     fn remove_nearby_player(&mut self, player: Gd<Player>) {
         if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
             let mut player = self.nearby_players.remove(pos);
-            player.bind_mut().hide_particles();
+            let visibility_mask = 1 << player.bind().get_player_id() * 2;
+            player.bind_mut().hide_particles(visibility_mask);
         }
     }
 
@@ -967,11 +1051,12 @@ impl Player {
         }
     }
 
-    pub fn hide_particles(&mut self) {
-        let current_layer = 1 << (self.player_id * 2);
+    pub fn hide_particles(&mut self, visibility_layer: u32) {
+        let mask_to_clear = !(visibility_layer); // Bitwise NOT to clear the target bit
         for metal in MetalType::iter() {
             let mut particles = self.get_metal_particles(metal);
-            particles.set_visibility_layer(current_layer);
+            let current_mask = particles.get_visibility_layer();
+            particles.set_visibility_layer(current_mask & mask_to_clear);
         }
     }
 
@@ -1020,6 +1105,16 @@ impl Player {
     pub fn is_burning_metal(&mut self, metal: MetalType) -> bool {
         let particles = self.get_metal_particles(metal);
         particles.is_visible_in_tree()
+    }
+
+    #[func]
+    pub fn is_burning_metal_from_string(&mut self, metal: String) -> bool {
+        if let Some(metal) = MetalType::from_string(&metal) {
+            let particles = self.get_metal_particles(metal);
+            return particles.is_visible_in_tree();
+        } else {
+            return false;
+        }
     }
 
     /// Gets the vec of all nearby metal objects

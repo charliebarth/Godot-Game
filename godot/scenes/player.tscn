@@ -1187,6 +1187,16 @@ amount = 12
 lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_8cf5s")
 
+[node name="CopperParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(1, 10, 10, 1)
+show_behind_parent = true
+light_mask = 524289
+position = Vector2(0, 3)
+amount = 12
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+
 [node name="Landing" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("38_gtvlb")
 volume_db = -15.0
@@ -1234,10 +1244,6 @@ offset_right = 128.263
 offset_bottom = 85.4783
 
 [node name="Timer" type="Timer" parent="Disconnected"]
-
-[node name="RayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(34, -31)
-collision_mask = 3072
 
 [connection signal="id_changed" from="." to="PointLight2D" method="_on_player_id_changed"]
 [connection signal="id_changed" from="." to="PointLight2D2" method="_on_player_id_changed"]
