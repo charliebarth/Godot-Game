@@ -1,12 +1,12 @@
-/// Represents a coin.
-///
-/// Author: Trinity Pittman
-/// Date: Fall 2024
-use godot::prelude::*;
+//! Represents a coin.
+//!
+//! Author: Trinity Pittman
+//! Author: Charles Barth 
 
 use crate::metal_object::MetalObject;
 use crate::player::enums::coin_events::CoinState;
 use crate::player::player::Player;
+use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
@@ -43,8 +43,8 @@ impl INode2D for Coin {
         }
     }
 
-    /// The Godot method called when the coin enters the scene tree for the first time
-    /// Any one time logic and initialization should be done here
+    /// The Godot method called when the coin enters the scene tree for the
+    /// first time. Any one time logic and initialization should be done here
     ///
     /// Sets coin freeze mode to true, and allows collsions.
     fn ready(&mut self) {
@@ -85,8 +85,8 @@ impl Coin {
         self.curr_player = Some(new_player);
     }
 
-    /// When someone enters this coins hit box we call the method to add a coin to that players  
-    /// coin counter.
+    /// When someone enters this coins hit box we call the method to add a coin
+    /// to that players coin counter.
     ///
     /// # Arguments
     /// * `body` (`Gd<Node2D>`) - the Node that enters this coin
@@ -162,8 +162,9 @@ impl Coin {
         }
     }
 
-    /// Handles dropping the coin, called when the coin enters something while in throw state. If
-    /// the coin enters a player other than the player who threw the coin, damages the player.
+    /// Handles dropping the coin, called when the coin enters something while
+    /// in throw state. If the coin enters a player other than the player who
+    /// threw the coin, damages the player.
     pub fn drop(&mut self, body: Gd<Node2D>) {
         // If the player the coin entered is not the current player
         if let Ok(mut player) = body.try_cast::<Player>() {

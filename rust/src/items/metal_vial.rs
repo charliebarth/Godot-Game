@@ -1,19 +1,19 @@
-use godot::classes::{Area2D, AudioStreamPlayer2D, IArea2D};
-/// Represents a Metal Vial.
-///
-/// Author : Trinity Pittman
-/// Version : Fall 2024
-use godot::prelude::*;
+//! Represents a Metal Vial.
+//!
+//! Author : Trinity Pittman
 
 use crate::player::player::Player;
+use godot::classes::{Area2D, AudioStreamPlayer2D, IArea2D};
+use godot::prelude::*;
 
+// A position off the map used to move the metal vial to when picked up
 const OFF_MAP: Vector2 = Vector2::new(-100000., 100000.);
 
 #[derive(GodotClass)]
 #[class(base=Area2D)]
 /// Represents a Metal Vial
 pub struct MetalVial {
-    // The base node of the MetalVial
+    /// The base node of the MetalVial
     base: Base<Area2D>,
     /// A vector of metals this metal vial increments
     metals: Vec<&'static str>,
@@ -48,25 +48,20 @@ impl IArea2D for MetalVial {
 #[godot_api]
 // Methods owned by the MetalVial
 impl MetalVial {
-    /// When someone enters this metal vial hit box we call the method to add metal to that players  
-    /// metal bars.
+    /// When someone enters this metal vial hit box we call the method to add
+    /// metal to that players metal bars.
     ///
     /// # Arguments
-    /// * `body` (`Gd<Node2D>`) - the Node that enters this metal vial.
+    /// * `body` (Gd<Node2D>) - the Node that enters this metal vial.
     #[func]
     fn metal_pickup(&mut self, body: Gd<Node2D>) {
-        let body_name = body.get_name();
-
         if let Ok(mut player) = body.try_cast::<Player>() {
-            player.bind_mut().adjust_metals(self.get_metals(), self.amt); // Dereference and call the method
+            // Dereference and call the method
+            player.bind_mut().adjust_metals(self.get_metals(), self.amt);
 
             self.play_sound(player);
 
-            // Set position
-            // let pos = Vector2::new(100000., -100000.);
             self.base_mut().set_global_position(OFF_MAP);
-
-            // self.base_mut().queue_free(); // Remove the vial from the scene
         }
     }
 
