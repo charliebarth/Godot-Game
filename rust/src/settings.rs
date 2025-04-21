@@ -59,21 +59,33 @@ impl Settings {
         self.general.debug_mode
     }
 
+    /// Gets the game mode.
+    /// # Returns 
+    /// * A string representing the game mode, defaults to "Last Player Standing".
     #[func]
     pub fn get_game_mode(&self) -> String {
         self.game_mode.game_mode.clone()
     }
 
+    /// Sets the game mode.
+    /// # Parameters
+    /// * `mode` - The new game mode.
     #[func]
     pub fn set_game_mode(&mut self, mode: String) {
         self.game_mode.game_mode = mode;
     }
 
+    /// Gets whether this game is a team game or not.
+    /// # Returns 
+    /// * true if team game, false if solo game.
     #[func]
     pub fn get_team_game(&self) -> bool {
         self.game_mode.team_game
     }
 
+    /// Sets whether this is a team game or not.
+    /// # Parameters 
+    /// * `team` - true if team game, false if solo game. 
     #[func]
     pub fn set_team_game(&mut self, team: bool) {
         self.game_mode.team_game = team;

@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
 use godot::{
-    classes::{DisplayServer, Engine, InputEvent, InputMap, Timer},
+    classes::{
+        class_macros::sys::known_virtual_hashes::Shader, AnimatedSprite2D, DisplayServer, Engine, InputEvent, InputMap, Material, ResourceLoader, ShaderMaterial, Timer
+    },
     prelude::*,
 };
 
@@ -24,6 +26,9 @@ pub struct Game {
     base: Base<Node2D>,
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
+
+    team_tracker: HashMap<String, Vec<i32>>,
+
     /// A list of connected input devices.
     devices: Vec<i32>,
     /// The name of the button that players must press to register.
@@ -36,8 +41,8 @@ pub struct Game {
     started: bool,
     /// The current map.
     map: Option<Gd<Map>>,
-    /// The ID of the winning player.
-    winning_player: i32,
+    /// The ID of the winning player as a string.
+    winner: String,
     /// A collection of maps/levels that can be loaded.
     maps: HashMap<String, Gd<PackedScene>>,
     /// A reference to the main menu.
@@ -77,13 +82,14 @@ impl INode2D for Game {
         Self {
             base,
             players: Vec::new(),
+            team_tracker: HashMap::new(),
             devices: Vec::new(),
             register_button: "jump".into(),
             player_scene: load::<PackedScene>("res://scenes/player.tscn"),
             current_player_id: 0,
             started: false,
             map: None,
-            winning_player: 0,
+            winner: "0".to_string(),
             maps: HashMap::new(),
             main_menu: None,
             split_screen_one: SplitScreen::new_alloc(),
@@ -236,44 +242,182 @@ impl Game {
             .clone()
     }
 
-    pub fn get_game_mode(&mut self) -> String {
-        self.settings.bind().get_selected_map()
-        // unsafe { GAME_MODE.clone().unwrap() }
+    /// Gets the hashmap that stores which team each player is on, if the
+    /// hashmap is empty, initializes it with the teams Red and Blue
+    /// # Returns
+    /// * a hasmap of strings (team names) maped to vectors of i32 (player ids)
+    fn get_team_tracker(&mut self) -> &mut HashMap<String, Vec<i32>> {
+        if self.team_tracker.is_empty() {
+            self.team_tracker.insert("Red".to_string(), vec![]);
+            self.team_tracker.insert("Blue".to_string(), vec![]);
+        }
+
+        &mut self.team_tracker
     }
 
+    #[func]
+    fn reset_team_players(&mut self) {
+        self.get_team_tracker().clear();
+        for i in 0..self.players.len(){
+            let player = self.players[i].clone();
+            let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
+            player_an.set_use_parent_material(true);
+            self.get_main_menu().bind_mut().set_player_team(i as i32, "clear".to_string());
+        }        
+    }
+
+    /// Given the players Id and chosen team, adds a player to the correct
+    /// hashmap and sets the players outline to the correct color of their team.
+    #[func]
+    fn set_player_team(&mut self, id: i32, team: String) {
+        self.get_main_menu().bind_mut().set_player_team(id, team.clone());
+        let position = self.devices.iter().position(|&el| el == id);
+        if position.is_none() {
+            return;
+        }
+
+        let id = position.expect("id missing") as i32;
+        let add: &str = &team; // The team to add the player to
+        let rem: &str; // The team to remove the player from
+
+        if team == "Blue" {
+            rem = "Red";
+        } else {
+            rem = "Blue";
+        }
+
+        // Add the player to the correct team if they aren't already on it
+        let add_to = self
+            .get_team_tracker()
+            .get_mut(add)
+            .expect("Failed to get Key");
+        if !add_to.contains(&id) {
+            add_to.push(id)
+        }
+
+        // Removes the player from the other team if they were on it
+        let remove_from = self
+            .get_team_tracker()
+            .get_mut(rem)
+            .expect("Failed to get Key");
+        if let Some(i) = remove_from.iter().position(|&el| el == id) {
+            remove_from.remove(i);
+        }
+
+    }
+
+    /// Given the players Id and chosen team, adds a player to the correct
+    /// hashmap and sets the players outline to the correct color of their team.
+    fn set_player_team_outline(&mut self, id: i32, team: String) {
+        // let position = self.devices.iter().position(|&el| el == id);
+        // if position.is_none() {
+        //     return;
+        // }
+
+        // let id = position.expect("id missing") as i32;
+        let path: &str;
+
+        if team == "Blue" {
+            path = "res://shaders/blue_outline.tres";
+        } else {
+            path = "res://shaders/red_outline.tres";
+        }
+
+        
+        // Sets the players outline to the team color
+        let shader = ResourceLoader::singleton().load(path);
+        if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>() {
+            let player = self.players[id as usize].clone();
+            let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
+            player_an.set_use_parent_material(false);
+            player_an.set_material(&shader);
+        }
+    }
+
+    /// Gets the selected game mode from the settings
+    /// # Returns
+    /// * A string representing the game mode (see options below)
+    ///     - "Last Player Standing"
+    ///     - "Head Hunters"
+    pub fn get_game_mode(&mut self) -> String {
+        self.settings.bind().get_game_mode()
+    }
+
+    /// Gets whether the game is a team game or not from the settings
+    /// # Returns
+    /// * true if team game false if solo
+    #[func]
     pub fn get_team_game(&mut self) -> bool {
         self.settings.bind().get_team_game()
-        // unsafe { GAME_MODE.clone().unwrap() }
     }
 
-    /// This will attempt to start the game.
-    /// It will check if the appropriate conditions are met to start the game.
-    ///
-    /// Arguments:
-    /// * `test_mode` - A boolean that determines if the game should only launch with exactly 1 player.
-    ///
-    /// Note: If test mode is true the game will only start if there is exactly 1 player. Otherwise the game will start only if there are at least 2 players.
-    #[func]
-    pub fn start_game(&mut self) {
-        self.set_game_mode(String::from("last_player_standing"));
-        self.start_round();
-        return;
-    }
-
+    /// Sets the game mode for this game in the settings
+    /// # Paramaters
+    /// * `mode` - The new game mode
     #[func]
     fn set_game_mode(&mut self, mode: String) {
         self.settings.bind_mut().set_game_mode(mode);
-        // unsafe { GAME_MODE = Some(mode) }
     }
 
+    /// Sets whether this game is a team game or not in the settings
+    /// # Parameters
+    /// * `team_game` - true if team game false if solo
     #[func]
     fn set_team_game(&mut self, team_game: bool) {
         self.settings.bind_mut().set_team_game(team_game);
     }
 
+    /// Sets the map for this game in the settings
+    /// # Parameters
+    /// * `map` - a string representing the map to play on, should be entered
+    ///           based on the name of the map node in godot ex. `MapOne`
     #[func]
     fn set_game_map(&mut self, map: String) {
         self.settings.bind_mut().set_map(map);
+    }
+
+    /// This will attempt to start the game.
+    /// It will check if the appropriate conditions are met to start the game.
+    /// # Conditions
+    /// * there must be at least one player
+    /// * in team games each player must be on a team
+    /// * in team games each team must have at least one player
+    #[func]
+    pub fn start_game(&mut self) {
+        if self.get_team_game() {
+            let red_num = self
+                .get_team_tracker()
+                .get("Red")
+                .expect("Couldn't get value")
+                .len();
+            let blue_num = self
+                .get_team_tracker()
+                .get("Blue")
+                .expect("Couldn't get value")
+                .len();
+            let team_players = red_num + blue_num;
+
+            if team_players != self.players.len() {
+                self.get_main_menu()
+                    .bind()
+                    .add_notification("All players must choose a team".to_string());
+                return;
+            } else if blue_num == 0 || red_num == 0 {
+                self.get_main_menu()
+                    .bind()
+                    .add_notification("Each team must have at least one player".to_string());
+                return;
+            } 
+        } else if self.players.len() <= 0 {
+            self.get_main_menu()
+                .bind()
+                .add_notification("More players needed to start the game".to_string());
+            return;
+        }
+
+        self.start_round();
+
+        return;
     }
 
     /// This will start a round of the game.
@@ -303,6 +447,18 @@ impl Game {
             let mut bound_player = player.bind_mut();
             bound_player.set_device_id(self.devices[index]);
             bound_player.set_player_id(player_id);
+        }
+
+        // If its a team game, set the players outline colors  
+        if self.get_team_game(){
+            let red_team = self.get_team_tracker().get("Red").expect("Couldn't get value").clone();
+            for id in red_team{
+                self.set_player_team_outline(id, "Red".to_string());
+            }
+            let blue_team = self.get_team_tracker().get("Blue").expect("Couldn't get value").clone();
+            for id in blue_team{
+                self.set_player_team_outline(id, "Blue".to_string());
+            }
         }
 
         // Get references to split screens
@@ -382,9 +538,16 @@ impl Game {
         // Show winner screen
         let mut main_menu = self.get_main_menu();
         self.base_mut().add_child(&main_menu);
-        main_menu
-            .bind_mut()
-            .add_notification(format!("Player {} wins!", self.winning_player));
+
+        if self.get_team_game() {
+            main_menu
+                .bind_mut()
+                .add_notification(format!("Team {} wins!", self.winner));
+        } else {
+            main_menu
+                .bind_mut()
+                .add_notification(format!("Player {} wins!", self.winner));
+        }
     }
 
     #[func]
@@ -407,6 +570,10 @@ impl Game {
         }
     }
 
+    /// Gets the number of players currently in this game as an i32
+    /// # Returns
+    /// * The number of players currently connected
+    #[func]
     pub fn get_number_of_players(&self) -> i32 {
         self.players.len() as i32
     }
@@ -428,6 +595,7 @@ impl Game {
             player.bind_mut().set_device_id(device_id.clone());
             player.bind_mut().set_player_id(self.current_player_id);
             player.set_name(format!("Player{}", self.current_player_id).as_str());
+            // Add player team adding here 
             self.players.push(player);
         }
     }
@@ -461,6 +629,19 @@ impl Game {
         }
     }
 
+    fn get_team_eliminations(&mut self, team_color: &str) -> i32 {
+        let team_tracker = self.get_team_tracker().clone();
+        let team = team_tracker.get(team_color).expect("Couldn't get value");
+
+        let elims = &self.eliminations;
+        let mut team_elims: i32 = 0;
+        for id in team.clone() {
+            team_elims += elims.get(&(id + 1)).unwrap();
+        }
+
+        team_elims
+    }
+
     /// This will check if a player has reached the required elimination count.
     ///
     /// Returns:
@@ -472,16 +653,32 @@ impl Game {
 
         // The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
         const REQUIRED_ELIMINATIONS: i32 = 2;
+
+        if self.get_team_game() {
+            let red = self.get_team_eliminations("Red");
+            let blue = self.get_team_eliminations("Blue");
+
+            if red == REQUIRED_ELIMINATIONS {
+                self.winner = "Red".to_string();
+                return true;
+            } else if blue == REQUIRED_ELIMINATIONS {
+                self.winner = "Blue".to_string();
+                return true;
+            }
+            return false;
+        }
+
         // check if a player has reached the required number of eliminations by checking the hashmap
         for (_, eliminations) in self.eliminations.iter() {
             if *eliminations >= REQUIRED_ELIMINATIONS {
                 // set the winning player to the player with the required number of eliminations
-                self.winning_player = self
+                self.winner = (self
                     .eliminations
                     .iter()
                     .position(|(&k, &v)| v == REQUIRED_ELIMINATIONS)
                     .unwrap() as i32
-                    + 1;
+                    + 1)
+                .to_string();
                 return true;
             }
         }
