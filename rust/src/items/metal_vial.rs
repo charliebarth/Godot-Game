@@ -1,6 +1,6 @@
 //! Represents a Metal Vial.
 //!
-//! Author : Trinity Pittman
+//! Author: Trinity Pittman
 
 use crate::player::player::Player;
 use godot::classes::{Area2D, AudioStreamPlayer2D, IArea2D};
@@ -76,13 +76,17 @@ impl MetalVial {
     /// Sets the metals this metal vial will increment
     ///
     /// # Arguments
-    /// * `metals` (`Vec<StringName>`) - the names of the metals to set
+    /// * `metals` (Vec<StringName>) - the names of the metals to set
     pub fn set_metals(&mut self, metals: Vec<&'static str>) {
         self.metals = metals
     }
 
+    /// Plays the sound effect to the player when a metal vial is picked up
+    ///
+    /// # Arguments
+    /// * `player` (Gd<Player>) - The player who picked up the vial
     fn play_sound(&mut self, player: Gd<Player>) {
-        // Play swallowing sound
+        // Play pickup sound
         let mut sound_effect: Gd<AudioStreamPlayer2D> = player.get_node_as("./Vial");
 
         sound_effect.play();

@@ -1,4 +1,3 @@
-
 use godot::{
     classes::{
         AnimatedSprite2D, AnimationPlayer, Control, ResourceLoader, RichTextLabel, ShaderMaterial,
@@ -101,7 +100,7 @@ impl MainMenu {
     }
 
     /// This function adds a notification to the notification box.
-    /// This is used for error messages such as trying to start a game with an 
+    /// This is used for error messages such as trying to start a game with an
     /// incorrect number of players.
     /// This is also used for victory messages after a game has ended.
     /// The notification will fade out after a few seconds.
@@ -110,9 +109,7 @@ impl MainMenu {
     /// * `msg` - The message to display in the notification box.
     #[func]
     pub fn add_notification(&self, msg: String) {
-        let mut notification_box = self
-            .base()
-            .get_node_as::<RichTextLabel>("NotificationBox");
+        let mut notification_box = self.base().get_node_as::<RichTextLabel>("NotificationBox");
         notification_box.clear();
         notification_box.append_text(format!("[center]{}", msg).as_str());
 

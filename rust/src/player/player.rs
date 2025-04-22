@@ -1082,10 +1082,10 @@ impl Player {
     pub fn add_active_metal(&mut self, metal: MetalType) {
         if !self.active_metals.contains(&metal) {
             self.active_metals.push(metal);
-             if metal == MetalType::Copper {
-                 // get the visibility mask of the current player
+            if metal == MetalType::Copper {
+                // get the visibility mask of the current player
                 let visibility_mask = 1 << self.player_id * 2;
-                 self.hide_particles(visibility_mask);
+                self.hide_particles(visibility_mask);
             }
         }
     }

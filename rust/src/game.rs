@@ -1,4 +1,3 @@
-
 use crate::{
     main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
     split_screen::SplitScreen,

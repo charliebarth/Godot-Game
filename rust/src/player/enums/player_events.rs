@@ -1,7 +1,7 @@
 use godot::prelude::*;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
-/// This enum is used to determine whether an event registered by the 
+/// This enum is used to determine whether an event registered by the
 /// InputManager should be triggered on press or release.
 pub enum TriggerEvents {
     /// The event should be triggered on press.
@@ -12,7 +12,7 @@ pub enum TriggerEvents {
 
 impl TriggerEvents {
     /// Returns the corresponding trigger event for a given player event.
-    /// This is used to determine whether a player event should be recorded on 
+    /// This is used to determine whether a player event should be recorded on
     /// press or release.
     ///
     /// # Arguments
@@ -29,15 +29,14 @@ impl TriggerEvents {
             PlayerEvents::Attack => TriggerEvents::OnPress,
             PlayerEvents::LowBurn => TriggerEvents::OnPress,
             PlayerEvents::Die => TriggerEvents::OnPress,
-            PlayerEvents::MetalWheel => TriggerEvents::OnPress
+            PlayerEvents::MetalWheel => TriggerEvents::OnPress,
         }
     }
 }
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
-#[derive(GodotConvert, Var, Export)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy, GodotConvert, Var, Export)]
 #[godot(via = GString)]
-/// This enum defines the valid player events and is used to identify events in 
+/// This enum defines the valid player events and is used to identify events in
 /// the InputManager.
 pub enum PlayerEvents {
     /// The player has jumped.
@@ -51,7 +50,7 @@ pub enum PlayerEvents {
     /// The player has attacked.
     Attack,
     /// This is a modifier key on the controller.
-    /// If button is held/the event is registered and a metal event is 
+    /// If button is held/the event is registered and a metal event is
     /// triggered, the metal event will be triggered with the LowBurn variant.
     LowBurn,
     /// The player has died or should die.
@@ -81,12 +80,12 @@ impl PlayerEvents {
         }
     }
 
-    /// This determines the number of frames a player event should be held in a 
+    /// This determines the number of frames a player event should be held in a
     /// vec of registered events before expiring and being removed.
     /// -1 means the event should persist until the button is released
     ///
     /// # Returns
-    /// * `i8` - The number of frames the event should be held in a vec of 
+    /// * `i8` - The number of frames the event should be held in a vec of
     ///          registered events before expiring and being removed.
     pub fn timeout(&self) -> i8 {
         match self {
