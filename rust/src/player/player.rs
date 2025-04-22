@@ -1210,6 +1210,16 @@ impl Player {
         let mut disconnected_node = self.get_disconnected();
         disconnected_node.set_visible(disconnected);
     }
+
+    /// Getter for the InputManager node
+    /// This effectively caches the InputManager node so that it does not have to be found every time it is needed
+    ///
+    /// # Returns
+    /// * `InputManager` - The InputManager node
+    #[func]
+    pub fn get_input_manager(&mut self) -> Gd<InputManager> {
+        self.get_cached_node(CachedNode::InputManager, "InputManager")
+    }
 }
 /// Getters for nodes
 impl Player {
@@ -1228,15 +1238,6 @@ impl Player {
             .expect(&format!("{:?} node not found", cache_key))
             .clone()
             .cast::<T>()
-    }
-
-    /// Getter for the InputManager node
-    /// This effectively caches the InputManager node so that it does not have to be found every time it is needed
-    ///
-    /// # Returns
-    /// * `InputManager` - The InputManager node
-    pub fn get_input_manager(&mut self) -> Gd<InputManager> {
-        self.get_cached_node(CachedNode::InputManager, "InputManager")
     }
 
     /// Getter for the MetalManager node

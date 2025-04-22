@@ -1,24 +1,28 @@
 extends CanvasLayer
 @onready var player = self.get_parent().get_parent() as Player
 @onready var metal_reserve_bar_manager: MetalReserveBarManager = player.get_node("PlayerUI/MetalReserveBarManager")
-#@onready var input_manager: InputManager = $InputManager
+@onready var input_manager: InputManager = player.get_node("InputManager")
 
 # The name of the metal we are removing 
 var prev_metal = null
 # The event mapped to the metal we are removing
 var rebind_event = null
+# Keeps track of whether the button was just pressed
+var pressed = false
 # Types of metals
 var metals = ["iron", "steel", "pewter", "copper", "bronze", "tin", 
 			"duralumin", "nicrosil", "chromium", "gold"]
 
+
 func _process(delta: float) -> void:
 	# When the button to open the metal selector is pressed
-	if Input.is_action_just_pressed("metal_selector"):
+	var metal_selector_event = input_manager.str_to_player_event("metal_selector")
+	if input_manager.check_for_player_event(metal_selector_event):
 		$Label.visible = false # Make sure the label is hiddle
 		$SelectionWheel.show() # Show the selector wheel 
-		
+		pressed = true
 	# When the button is released 
-	elif Input.is_action_just_released("metal_selector"):
+	elif !input_manager.check_for_player_event(metal_selector_event) and pressed:
 		# Get the metal that was chosen, this will be the new metal
 		var new_metal: String = $SelectionWheel.close().to_lower()
 		
@@ -40,6 +44,7 @@ func _process(delta: float) -> void:
 			else: # If the new metal was already on screen 
 				display_msg(new_metal + " already on screen")
 		prev_metal = null 
+		pressed = false
 
 
 func display_msg(msg: String) -> void:
