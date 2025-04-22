@@ -4,11 +4,17 @@
 ## @version Spring 2025
 extends TabBar
 
+## The button that allows changing the display mode settings.
 @onready var display_mode_btn = $MarginContainer/VBoxContainer/DisplayMode/HBoxContainer/DisplayModeBtn
+## The button that allows changing the border mode settings. 
 @onready var border_mode_btn = $MarginContainer/VBoxContainer/BorderMode/HBoxContainer/BorderModeBtn
+## The button that allows changing the vsync mode settings.
 @onready var vsync_mode_btn = $MarginContainer/VBoxContainer/VsyncMode/HBoxContainer/VsyncModeBtn
+## The button that allows changing the window size settings.
 @onready var window_size_btn = $MarginContainer/VBoxContainer/WindowSize/HBoxContainer/WindowSizeBtn
+## The slider that allows changing the fps cap.
 @onready var fps_slider = $"MarginContainer/VBoxContainer/FPS cap/HBoxContainer/HSlider"
+## The label that displays the fps cap. 
 @onready var fps_label = $"MarginContainer/VBoxContainer/FPS cap/HBoxContainer/Value"
 
 ## Contains the possible resolutions 
@@ -39,7 +45,7 @@ func _ready() -> void:
 
 ## Called when a window mode item is selected. Sets the new window mode.
 ##
-## @param index The index of the item selected 
+## @param `index` (int) - The index of the item selected 
 func set_window_mode(index: int) -> void:
 	DisplayServer.window_set_mode(
 		DisplayServer.WINDOW_MODE_WINDOWED if index == 0 
@@ -48,24 +54,25 @@ func set_window_mode(index: int) -> void:
 
 ## Called when the border mode toggle is toggled. Sets the new border mode.
 ##
-## @param enabled True or False value of whether the toggle is on or off
+## @param `enabled` (bool) - True or False value of whether the toggle is on or 
+##							 off
 func set_border_mode(enabled: bool) -> void:
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS,enabled)
 
 
 ## Called when the vsync toggle is toggled. Sets the new vsync mode.
 ##
-## @param enabled True or False value of whether the toggle is on or off
-func set_vsync(enabled: bool):
+## @param `enabled` (bool) - True or False value of whether the toggle is on or 
+## 							 off.
+func set_vsync(enabled: bool) -> void:
 	DisplayServer.window_set_vsync_mode(
 		DisplayServer.VSYNC_ENABLED if enabled 
 		else DisplayServer.VSYNC_DISABLED)
-	print("set vsync to %s" %[DisplayServer.window_get_vsync_mode()])
 
 
 ## Called when a window mode item is selected. Sets the new window mode.
 ##
-## @param index The index of the item selected 
+## @param `index` (int) - The index of the item selected 
 func set_window_size(index: int) -> void:
 	DisplayServer.window_set_size(resolutions[index])
 	print("set window size to %s" %[DisplayServer.window_get_size()])
@@ -73,7 +80,7 @@ func set_window_size(index: int) -> void:
 
 ## Called when the fps slider value is changed. 
 ##
-## @param val The new value the slider was set to.
+## @param `val` (float) - The new value the slider was set to.
 func set_fps(val: float) -> void:
 	Engine.max_fps = val
 	fps_label.text = str(val)

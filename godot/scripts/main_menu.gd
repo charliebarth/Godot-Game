@@ -1,13 +1,19 @@
+## Handles logic for the main menu buttons and screen swapping
+## 
+## @author Charles Barth
+## @author Trinity Pittman
 extends Control
 
+# A reference to the game
 @onready var game = get_node("/root/Game") as Game
+# A reference to the main menu (for rust methods)
 @onready var main_menu = $".." as MainMenu
+# A reference to the play button
 @onready var play: Button = $MarginContainer/HBoxContainer/VBoxContainer/Play
 
-## When the play button is pressed, attempt to start the game
+## When the play button is pressed, swap to the new game menu 
 func _on_play_pressed() -> void:
 	main_menu.swap_to_new_game_menu()
-	#game.start_game()
 
 ## When the settings button is pressed, swap to the settings menu
 func _on_settings_pressed() -> void:
