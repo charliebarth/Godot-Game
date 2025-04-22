@@ -1,8 +1,7 @@
-use godot::classes::{ITextureProgressBar, ResourceLoader, Texture2D, TextureProgressBar};
 /// Represents a Metal Bar that contains the amount of reserves for a particular metal type.
 ///
 /// Author : Trinity Pittman
-/// Version : Fall 2024
+use godot::classes::{ITextureProgressBar, ResourceLoader, Texture2D, TextureProgressBar};
 use godot::prelude::*;
 
 /// The maximum number of metal reserves a player can have
@@ -74,7 +73,7 @@ impl MetalBar {
     /// # Arguments
     /// * `path` (&str) - the path the the texture to load
     /// # Returns
-    /// * (`Gd<Texture2D>`) - the texture loaded
+    /// * (Gd<Texture2D>) - the texture loaded
     fn load_texture(&mut self, path: &str) -> Gd<Texture2D> {
         let mut loader: Gd<ResourceLoader> = ResourceLoader::singleton();
 
@@ -96,11 +95,6 @@ impl MetalBar {
     /// * (StringName) - the name of the bar
     pub fn get_name(&mut self) -> StringName {
         self.base_mut().get_name()
-    }
-
-    /// Hides this metal bar from the scene
-    pub fn hide(&mut self) {
-        self.base_mut().hide();
     }
 
     /// Getter method for the current number of reserves

@@ -29,9 +29,8 @@ pub struct Game {
     base: Base<Node2D>,
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
-
+    /// A map of Player team names to player ids
     team_tracker: HashMap<String, Vec<i32>>,
-
     /// A list of connected input devices.
     devices: Vec<i32>,
     /// The name of the button that players must press to register.
@@ -317,9 +316,12 @@ impl Game {
         &mut self.team_tracker
     }
 
+    /// Resets the team players hashmap and clears each players outline
     #[func]
     fn reset_team_players(&mut self) {
         self.get_team_tracker().clear();
+
+        // Remove the outline for each player
         for i in 0..self.players.len() {
             let player = self.players[i].clone();
             let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
@@ -330,8 +332,12 @@ impl Game {
         }
     }
 
-    /// Given the players Id and chosen team, adds a player to the correct
-    /// hashmap and sets the players outline to the correct color of their team.
+    /// Given the players device Id and chosen team, adds a player to the
+    /// correct hashmap
+    ///
+    /// # Arguments
+    /// * `id` (i32) - the device id of a player
+    /// * `team` (String) - the name of the players team
     #[func]
     fn set_player_team(&mut self, id: i32, team: String) {
         self.get_main_menu()
@@ -371,8 +377,12 @@ impl Game {
         }
     }
 
-    /// Given the players Id and chosen team, adds a player to the correct
-    /// hashmap and sets the players outline to the correct color of their team.
+    /// Given the players Id and chosen team, sets the players outline to the
+    /// correct color of their team.
+    ///
+    /// # Arguments
+    /// * `id` (i32) - The player id
+    /// * `team` (String) - The name of the team
     fn set_player_team_outline(&mut self, id: i32, team: String) {
         let path: &str;
 
@@ -611,6 +621,7 @@ impl Game {
         let mut main_menu = self.get_main_menu();
         self.base_mut().add_child(&main_menu);
 
+        // Show who won!
         if self.get_team_game() {
             main_menu
                 .bind_mut()
@@ -729,6 +740,15 @@ impl Game {
         }
     }
 
+    /// Adds up the number of wins/eliminations for a team based on the hashmap
+    /// passed in.
+    ///
+    /// # Arguments
+    /// * `team_color` - The color of the team to calculate.
+    /// * `wins_check` - The hashmap the number of wins for each player is
+    ///                  stored in.
+    /// # Returns
+    /// * (i32) - The number of wins/eliminations.
     fn get_team_eliminations(&mut self, team_color: &str, wins_check: &HashMap<i32, i32>) -> i32 {
         let team_tracker = self.get_team_tracker().clone();
         let team = team_tracker.get(team_color).expect("Couldn't get value");
@@ -745,7 +765,7 @@ impl Game {
     /// This will check if a player has reached the required elimination count.
     ///
     /// # Returns
-    /// * bool - If a player has reached the required elimination count.
+    /// * (bool) - If a player has reached the required elimination count.
     fn check_win_condition(&mut self) -> bool {
         if self.devices.len() == 1 {
             return true;
@@ -764,9 +784,11 @@ impl Game {
         }
 
         if self.get_team_game() {
+            // Get the number of elminations/rounds won for each team
             let red = self.get_team_eliminations("Red", &wins_check);
             let blue = self.get_team_eliminations("Blue", &wins_check);
 
+            // Check if either team has reached the end condition
             if red == end_condition {
                 self.winner = "Red".to_string();
                 return true;
@@ -774,7 +796,6 @@ impl Game {
                 self.winner = "Blue".to_string();
                 return true;
             }
-            return false;
         } else {
             // check if a player has reached the required number of eliminations
             // by checking the hashmap
