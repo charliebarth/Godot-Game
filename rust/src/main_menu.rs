@@ -1,3 +1,8 @@
+//! Contains logic for the main menu of the game. Handles notification
+//! displaying and swapping between screens.
+//!
+//! Author: Charles Barth
+//! Author: Trinity Pittman
 use godot::{
     classes::{
         AnimatedSprite2D, AnimationPlayer, Control, ResourceLoader, RichTextLabel, ShaderMaterial,
@@ -71,6 +76,7 @@ impl MainMenu {
 
     /// This function sets the outline of the player animation on the main menu
     /// to be based on the chosen team of the specified player.
+    ///
     /// # Arguments
     /// * `id` - The id of the player to set the outline of.
     /// * `blue` - true if we are setting it to blue, false if red.
@@ -149,7 +155,7 @@ impl MainMenu {
             .clone()
     }
 
-    /// This function returns the new gam menu node.
+    /// This function returns the new game menu node.
     ///
     /// # Returns
     /// * `Control` - The new game menu node.
@@ -194,7 +200,7 @@ impl MainMenu {
 
     /// This function swaps the current menu with the main menu. The menu could
     /// either be on the new game menu or settings menu before being swapped to
-    /// the settings menu.
+    /// the main menu.
     #[func]
     pub fn swap_to_main_menu(&mut self) {
         let mut main_menu = self.get_main_menu();

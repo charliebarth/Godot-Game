@@ -1,3 +1,8 @@
+//! Contains structs representing the settings of the game and default settings
+//! for each value. 
+//! 
+//! Author: Charles Barth
+//! Author: Trinity Pittman
 use godot::{classes::Object, prelude::*};
 
 /// This is a struct for all the adjustable settings in the game
@@ -14,7 +19,7 @@ pub struct Settings {
     pub map: MapSettings,
     /// The general settings.
     pub general: GeneralSettings,
-    /// The game mode 
+    /// The game mode
     pub game_mode: GameMode,
 }
 
@@ -60,7 +65,7 @@ impl Settings {
     }
 
     /// Gets the game mode.
-    /// # Returns 
+    /// # Returns
     /// * A string representing the game mode, defaults to "Last Player Standing".
     #[func]
     pub fn get_game_mode(&self) -> String {
@@ -68,7 +73,7 @@ impl Settings {
     }
 
     /// Sets the game mode.
-    /// # Parameters
+    /// # Arguments
     /// * `mode` - The new game mode.
     #[func]
     pub fn set_game_mode(&mut self, mode: String) {
@@ -76,7 +81,7 @@ impl Settings {
     }
 
     /// Gets whether this game is a team game or not.
-    /// # Returns 
+    /// # Returns
     /// * true if team game, false if solo game.
     #[func]
     pub fn get_team_game(&self) -> bool {
@@ -84,8 +89,8 @@ impl Settings {
     }
 
     /// Sets whether this is a team game or not.
-    /// # Parameters 
-    /// * `team` - true if team game, false if solo game. 
+    /// # Arguments
+    /// * `team` - true if team game, false if solo game.
     #[func]
     pub fn set_team_game(&mut self, team: bool) {
         self.game_mode.team_game = team;
@@ -166,17 +171,25 @@ impl Default for GeneralSettings {
     }
 }
 
+/// Represents the game mode and whether this game is team or solo based.
 #[derive(Clone)]
 pub struct GameMode {
+    /// What game mode the game will be.
     pub game_mode: String,
+    /// Whether the game will be a team or solo game.
     pub team_game: bool,
 }
 
+/// Default method for the GameMode struct
 impl Default for GameMode {
+    /// Gets the default values for the GameMode struct
+    ///
+    /// # Returns
+    /// * (Self) - Default representation of GameMode.
     fn default() -> Self {
-        Self { game_mode: "Last Player Standing".to_string(),
-               team_game: false, 
-            }
-        
+        Self {
+            game_mode: "Last Player Standing".to_string(),
+            team_game: false,
+        }
     }
 }

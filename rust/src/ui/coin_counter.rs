@@ -1,7 +1,7 @@
-/// Represents a coin counter.
+/// Represents a coin counter. Handles logic for adding and removing coins, and
+/// for catching the input event for throwing a coin.
 ///
 /// Author: Trinity Pittman
-/// Date: Fall 2024
 use godot::{
     classes::{ILabel, InputEvent, Label, Time},
     prelude::*,
@@ -54,7 +54,8 @@ impl ILabel for CoinCounter {
         }
     }
 
-    /// The Godot method called when the coin counter enters the scene tree for the first time
+    /// The Godot method called when the coin counter enters the scene tree for
+    /// the first time.
     /// Sets the base value of coins and adds coins to the player.
     fn ready(&mut self) {
         let coin_cnt = GString::from(format!("{}", self.coins));
@@ -63,6 +64,11 @@ impl ILabel for CoinCounter {
         self.add_starting_coins();
     }
 
+    /// This message is called every frame. When the coin charge is full, the
+    /// coin will be automatically thrown.
+    ///
+    /// # Arguments
+    /// * `delta` (f64) - The time since the last frame.
     fn process(&mut self, _delta: f64) {
         if self.charging && Time::singleton().get_ticks_msec() - self.charge_start >= 3000 {
             godot_print!("HIT MAX\n");
@@ -70,9 +76,11 @@ impl ILabel for CoinCounter {
         }
     }
 
-    /// On an input event, calls the process_coin_events method if the event is a CoinEvent
+    /// On an input event, calls the process_coin_events method if the event is
+    /// a CoinEvent.
+    ///
     /// # Arguments
-    /// * `event` (`Gd<InputEvent>`) - the input event that took place
+    /// * `event` (Gd<InputEvent>) - the input event that took place
     fn input(&mut self, event: Gd<InputEvent>) {
         let button_name = InputManager::event_to_input_name(event.clone());
 
@@ -86,6 +94,7 @@ impl ILabel for CoinCounter {
 /// Methods for the CoinCounter
 impl CoinCounter {
     /// Increments the number of coins
+    ///
     /// # Arguments
     /// * `coin` (Coin) - the coin to add to the coin counter
     pub fn add_coin(&mut self, mut coin: Gd<MetalObject>) {
@@ -150,6 +159,8 @@ impl CoinCounter {
         }
     }
 
+    /// This method checks if the player can throw a coin, if they can it calls
+    /// that coins throw method and removes the coin from the coin holder.
     fn throw(&mut self) {
         // Check if player has coins to throw
         if self.remove_coin() {
@@ -165,7 +176,8 @@ impl CoinCounter {
         }
     }
 
-    /// Adds the number of coins to start the game depending on the starting coin count.
+    /// Adds the number of coins to start the game depending on the starting
+    /// coin count.
     fn add_starting_coins(&mut self) {
         for i in 0..STARTING_COIN_COUNT {
             // Get the coin scene and instantiate it

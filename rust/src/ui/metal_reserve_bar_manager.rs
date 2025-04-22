@@ -1,5 +1,6 @@
-/// Controls the metal bars on screen, stores bars that are not currently on screen and has methods
-/// to add and remove bars from the on screen Vbox by name.
+/// Controls the metal bars on screen, stores bars that are not currently on 
+/// screen and has methods to add and remove bars from the on screen Vbox by 
+/// name.
 ///
 /// Author: Trinity Pittman
 use std::collections::HashMap;
@@ -53,8 +54,9 @@ impl IVBoxContainer for MetalReserveBarManager {
         Self { base, bars: None }
     }
 
-    /// The Godot method called when the coin counter enters the scene tree for the first time
-    /// Creates and sets up the bars inside the Metal Reserve Bar Manager
+    /// The Godot method called when the coin counter enters the scene tree 
+    /// for the first time.
+    /// Creates and sets up the bars inside the Metal Reserve Bar Manager.
     fn ready(&mut self) {
         // Create Metals that are auto added to VBox based on the keybound metals
         for i in 0..TOTAL_BARS + 1 {
@@ -137,7 +139,8 @@ impl MetalReserveBarManager {
     /// Gets the HashMap of metal bars, if it doesn't exist, create it
     ///
     /// # Returns
-    /// * (HashMap<StringName, Gd<MetalBar>>) - HashMap of MetalBars and their name (StringName)
+    /// * (HashMap<StringName, Gd<MetalBar>>) - HashMap of MetalBars and their 
+    ///                                         name (StringName)
     fn get_bars(&mut self) -> &mut HashMap<StringName, Gd<MetalBar>> {
         if self.bars.is_none() {
             self.bars = Some(HashMap::new());
@@ -145,7 +148,8 @@ impl MetalReserveBarManager {
         self.bars.as_mut().unwrap()
     }
 
-    /// Adds metals to all the bars contained within the metal reserve bar manager
+    /// Adds metals to all the bars contained within the metal bar manager
+    /// 
     /// # Arguments
     /// * `metals` (&Vec<StringName>) - the metals to increment
     /// * `amt` (f64) - the ammount to increment by
