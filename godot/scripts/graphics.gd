@@ -1,8 +1,8 @@
-extends TabBar
 ## Handles the logic for the graphics settings menu
 ## 
 ## @author Trinity Pittman
 ## @version Spring 2025
+extends TabBar
 
 @onready var display_mode_btn = $MarginContainer/VBoxContainer/DisplayMode/HBoxContainer/DisplayModeBtn
 @onready var border_mode_btn = $MarginContainer/VBoxContainer/BorderMode/HBoxContainer/BorderModeBtn

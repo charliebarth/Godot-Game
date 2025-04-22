@@ -1,8 +1,8 @@
-extends TabBar
 ## Handles the logic for setting the keybind settings menu and rebinding keys.
 ## 
 ## @author Trinity Pittman
 ## @version Spring 2025
+extends TabBar
 class_name Controls
 
 ## The Hbox that contains the Player # buttons
