@@ -1,9 +1,9 @@
-extends Node
 ## Handles the logic for saving and loading to and from the config file. 
 ## 
 ## @author Charles Barth 
 ## @author Trinity Pittman 
 ## @version Spring 2025
+extends Node
 
 ## A reference to the config file
 var config = ConfigFile.new()
@@ -52,7 +52,7 @@ func _ready() -> void:
 
 ## Loads the setting based on the string passed in, for example "audio" or "ui".
 ## 
-## @param type The name of the section to load the settings for
+## @param `type` (String) - The name of the section to load the settings for
 ## @returns A dictionary of the settings for the specified section
 func load_settings_helper(type: String) -> Dictionary:
 	var settings = {}
@@ -63,8 +63,8 @@ func load_settings_helper(type: String) -> Dictionary:
 
 ## Save the audio setting to the config file.
 ##
-## @param key The name of the audio setting being saved
-## @param value The value it is being saved as
+## @param `key` (String) - The name of the audio setting being saved
+## @param `value` (float) - The value it is being saved as
 func save_audio_setting(key: String, value: float) -> void:
 	config.set_value("audio", key, value)
 	config.save(SETTINGS_FILE_PATH)
@@ -102,9 +102,9 @@ func save_graphics_setting() -> void:
 
 ## Saves the UI settings to the config file. 
 ## 
-## @param size The size to save 
-## @param opacity The opacity to save 
-## @param pos The position index to save 
+## @param `size` (float) - The size to save 
+## @param `opacity` (float) - The opacity to save 
+## @param `pos` (pos) - The position index to save 
 func save_ui_settings(size: float, opacity: float, pos: int) -> void:
 	config.set_value(
 		"ui",
@@ -139,9 +139,9 @@ func save_keybind_settings() -> void:
 	config.save(SETTINGS_FILE_PATH)
 
 
-## Takes in an InputEvent and parses it into a storable dictionary 
+## Takes in an InputEvent and parses it into a storable dictionary. 
 ##
-## @param key The input event to serialize 
+## @param `key` (InputEvent) - The input event to serialize 
 ## @returns The serialized input event 
 func serialize_keybind(key: InputEvent) -> Dictionary:
 	if key is InputEventJoypadButton:
@@ -156,8 +156,8 @@ func serialize_keybind(key: InputEvent) -> Dictionary:
 ## Takes in a stringified dictionary, parses it into a string, then creates an 
 ## input event with the information stored. 
 ## 
-## @param data The stringified dictionary representing a key to parse
-## @param device The players device id 
+## @param `data` (String) - Stringified dictionary representing a key to parse
+## @param `device` (int) - The players device id 
 ## @returns The parsed input event 
 func parse_keybind(data: String, device: int) -> InputEvent:
 	var input = "UNBOUND"
@@ -176,7 +176,7 @@ func parse_keybind(data: String, device: int) -> InputEvent:
 	return input
 
 
-## Loads the keybind settings from the config file
+## Loads the keybind settings from the config file.
 ##
 ## @returns A dictionary of the keybind settings 
 func load_all_keybind_settings() -> Array:

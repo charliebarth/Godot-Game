@@ -1,28 +1,26 @@
-use std::collections::HashMap;
-
-use godot::{
-    classes::{
-        class_macros::sys::known_virtual_hashes::Shader, AnimatedSprite2D, DisplayServer, Engine, InputEvent, InputMap, Material, ResourceLoader, ShaderMaterial, Timer
-    },
-    prelude::*,
+use crate::{
+    main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
+    split_screen::SplitScreen,
 };
 use godot::classes::Label;
 use godot::global::HorizontalAlignment;
-use crate::{
-    main_menu::MainMenu,
-    map::Map,
-    player::player::Player,
-    settings::Settings,
-    split_screen::{self, SplitScreen},
+use godot::{
+    classes::{
+        AnimatedSprite2D, DisplayServer, Engine, InputEvent, InputMap, ResourceLoader,
+        ShaderMaterial, Timer,
+    },
+    prelude::*,
 };
+use std::collections::HashMap;
 
-static mut GAME_MODE: Option<String> = None;
-// The number of eliminations required to win the game; could/should be changed to be more dynamic in the future
+// The number of eliminations required to win the game;
+// could/should be changed to be more dynamic in the future
 const REQUIRED_ELIMINATIONS: i32 = 5;
 // The number of rounds required to win the game
 const REQUIRED_ROUNDS: i32 = 3;
 
-/// The Game class is responsible for managing the game state such as players, maps, and the main menu.
+/// The Game class is responsible for managing the game state such as players,
+/// maps, and the main menu.
 /// This is also the root node of the scene tree.
 #[derive(GodotClass)]
 #[class(base=Node2D)]
@@ -31,9 +29,8 @@ pub struct Game {
     base: Base<Node2D>,
     /// A map of input device IDs to players.
     players: Vec<Gd<Player>>,
-
+    /// A map of Player team names to player ids
     team_tracker: HashMap<String, Vec<i32>>,
-
     /// A list of connected input devices.
     devices: Vec<i32>,
     /// The name of the button that players must press to register.
@@ -124,7 +121,8 @@ impl INode2D for Game {
         }
     }
 
-    /// This is a builtin method for Godot that is called when the node is added to the scene tree.
+    /// This is a builtin method for Godot that is called when the node is added
+    /// to the scene tree.
     /// This is where the signals are connected and the maps are loaded.
     fn ready(&mut self) {
         Input::singleton().connect(
@@ -160,10 +158,9 @@ impl INode2D for Game {
         self.base_mut().add_child(&timer);
 
         let target = self.base().clone();
-         timer.connect(
+        timer.connect(
             "timeout",
-            &Callable::from_object_method(
-                &target, "round_transition"),
+            &Callable::from_object_method(&target, "round_transition"),
         );
 
         // Create the winner label
@@ -176,13 +173,15 @@ impl INode2D for Game {
     }
 
     /// This listens for a specific button press (jump by default)
-    /// When the button is pressed if it is the first time that device has pressed the button
-    /// the device id will be saved and a player will be created and assigned that device id.
+    /// When the button is pressed if it is the first time that device has
+    /// pressed the button the device id will be saved and a player will be
+    /// created and assigned that device id.
     ///
-    /// Note: This does not spawn players or start the game simply tracks players and their device ids.
+    /// Note: This does not spawn players or start the game simply tracks
+    /// players and their device ids.
     /// Players can be spawned with the start method.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `event` - The input event that triggered this method.
     fn input(&mut self, event: Gd<InputEvent>) {
         let device_id = event.get_device();
@@ -205,7 +204,7 @@ impl INode2D for Game {
 
     /// This is a built in method for Godot that is called every frame.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `delta` - The time in seconds since the last frame.
     fn process(&mut self, _delta: f64) {
         if self.should_start_new_round {
@@ -218,16 +217,17 @@ impl INode2D for Game {
 #[godot_api]
 impl Game {
     /// Reference viewport size for a single player pane at zoom 1.0
-    /// This is the size of one viewport in a 4-player configuration on a 1920x1080 screen
+    /// This is the size of one viewport in a 4-player configuration on a
+    /// 1920x1080 screen
     const REFERENCE_VIEWPORT: Vector2 = Vector2::new(960.0, 540.0);
 
     /// Calculates the appropriate zoom factor based on viewport size.
     /// Uses the minimum zoom value to maintain aspect ratio.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `viewport_size` - The size of the viewport to calculate the zoom for.
     ///
-    /// Returns:
+    /// # Returns
     /// * Vector2 - The zoom factor for the viewport.
     fn calculate_zoom(&self, viewport_size: Vector2) -> Vector2 {
         let zoom_x = viewport_size.x / Self::REFERENCE_VIEWPORT.x;
@@ -236,10 +236,11 @@ impl Game {
         Vector2::new(zoom, zoom)
     }
 
-    /// This will register a player to the game by adding them to the devices vector
-    /// and creating a new player instance. The player will then be added to the main menu.
+    /// This will register a player to the game by adding them to the devices
+    /// vector and creating a new player instance. The player will then be added
+    /// to the main menu.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `device_id` - The device id of the player to register.
     fn register_player(&mut self, device_id: i32) {
         self.devices.push(device_id);
@@ -257,7 +258,7 @@ impl Game {
 
     /// Updates the number of elimination for a player as they get a new one.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `player_id` - The id of the player that got an elimination.
     pub fn update_eliminations(&mut self, player_id: i32) {
         let eliminations = self.eliminations.entry(player_id).or_insert(0);
@@ -265,11 +266,14 @@ impl Game {
     }
 
     /// This will disconnect a player from the game.
-    /// Disconnecting a player will remove them from the game and shift all still connected players up.
-    /// For example if player 2 is disconnected player 3 will become player 2 and player 4 will become player 3.
-    /// The device associated with the disconnected player will be removed from the list of connected devices as well.
+    /// Disconnecting a player will remove them from the game and shift all
+    /// still connected players up.
+    /// For example if player 2 is disconnected player 3 will become player 2
+    /// and player 4 will become player 3. The device associated with the
+    /// disconnected player will be removed from the list of connected devices
+    /// as well.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `device_id` - The device id of the player to disconnect.
     fn disconnect_player(&mut self, device_id: i32) {
         let mut main_menu = self.get_main_menu();
@@ -287,7 +291,7 @@ impl Game {
 
     /// This will return the main menu node.
     ///
-    /// Returns:
+    /// # Returns
     /// * Gd<MainMenu> - The main menu node.
     fn get_main_menu(&mut self) -> Gd<MainMenu> {
         if self.main_menu.is_none() {
@@ -312,22 +316,33 @@ impl Game {
         &mut self.team_tracker
     }
 
+    /// Resets the team players hashmap and clears each players outline
     #[func]
     fn reset_team_players(&mut self) {
         self.get_team_tracker().clear();
-        for i in 0..self.players.len(){
+
+        // Remove the outline for each player
+        for i in 0..self.players.len() {
             let player = self.players[i].clone();
             let mut player_an = player.get_node_as::<AnimatedSprite2D>("PlayerAnimation");
             player_an.set_use_parent_material(true);
-            self.get_main_menu().bind_mut().set_player_team(i as i32, "clear".to_string());
-        }        
+            self.get_main_menu()
+                .bind_mut()
+                .set_player_team(i as i32, "clear".to_string());
+        }
     }
 
-    /// Given the players Id and chosen team, adds a player to the correct
-    /// hashmap and sets the players outline to the correct color of their team.
+    /// Given the players device Id and chosen team, adds a player to the
+    /// correct hashmap
+    ///
+    /// # Arguments
+    /// * `id` (i32) - the device id of a player
+    /// * `team` (String) - the name of the players team
     #[func]
     fn set_player_team(&mut self, id: i32, team: String) {
-        self.get_main_menu().bind_mut().set_player_team(id, team.clone());
+        self.get_main_menu()
+            .bind_mut()
+            .set_player_team(id, team.clone());
         let position = self.devices.iter().position(|&el| el == id);
         if position.is_none() {
             return;
@@ -360,18 +375,15 @@ impl Game {
         if let Some(i) = remove_from.iter().position(|&el| el == id) {
             remove_from.remove(i);
         }
-
     }
 
-    /// Given the players Id and chosen team, adds a player to the correct
-    /// hashmap and sets the players outline to the correct color of their team.
+    /// Given the players Id and chosen team, sets the players outline to the
+    /// correct color of their team.
+    ///
+    /// # Arguments
+    /// * `id` (i32) - The player id
+    /// * `team` (String) - The name of the team
     fn set_player_team_outline(&mut self, id: i32, team: String) {
-        // let position = self.devices.iter().position(|&el| el == id);
-        // if position.is_none() {
-        //     return;
-        // }
-
-        // let id = position.expect("id missing") as i32;
         let path: &str;
 
         if team == "Blue" {
@@ -380,7 +392,6 @@ impl Game {
             path = "res://shaders/red_outline.tres";
         }
 
-        
         // Sets the players outline to the team color
         let shader = ResourceLoader::singleton().load(path);
         if let Ok(shader) = shader.unwrap().try_cast::<ShaderMaterial>() {
@@ -409,7 +420,7 @@ impl Game {
     }
 
     /// Sets the game mode for this game in the settings
-    /// # Paramaters
+    /// # Arguments
     /// * `mode` - The new game mode
     #[func]
     fn set_game_mode(&mut self, mode: String) {
@@ -417,7 +428,7 @@ impl Game {
     }
 
     /// Sets whether this game is a team game or not in the settings
-    /// # Parameters
+    /// # Arguments
     /// * `team_game` - true if team game false if solo
     #[func]
     fn set_team_game(&mut self, team_game: bool) {
@@ -425,7 +436,7 @@ impl Game {
     }
 
     /// Sets the map for this game in the settings
-    /// # Parameters
+    /// # Arguments
     /// * `map` - a string representing the map to play on, should be entered
     ///           based on the name of the map node in godot ex. `MapOne`
     #[func]
@@ -464,7 +475,7 @@ impl Game {
                     .bind()
                     .add_notification("Each team must have at least one player".to_string());
                 return;
-            } 
+            }
         } else if self.players.len() <= 0 {
             self.get_main_menu()
                 .bind()
@@ -506,14 +517,22 @@ impl Game {
             bound_player.set_player_id(player_id);
         }
 
-        // If its a team game, set the players outline colors  
-        if self.get_team_game(){
-            let red_team = self.get_team_tracker().get("Red").expect("Couldn't get value").clone();
-            for id in red_team{
+        // If its a team game, set the players outline colors
+        if self.get_team_game() {
+            let red_team = self
+                .get_team_tracker()
+                .get("Red")
+                .expect("Couldn't get value")
+                .clone();
+            for id in red_team {
                 self.set_player_team_outline(id, "Red".to_string());
             }
-            let blue_team = self.get_team_tracker().get("Blue").expect("Couldn't get value").clone();
-            for id in blue_team{
+            let blue_team = self
+                .get_team_tracker()
+                .get("Blue")
+                .expect("Couldn't get value")
+                .clone();
+            for id in blue_team {
                 self.set_player_team_outline(id, "Blue".to_string());
             }
         }
@@ -562,7 +581,7 @@ impl Game {
 
     /// This will determine the screen size based on the number of players.
     ///
-    /// Returns:
+    /// # Returns
     /// * Vector2 - The size of the screen.
     pub fn determine_screen_size(&mut self) -> Vector2 {
         let screen_size: Vector2;
@@ -580,7 +599,8 @@ impl Game {
         self.calculate_zoom(screen_size)
     }
 
-    /// This will end the game, end the day/night cycle, and show the winner screen.
+    /// This will end the game, end the day/night cycle, and show the winner
+    /// screen.
     #[func]
     pub fn end_game(&mut self) {
         self.started = false;
@@ -601,6 +621,7 @@ impl Game {
         let mut main_menu = self.get_main_menu();
         self.base_mut().add_child(&main_menu);
 
+        // Show who won!
         if self.get_team_game() {
             main_menu
                 .bind_mut()
@@ -614,9 +635,10 @@ impl Game {
 
     /// This will be called when a device is connected or disconnected.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `device_id` - The id of the device that was connected or disconnected.
-    /// * `connected` - A boolean that determines if the device is connected or disconnected.
+    /// * `connected` - A boolean that determines if the device is connected or
+    ///                 disconnected.
     #[func]
     pub fn device_changed(&mut self, device_id: i32, connected: bool) {
         if self.devices.contains(&device_id) && self.started {
@@ -647,7 +669,7 @@ impl Game {
 
     /// This will set the map for the game.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `map` - The map to set.
     pub fn set_map(&mut self, map: Gd<Map>) {
         self.map = Some(map);
@@ -655,13 +677,14 @@ impl Game {
 
     /// This will return the current map.
     ///
-    /// Returns:
+    /// # Returns
     /// * Gd<Map> - The current map.
     pub fn get_map(&self) -> Gd<Map> {
         self.map.as_ref().expect("Map not found").clone()
     }
 
-    /// This will reset the players by clearing the players vector and re-adding them.
+    /// This will reset the players by clearing the players vector and re-adding
+    /// them.
     fn reset_players(&mut self) {
         self.players.clear();
         self.current_player_id = 0;
@@ -671,17 +694,19 @@ impl Game {
             player.bind_mut().set_device_id(device_id.clone());
             player.bind_mut().set_player_id(self.current_player_id);
             player.set_name(format!("Player{}", self.current_player_id).as_str());
-            // Add player team adding here 
+            // Add player team adding here
             self.players.push(player);
         }
     }
 
     /// This will disconnect a player from the game.
-    /// If there is only one player left in the game they will be declared the winner.
+    /// If there is only one player left in the game they will be declared the
+    /// winner.
     ///
-    /// Arguments:
+    /// # Arguments:
     /// * `player_id` - The id of the player to disconnect.
-    /// * `instance_elims` - The number of eliminations the player got in this instance.
+    /// * `instance_elims` - The number of eliminations the player got in this
+    ///                      instance.
     pub fn remove_player(&mut self, player_id: i32, instance_elims: i32) {
         // before removing the player, update the eliminations for the player
         // associated with the player_id in the hashmap
@@ -689,8 +714,8 @@ impl Game {
         // get the number of eliminations for the player in the hashmap
         let eliminations = self.eliminations.get(&player_id).unwrap();
 
-        // update the eliminations in the hashmap with the eliminations in this instance + the
-        // eliminations in the hashmap
+        // update the eliminations in the hashmap with the eliminations in this
+        // instance + the eliminations in the hashmap
         self.eliminations
             .insert(player_id, eliminations + instance_elims);
 
@@ -698,7 +723,8 @@ impl Game {
 
         let player_length = self.players.len();
 
-        // if there is only one player left in the game, they are the winner of that round
+        // if there is only one player left in the game, they are the winner of
+        // that round
         if player_length == 1 {
             let last_player_id = self.players[0].bind().get_player_id();
             let wins = self.round_wins.entry(last_player_id).or_insert(0);
@@ -714,6 +740,15 @@ impl Game {
         }
     }
 
+    /// Adds up the number of wins/eliminations for a team based on the hashmap
+    /// passed in.
+    ///
+    /// # Arguments
+    /// * `team_color` - The color of the team to calculate.
+    /// * `wins_check` - The hashmap the number of wins for each player is
+    ///                  stored in.
+    /// # Returns
+    /// * (i32) - The number of wins/eliminations.
     fn get_team_eliminations(&mut self, team_color: &str, wins_check: &HashMap<i32, i32>) -> i32 {
         let team_tracker = self.get_team_tracker().clone();
         let team = team_tracker.get(team_color).expect("Couldn't get value");
@@ -729,8 +764,8 @@ impl Game {
 
     /// This will check if a player has reached the required elimination count.
     ///
-    /// Returns:
-    /// * bool - If a player has reached the required elimination count.
+    /// # Returns
+    /// * (bool) - If a player has reached the required elimination count.
     fn check_win_condition(&mut self) -> bool {
         if self.devices.len() == 1 {
             return true;
@@ -742,15 +777,18 @@ impl Game {
         if self.get_game_mode() == "Head Hunters" {
             end_condition = REQUIRED_ELIMINATIONS;
             wins_check = self.eliminations.clone();
-        } else  { // Last Player Standing
+        } else {
+            // Last Player Standing
             end_condition = REQUIRED_ROUNDS;
             wins_check = self.round_wins.clone();
-        } 
-        
+        }
+
         if self.get_team_game() {
+            // Get the number of elminations/rounds won for each team
             let red = self.get_team_eliminations("Red", &wins_check);
             let blue = self.get_team_eliminations("Blue", &wins_check);
 
+            // Check if either team has reached the end condition
             if red == end_condition {
                 self.winner = "Red".to_string();
                 return true;
@@ -758,12 +796,13 @@ impl Game {
                 self.winner = "Blue".to_string();
                 return true;
             }
-            return false;
         } else {
-            // check if a player has reached the required number of eliminations by checking the hashmap
+            // check if a player has reached the required number of eliminations
+            // by checking the hashmap
             for (_, eliminations) in wins_check.iter() {
                 if *eliminations >= end_condition {
-                    // set the winning player to the player with the required number of eliminations
+                    // set the winning player to the player with the required
+                    // number of eliminations
                     self.winner = (wins_check
                         .iter()
                         .position(|(&k, &v)| v == end_condition)
@@ -774,38 +813,11 @@ impl Game {
                 }
             }
         }
-        // if self.get_game_mode() == "Head Hunters" {
-        //     // check if a player has reached the required number of eliminations by checking the hashmap
-        //     for (_, eliminations) in self.eliminations.iter() {
-        //         if *eliminations >= REQUIRED_ELIMINATIONS {
-        //             // set the winning player to the player with the required number of eliminations
-        //             self.winning_player = self
-        //                 .eliminations
-        //                 .iter()
-        //                 .position(|(&k, &v)| v == REQUIRED_ELIMINATIONS)
-        //                 .unwrap() as i32
-        //                 + 1;
-        //             return true;
-        //         }
-        //     }
-        // } else if self.get_game_mode() == "Last Player Standing" {
-        //     // check if a player has reached the required number of round wins
-        //     for (_, round_wins) in self.round_wins.iter() {
-        //         if *round_wins >= REQUIRED_ROUNDS {
-        //             // set the winning player to the player with the required number of round wins
-        //             self.winning_player = self
-        //                 .round_wins
-        //                 .iter()
-        //                 .position(|(&k, &v)| v == REQUIRED_ROUNDS)
-        //                 .unwrap() as i32
-        //                 + 1;
-        //             return true;
-        //         }
-
         false
     }
 
-    /// This will start a new round. It will reset the players and start the game again.
+    /// This will start a new round. It will reset the players and start the
+    /// game again.
     fn start_new_round(&mut self) {
         // Reset split screens to size 0,0
         self.split_screen_one.bind_mut().reset();
