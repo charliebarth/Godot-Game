@@ -1,3 +1,10 @@
+// metal_manager.rs
+//
+// This module defines the MetalManager class, which is responsible for managing the metals
+// that the player has access to. It creates the metals and assigns them to the player based
+// on the game mode. It also updates the metals every frame.
+//
+// Author: Charles Barth, Michael Imerman
 use std::collections::HashMap;
 
 use super::{
@@ -39,6 +46,7 @@ impl INode2D for MetalManager {
         }
     }
 
+    /// The Godot method that is called when the node is added to the scene.
     fn ready(&mut self) {
         let player_node = self.base().get_parent().expect("parent not found");
         let player = player_node.try_cast::<Player>().expect("player not found");
@@ -46,12 +54,17 @@ impl INode2D for MetalManager {
         self.player = Some(player);
     }
 
+    /// The Godot method that is called every frame.
     fn physics_process(&mut self, _delta: f64) {
         self.update_metals();
     }
 }
 
 impl MetalManager {
+    /// Sets the player that the metal manager is attached to.
+    ///
+    /// # Arguments
+    /// * `player` - The player that the metal manager is attached to.
     pub fn set_player(&mut self, player: Gd<Player>) {
         self.player = Some(player);
     }

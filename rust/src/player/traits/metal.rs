@@ -1,3 +1,10 @@
+// metal.rs
+// This file defines a trait for metals in the game. Each metal has a reserve, a type, and can be
+// burned or low burned. The trait provides methods to manage the metal's state and reserve, as
+// well as to interact with the player.
+//
+// Author: Charles Barth
+// Version: Spring 2025
 use godot::obj::GdMut;
 
 use crate::player::{
@@ -101,18 +108,44 @@ pub trait Metal {
         }
     }
 
+    /// This function gets the current reserve of the metal
     fn current_reserve(&self) -> f64;
 
+    /// This function is used to check if the player is burning a metal
     fn burning(&self) -> bool;
+
+    /// This function is used to check if the player is low burning a metal
     fn low_burning(&self) -> bool;
-    // If any low burn cleanup logic is unique to a metal it can be triggered in this method
+
+    /// This function will set the low_burning flag to true or false.
+    /// If any low burn cleanup logic is unique to a metal it can be triggered in this method.
+    ///
+    /// # Arguments
+    /// * `low_burning` - The state of if low burning is occurring or not
     fn set_low_burning(&mut self, low_burning: bool);
-    // If any burn cleanup logic is unique to a metal it can be triggered in this method
+
+    /// This function will set the burning flag to true or false.
+    /// If any burn cleanup logic is unique to a metal it can be triggered in this method.
+    ///
+    /// # Arguments
+    /// * `burning` - The state of if burning is occurring or not
     fn set_burning(&mut self, burning: bool);
 
+    /// This function will get the player
+    ///
+    /// # Returns
+    /// * `GdMut<'_, Player>` - The player
     fn get_player(&mut self) -> GdMut<'_, Player>;
 
+    /// This function will get the previous reserve of the metal
+    ///
+    /// # Returns
+    /// * `f64` - The previous reserve of the metal
     fn previous_reserve(&self) -> f64;
 
+    /// This function will set the previous reserve of the metal
+    ///
+    /// # Arguments
+    /// * `amt` - The amount to set the previous reserve to
     fn set_previous_reserve(&mut self, amt: f64);
 }

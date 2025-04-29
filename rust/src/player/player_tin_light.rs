@@ -1,3 +1,10 @@
+// player_tin_light.rs
+//
+// This module defines the PlayerTinLight class, which represents a light source that is
+// used for Tin lighting.
+//
+// Author: Michael Imerman
+// Version: Spring 2025
 use godot::{
     classes::{IPointLight2D, PointLight2D},
     prelude::*,
@@ -17,19 +24,20 @@ pub struct PlayerTinLight {
 
 #[godot_api]
 impl IPointLight2D for PlayerTinLight {
+    /// The constructor for the PlayerTinLight class.
+    ///
+    /// # Arguments
+    /// * `base` - The base node of the PlayerLight.
+    ///
+    /// # Returns
+    /// A new instance of PlayerTinLight.
     fn init(base: Base<PointLight2D>) -> Self {
         Self { base, energy: 1.0 }
     }
 
+    /// The Godot method that is called when the node is added to the scene.
     fn ready(&mut self) {
         self.energy = self.base().get_energy();
-
-        // let mut game = self.base().get_node_as::<Game>("/root/Game");
-        // let light = self.base().get_node_as::<PlayerTinLight>(".");
-        // game.connect(
-        //     "change_cycle_player",
-        //     &Callable::from_object_method(&light, "transition_light_levels"),
-        // );
     }
 }
 

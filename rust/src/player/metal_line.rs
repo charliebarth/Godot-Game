@@ -1,3 +1,11 @@
+// metal_line.rs
+//
+// This module defines the MetalLine class, which is responsible for drawing lines from the player.
+// It uses the Godot engine's drawing capabilities to render the lines. The lines can also have
+// different colors and can be shown or hidden based on the player's actions.
+//
+// Author: Charles Barth
+// Version: Spring 2025
 use godot::{
     classes::{INode2D, Node2D},
     prelude::*,
@@ -51,6 +59,7 @@ impl INode2D for MetalLine {
             .done();
     }
 
+    /// This is a build in method for Godot that is called every frame.
     fn process(&mut self, _delta: f64) {
         if self.should_show {
             self.base_mut().queue_redraw();
@@ -80,6 +89,11 @@ impl MetalLine {
         self.should_show = should_show;
     }
 
+    /// Updates the color of a specific line segment.
+    ///
+    /// # Arguments
+    /// * `color` - The new color for the line segment.
+    /// * `index` - The index of the line segment to update.
     pub fn update_color(&mut self, color: Color, index: usize) {
         if self.colors.len() > index {
             self.colors[index] = color;

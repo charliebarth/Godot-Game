@@ -1,3 +1,12 @@
+// player.rs
+//
+// The Player class is a character that can move and jump around the game world.
+// The player has a health bar, a coin counter, and can interact with other players and
+// metal objects in multiple ways, like dealing damage, getting damaged, and more.
+// The player can also be in different states, such as idle, running, jumping, and falling.
+//
+// Author: Michael Imerman, Trinity Pittman, Charles Barth
+// Version: Spring 2025
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
@@ -37,13 +46,21 @@ use super::metal_line::MetalLine;
 use super::metal_manager::MetalManager;
 use crate::ui::coin_counter::CoinCounter;
 
+/// The maximum amount of health the player can have
 const MAX_HEALTH: f64 = 100.0;
+/// The minimum amount of health the player can have
 const MIN_HEALTH: f64 = 0.0;
+/// The default run speed of the player
 const DEFAULT_RUN_SPEED: f32 = 250.0;
+/// The default jump force of the player
 const DEFAULT_JUMP_FORCE: f32 = 450.0;
+/// The maximum run speed of the player
 const MAX_RUN_SPEED: f32 = 600.0;
+/// The minimum run speed of the player
 const MIN_RUN_SPEED: f32 = 0.0;
+/// The maximum jump force of the player
 const MAX_JUMP_FORCE: f32 = 700.0;
+/// The minimum jump force of the player
 const MIN_JUMP_FORCE: f32 = 300.0;
 
 // Add an enum to identify different node types
@@ -130,7 +147,7 @@ pub struct Player {
 
 #[godot_api]
 impl ICharacterBody2D for Player {
-    /// The Godot contructor for the Player class node
+    /// The Godot contractor for the Player class node
     ///
     /// # Arguments
     /// * `base` - The base node type for the player
@@ -334,6 +351,10 @@ impl Player {
             .remove_player(self.player_id, self.eliminations);
     }
 
+    /// Makes a given player visible to the current player
+    ///
+    /// # Arguments
+    /// * `player_id` - The ID of the player to make visible
     #[func]
     pub fn make_player_visible(&mut self, player_id: i32) {
         let mut player_sprite = self.get_sprite();
@@ -341,6 +362,10 @@ impl Player {
         player_sprite.set_visibility_layer(current_layer | 1 << (player_id * 2));
     }
 
+    /// Makes a given player invisible to the current player
+    ///
+    /// # Arguments
+    /// * `player_id` - The ID of the player to make invisible
     #[func]
     pub fn make_player_invisible(&mut self, player_id: i32) {
         let mut player_sprite = self.get_sprite();
@@ -619,6 +644,13 @@ impl Player {
         sprite.set_speed_scale(speed);
     }
 
+    /// Checks to see if a metal object is in range of the player
+    ///
+    /// # Arguments
+    /// * `metal_object` - The metal object to check
+    ///
+    /// # Returns
+    /// * `bool` - True if the metal object is in range, false otherwise
     pub fn is_metal_object_in_range(&self, metal_object: &Gd<MetalObject>) -> bool {
         self.metal_objects.contains(&metal_object)
     }
@@ -791,12 +823,12 @@ impl Player {
         self.forces.push_back(force);
     }
 
-    /// Adds a foce modifier to the player's hashmap
+    /// Adds a face modifier to the player's hashmap
     /// These modifiers are not automatically removed by the player.
     ///
     /// If the modifier already exists in the set a default merging of the current modifier and
     /// the provided modifier will be attempted. This behavior comes from the combine_modifiers function
-    /// in the ForceModifier implementaion
+    /// in the ForceModifier implementation
     ///
     ///  Note: Modifiers MUST BE REMOVED MANUALLY
     ///
@@ -813,10 +845,18 @@ impl Player {
         self.force_modifiers.insert(tag, modifier);
     }
 
+    /// Removes a force modifier from the player's hashmap
+    ///
+    /// # Arguments
+    /// * `modifier` - The force modifier to remove from the player's hashmap
     pub fn remove_force_modifier(&mut self, modifier: ForceModifierTag) {
         self.force_modifiers.remove(&modifier);
     }
 
+    /// Replaces a force modifier in the player's hashmap
+    ///
+    /// # Arguments
+    /// * `modifier` - The force modifier to replace in the player's hashmap
     pub fn replace_force_modifier(&mut self, modifier: ForceModifier) {
         self.force_modifiers.insert(modifier.tag(), modifier);
     }
@@ -1051,6 +1091,11 @@ impl Player {
         }
     }
 
+    /// Hides the particles (that indicate a player is burning a certain metal) of the player
+    /// from other players.
+    ///
+    /// # Arguments
+    /// * `visibility_layer` - A given player's visibility layer
     pub fn hide_particles(&mut self, visibility_layer: u32) {
         let mask_to_clear = !(visibility_layer); // Bitwise NOT to clear the target bit
         for metal in MetalType::iter() {
@@ -1112,6 +1157,13 @@ impl Player {
         particles.is_visible_in_tree()
     }
 
+    /// Returns a boolean indicating if the player is burning a specific metal from a string
+    ///
+    /// # Arguments
+    /// * `metal` - The metal to check if the player is burning
+    ///
+    /// # Returns
+    /// * `bool` - True if the player is burning the metal, false otherwise
     #[func]
     pub fn is_burning_metal_from_string(&mut self, metal: String) -> bool {
         if let Some(metal) = MetalType::from_string(&metal) {
@@ -1213,6 +1265,7 @@ impl Player {
 }
 /// Getters for nodes
 impl Player {
+    /// This enum is used to cache nodes in the player
     fn get_cached_node<T: GodotClass + Inherits<Node>>(
         &mut self,
         cache_key: CachedNode,
@@ -1360,19 +1413,27 @@ impl Player {
     }
 
     /// Getter for the IronParticles node
-    /// This effectively caches the IronParticles node so that it does not have to be found every time it is needed
+    /// This effectively caches the IronParticles node so that it does not have to be found every
+    /// time it is needed.
     ///
     /// * `GpuParticles2D` - The IronParticles node
     pub fn get_iron_particles(&mut self) -> Gd<GpuParticles2D> {
         self.get_cached_node(CachedNode::IronParticles, "IronParticles")
     }
 
+    /// Getter for the CopperParticles node
+    /// This effectively caches the CopperParticles node so that it does not have to be found every
+    /// time it is needed.
+    ///
+    /// # Returns
+    /// * `GpuParticles2D` - The CopperParticles node
     pub fn get_copper_particles(&mut self) -> Gd<GpuParticles2D> {
         self.get_cached_node(CachedNode::CopperParticles, "CopperParticles")
     }
 
     /// Getter for the Disconnected node
-    /// This effectively caches the Disconnected node so that it does not have to be found every time it is needed
+    /// This effectively caches the Disconnected node so that it does not have to be found every
+    /// time it is needed.
     ///
     /// # Returns
     /// * `Disconnected` - The Disconnected node
@@ -1380,10 +1441,23 @@ impl Player {
         self.get_cached_node(CachedNode::Disconnected, "Disconnected")
     }
 
+    /// Getter for the Camera2D node
+    /// This effectively caches the Camera2D node so that it does not have to be found every
+    /// time it is needed.
+    ///
+    /// # Returns
+    /// * `Camera2D` - The Camera2D node
     pub fn get_camera(&mut self) -> Gd<Camera2D> {
         self.get_cached_node(CachedNode::Camera, "Camera2D")
     }
 
+    /// Getter for the MetalParticles node
+    ///
+    /// # Arguments
+    /// * `metal_type` - The type of metal to get the particles for
+    ///
+    /// # Returns
+    /// * `GpuParticles2D` - The particles for the given metal type
     pub fn get_metal_particles(&mut self, metal_type: MetalType) -> Gd<GpuParticles2D> {
         match metal_type {
             MetalType::Pewter => self.get_pewter_particles(),
