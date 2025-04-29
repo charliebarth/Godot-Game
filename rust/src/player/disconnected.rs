@@ -1,11 +1,21 @@
+// disconnected.rs
+//
+// This module defines the Disconnected class, which is responsible for displaying a timer
+// when the player is disconnected from the game. It will remove the player from the game
+// when the timer runs out. This node is made active when the device responsible for the player
+// disconnects from the game. It will be disabled if the device reconnects before the timer runs out.
+//
+// Author: Charles Barth
+// Version: Spring 2025
 use godot::{
     classes::{ColorRect, ILabel, Label, ShaderMaterial, Timer},
     prelude::*,
 };
 
-/// The Disconnected class is responsible for displaying a timer and removing the player from the game when the timer runs out.
+/// The Disconnected class is responsible for displaying a timer and removing the player from the
+/// game when the timer runs out.
 /// This node is made active when the device responsible for the player disconnects from the game.
-/// It will be diabled if the device reconnects before the timer runs out.
+/// It will be disabled if the device reconnects before the timer runs out.
 #[derive(GodotClass)]
 #[class(base=Label)]
 pub struct Disconnected {

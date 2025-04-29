@@ -1,3 +1,10 @@
+// player_state.rs
+// This file defines the PlayerState trait, which is used to define the different states a player
+// can be in. The PlayerState trait defines the functions that a player state must implement.
+//
+// Author: Charles Barth
+// Version: Spring 2025
+
 use crate::player::player::Player;
 
 /// This trait defines the functions that a player state must implement.
