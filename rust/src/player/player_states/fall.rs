@@ -1,3 +1,10 @@
+// fall.rs
+// This file contains the implementation of the Fall state for the player.
+// The Fall state is responsible for handling the player's fall animation
+// and transitioning to other states based on player input and conditions.
+//
+// Author: Charles Barth, Michael Imerman
+// Version: Spring 2025
 use godot::obj::WithBaseField;
 
 use crate::player::{
@@ -8,6 +15,7 @@ use crate::player::{
     traits::player_state::PlayerState,
 };
 
+/// The default gravity for the player when falling
 const FALL_GRAVITY: f64 = 1500.0;
 
 #[derive(Clone, Copy)]
@@ -41,6 +49,9 @@ impl PlayerState for Fall {
 
 impl Fall {
     /// Applies horizontal velocity to the player so they can move while falling
+    ///
+    /// # Arguments
+    /// * `player` - The player object that is falling
     fn run(player: &mut Player) {
         let horizontal_dir = player.get_horizontal_movement();
 

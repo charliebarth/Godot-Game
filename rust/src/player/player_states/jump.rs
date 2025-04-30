@@ -1,3 +1,10 @@
+// jump.rs
+// This file contains the implementation of the Jump state for the player.
+// The Jump state is responsible for handling the player's jump animation
+// and transitioning to other states based on player input and conditions.
+//
+// Author: Charles Barth, Michael Imerman
+// Version: Spring 2025
 use godot::obj::{GdMut, WithBaseField};
 
 use crate::player::{
@@ -74,6 +81,10 @@ impl Jump {
 
     /// Exits the jump state and enters the next state
     /// This is used so there are fewer exit points in the update function
+    ///
+    /// # Arguments
+    /// * `player` - The player
+    /// * `next_state` - The next state to enter
     fn exit(player: &mut Player, next_state: PlayerStates) {
         player.set_state(next_state);
     }
