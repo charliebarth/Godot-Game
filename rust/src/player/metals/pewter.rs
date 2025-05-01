@@ -1,3 +1,10 @@
+// pewter.rs
+//
+// This file contains the implementation of the Pewter player ability.
+// The Pewter ability allows players to burn pewter to gain a speed boost and a jump boost.
+//
+// Author: Charles Barth
+// Version: Spring 2025
 use godot::obj::{Gd, GdMut};
 
 use crate::player::enums::force::{ForceModifier, ForceModifierTag};
@@ -6,8 +13,8 @@ use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
 
 /// The pewter player ability.
-/// CUrrently this gives the player a speed boost and a jump boost.
-/// In the future I would like to reduce these boost and add additional mechanics.
+/// Currently this gives the player a speed boost and a jump boost.
+/// In the future we would like to reduce these boost and add additional mechanics.
 /// Such as the ability to wall jump or chain a landing into a high jump.
 pub struct Pewter {
     /// The maximum amount of pewter the player can store.

@@ -1,3 +1,10 @@
+// copper.rs
+//
+// This file contains the implementation of the Copper player ability.
+// The Copper ability allows players to mask their particles from other players that are burning
+// Bronze.
+//
+// Author: Michael Imerman, Charles Barth
 use godot::obj::{Gd, GdMut};
 
 use crate::player::enums::metal_type::MetalType;

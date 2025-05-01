@@ -1,3 +1,11 @@
+// bronze.rs
+//
+// This file contains the implementation of the Bronze player ability.
+// The Bronze ability allows players to view the particles that other players emit when they burn
+// metals, given that the other player is not burning copper.
+//
+// Author: Michael Imerman, Charles Barth
+// Version: Spring 2025
 use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
@@ -56,6 +64,7 @@ impl Bronze {
         }
     }
 
+    /// Function that hides particle visibility for nearby players
     fn hide_particle_visibility(&mut self) {
         let mut player = self.player.bind_mut();
         let visibility_mask = 1 << player.get_player_id() * 2;
@@ -97,18 +106,25 @@ impl Metal for Bronze {
         self.metal_type
     }
 
+    /// This function will return the current reserve of the metal
     fn current_reserve(&self) -> f64 {
         self.current_reserve
     }
 
+    /// This function will return a boolean indicating if the player is burning
     fn burning(&self) -> bool {
         self.burning
     }
 
+    /// This function will return a boolean indicating if the player is low burning
     fn low_burning(&self) -> bool {
         self.low_burning
     }
 
+    /// This function will set the burning flag and update the active metals
+    ///
+    /// # Arguments
+    /// * `burning` - A boolean indicating if the player is burning
     fn set_burning(&mut self, burning: bool) {
         self.burning = burning;
 
@@ -126,6 +142,11 @@ impl Metal for Bronze {
             player.remove_active_metal(self.metal_type);
         }
     }
+
+    /// This function will set the low_burning flag and update the active metals
+    ///
+    /// # Arguments
+    /// * `low_burning` - A boolean indicating if the player is low burning
     fn set_low_burning(&mut self, low_burning: bool) {
         self.low_burning = low_burning;
 
@@ -144,14 +165,26 @@ impl Metal for Bronze {
         }
     }
 
+    /// This function will get the player
+    ///
+    /// # Returns
+    /// * `GdMut<Player>` - A mutable reference to the player
     fn get_player(&mut self) -> GdMut<'_, Player> {
         self.player.bind_mut()
     }
 
+    /// This function will get the previous reserve of the metal
+    ///
+    /// # Returns
+    /// * `f64` - The previous reserve of the metal
     fn previous_reserve(&self) -> f64 {
         self.previous_reserve
     }
 
+    /// This function will set the previous reserve of the metal
+    ///
+    /// # Arguments
+    /// * `amt` - The amount to set the previous reserve to
     fn set_previous_reserve(&mut self, amt: f64) {
         self.previous_reserve = amt;
     }
