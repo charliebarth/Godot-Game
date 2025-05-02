@@ -174,7 +174,7 @@ impl InputManager {
 
             // Skip inputs that start with "ui_"
             if input_str.starts_with("ui_") {
-                break;
+                continue;
             }
 
             if input_map.event_is_action(&event, &input) {

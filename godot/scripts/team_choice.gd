@@ -12,9 +12,9 @@ extends Control
 func _input(event: InputEvent) -> void:
 	if self.is_visible_in_tree():
 		var device_id = event.device
-		if event.is_action("blue"):
+		if event.is_action("ui_blue"):
 			game.set_player_team(device_id, "Blue")
-		elif event.is_action("red"):
+		elif event.is_action("ui_red"):
 			game.set_player_team(device_id, "Red")
 		
 

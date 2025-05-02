@@ -79,6 +79,7 @@ func display_msg(msg: String) -> void:
 ## @param `event` (InputEvent) - The input event that was detected
 func _input(event: InputEvent) -> void:
 	if $SelectionWheel.is_visible_in_tree() and prev_metal == null:
+		print(event)
 		# The event cannot be the metal selector button
 		var is_relevant_joy_button = event is InputEventJoypadButton and event.button_index != 11
 		# The event cannot be the movement buttons

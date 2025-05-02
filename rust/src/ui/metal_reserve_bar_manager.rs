@@ -1,5 +1,5 @@
-/// Controls the metal bars on screen, stores bars that are not currently on 
-/// screen and has methods to add and remove bars from the on screen Vbox by 
+/// Controls the metal bars on screen, stores bars that are not currently on
+/// screen and has methods to add and remove bars from the on screen Vbox by
 /// name.
 ///
 /// Author: Trinity Pittman
@@ -11,7 +11,7 @@ use godot::prelude::*;
 pub use crate::ui::metal_bar::MetalBar;
 
 // The maximum number of bars to display on a players screen at a time
-const MAX_BARS_ON_SCREEN: u8 = 3;
+const MAX_BARS_ON_SCREEN: u8 = 6;
 
 // Change this to account for how many we currently support
 const TOTAL_BARS: u8 = 6;
@@ -54,7 +54,7 @@ impl IVBoxContainer for MetalReserveBarManager {
         Self { base, bars: None }
     }
 
-    /// The Godot method called when the coin counter enters the scene tree 
+    /// The Godot method called when the coin counter enters the scene tree
     /// for the first time.
     /// Creates and sets up the bars inside the Metal Reserve Bar Manager.
     fn ready(&mut self) {
@@ -139,7 +139,7 @@ impl MetalReserveBarManager {
     /// Gets the HashMap of metal bars, if it doesn't exist, create it
     ///
     /// # Returns
-    /// * (HashMap<StringName, Gd<MetalBar>>) - HashMap of MetalBars and their 
+    /// * (HashMap<StringName, Gd<MetalBar>>) - HashMap of MetalBars and their
     ///                                         name (StringName)
     fn get_bars(&mut self) -> &mut HashMap<StringName, Gd<MetalBar>> {
         if self.bars.is_none() {
@@ -149,7 +149,7 @@ impl MetalReserveBarManager {
     }
 
     /// Adds metals to all the bars contained within the metal bar manager
-    /// 
+    ///
     /// # Arguments
     /// * `metals` (&Vec<StringName>) - the metals to increment
     /// * `amt` (f64) - the ammount to increment by

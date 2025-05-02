@@ -791,10 +791,14 @@ impl Game {
         let team_tracker = self.get_team_tracker().clone();
         let team = team_tracker.get(team_color).expect("Couldn't get value");
 
+        godot_print!("Hashmap of wins {:?}", wins_check);
+        godot_print!("Hashmap of teams {:?}", team);
         // let elims = &self.eliminations;
         let mut team_elims: i32 = 0;
         for id in team.clone() {
-            team_elims += wins_check.get(&(id + 1)).unwrap();
+            if wins_check.contains_key(&(id + 1)) {
+                team_elims += wins_check.get(&(id + 1)).unwrap();
+            }
         }
 
         team_elims
