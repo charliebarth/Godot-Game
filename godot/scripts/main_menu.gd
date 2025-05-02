@@ -34,6 +34,6 @@ func _on_ready() -> void:
 	if self.visible:
 		play.grab_focus.call_deferred()
 
-
+## When the tutorial button is pressed, start the tutorial
 func _on_tutorial_pressed() -> void:
 	game.start_tutorial()

@@ -943,6 +943,7 @@ impl Game {
     #[signal]
     pub fn change_cycle_player(light_level: f32, transition_time: f64);
 
+    /// This will start the tutorial and set the map to the tutorial map.
     #[func]
     pub fn start_tutorial(&mut self) {
         // First remove the main menu
@@ -1006,6 +1007,7 @@ impl Game {
         self.started = true;
     }
 
+    /// This will end the tutorial and return to the main menu.
     #[func]
     pub fn end_tutorial(&mut self) {
         self.started = false;
