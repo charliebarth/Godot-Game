@@ -1,5 +1,11 @@
 use godot::prelude::*;
 
+// player_events.rs
+//
+// This file defines the `PlayerEvents` enum and its associated methods.
+//
+// Author: Charles Barth, Michael Imerman
+// Version: Spring 2025
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 /// This enum is used to determine whether an event registered by the
 /// InputManager should be triggered on press or release.

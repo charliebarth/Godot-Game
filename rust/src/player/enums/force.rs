@@ -1,3 +1,9 @@
+// force.rs
+//
+// This file defines the `Force` enum and its associated methods.
+//
+// Author: Charles Barth
+// Version: Spring 2025
 use godot::{builtin::Vector2, obj::Gd};
 
 use crate::player::player::Player;
@@ -6,15 +12,18 @@ use crate::player::player::Player;
 /// Forces are used to move the player around the map
 ///
 /// NOTE:
-/// acceleration is meant to be multiplied by delta as it is a force to be applied over multiple frames
-/// impulse is not effected by delta because it is a one time occurence
+/// acceleration is meant to be multiplied by delta as it is a force to be applied over
+/// multiple frames impulse is not effected by delta because it is a one time occurrence.
 ///
-/// Jump is an example of both. It has an impulse which is an instant application of force that creates a minimum jump height
-/// There is also an acceleration which is effect by gravity because it is applied every frame the player is still holding the jump button.
+/// Jump is an example of both. It has an impulse which is an instant application of force that
+/// creates a minimum jump height.
+/// There is also an acceleration which is effect by gravity because it is applied every frame the
+/// player is still holding the jump button.
 #[derive(PartialEq)]
 pub enum Force {
     /// Gravity
-    /// This force is always applied to the player but will be countered by the normal force when the player is on the floor
+    /// This force is always applied to the player but will be countered by the normal force when
+    /// the player is on the floor.
     Gravity {
         acceleration: f64,
     },
@@ -46,9 +55,11 @@ pub enum Force {
         x_acceleration: f32,
         y_acceleration: f32,
     },
+    /// A force to apply to a player when they are on the floor
     Friction {
         acceleration: f32,
     },
+    /// A force to apply to a player when they are in the air
     AirResistance {
         acceleration: f32,
     },
@@ -61,7 +72,8 @@ pub enum Force {
     },
 }
 
-/// These are modifiers which will be applied to incoming player forces before they are actually applied to the player themselves.
+/// These are modifiers which will be applied to incoming player forces before they are actually
+/// applied to the player themselves.
 /// For instance a pewter modifier will increase any run forces and jump forces by some percentage.
 #[derive(Hash, Eq, PartialEq, Debug)]
 pub enum ForceModifierTag {
