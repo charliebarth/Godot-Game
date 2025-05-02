@@ -1,7 +1,7 @@
 //! Represents a coin.
 //!
 //! Author: Trinity Pittman
-//! Author: Charles Barth 
+//! Author: Charles Barth
 
 use crate::metal_object::MetalObject;
 use crate::player::enums::coin_events::CoinState;
@@ -122,11 +122,12 @@ impl Coin {
         if self.state == CoinState::PickedUp {
             godot_print!("THROWING {}", self.base().get_name());
 
-            let max_charge = 1000.;
+            let max_charge = 150.;
             let min_charge_rate = 0.1;
             let max_charge_power_time = 3000.;
+            let vertical_force = -20.;
             // Calculate charge
-            let mut charge = ((end as f32 - start as f32) / max_charge_power_time);
+            let mut charge = (end as f32 - start as f32) / max_charge_power_time;
             if charge < min_charge_rate {
                 charge = min_charge_rate;
             }
@@ -135,15 +136,17 @@ impl Coin {
             let force;
             let player = self.curr_player.as_mut().unwrap();
             let mut pos = player.get_global_position();
+            let x_offset = 20.;
+            let y_offset = -15.;
 
             if player.bind().get_dir() < 0. {
                 // Throw left
-                force = Vector2::new(-1. * (max_charge * charge), -400.);
-                pos = pos + Vector2::new(0., -5.); // Adjust pos to be higher
+                force = Vector2::new(-1. * (max_charge * charge), vertical_force);
+                pos = pos + Vector2::new(-x_offset, y_offset); // Adjust pos to be higher
             } else {
                 // Throw right
-                force = Vector2::new((max_charge * charge), -400.);
-                pos = pos + Vector2::new(20., -15.); // Adjust pos for throwing right
+                force = Vector2::new(max_charge * charge, vertical_force);
+                pos = pos + Vector2::new(x_offset, y_offset); // Adjust pos for throwing right
             }
 
             let metal_object = self.metal_object.as_mut().expect("metal object missing");
