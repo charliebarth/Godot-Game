@@ -1,12 +1,12 @@
-// player.rs
-//
-// The Player class is a character that can move and jump around the game world.
-// The player has a health bar, a coin counter, and can interact with other players and
-// metal objects in multiple ways, like dealing damage, getting damaged, and more.
-// The player can also be in different states, such as idle, running, jumping, and falling.
-//
-// Author: Michael Imerman, Trinity Pittman, Charles Barth
-// Version: Spring 2025
+/// player.rs
+///
+/// The Player class is a character that can move and jump around the game world.
+/// The player has a health bar, a coin counter, and can interact with other players and
+/// metal objects in multiple ways, like dealing damage, getting damaged, and more.
+/// The player can also be in different states, such as idle, running, jumping, and falling.
+///
+/// Author: Michael Imerman, Trinity Pittman, Charles Barth
+/// Version: Spring 2025
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;

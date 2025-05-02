@@ -1,3 +1,11 @@
+/// crouch.rs
+///
+/// This file contains the implementation of the Crouch state for the player.
+/// The Crouch state is responsible for handling the player's crouch animation
+/// and movement.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::obj::WithBaseField;
 
 use crate::player::enums::player_events::PlayerEvents;
@@ -5,6 +13,7 @@ use crate::player::{
     enums::player_states::PlayerStates, player::Player, traits::player_state::PlayerState,
 };
 
+/// The speed at which the player can move while crouching
 const CROUCH_SPEED: f32 = 75.0;
 
 #[derive(Clone, Copy)]
@@ -13,6 +22,11 @@ pub struct Crouch;
 impl PlayerState for Crouch {
     fn enter(_player: &mut Player) {}
 
+    /// This function is ran on every frame to flow from the current state (crouching) to the
+    /// next possible state.
+    ///
+    /// # Arguments
+    /// * `player` - The player object that is crouching
     fn update(player: &mut Player) {
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();

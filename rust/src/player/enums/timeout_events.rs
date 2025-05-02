@@ -1,3 +1,9 @@
+/// timeout_events.rs
+///
+/// This file defines the `TimeoutEvents` enum and its associated methods.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use std::time::Duration;
 
 /// An enum of events that are available for only a specific duration until they time out.

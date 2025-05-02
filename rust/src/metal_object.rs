@@ -1,3 +1,11 @@
+/// metal_object.rs
+///
+/// This file contains the MetalObject class, which is responsible for managing the
+/// physics and interactions of metal objects in the game. It includes functions for
+/// applying forces, handling collisions, and determining the collision direction.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use std::collections::VecDeque;
 
 use godot::{
@@ -58,6 +66,7 @@ impl IRigidBody2D for MetalObject {
         }
     }
 
+    /// This function is called when the MetalObject node is ready.
     fn ready(&mut self) {
         let mass = self.mass;
         let mut base_mut = self.base_mut();
@@ -68,6 +77,7 @@ impl IRigidBody2D for MetalObject {
         base_mut.set_mass(mass);
     }
 
+    /// This function is called every physics frame.
     fn physics_process(&mut self, delta: f64) {
         self.delta = delta;
     }
@@ -160,6 +170,17 @@ impl MetalObject {
         Vector2::new(new_body_velocity_x, new_body_velocity_y)
     }
 
+    /// This method handles the collision with other objects.
+    /// It checks the type of the object and applies the appropriate response.
+    ///
+    /// # Arguments
+    /// * `body` - The body that is colliding with the metal object.
+    /// * `base_velocity` - The base velocity of the metal object.
+    /// * `collision_index` - The index of the collision.
+    /// * `direction` - The direction of the collision.
+    ///
+    /// # Returns
+    /// * `Vector2` - The new base velocity after handling the collision.
     fn handle_collision(
         &mut self,
         body: &Gd<PhysicsDirectBodyState2D>,
@@ -192,7 +213,7 @@ impl MetalObject {
         base_velocity
     }
 
-    /// This method is the way to determine if the object is metal.
+    /// This function is the way to determine if the object is metal.
     ///
     /// # Returns
     /// * `bool` - True if the object is metal.
@@ -201,10 +222,21 @@ impl MetalObject {
         true
     }
 
+    /// This function adds a force to the forces queue.
+    ///
+    /// # Arguments
+    /// * `force` - The force to be added.
     pub fn add_force(&mut self, force: Force) {
         self.forces.push_back(force);
     }
 
+    /// This function applies the forces in the queue to the base velocity.
+    ///
+    /// # Arguments
+    /// * `base_velocity` - The base velocity to be modified.
+    ///
+    /// # Returns
+    /// * `(Vector2, VecDeque<Force>)` - The modified base velocity and the expected forces.
     pub fn apply_forces(&mut self, base_velocity: Vector2) -> (Vector2, VecDeque<Force>) {
         let mut base_velocity = base_velocity;
         let mut expected_forces: VecDeque<Force> = VecDeque::new();
@@ -217,6 +249,11 @@ impl MetalObject {
         (base_velocity, expected_forces)
     }
 
+    /// This function applies the push back forces to the player.
+    ///
+    /// # Arguments
+    /// * `expected_forces` - The expected forces to be applied.
+    /// * `base_velocity` - The base velocity to be modified.
     fn apply_push_back(&mut self, expected_forces: VecDeque<Force>, base_velocity: Vector2) {
         for force in expected_forces {
             if let Force::PlayerSteelPush {
@@ -263,6 +300,15 @@ impl MetalObject {
         }
     }
 
+    /// This function applies a force to the metal object.
+    ///
+    /// # Arguments
+    /// * `force` - The force to be applied.
+    /// * `expected_forces` - The expected forces to be applied.
+    /// * `base_velocity` - The base velocity to be modified.
+    ///
+    /// # Returns
+    /// * `Vector2` - The modified base velocity.
     pub fn apply_force(
         &mut self,
         force: Force,
@@ -287,6 +333,14 @@ impl MetalObject {
         base_velocity
     }
 
+    /// This function determines the direction of the collision based on the contact position.
+    ///
+    /// # Arguments
+    /// * `body_position` - The position of the body.
+    /// * `contact_position` - The position of the contact.
+    ///
+    /// # Returns
+    /// * `&'static str` - The direction of the collision.
     fn determine_collision_direction(
         &self,
         body_position: Vector2,

@@ -1,8 +1,11 @@
-//! Contains structs representing the settings of the game and default settings
-//! for each value. 
-//! 
-//! Author: Charles Barth
-//! Author: Trinity Pittman
+/// settings.rs
+///
+/// This file contains the implementation of the Settings class, which is responsible for
+/// managing the game settings. It includes player settings, environment settings, map settings,
+/// general settings, and game mode settings.
+///
+/// Author: Trinity Pittman, Charles Barth
+/// Version: Spring 2025
 use godot::{classes::Object, prelude::*};
 
 /// This is a struct for all the adjustable settings in the game

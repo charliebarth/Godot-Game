@@ -1,3 +1,12 @@
+/// steel.rs
+///
+/// This file contains the implementation of the Steel player ability.
+/// The Steel ability allows players to push on metal objects. This gives the player the ability
+/// to damage other players via pushing metal objects into them, in addition to additional movement
+/// options.
+///
+/// Author: Charles Barth, Michael Imerman
+/// Version: Spring 2025
 use godot::builtin::{Color, Vector2};
 use godot::classes::Input;
 use godot::global::JoyAxis;

@@ -1,10 +1,10 @@
-// metal_manager.rs
-//
-// This module defines the MetalManager class, which is responsible for managing the metals
-// that the player has access to. It creates the metals and assigns them to the player based
-// on the game mode. It also updates the metals every frame.
-//
-// Author: Charles Barth, Michael Imerman
+/// metal_manager.rs
+///
+/// This module defines the MetalManager class, which is responsible for managing the metals
+/// that the player has access to. It creates the metals and assigns them to the player based
+/// on the game mode. It also updates the metals every frame.
+///
+/// Author: Charles Barth, Michael Imerman
 use std::collections::HashMap;
 
 use super::{

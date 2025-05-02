@@ -1,3 +1,10 @@
+/// map.rs
+///
+/// This file contains the Map class, which is responsible for managing the spawn points in the game.
+/// It includes functions for initializing the spawn points and retrieving their positions.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use std::collections::HashMap;
 
 use godot::{
@@ -14,6 +21,10 @@ pub struct Map {
 
 #[godot_api]
 impl INode2D for Map {
+    /// The Godot constructor for the Map class.
+    ///
+    /// # Arguments
+    /// * `base` - The base node of the Map.
     fn init(base: Base<Node2D>) -> Self {
         Self {
             base,
@@ -21,6 +32,7 @@ impl INode2D for Map {
         }
     }
 
+    /// This function is called when the Map node is ready.
     fn ready(&mut self) {
         let spawn_points = self.base().get_node_as::<Node>("SpawnPoints");
         for child in spawn_points.get_children().iter_shared() {
@@ -34,6 +46,10 @@ impl INode2D for Map {
 
 #[godot_api]
 impl Map {
+    /// This function retrieves the spawn point for a given player.
+    ///
+    /// # Arguments
+    /// * `name` - The name of the spawn point.
     #[func]
     pub fn get_spawn_point(&self, name: String) -> Vector2 {
         godot_print!("Spawn point: {:?}", self.spawn_points);

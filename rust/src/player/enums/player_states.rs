@@ -1,3 +1,9 @@
+/// player_states.rs
+///
+/// This file defines the `PlayerStates` enum and its associated methods.
+///
+/// Author: Charles Barth, Michael Imerman
+/// Version: Spring 2025
 use crate::player::{
     player::Player,
     player_states::{
