@@ -6,7 +6,7 @@ extends Control
 
 ## When the visibility of the new game menu changes, grab the focus on the start game button
 func _on_visibility_changed() -> void:
-	if self.visible:
+	if self.is_visible_in_tree():
 		start_game.grab_focus()
 
 ## When the exit button is pressed, swap to the main menu

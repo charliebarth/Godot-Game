@@ -10,4 +10,4 @@ func _ready() -> void:
 ##
 ## @param `delta` (float) - The elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	print(self.linear_velocity)
+	pass

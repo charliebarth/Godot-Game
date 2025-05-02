@@ -85,6 +85,9 @@ pub struct Game {
     round_transition_timer: Gd<Timer>,
     /// Label to display the winner message
     winner_label: Option<Gd<Label>>,
+    local_player_index: i32,
+    accept_input: bool,
+    local_player: Option<Gd<Player>>,
 }
 
 #[godot_api]
@@ -95,7 +98,7 @@ impl INode2D for Game {
     /// # Returns
     /// * A Game object.
     fn init(base: Base<Node2D>) -> Self {
-        const CYCLE_LENGTH: f64 = 10.0;
+        const CYCLE_LENGTH: f64 = 120.0;
         let mut day_night_timer = Timer::new_alloc();
         day_night_timer.set_wait_time(CYCLE_LENGTH);
         day_night_timer.set_autostart(true);
@@ -141,6 +144,9 @@ impl INode2D for Game {
             should_start_new_round: false,
             round_transition_timer,
             winner_label: None,
+            local_player_index: -1,
+            accept_input: false,
+            local_player: None,
         }
     }
 
@@ -207,6 +213,10 @@ impl INode2D for Game {
     /// # Arguments:
     /// * `event` - The input event that triggered this method.
     fn input(&mut self, event: Gd<InputEvent>) {
+        if !self.accept_input || self.settings.bind().get_online_multiplayer() {
+            return;
+        }
+
         let device_id = event.get_device();
 
         let input_map = InputMap::singleton();
@@ -239,6 +249,44 @@ impl INode2D for Game {
 
 #[godot_api]
 impl Game {
+    #[func]
+    pub fn set_accept_input(&mut self, accept_input: bool) {
+        self.accept_input = accept_input;
+    }
+
+    #[func]
+    pub fn handle_input(
+        &mut self,
+        player_id: i32,
+        button_name: String,
+        is_pressed: bool,
+        is_released: bool,
+        action_strength: f32,
+    ) {
+        let mut player = self.players[(player_id - 1) as usize].clone();
+        let mut input_manager = player.bind_mut().get_input_manager();
+        input_manager.bind_mut().handle_input(
+            button_name,
+            is_pressed,
+            is_released,
+            action_strength,
+        );
+    }
+
+    #[func]
+    pub fn set_peer_number(&mut self, peer_number: i32) {
+        self.local_player_index = peer_number;
+    }
+
+    #[func]
+    pub fn update_player_data(&mut self, data: Dictionary, player_id: i32) {
+        let player = self
+            .players
+            .get_mut(player_id as usize - 1)
+            .expect("Player not found");
+        player.bind_mut().add_server_data(data);
+    }
+
     /// Reference viewport size for a single player pane at zoom 1.0
     /// This is the size of one viewport in a 4-player configuration on a
     /// 1920x1080 screen
@@ -265,12 +313,24 @@ impl Game {
     ///
     /// # Arguments:
     /// * `device_id` - The device id of the player to register.
+    #[func]
     fn register_player(&mut self, device_id: i32) {
         self.devices.push(device_id);
         self.current_player_id = self.devices.len() as i32;
 
-        let player = self.player_scene.instantiate_as::<Player>();
-        self.players.push(player.clone());
+        self.current_player_id = self.players.len() as i32 + 1;
+
+        let mut player = self.player_scene.instantiate_as::<Player>();
+        if self.settings.bind().get_online_multiplayer()
+            && self.local_player_index != self.players.len() as i32
+        {
+            player.bind_mut().set_remote_player(true);
+        } else if self.settings.bind().get_online_multiplayer()
+            && self.local_player_index == self.players.len() as i32
+        {
+            self.local_player = Some(player.clone());
+        }
+        self.players.push(player);
 
         let mut main_menu = self.get_main_menu();
         main_menu.bind_mut().add_player(self.current_player_id);
@@ -531,12 +591,12 @@ impl Game {
         }
 
         // Next instantiate the map
-        let map = self
+        let mut map = self
             .maps
             .get(self.settings.bind().get_selected_map().as_str())
             .expect("Map not found")
             .instantiate_as::<Map>();
-        self.set_map(map);
+        self.set_map(map.clone());
 
         // Set the name, device id, and player id for each player
         let mut players = self.players.clone();
@@ -986,11 +1046,24 @@ impl Game {
         let mut even_players = Vec::new();
 
         for (i, player) in self.players.iter().enumerate() {
+            if player.bind().is_remote_player() {
+                self.get_map().add_child(player);
+                continue;
+            } else if player.bind().get_player_id() == self.local_player_index + 1 {
+                continue;
+            }
+
             if (i + 1) % 2 == 0 {
                 even_players.push(player.clone());
             } else {
                 odd_players.push(player.clone());
             }
+        }
+
+        if let Some(local_player) = self.local_player.as_ref() {
+            odd_players.clear();
+            even_players.clear();
+            odd_players.push(local_player.clone());
         }
 
         // Set sizes and add players

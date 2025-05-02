@@ -42,12 +42,12 @@ pub mod player {
     }
 
     pub mod metals {
+        pub mod bronze;
+        pub mod copper;
         pub mod iron;
         pub mod pewter;
         pub mod steel;
         pub mod tin;
-        pub mod copper;
-        pub mod bronze;
     }
 }
 

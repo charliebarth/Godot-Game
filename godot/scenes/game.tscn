@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://vpakk8ov0chg"]
+[gd_scene load_steps=8 format=3 uid="uid://vpakk8ov0chg"]
 
 [ext_resource type="PackedScene" uid="uid://c1l6h04x8ew74" path="res://scenes/main_menu.tscn" id="1_gw26h"]
+[ext_resource type="Script" uid="uid://dsl0m72v80831" path="res://scripts/game.gd" id="1_iywne"]
 [ext_resource type="AudioStream" uid="uid://cyf518ij6x0jj" path="res://assets/SFX & Music/ES_Rosee du matin - DEX 1200.mp3" id="2_nitj3"]
 [ext_resource type="AudioStream" uid="uid://8wek4qfbtsrq" path="res://assets/SFX & Music/ES_Tenuous Fog - Cercles Nouvelles.mp3" id="3_418gl"]
 [ext_resource type="AudioStream" uid="uid://dydhf560n5qon" path="res://assets/SFX & Music/ES_Leave No Trace - Alec Slayne.mp3" id="4_k8wqu"]
@@ -20,6 +21,7 @@ stream_2 = ExtResource("4_k8wqu")
 
 [node name="Game" type="Game"]
 texture_filter = 1
+script = ExtResource("1_iywne")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_h8kyb")

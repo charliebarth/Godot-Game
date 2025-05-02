@@ -101,4 +101,39 @@ impl PlayerStates {
             PlayerStates::Attack => Attack::enter(player),
         }
     }
+
+    pub fn serialize(&self) -> String {
+        match self {
+            PlayerStates::Attack => "attack".to_string(),
+            PlayerStates::Crouch => "crouch_walk".to_string(),
+            PlayerStates::CrouchEnd => "crouch_end".to_string(),
+            PlayerStates::CrouchStart => "crouch_start".to_string(),
+            PlayerStates::Fall => "fall".to_string(),
+            PlayerStates::Idle => "idle".to_string(),
+            PlayerStates::Jump => "jump".to_string(),
+            PlayerStates::Land => "land".to_string(),
+            PlayerStates::Roll => "roll".to_string(),
+            PlayerStates::Run => "run".to_string(),
+            PlayerStates::Slide => "slide".to_string(),
+            PlayerStates::SlideCrouch => "slide".to_string(),
+            PlayerStates::Sprint => "run".to_string(),
+        }
+    }
+
+    pub fn deserialize(s: &str) -> Option<PlayerStates> {
+        match s {
+            "attack" => Some(PlayerStates::Attack),
+            "crouch_walk" => Some(PlayerStates::Crouch),
+            "crouch_end" => Some(PlayerStates::CrouchEnd),
+            "crouch_start" => Some(PlayerStates::CrouchStart),
+            "fall" => Some(PlayerStates::Fall),
+            "idle" => Some(PlayerStates::Idle),
+            "jump" => Some(PlayerStates::Jump),
+            "land" => Some(PlayerStates::Land),
+            "roll" => Some(PlayerStates::Roll),
+            "run" => Some(PlayerStates::Run),
+            "slide" => Some(PlayerStates::Slide),
+            _ => None,
+        }
+    }
 }

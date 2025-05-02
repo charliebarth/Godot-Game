@@ -121,6 +121,16 @@ impl Settings {
     pub fn set_team_game(&mut self, team: bool) {
         self.game_mode.team_game = team;
     }
+
+    #[func]
+    pub fn get_online_multiplayer(&self) -> bool {
+        self.general.online_multiplayer
+    }
+
+    #[func]
+    pub fn set_online_multiplayer(&mut self, online: bool) {
+        self.general.online_multiplayer = online;
+    }
 }
 
 #[derive(Clone)]
@@ -218,6 +228,7 @@ impl Default for MapSettings {
 pub struct GeneralSettings {
     /// Whether the debug mode is enabled.
     pub debug_mode: bool,
+    pub online_multiplayer: bool,
 }
 
 ///  Default methods for the General Settings
@@ -226,7 +237,10 @@ impl Default for GeneralSettings {
     /// # Returns
     /// * GeneralSettings with default values
     fn default() -> Self {
-        Self { debug_mode: true }
+        Self {
+            debug_mode: true,
+            online_multiplayer: false,
+        }
     }
 }
 

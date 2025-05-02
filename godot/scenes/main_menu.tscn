@@ -8966,10 +8966,10 @@ position = Vector2(0, -368)
 zoom = Vector2(2.4, 2.4)
 
 [node name="Torch" parent="." instance=ExtResource("13_k8rir")]
-position = Vector2(161, -338)
+position = Vector2(-155, -343)
 
 [node name="Torch2" parent="." instance=ExtResource("13_k8rir")]
-position = Vector2(-156, -341)
+position = Vector2(158, -335)
 
 [node name="Fog" type="ColorRect" parent="."]
 z_index = 20

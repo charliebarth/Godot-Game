@@ -11,6 +11,8 @@ use godot::{
     prelude::*,
 };
 
+use super::player::Player;
+
 /// The MetalLine class is responsible for drawing lines from the player to nearby metal objects.
 #[derive(GodotClass)]
 #[class(base=Node2D)]
@@ -24,6 +26,8 @@ pub struct MetalLine {
     colors: PackedColorArray,
     /// Whether the lines should be shown or not.
     should_show: bool,
+    /// Whether the player is a remote ghost player or not
+    remote_player: bool,
 }
 
 /// INode2D methods for the MetalLine
@@ -42,13 +46,29 @@ impl INode2D for MetalLine {
             points: PackedVector2Array::new(),
             colors: PackedColorArray::new(),
             should_show: false,
+            remote_player: false,
         }
+    }
+
+    fn ready(&mut self) {
+        self.remote_player = self
+            .base()
+            .get_parent()
+            .unwrap()
+            .try_cast::<Player>()
+            .unwrap()
+            .bind()
+            .is_remote_player();
     }
 
     /// This is a build in method for Godot that is called when a node is first added to the scene.
     /// It can also be called in other circumstances such as when the node is made visible.
     fn draw(&mut self) {
-        if !self.should_show || self.points.is_empty() || self.colors.is_empty() {
+        if !self.should_show
+            || self.points.is_empty()
+            || self.colors.is_empty()
+            || self.remote_player
+        {
             return;
         }
 

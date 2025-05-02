@@ -10,14 +10,34 @@ extends Control
 @onready var main_menu = $".." as MainMenu
 # A reference to the play button
 @onready var play: Button = $MarginContainer/HBoxContainer/VBoxContainer/Play
+@onready var settings: Button = $MarginContainer/HBoxContainer/VBoxContainer/Settings
+@onready var quit: Button = $MarginContainer/HBoxContainer/VBoxContainer/Quit
 
 ## When the play button is pressed, swap to the new game menu 
 func _on_play_pressed() -> void:
-	main_menu.swap_to_new_game_menu()
+	if play.text == "Play":
+		main_menu.swap_to_new_game_menu()
+	elif play.text == "Local Multiplayer":
+		self.swap_to_main_menu()
+	elif play.text == "Host":
+		game.host()
+		self.swap_to_server_main_menu()
+	elif play.text == "Ready" || play.text == "Readied":
+		game.rpc_id(1, "ready", multiplayer.get_unique_id())
+		if play.text == "Ready":
+			play.text = "Readied"
+		else:
+			play.text = "Ready"
 
 ## When the settings button is pressed, swap to the settings menu
 func _on_settings_pressed() -> void:
-	main_menu.swap_to_settings()
+	if settings.text == "Settings":
+		main_menu.swap_to_settings()
+	elif settings.text == "Online Multiplayer":
+		self.swap_to_online_mode_select()
+	elif settings.text == "Join":
+		game.join()
+		self.swap_to_client_main_menu()
 
 ## When the quit button is pressed, quit the game
 func _on_quit_pressed() -> void:
@@ -26,14 +46,33 @@ func _on_quit_pressed() -> void:
 ## When the visibility of the main menu is changed, grab the focus
 ## This allows controllers to navigate the menu
 func _on_visibility_changed() -> void:
-	if self.visible && play != null:
+	if play != null && self.is_visible_in_tree():
 		play.grab_focus.call_deferred()
 		
 ## When the main menu is ready, grab the focus
 func _on_ready() -> void:
-	if self.visible:
+	if play.is_visible_in_tree():
 		play.grab_focus.call_deferred()
 
 ## When the tutorial button is pressed, start the tutorial
 func _on_tutorial_pressed() -> void:
 	game.start_tutorial()
+	
+func swap_to_online_mode_select():
+	Settings.set_online_multiplayer(true)
+	play.text = "Host"
+	settings.text = "Join"
+
+func swap_to_main_menu():
+	Settings.set_online_multiplayer(false)
+	game.set_accept_input(true)
+	play.text = "Play"
+	settings.text = "Settings"
+
+func swap_to_client_main_menu():
+	play.text = "Ready"
+	settings.text = "Settings"
+
+func swap_to_server_main_menu():
+	play.text = "Server"
+	settings.text = "Server"

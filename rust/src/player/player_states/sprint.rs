@@ -22,11 +22,11 @@ impl PlayerState for Sprint {
     }
 
     fn update(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
+        let horizontal_movement = input_manager.get_left_right_value();
 
-        if horizontal_dir.signum() != player.get_dir().signum() || horizontal_dir == 0.0 {
+        if horizontal_movement.signum() != player.get_dir().signum() || horizontal_movement == 0.0 {
             player.set_state(PlayerStates::Idle);
         } else if input_manager.check_for_player_event(PlayerEvents::Jump)
             && player.jump_available()

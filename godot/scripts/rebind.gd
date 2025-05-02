@@ -18,7 +18,7 @@ var latest_event: InputEvent = null
 ## Called when the node enters the scene. Sets the label depending on the action
 ## name. Also turns of unhandled input processing. 
 func _ready() -> void:
-	set_process_unhandled_input(false) 
+	set_process_unhandled_input(false)
 	set_action_label()
 
 
@@ -27,8 +27,8 @@ func set_action_label() -> void:
 	label.text = "Unassigned"
 
 	# Match the names in godot settings to the names we want to display
-	match action_name: 
-		"jump": 
+	match action_name:
+		"jump":
 			label.text = "Jump"
 		"sprint":
 			label.text = "Sprint"
@@ -64,7 +64,7 @@ func set_button_text(keybind_settings: Dictionary, event: InputEvent) -> void:
 ## @param `event` (InputEvent) - the input event to map to a key name
 ## @returns - The string name of the input event 
 func controller_matcher(event: InputEvent) -> String:
-	var name = event.as_text()	
+	var name = event.as_text()
 	
 	if event is InputEventJoypadMotion:
 			match event.axis:
@@ -100,7 +100,7 @@ func _on_button_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		button.text = "Press a new key"
 		# Catches input other nodes didn't handle
-		set_process_unhandled_input(true) 
+		set_process_unhandled_input(true)
 		
 	for i in get_tree().get_nodes_in_group("keybind_btns"):
 		if i.action_name != self.action_name:
@@ -112,13 +112,12 @@ func _on_button_toggled(toggled_on: bool) -> void:
 ## 
 ## @param `event` (InputEvent) - The unhandled input event that was caught
 func _unhandled_input(event: InputEvent) -> void:
-	if ((event is InputEventJoypadButton or 
-		event is InputEventJoypadMotion or 
-		event is InputEventKey) and 
+	if ((event is InputEventJoypadButton or
+		event is InputEventJoypadMotion or
+		event is InputEventKey) and
 		latest_event.device == event.device):
-		
 		# Makes it so you cannot rebind the sticks 
-		if !(event is InputEventJoypadMotion and (event.axis in [0,1,2,3])):
+		if !(event is InputEventJoypadMotion and (event.axis in [0, 1, 2, 3])):
 			rebind_action_key(event)
 			button.button_pressed = false
 
@@ -128,12 +127,12 @@ func _unhandled_input(event: InputEvent) -> void:
 ## @param `event` (InputEvent) - The event to remap the action to.
 func rebind_action_key(event: InputEvent) -> void:
 	# Remove the event currently bound to the action if one exists
-	if latest_event != null: 
-		InputMap.action_erase_event(action_name, latest_event) 
+	if latest_event != null:
+		InputMap.action_erase_event(action_name, latest_event)
 	
 	# Add the event and stop processing input
 	InputMap.action_add_event(action_name, event)
-	set_process_unhandled_input(false) 
+	set_process_unhandled_input(false)
 	button.text = controller_matcher(event)
 	
 	# Check to make sure no other actions have the same event 

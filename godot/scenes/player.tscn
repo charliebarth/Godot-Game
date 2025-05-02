@@ -26,6 +26,7 @@
 [ext_resource type="Texture2D" uid="uid://d2metxkspx3lq" path="res://assets/HealthMetalBars/HealthBardone.png" id="22_33rpo"]
 [ext_resource type="PackedScene" uid="uid://wsu5g273l7t4" path="res://scenes/Coin_Counter.tscn" id="22_l2cmc"]
 [ext_resource type="Texture2D" uid="uid://bummcujfrfh1w" path="res://assets/HealthMetalBars/healthprog.png" id="23_0ycqf"]
+[ext_resource type="Script" uid="uid://dmtuwskugphq1" path="res://scripts/input_manager.gd" id="23_fdfoy"]
 [ext_resource type="Script" uid="uid://5gr7o6vjk0sp" path="res://scripts/point_light_2d.gd" id="26_f1f48"]
 [ext_resource type="PackedScene" uid="uid://c20hnjcoph2e0" path="res://scenes/metal_wheel_menu.tscn" id="27_fdfoy"]
 [ext_resource type="Texture2D" uid="uid://b5lf080mspvgn" path="res://assets/navigation_e.png" id="29_a80li"]
@@ -983,6 +984,7 @@ shape = SubResource("CapsuleShape2D_bajs7")
 position = Vector2(0, 1)
 
 [node name="InputManager" type="InputManager" parent="."]
+script = ExtResource("23_fdfoy")
 
 [node name="PlayerUI" type="Control" parent="."]
 layout_mode = 3
@@ -1189,6 +1191,16 @@ process_material = SubResource("ParticleProcessMaterial_8cf5s")
 [node name="IronParticles" type="GPUParticles2D" parent="."]
 visible = false
 self_modulate = Color(1, 10, 10, 1)
+show_behind_parent = true
+light_mask = 524289
+position = Vector2(0, 3)
+amount = 12
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_8cf5s")
+
+[node name="CopperParticles" type="GPUParticles2D" parent="."]
+visible = false
+self_modulate = Color(5, 10, 5, 1)
 show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 3)

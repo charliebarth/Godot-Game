@@ -130,7 +130,6 @@ impl Coin {
             if charge < min_charge_rate {
                 charge = min_charge_rate;
             }
-            godot_print!("Charge: {}", charge);
 
             let force;
             let player = self.curr_player.as_mut().unwrap();

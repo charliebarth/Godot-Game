@@ -18,17 +18,15 @@ use crate::player::{
 pub struct Run;
 
 impl PlayerState for Run {
-    fn enter(player: &mut Player) {
-        Run::run(player);
-    }
+    fn enter(_player: &mut Player) {}
 
     fn update(player: &mut Player) {
-        let horizontal_dir = player.get_horizontal_movement();
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
         let mut next_state: PlayerStates = PlayerStates::Run;
+        let horizontal_movement = input_manager.get_left_right_value();
 
-        if horizontal_dir == 0.0 {
+        if horizontal_movement == 0.0 {
             next_state = PlayerStates::Idle;
         } else if input_manager.check_for_player_event(PlayerEvents::Jump)
             && player.jump_available()
@@ -49,7 +47,7 @@ impl PlayerState for Run {
         if next_state != PlayerStates::Run {
             Run::exit(player, next_state);
         } else {
-            Run::run(player);
+            Run::run(player, horizontal_movement);
         }
     }
 }
@@ -60,8 +58,8 @@ impl Run {
     ///
     /// # Arguments
     /// * `player` - The player
-    fn run(player: &mut Player) {
-        let run_strength = player.get_horizontal_movement();
+    fn run(player: &mut Player, horizontal_movement: f32) {
+        let run_strength = horizontal_movement;
 
         if run_strength.signum() != player.get_dir().signum() {
             player.add_force(Force::Run { acceleration: 0.0 });

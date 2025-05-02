@@ -29,7 +29,7 @@ impl PlayerState for Jump {
         let next_state: PlayerStates;
         let mut input_manager_unbound = player.get_input_manager();
         let mut input_manager = input_manager_unbound.bind_mut();
-
+        let horizontal_movement = input_manager.get_left_right_value();
         if !input_manager.check_for_player_event(PlayerEvents::Jump) {
             next_state = PlayerStates::Fall;
         } else if player.base().is_on_floor() {
@@ -43,7 +43,7 @@ impl PlayerState for Jump {
         if next_state != PlayerStates::Jump {
             Jump::exit(player, next_state);
         } else {
-            Jump::run(player);
+            Jump::run(player, horizontal_movement);
             Jump::jump(player, input_manager);
         }
     }
@@ -54,8 +54,8 @@ impl Jump {
     ///
     /// # Arguments
     /// * `player` - The player
-    fn run(player: &mut Player) {
-        let run_strength = player.get_horizontal_movement();
+    fn run(player: &mut Player, horizontal_movement: f32) {
+        let run_strength = horizontal_movement;
 
         if run_strength == 0.0 {
             return;

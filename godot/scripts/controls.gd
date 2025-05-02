@@ -12,7 +12,7 @@ class_name Controls
 
 
 ## Types of actions the keybind menu controls
-var actions = ["jump", "sprint", "roll", "attack", "throw", "low_burn", 
+var actions = ["jump", "sprint", "roll", "attack", "throw", "low_burn",
 				"pewter", "iron", "steel"]
 ## The button group that holds the Player # buttons
 var button_group = ButtonGroup.new()
@@ -26,7 +26,7 @@ func _ready() -> void:
 		if button is Button:
 			button.button_group = button_group
 	
-	button_group.connect("pressed", on_button_press)	
+	button_group.connect("pressed", on_button_press)
 	
 	set_keybinds_from_config()
 	
@@ -37,14 +37,14 @@ func _ready() -> void:
 ## Loads the keybindings from the config file. 
 func set_keybinds_from_config() -> void:
 	var keybind_settings = ConfigFileHandler.load_all_keybind_settings()
-
+	
 	# Erase current bindings
 	for action in actions:
 		InputMap.action_erase_events(action)
 		
-	# Add keybinding for each player 
-	for player in keybind_settings: 
-		for action in player: 
+	## Add keybinding for each player 
+	for player in keybind_settings:
+		for action in player:
 			InputMap.action_add_event(action, player[action])
 
 
@@ -57,7 +57,7 @@ func set_device_keybind_menu(id: int) -> void:
 	for el in v_box_container.get_children():
 		if el.has_method("set_button_text"):
 			var latest_event = get_action_event_keybound(
-				el.action_name, 
+				el.action_name,
 				button_group.get_pressed_button().name.to_int() - 1)
 			el.set_button_text(keybind_settings, latest_event)
 
@@ -70,21 +70,21 @@ func load_keybind_settings(id: int) -> Dictionary:
 	var keybind_settings = {}
 
 	# Go through the actions 
-	for action in actions: 
+	for action in actions:
 		var key_name = null
 		var backup = null
 		# Get the events mapped to the action
 		for key in InputMap.action_get_events(action):
 			# Try to find the event for this device id
-			if key.device == id: 
+			if key.device == id:
 				key_name = key
 			elif key.device == -1: # Defaults to all devices
 				backup = key
 
 		if key_name != null: # If we found the right key for the specific device
 			keybind_settings[action] = key_name
-		elif backup != null: # The general key that all devices use 
-			keybind_settings[action] = backup 
+		elif backup != null: # The general key that all devices use
+			keybind_settings[action] = backup
 		else:
 			keybind_settings[action] = "Unbound"
 					
@@ -96,9 +96,8 @@ func load_keybind_settings(id: int) -> Dictionary:
 ## 
 ## @param button The button that was pressed 
 func on_button_press(button: BaseButton) -> void:
-	print("button pressed %s %s" %[button.name, button.name.to_int()])
 	# The buttons are name 1-8 but the id's go 0-7 
-	set_device_keybind_menu(button.name.to_int() - 1) 
+	set_device_keybind_menu(button.name.to_int() - 1)
 
  
 ## Finds the keybind currently mapped to an action for a specified device. 
@@ -117,3 +116,8 @@ func get_action_event_keybound(action: String, id: int) -> InputEvent:
 ## When the apply button is pressed, save the graphics setting.
 func _on_apply_pressed() -> void:
 	ConfigFileHandler.save_keybind_settings()
+
+
+# func _on_tab_clicked(tab: int) -> void:
+# 	if _1.is_visible_in_tree():
+# 		_1.grab_focus()

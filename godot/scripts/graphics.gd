@@ -18,8 +18,8 @@ extends TabBar
 @onready var fps_label = $"MarginContainer/VBoxContainer/FPS cap/HBoxContainer/Value"
 
 ## Contains the possible resolutions 
-var resolutions = [Vector2i(1920, 1080), Vector2i(1920,1200), 
-						Vector2i(1080,960), Vector2i(1280, 720), Vector2i(800,600)]
+var resolutions = [Vector2i(1920, 1080), Vector2i(1920, 1200),
+						Vector2i(1080, 960), Vector2i(1280, 720), Vector2i(800, 600)]
 
 
 ## Called when this node is added to the scene tree. Sets the graphics settings
@@ -48,7 +48,7 @@ func _ready() -> void:
 ## @param `index` (int) - The index of the item selected 
 func set_window_mode(index: int) -> void:
 	DisplayServer.window_set_mode(
-		DisplayServer.WINDOW_MODE_WINDOWED if index == 0 
+		DisplayServer.WINDOW_MODE_WINDOWED if index == 0
 		else DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 
@@ -57,7 +57,7 @@ func set_window_mode(index: int) -> void:
 ## @param `enabled` (bool) - True or False value of whether the toggle is on or 
 ##							 off
 func set_border_mode(enabled: bool) -> void:
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS,enabled)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, enabled)
 
 
 ## Called when the vsync toggle is toggled. Sets the new vsync mode.
@@ -66,7 +66,7 @@ func set_border_mode(enabled: bool) -> void:
 ## 							 off.
 func set_vsync(enabled: bool) -> void:
 	DisplayServer.window_set_vsync_mode(
-		DisplayServer.VSYNC_ENABLED if enabled 
+		DisplayServer.VSYNC_ENABLED if enabled
 		else DisplayServer.VSYNC_DISABLED)
 
 
@@ -75,7 +75,6 @@ func set_vsync(enabled: bool) -> void:
 ## @param `index` (int) - The index of the item selected 
 func set_window_size(index: int) -> void:
 	DisplayServer.window_set_size(resolutions[index])
-	print("set window size to %s" %[DisplayServer.window_get_size()])
 
 
 ## Called when the fps slider value is changed. 
@@ -84,7 +83,6 @@ func set_window_size(index: int) -> void:
 func set_fps(val: float) -> void:
 	Engine.max_fps = val
 	fps_label.text = str(val)
-	print("set max fps to %s" %[Engine.max_fps])
 
 ## When the apply button is pressed, save the graphics setting.
 func _on_apply_pressed() -> void:

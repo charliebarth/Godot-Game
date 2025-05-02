@@ -24,9 +24,9 @@ extends TabBar
 var button_group = ButtonGroup.new()
 
 
-var ui_size = null; 	## Holds the current UI size
-var ui_opacity = null;	## Holds the current UI opacity
-var pos = null;			## Holds the current position of the UI 
+var ui_size = null; ## Holds the current UI size
+var ui_opacity = null; ## Holds the current UI opacity
+var pos = null; ## Holds the current position of the UI
 
 
 ## Called when this node enters the scene tree for the first time. Adds the UI
@@ -42,7 +42,6 @@ func _ready() -> void:
 	
 	# Load in the UI settings and set 
 	var UI_settings = ConfigFileHandler.load_settings_helper("ui")
-	print(UI_settings["size"], UI_settings["opacity"])
 	
 	size_slider.value = UI_settings["size"]
 	scale_UI_size(UI_settings["size"])
@@ -63,7 +62,6 @@ func scale_UI_size(val: float) -> void:
 	size_label.text = str(val);
 	# scale the UI elements to show up the same as they will in game
 	player_ui.scale = Vector2(2 * val + 1, 2 * val + 1);
-	print("UI SCALE UPDATED TO ", val, "\t ", player_ui.scale)
 	player_ui.queue_redraw()
 	ui_size = val;
 
@@ -82,14 +80,13 @@ func scale_UI_opacity(val: float) -> void:
 ##
 ## @param button The button that was pressed 
 func on_button_press(button: BaseButton) -> void:
-	print("button pressed %s" %[button.name])
 	pos = button.name.to_int()
 
 
 ## When the apply button is pressed, save the ui settings to the config file.
 func _on_apply_pressed() -> void:
 	ConfigFileHandler.save_ui_settings(
-		1 if ui_size == null else ui_size, 
-		1 if ui_opacity == null else ui_opacity, 
+		1 if ui_size == null else ui_size,
+		1 if ui_opacity == null else ui_opacity,
 		0 if pos == null else pos,
 		);

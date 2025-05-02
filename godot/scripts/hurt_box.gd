@@ -5,6 +5,9 @@ extends Area2D
 
 # Handle when another Area2D enters this hurtbox
 func _on_area_entered(area: Area2D):
+	if parent_player.is_remote_player():
+		return
+	
 	# Check if the area belongs to a hitbox
 	if (area.name == "RightHitbox" || area.name == "LeftHitbox") && area.get_parent() != get_parent():
 		# Get the node owning the hitbox
