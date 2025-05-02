@@ -93,6 +93,11 @@ impl SplitScreen {
         self.viewports[1].set_world_2d(&world_2d);
     }
 
+    pub fn add_levels(&mut self, level_one: Gd<Map>, level_two: Gd<Map>) {
+        self.viewports[0].add_child(&level_one);
+        self.viewports[1].add_child(&level_two);
+    }
+
     #[func]
     /// Add a world to the split screen
     /// This is used for the second split screen so both viewports will use the world rather than having their own
@@ -161,6 +166,43 @@ impl SplitScreen {
         }
     }
 
+    pub fn add_players_to_levels(&mut self, players: Vec<Gd<Player>>) {
+        let hbox_size = self.base().get_size();
+
+        match players.len() {
+            1 => {
+                // Single player - use full viewport size
+                self.set_container_sizes(vec![hbox_size, Vector2::new(0.0, 0.0)]);
+                self.set_viewport_sizes(vec![
+                    Vector2i::new(hbox_size.x as i32, hbox_size.y as i32),
+                    Vector2i::new(0, 0),
+                ]);
+            }
+            2 => {
+                // Two players - split screen horizontally
+                let half_width = hbox_size.x / 2.0;
+                let container_size = Vector2::new(half_width, hbox_size.y);
+                let viewport_size = Vector2i::new(half_width as i32, hbox_size.y as i32);
+
+                self.set_container_sizes(vec![container_size, container_size]);
+                self.set_viewport_sizes(vec![viewport_size, viewport_size]);
+            }
+            _ => {}
+        }
+
+        for (i, player) in players.iter().enumerate() {
+            self.viewports[i].set_use_hdr_2d(true);
+            let mut level = self.viewports[i].get_child(0).expect("Level not found");
+            level.add_child(player);
+
+            self.viewports[i].set_canvas_cull_mask(
+                1 << player.bind().get_player_id() as u32 * 2
+                    | 1 << player.bind().get_player_id() as u32 * 2 - 1
+                    | 1,
+            );
+        }
+    }
+
     #[func]
     /// Reset the split screen
     pub fn reset(&mut self) {
@@ -174,5 +216,15 @@ impl SplitScreen {
                 child.queue_free();
             }
         }
+    }
+
+    pub fn get_spawn_point(&self, player_id: i32) -> Vector2 {
+        self.viewports[(player_id % 2) as usize]
+            .get_child(0)
+            .expect("Level not found")
+            .try_cast::<Map>()
+            .expect("Map not found")
+            .bind()
+            .get_spawn_point("3".to_string())
     }
 }

@@ -791,6 +791,10 @@ impl Player {
             }
         }
 
+        let mut sprite = self.get_sprite();
+        let sprite_layer = sprite.get_visibility_layer();
+        sprite.set_visibility_layer(sprite_layer | 1);
+
         self.base_mut().emit_signal("id_changed", &[]);
     }
 
