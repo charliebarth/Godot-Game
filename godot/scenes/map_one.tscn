@@ -1,8 +1,7 @@
-[gd_scene load_steps=23 format=3 uid="uid://tafp53a34qcc"]
+[gd_scene load_steps=22 format=3 uid="uid://tafp53a34qcc"]
 
 [ext_resource type="PackedScene" uid="uid://dynasqpbu3fut" path="res://scenes/level_one.tscn" id="1_5xy7n"]
 [ext_resource type="Shader" uid="uid://doggl7ot00nb8" path="res://shader scripts/fog.gdshader" id="1_y7bd1"]
-[ext_resource type="PackedScene" uid="uid://bmvk1bpdhdf6c" path="res://scenes/metal_object.tscn" id="2_3yakd"]
 [ext_resource type="PackedScene" uid="uid://br15s755g66ki" path="res://scenes/torch.tscn" id="4_0mjxy"]
 [ext_resource type="PackedScene" uid="uid://ci86vlmguka2q" path="res://scenes/camp_fire.tscn" id="5_hth5s"]
 [ext_resource type="PackedScene" uid="uid://ryehfll5666w" path="res://scenes/chandelier.tscn" id="6_htvoh"]
@@ -212,14 +211,6 @@ position = Vector2(-10, 295)
 
 [node name="4" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(-2, -843)
-
-[node name="MetalObjects" type="Node" parent="."]
-
-[node name="MetalObject3" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(705, -123)
-
-[node name="MetalObject4" parent="MetalObjects" instance=ExtResource("2_3yakd")]
-position = Vector2(763, -101)
 
 [node name="PointLight2D" type="PlayerLight" parent="."]
 position = Vector2(-144.5, -331)
