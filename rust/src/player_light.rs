@@ -1,3 +1,10 @@
+/// player_light.rs
+///
+/// This file contains the implementation of the PlayerLight class, which is responsible for
+/// creating and managing the light effect in the game with respect to the player's light point.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::{
     classes::{IPointLight2D, PointLight2D},
     prelude::*,

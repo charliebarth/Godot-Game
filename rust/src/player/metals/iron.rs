@@ -1,12 +1,12 @@
-// iron.rs
-//
-// This file contains the implementation of the Iron player ability.
-// The Iron ability allows players to pull metal objects toward them.
-// This ability is useful for damaging other player via pulling metal objects into other player,
-// but also for moving around the map.
-//
-// Author: Charles Barth
-// Version: Spring 2025
+/// iron.rs
+///
+/// This file contains the implementation of the Iron player ability.
+/// The Iron ability allows players to pull metal objects toward them.
+/// This ability is useful for damaging other player via pulling metal objects into other player,
+/// but also for moving around the map.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::obj::Gd;
 
 use crate::player::{enums::metal_type::MetalType, player::Player, traits::metal::Metal};

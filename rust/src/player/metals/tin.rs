@@ -1,10 +1,10 @@
-// tin.rs
-//
-// This file contains the implementation of the Tin player ability.
-// The Tin ability allows players to see better in the dark.
-//
-// Author: Michael Imerman, Charles Barth
-// Version: Spring 2025
+/// tin.rs
+///
+/// This file contains the implementation of the Tin player ability.
+/// The Tin ability allows players to see better in the dark.
+///
+/// Author: Michael Imerman, Charles Barth
+/// Version: Spring 2025
 use godot::obj::{Gd, GdMut};
 
 use crate::player::enums::metal_type::MetalType;

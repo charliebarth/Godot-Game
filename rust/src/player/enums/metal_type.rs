@@ -1,9 +1,9 @@
-// metal_type.rs
-//
-// This file defines the `MetalType` enum and its associated methods.
-//
-// Author: Charles Barth, Michael Imerman
-// Version: Spring 2025
+/// metal_type.rs
+///
+/// This file defines the `MetalType` enum and its associated methods.
+///
+/// Author: Charles Barth, Michael Imerman
+/// Version: Spring 2025
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub enum BurnType {
     /// A player is using a metal with its more intense affect

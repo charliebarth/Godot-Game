@@ -1,11 +1,11 @@
-// bronze.rs
-//
-// This file contains the implementation of the Bronze player ability.
-// The Bronze ability allows players to view the particles that other players emit when they burn
-// metals, given that the other player is not burning copper.
-//
-// Author: Michael Imerman, Charles Barth
-// Version: Spring 2025
+/// bronze.rs
+///
+/// This file contains the implementation of the Bronze player ability.
+/// The Bronze ability allows players to view the particles that other players emit when they burn
+/// metals, given that the other player is not burning copper.
+///
+/// Author: Michael Imerman, Charles Barth
+/// Version: Spring 2025
 use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;

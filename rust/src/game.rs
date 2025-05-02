@@ -1,7 +1,16 @@
+/// game.rs
+///
+/// This file contains the Game class which is responsible for managing the game state such as
+/// players, maps, game modes, and the main menu. It also handles the day/night cycle and the
+/// split screen for multiplayer gameplay.
+///
+/// Author: Charles Barth, Michael Imerman, Trinity Pittman
+/// Version: Spring 2025
 use crate::{
     main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
     split_screen::SplitScreen,
 };
+
 use godot::classes::Label;
 use godot::global::HorizontalAlignment;
 use godot::{
@@ -13,6 +22,8 @@ use godot::{
 };
 use std::collections::HashMap;
 
+// The game mode is stored in a static variable so it can be accessed from anywhere in the code
+static mut GAME_MODE: Option<String> = None;
 // The number of eliminations required to win the game;
 // could/should be changed to be more dynamic in the future
 const REQUIRED_ELIMINATIONS: i32 = 5;
@@ -78,12 +89,14 @@ pub struct Game {
 
 #[godot_api]
 impl INode2D for Game {
+    /// The constructor for the Game class.
     fn init(base: Base<Node2D>) -> Self {
         const CYCLE_LENGTH: f64 = 10.0;
         let mut day_night_timer = Timer::new_alloc();
         day_night_timer.set_wait_time(CYCLE_LENGTH);
         day_night_timer.set_autostart(true);
 
+        /// The time it takes to transition between rounds
         const ROUND_TRANSITION_TIME: f64 = 3.0;
         let mut round_transition_timer = Timer::new_alloc();
         // set the transition time to 3 seconds
@@ -311,8 +324,9 @@ impl Game {
 
     /// Gets the hashmap that stores which team each player is on, if the
     /// hashmap is empty, initializes it with the teams Red and Blue
+    ///
     /// # Returns
-    /// * a hasmap of strings (team names) maped to vectors of i32 (player ids)
+    /// * a hashmap of strings (team names) mapped to vectors of i32 (player ids)
     fn get_team_tracker(&mut self) -> &mut HashMap<String, Vec<i32>> {
         if self.team_tracker.is_empty() {
             self.team_tracker.insert("Red".to_string(), vec![]);
@@ -333,6 +347,8 @@ impl Game {
     }
 
     /// Resets the team players hashmap and clears each players outline
+    /// This will reset the team players by clearing the team tracker and
+    /// removing the team colors from the players.
     #[func]
     fn reset_team_players(&mut self) {
         self.get_team_tracker().clear();
@@ -348,12 +364,12 @@ impl Game {
         }
     }
 
-    /// Given the players device Id and chosen team, adds a player to the
-    /// correct hashmap
+    /// Given the players Id and chosen team, adds a player to the correct
+    /// hashmap and sets the players outline to the correct color of their team.
     ///
     /// # Arguments
-    /// * `id` (i32) - the device id of a player
-    /// * `team` (String) - the name of the players team
+    /// * `id` - The id of the player to set the team for
+    /// * `team` - The team to set the player to
     #[func]
     fn set_player_team(&mut self, id: i32, team: String) {
         self.get_main_menu()
@@ -393,12 +409,12 @@ impl Game {
         }
     }
 
-    /// Given the players Id and chosen team, sets the players outline to the
-    /// correct color of their team.
+    /// Given the players Id and chosen team, adds a player to the correct
+    /// hashmap and sets the players outline to the correct color of their team.
     ///
     /// # Arguments
-    /// * `id` (i32) - The player id
-    /// * `team` (String) - The name of the team
+    /// * `id` - The id of the player to set the team for
+    /// * `team` - The team to set the player to
     fn set_player_team_outline(&mut self, id: i32, team: String) {
         let path: &str;
 
@@ -419,6 +435,7 @@ impl Game {
     }
 
     /// Gets the selected game mode from the settings
+    ///
     /// # Returns
     /// * A string representing the game mode (see options below)
     ///     - "Last Player Standing"
@@ -428,6 +445,7 @@ impl Game {
     }
 
     /// Gets whether the game is a team game or not from the settings
+    ///
     /// # Returns
     /// * true if team game false if solo
     #[func]
@@ -436,6 +454,7 @@ impl Game {
     }
 
     /// Sets the game mode for this game in the settings
+    ///
     /// # Arguments
     /// * `mode` - The new game mode
     #[func]
@@ -444,6 +463,7 @@ impl Game {
     }
 
     /// Sets whether this game is a team game or not in the settings
+    ///
     /// # Arguments
     /// * `team_game` - true if team game false if solo
     #[func]
@@ -452,6 +472,7 @@ impl Game {
     }
 
     /// Sets the map for this game in the settings
+    ///
     /// # Arguments
     /// * `map` - a string representing the map to play on, should be entered
     ///           based on the name of the map node in godot ex. `MapOne`
@@ -462,6 +483,7 @@ impl Game {
 
     /// This will attempt to start the game.
     /// It will check if the appropriate conditions are met to start the game.
+    ///
     /// # Conditions
     /// * there must be at least one player
     /// * in team games each player must be on a team
@@ -829,6 +851,7 @@ impl Game {
                 }
             }
         }
+        // if no player has reached the required number of eliminations/rounds, return false
         false
     }
 
@@ -885,12 +908,12 @@ impl Game {
             &[Variant::from(brightness), Variant::from(TRANSITION_TIME)],
         );
 
-        let brigtness_map = if self.day { 0.4 } else { 1.0 };
+        let brightness_map = if self.day { 0.4 } else { 1.0 };
         let scale_map = if self.day { 0.6 } else { 1.0 };
         self.base_mut().emit_signal(
             "change_cycle_map",
             &[
-                Variant::from(brigtness_map),
+                Variant::from(brightness_map),
                 Variant::from(TRANSITION_TIME),
                 Variant::from(scale_map),
             ],
@@ -899,9 +922,20 @@ impl Game {
         self.day = !self.day;
     }
 
+    /// This will change the day/night cycle for the map
+    ///
+    /// # Arguments
+    /// * `light_level` - The light level to set the map to
+    /// * `transition_time` - The time it takes to transition to the new light level
+    /// * `scale` - The scale to set the map to
     #[signal]
     pub fn change_cycle_map(light_level: f32, transition_time: f64, scale: f32);
 
+    /// This will change the day/night cycle for the players
+    ///
+    /// # Arguments
+    /// * `light_level` - The light level to set the players to
+    /// * `transition_time` - The time it takes to transition to the new light level
     #[signal]
     pub fn change_cycle_player(light_level: f32, transition_time: f64);
 

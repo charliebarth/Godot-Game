@@ -1,6 +1,11 @@
-//! Handles logic for metal pickup locations.
-//!
-//! Author: Trinity Pittman
+/// metal_pickups.rs
+///
+/// This file contains the implementation of the MetalPickup class, which is responsible for
+/// creating and managing metal pickups in the game. It handles the spawning of metal vials
+/// and their behavior when the timer times out.
+///
+/// Author: Trinity Pittman, Charles Barth
+/// Version: Spring 2025
 use godot::classes::{Engine, IMarker2D, Marker2D, Timer};
 use godot::prelude::*;
 

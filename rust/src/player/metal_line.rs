@@ -1,11 +1,11 @@
-// metal_line.rs
-//
-// This module defines the MetalLine class, which is responsible for drawing lines from the player.
-// It uses the Godot engine's drawing capabilities to render the lines. The lines can also have
-// different colors and can be shown or hidden based on the player's actions.
-//
-// Author: Charles Barth
-// Version: Spring 2025
+/// metal_line.rs
+///
+/// This module defines the MetalLine class, which is responsible for drawing lines from the player.
+/// It uses the Godot engine's drawing capabilities to render the lines. The lines can also have
+/// different colors and can be shown or hidden based on the player's actions.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::{
     classes::{INode2D, Node2D},
     prelude::*,

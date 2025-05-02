@@ -1,3 +1,11 @@
+/// map_light.rs
+///
+/// This file contains the MapLight class, which is responsible for managing the light
+/// levels in the game. It includes functions for transitioning the light levels and
+/// setting the light energy.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::{
     classes::{IPointLight2D, PointLight2D},
     prelude::*,

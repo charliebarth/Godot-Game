@@ -1,10 +1,10 @@
-// jump.rs
-// This file contains the implementation of the Jump state for the player.
-// The Jump state is responsible for handling the player's jump animation
-// and transitioning to other states based on player input and conditions.
-//
-// Author: Charles Barth, Michael Imerman
-// Version: Spring 2025
+/// jump.rs
+/// This file contains the implementation of the Jump state for the player.
+/// The Jump state is responsible for handling the player's jump animation
+/// and transitioning to other states based on player input and conditions.
+///
+/// Author: Charles Barth, Michael Imerman
+/// Version: Spring 2025
 use godot::obj::{GdMut, WithBaseField};
 
 use crate::player::{

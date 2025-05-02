@@ -1,9 +1,9 @@
-// force.rs
-//
-// This file defines the `Force` enum and its associated methods.
-//
-// Author: Charles Barth
-// Version: Spring 2025
+/// force.rs
+///
+/// This file defines the `Force` enum and its associated methods.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::{builtin::Vector2, obj::Gd};
 
 use crate::player::player::Player;

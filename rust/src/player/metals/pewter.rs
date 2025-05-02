@@ -1,10 +1,10 @@
-// pewter.rs
-//
-// This file contains the implementation of the Pewter player ability.
-// The Pewter ability allows players to burn pewter to gain a speed boost and a jump boost.
-//
-// Author: Charles Barth
-// Version: Spring 2025
+/// pewter.rs
+///
+/// This file contains the implementation of the Pewter player ability.
+/// The Pewter ability allows players to burn pewter to gain a speed boost and a jump boost.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::obj::{Gd, GdMut};
 
 use crate::player::enums::force::{ForceModifier, ForceModifierTag};

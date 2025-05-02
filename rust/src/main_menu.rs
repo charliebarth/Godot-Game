@@ -1,8 +1,11 @@
-//! Contains logic for the main menu of the game. Handles notification
-//! displaying and swapping between screens.
-//!
-//! Author: Charles Barth
-//! Author: Trinity Pittman
+/// main_menu.rs
+///
+/// This file contains the MainMenu class, which is responsible for managing the main menu UI.
+/// It includes functions for adding and removing players, setting player teams, and swapping
+/// between different menus.
+///
+/// Author: Trinity Pittman, Charles Barth
+/// Version: Spring 2025
 use godot::{
     classes::{
         AnimatedSprite2D, AnimationPlayer, Control, ResourceLoader, RichTextLabel, ShaderMaterial,

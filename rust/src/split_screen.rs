@@ -1,3 +1,12 @@
+/// split_screen.rs
+///
+/// This file contains the implementation of the SplitScreen class, which is responsible for
+/// creating and managing a split screen view in the game. It handles the setup of two
+/// viewports and their respective containers, as well as the addition of levels and players
+/// to the split screen.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
 use godot::{
     classes::{
         viewport::DefaultCanvasItemTextureFilter, HBoxContainer, IHBoxContainer, SubViewport,
