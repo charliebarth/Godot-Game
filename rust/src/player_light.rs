@@ -24,6 +24,13 @@ pub struct PlayerLight {
 
 #[godot_api]
 impl IPointLight2D for PlayerLight {
+    /// The Godot constructor for the PlayerLight class node
+    ///
+    /// # Arguments
+    /// * `base` - The base node type for the PlayerLight
+    ///
+    /// # Returns
+    /// * `PlayerLight` - The PlayerLight node
     fn init(base: Base<PointLight2D>) -> Self {
         Self { base, energy: 1.0 }
     }
@@ -43,6 +50,11 @@ impl IPointLight2D for PlayerLight {
 #[godot_api]
 impl PlayerLight {
     #[func]
+    /// This function transitions the light levels of the PlayerLight node
+    ///
+    /// # Arguments
+    /// * `light_level` - The light level to transition to
+    /// * `transition_time` - The time it takes to transition to the new light level
     pub fn transition_light_levels(&mut self, light_level: f32, transition_time: f64) {
         let target_energy = light_level * self.energy;
 

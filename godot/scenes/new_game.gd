@@ -4,7 +4,7 @@ extends Control
 @onready var game = get_node("/root/Game") as Game
 @onready var start_game: Button = $"MarginContainer/VBoxContainer/HBoxContainer/Start Game"
 
-
+## When the visibility of the new game menu changes, grab the focus on the start game button
 func _on_visibility_changed() -> void:
 	if self.visible:
 		start_game.grab_focus()
@@ -12,7 +12,8 @@ func _on_visibility_changed() -> void:
 ## When the exit button is pressed, swap to the main menu
 func _on_exit_pressed() -> void:
 	main_menu.swap_to_main_menu()
-	
+
+## When the start game button is pressed, start the game
 func _on_start_game_pressed() -> void:
 	if game.get_team_game():
 		main_menu.swap_to_team_choice_menu()

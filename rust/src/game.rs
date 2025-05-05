@@ -336,16 +336,6 @@ impl Game {
         &mut self.team_tracker
     }
 
-    fn get_tutorial_level(&mut self) -> Gd<Map> {
-        if self.tutorial_level.is_none() {
-            self.tutorial_level = Some(self.base().get_node_as::<Map>("Tutorial"));
-        }
-        self.tutorial_level
-            .as_ref()
-            .expect("Tutorial level not found")
-            .clone()
-    }
-
     /// Resets the team players hashmap and clears each players outline
     /// This will reset the team players by clearing the team tracker and
     /// removing the team colors from the players.

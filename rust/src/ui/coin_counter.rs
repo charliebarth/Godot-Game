@@ -33,10 +33,15 @@ pub struct CoinCounter {
     coins: i32,
     /// Holds Coins
     coin_holder: Vec<Gd<MetalObject>>,
+    /// Whether the coin is charging
     charging: bool,
+    /// The time the charge started
     charge_start: u64,
+    /// The device id of the player
     device_id: i32,
+    /// The input manager of the player
     input_manager: Option<Gd<InputManager>>,
+    /// The duration of the charge
     charge_duration: u64,
 }
 

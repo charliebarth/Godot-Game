@@ -14,35 +14,36 @@ extends Control
 
 var selected_index: int = 0
 
+## This is a built in function to Godot.
+## It draws the selection wheel and is trigger whenever the node has redraw called.
 func _draw():
 	draw_circle(Vector2.ZERO, outer_radius, bkg_color)
 	draw_arc(Vector2.ZERO, inner_radius, 0, TAU, 128, line_color, line_width, true)
 	
 	if len(options) >= 3:
-		
 		for i in range(len(options)):
 			# Draw the seperator lines
 			var rads = TAU * i / (len(options))
 			var point = Vector2.from_angle(rads)
 			draw_line(
-				point*inner_radius, 
-				point*outer_radius,
+				point * inner_radius,
+				point * outer_radius,
 				line_color,
 				line_width,
 				true
 			)
 	
 			# Draw the text 
-			var start_rads = (TAU * (i-1)) / (len(options))
+			var start_rads = (TAU * (i - 1)) / (len(options))
 			var end_rads = (TAU * (i)) / (len(options))
-			var mid_rads = (start_rads + end_rads) / 2.0 * - 1
+			var mid_rads = (start_rads + end_rads) / 2.0 * -1
 			var radius_mid = (inner_radius + outer_radius) / 2.0
 			
 			var draw_pos = radius_mid * Vector2.from_angle(mid_rads)
 			
 			var font: Font = preload("res://assets/pixelated-times-new-roman.ttf")
 			
-			var size = font.get_string_size(options[i]) 
+			var size = font.get_string_size(options[i])
 			
 			# Draw highlight color 
 			if selected_index == i:
@@ -63,7 +64,7 @@ func _draw():
 
 			draw_string(
 				font,
-				draw_pos - (size * 1.7) ,
+				draw_pos - (size * 1.7),
 				options[i],
 				0, -1, 64
 			)
@@ -73,7 +74,10 @@ func _draw():
 			draw_arc(Vector2.ZERO, outer_radius, start_rads, end_rads, 128, colors[i], line_width, true)
 			
 			
-
+## This is a built in function to Godot.
+## It is called every frame and updates the selection wheel.
+##
+## @param `delta` (float) - The delta time.
 func _process(_delta: float) -> void:
 	if is_visible_in_tree():
 		# Get the joystick direction
@@ -89,17 +93,15 @@ func _process(_delta: float) -> void:
 			direction = direction.normalized()
 			var angle_deg = rad_to_deg(direction.angle())
 			if angle_deg > 0: # Because degrees 180 to 360 are 180 to 0
-				angle_deg = abs(angle_deg - 180) + 180 
+				angle_deg = abs(angle_deg - 180) + 180
 			else: # Because degrees 0 to 180 are 0 to -180
 				angle_deg = abs(angle_deg)
 			selected_index = ((int(angle_deg / (360 / len(options)))) + 1) % len(options)
 		queue_redraw()
 
-		
-		
+## This function closes the selection wheel and returns the selected option.
+##
+## @returns The selected option.
 func close() -> String:
 	hide()
 	return options[selected_index]
-
-	
-	

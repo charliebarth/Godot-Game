@@ -4,21 +4,36 @@ extends AnimatedSprite2D
 
 var new_energy: float
 
-
+## When the candle is ready, set the new energy to a random value between 2.5 and 4.0
+## and wait for a random amount of time between 0.0 and 1.2 seconds
+## then start playing the candle flame animation
 func _ready() -> void:
 	if self.is_visible_in_tree():
-		new_energy = randf_range(2.5, 4.0)
-		var delay = randf_range(0.0, 1.2)
+		var min_energy: float = 2.5
+		var max_energy: float = 4.0
+		var min_delay: float = 0.0
+		var max_delay: float = 1.2
+
+		new_energy = randf_range(min_energy, max_energy)
+		var delay = randf_range(min_delay, max_delay)
 		await get_tree().create_timer(delay).timeout # Wait for the delay
 		play("candleFlame") # Start playing the animation
 
+## When the frame changes, update the energy and speed scale of the candle
 func _on_frame_changed() -> void:
-	if self.frame != 0 && self.frame % 10 == 0:
-		new_energy = randf_range(2.5, 4.0)
+	var min_energy: float = 2.5
+	var max_energy: float = 4.0
+	var min_speed_scale: float = 0.8
+	var max_speed_scale: float = 1.5
+	var num_frames: int = 10
+	var min_energy_decrease: float = 0.008
+
+	if self.frame != 0 && self.frame % num_frames == 0:
+		new_energy = randf_range(min_energy, max_energy)
 	elif point_light.energy > new_energy:
-		point_light.energy -= (self.frame % 10) * 0.008
+		point_light.energy -= (self.frame % num_frames) * min_energy_decrease
 	elif point_light.energy <= new_energy:
-		point_light.energy += (self.frame % 10) * 0.008
+		point_light.energy += (self.frame % num_frames) * min_energy_increase
 	
 	if self.frame != 0 && self.frame % 15 == 0:
-		self.speed_scale = randf_range(0.8, 1.5)
+		self.speed_scale = randf_range(min_speed_scale, max_speed_scale)

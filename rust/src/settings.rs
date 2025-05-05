@@ -42,26 +42,41 @@ impl IObject for Settings {
 
 #[godot_api]
 impl Settings {
+    /// Gets the player's max health.
+    /// # Returns
+    /// * (f32) - The player's max health.
     #[func]
     pub fn get_player_max_health(&self) -> f32 {
         self.player.max_health
     }
 
+    /// Gets the selected map.
+    /// # Returns
+    /// * (String) - The selected map.
     #[func]
     pub fn get_selected_map(&self) -> String {
         self.map.selected_map.clone()
     }
 
+    /// Sets the selected map.
+    /// # Arguments
+    /// * (String) - The selected map.
     #[func]
     pub fn set_map(&mut self, map: String) {
         self.map.selected_map = map;
     }
 
+    /// Gets the gravity.
+    /// # Returns
+    /// * (f32) - The gravity.
     #[func]
     pub fn get_gravity(&self) -> f32 {
         self.environment.gravity
     }
 
+    /// Gets the debug mode.
+    /// # Returns
+    /// * (bool) - Whether the debug mode is enabled.
     #[func]
     pub fn is_debug_mode(&self) -> bool {
         self.general.debug_mode
@@ -101,12 +116,19 @@ impl Settings {
 }
 
 #[derive(Clone)]
+/// This is a struct for the player settings.
 pub struct PlayerSettings {
+    /// The player's max health.
     pub max_health: f32,
+    /// The player's max run speed.
     pub max_run_speed: f32,
+    /// The player's min run speed.
     pub min_run_speed: f32,
+    /// The player's max jump force.
     pub max_jump_force: f32,
+    /// The player's min jump force.
     pub min_jump_force: f32,
+    /// The player's fall gravity.
     pub fall_gravity: f32,
 }
 
@@ -124,13 +146,19 @@ impl Default for PlayerSettings {
 }
 
 #[derive(Clone)]
+/// This is a struct for the environment settings.
 pub struct EnvironmentSettings {
+    /// The length of the day and night cycle.
     pub day_night_length: f32,
+    /// The time it takes to transition from day to night.
     pub day_night_transition_time: f32,
+    /// The gravity of the environment.
     pub gravity: f32,
+    /// The static friction of the environment.
     pub static_friction: f32,
+    /// The kinetic friction of the environment.
     pub kinetic_friction: f32,
-    pub drag_coefficient: f32,
+    /// The drag coefficient of the environment.
     pub air_density: f32,
 }
 
@@ -142,15 +170,17 @@ impl Default for EnvironmentSettings {
             gravity: 980.0,
             static_friction: 1.0,
             kinetic_friction: 1.0,
-            drag_coefficient: 1.0,
             air_density: 1.0,
         }
     }
 }
 
 #[derive(Clone)]
+/// This is a struct for the map settings.
 pub struct MapSettings {
+    /// The maps in the game.
     pub maps: Vec<String>,
+    /// The selected map.
     pub selected_map: String,
 }
 
@@ -164,7 +194,9 @@ impl Default for MapSettings {
 }
 
 #[derive(Clone)]
+/// This is a struct for the general settings.
 pub struct GeneralSettings {
+    /// Whether the debug mode is enabled.
     pub debug_mode: bool,
 }
 

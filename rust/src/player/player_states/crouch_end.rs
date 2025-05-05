@@ -19,8 +19,19 @@ use crate::player::{
 pub struct CrouchEnd;
 
 impl PlayerState for CrouchEnd {
+    /// This function is called when the player enters the CrouchEnd state.
+    /// It is responsible for any one time logic that should occur in the state.
+    /// It does not check for any state transitions.
+    ///
+    /// # Arguments
+    /// * `player` - The player owner of the state.
     fn enter(_player: &mut Player) {}
 
+    /// This function is called every frame the player is in the CrouchEnd state.
+    /// It is responsible for updating the player's state and checking for state transitions.
+    ///
+    /// # Arguments
+    /// * `player` - The player owner of the state.
     fn update(player: &mut Player) {
         if player.is_anim_finished() {
             player.set_state(PlayerStates::Idle);

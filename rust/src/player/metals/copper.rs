@@ -87,18 +87,34 @@ impl Metal for Copper {
         self.metal_type
     }
 
+    /// This function will get the current reserve.
+    ///
+    /// # Returns
+    /// The current reserve.
     fn current_reserve(&self) -> f64 {
         self.current_reserve
     }
 
+    /// This function will get the burning flag.
+    ///
+    /// # Returns
+    /// The burning flag.
     fn burning(&self) -> bool {
         self.burning
     }
 
+    /// This function will get the low burning flag.
+    ///
+    /// # Returns
+    /// The low burning flag.
     fn low_burning(&self) -> bool {
         self.low_burning
     }
 
+    /// This function will set the burning flag.
+    ///
+    /// # Arguments
+    /// * `burning` - The new value of the burning flag.
     fn set_burning(&mut self, burning: bool) {
         self.burning = burning;
 
@@ -115,6 +131,11 @@ impl Metal for Copper {
             player.remove_active_metal(self.metal_type);
         }
     }
+
+    /// This function will set the low burning flag.
+    ///
+    /// # Arguments
+    /// * `low_burning` - The new value of the low burning flag.
     fn set_low_burning(&mut self, low_burning: bool) {
         self.low_burning = low_burning;
 
@@ -132,14 +153,26 @@ impl Metal for Copper {
         }
     }
 
+    /// This function will get the player.
+    ///
+    /// # Returns
+    /// The player.
     fn get_player(&mut self) -> GdMut<'_, Player> {
         self.player.bind_mut()
     }
 
+    /// This function will get the previous reserve.
+    ///
+    /// # Returns
+    /// The previous reserve.
     fn previous_reserve(&self) -> f64 {
         self.previous_reserve
     }
 
+    /// This function will set the previous reserve.
+    ///
+    /// # Arguments
+    /// * `amt` - The amount to set the previous reserve to.
     fn set_previous_reserve(&mut self, amt: f64) {
         self.previous_reserve = amt;
     }

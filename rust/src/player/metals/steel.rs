@@ -122,27 +122,51 @@ impl Metal for Steel {
         }
     }
 
+    /// This function will update the reserve of the steel.
+    ///
+    /// # Arguments
+    /// * `amount` - The amount to update the reserve by.
     fn update_reserve(&mut self, amount: f64) {
         self.current_reserve += amount;
         self.current_reserve = self.current_reserve.clamp(0.0, self.capacity);
     }
 
+    /// This function will get the type of metal.
+    ///
+    /// # Returns
+    /// * `MetalType` - The type of metal.
     fn metal_type(&self) -> MetalType {
         self.metal_type
     }
 
+    /// This function will get the current reserve of the steel.
+    ///
+    /// # Returns
+    /// * `f64` - The current reserve.
     fn current_reserve(&self) -> f64 {
         self.current_reserve
     }
 
+    /// This function will get the burning flag.
+    ///
+    /// # Returns
+    /// * `bool` - The burning flag.
     fn burning(&self) -> bool {
         self.burn
     }
 
+    /// This function will get the low burning flag.
+    ///
+    /// # Returns
+    /// * `bool` - The low burning flag.
     fn low_burning(&self) -> bool {
         self.low_burn
     }
 
+    /// This function will set the burning flag.
+    ///
+    /// # Arguments
+    /// * `burning` - The new value of the burning flag.
     fn set_burning(&mut self, burning: bool) {
         self.burn = burning;
 
@@ -151,6 +175,10 @@ impl Metal for Steel {
         }
     }
 
+    /// This function will set the low burning flag.
+    ///
+    /// # Arguments
+    /// * `low_burning` - The new value of the low burning flag.
     fn set_low_burning(&mut self, low_burning: bool) {
         self.low_burn = low_burning;
 
@@ -166,14 +194,26 @@ impl Metal for Steel {
         }
     }
 
+    /// This function will get the player.
+    ///
+    /// # Returns
+    /// * `GdMut<Player>` - The player.
     fn get_player(&mut self) -> GdMut<'_, Player> {
         self.player.bind_mut()
     }
 
+    /// This function will get the previous reserve.
+    ///
+    /// # Returns
+    /// * `f64` - The previous reserve.
     fn previous_reserve(&self) -> f64 {
         self.previous_reserve
     }
 
+    /// This function will set the previous reserve.
+    ///
+    /// # Arguments
+    /// * `amt` - The amount to set the previous reserve to.
     fn set_previous_reserve(&mut self, amt: f64) {
         self.previous_reserve = amt;
     }
@@ -242,6 +282,7 @@ impl Steel {
         None
     }
 
+    /// This function will update the selected object location.
     fn update_selected_object_location(&mut self) {
         let mut player = self.player.bind_mut();
 
@@ -284,6 +325,7 @@ impl Steel {
         bound_metal_line.replace_lines(points, colors);
     }
 
+    /// This function will update the line selection.
     fn update_line_selection(&mut self) {
         self.object = None;
         self.object_location = Vector2::ZERO;
@@ -368,15 +410,24 @@ impl Steel {
         metal_line.queue_redraw();
     }
 
+    /// This function will cleanup the burn.
     fn cleanup_burn(&mut self) {
         self.object_location = Vector2::ZERO;
         self.object = None;
     }
 
+    /// This function will set the burn direction.
+    ///
+    /// # Arguments
+    /// * `direction` - The new value of the burn direction.
     pub fn set_burn_direction(&mut self, direction: f32) {
         self.burn_direction = direction;
     }
 
+    /// This function will set the metal type.
+    ///
+    /// # Arguments
+    /// * `metal_type` - The new value of the metal type.
     pub fn set_metal_type(&mut self, metal_type: MetalType) {
         self.metal_type = metal_type;
     }

@@ -30,6 +30,12 @@ pub struct SplitScreen {
 
 #[godot_api]
 impl IHBoxContainer for SplitScreen {
+    /// The Godot constructor for the SplitScreen class node
+    ///
+    /// # Arguments
+    /// * `base` - The base node type for the SplitScreen
+    ///
+    /// # Returns
     fn init(base: Base<HBoxContainer>) -> Self {
         Self {
             base,
@@ -41,6 +47,8 @@ impl IHBoxContainer for SplitScreen {
         }
     }
 
+    /// The Godot ready function for the SplitScreen class node
+    /// This runs when the node first enters the scene tree
     fn ready(&mut self) {
         // Setup the structure for two split screen views in a HBoxContainer
         let mut container1 = self.containers[0].clone();
@@ -102,6 +110,13 @@ impl SplitScreen {
         self.viewports[1].set_world_2d(&world_2d);
     }
 
+    #[func]
+    /// Add a level to the split screen
+    /// Two levels need to be passed so they can be added to the two viewports
+    ///
+    /// # Arguments
+    /// * `level_one` - A Gd<Map> value representing the first level to add
+    /// * `level_two` - A Gd<Map> value representing the second level to add
     pub fn add_levels(&mut self, level_one: Gd<Map>, level_two: Gd<Map>) {
         self.viewports[0].add_child(&level_one);
         self.viewports[1].add_child(&level_two);
@@ -175,6 +190,12 @@ impl SplitScreen {
         }
     }
 
+    /// Adds players to the levels of the split screen
+    /// This is used to add players to the levels of the split screen
+    ///
+    /// # Arguments
+    ///
+    /// * `players` - A vector of Gd<Player> values representing the players to add
     pub fn add_players_to_levels(&mut self, players: Vec<Gd<Player>>) {
         let hbox_size = self.base().get_size();
 
@@ -227,6 +248,15 @@ impl SplitScreen {
         }
     }
 
+    /// Get the spawn point for a player
+    ///
+    /// # Arguments
+    ///
+    /// * `player_id` - The ID of the player to get the spawn point for
+    ///
+    /// # Returns
+    ///
+    /// * A Vector2 value representing the spawn point for the player
     pub fn get_spawn_point(&self, player_id: i32) -> Vector2 {
         self.viewports[(player_id % 2) as usize]
             .get_child(0)

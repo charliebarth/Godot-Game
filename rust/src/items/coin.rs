@@ -188,10 +188,18 @@ impl Coin {
     }
 
     #[func]
+    /// Returns true if the coin is a metal object
+    ///
+    /// # Returns
+    /// * `bool` - True if the coin is a metal object
     fn is_metal(&self) -> bool {
         true
     }
 
+    /// Returns the metal object associated with the coin
+    ///
+    /// # Returns
+    /// * `Gd<MetalObject>` - The metal object associated with the coin
     pub fn get_metal_obejct(&self) -> Gd<MetalObject> {
         self.metal_object.clone().unwrap()
     }

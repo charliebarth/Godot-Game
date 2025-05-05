@@ -28,10 +28,12 @@ pub struct MetalObject {
     base: Base<RigidBody2D>,
     /// A queue of forces to be applied to the metal item
     forces: VecDeque<Force>,
+    /// The delta time of the MetalObject
     delta: f64,
+    /// The gravity of the MetalObject
     gravity: f64,
-    air_resistance: f64,
-    friction: f64,
+
+    /// The mass of the MetalObject
     mass: f32,
 }
 
@@ -60,8 +62,6 @@ impl IRigidBody2D for MetalObject {
             forces: VecDeque::new(),
             delta: 0.0,
             gravity,
-            air_resistance: 0.0,
-            friction: 0.0,
             mass: 0.1,
         }
     }

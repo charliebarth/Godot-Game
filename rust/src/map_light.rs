@@ -26,6 +26,13 @@ pub struct MapLight {
 
 #[godot_api]
 impl IPointLight2D for MapLight {
+    /// The Godot constructor for the MapLight class node
+    ///
+    /// # Arguments
+    /// * `base` - The base node type for the MapLight
+    ///
+    /// # Returns
+    /// * `MapLight` - The MapLight node
     fn init(base: Base<PointLight2D>) -> Self {
         Self {
             base,
@@ -34,6 +41,8 @@ impl IPointLight2D for MapLight {
         }
     }
 
+    /// The Godot ready function for the MapLight class node
+    /// This run when the node first enters the scene tree
     fn ready(&mut self) {
         self.energy = self.base().get_energy();
         self.scale = self.base().get_scale().x;
@@ -49,6 +58,12 @@ impl IPointLight2D for MapLight {
 
 #[godot_api]
 impl MapLight {
+    /// This function transitions the light levels of the MapLight node
+    ///
+    /// # Arguments
+    /// * `light_level` - The light level to transition to
+    /// * `transition_time` - The time it takes to transition to the new light level
+    /// * `scale` - The scale of the light
     #[func]
     pub fn transition_light_levels(&mut self, light_level: f32, transition_time: f64, scale: f32) {
         let target_energy = light_level * self.energy;

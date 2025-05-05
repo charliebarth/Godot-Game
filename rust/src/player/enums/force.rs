@@ -86,12 +86,23 @@ pub enum ForceModifier {
 }
 
 impl ForceModifier {
+    /// This function will get the tag of the force modifier.
+    ///
+    /// # Returns
+    /// * `ForceModifierTag` - The tag of the force modifier.
     pub fn tag(&self) -> ForceModifierTag {
         match self {
             ForceModifier::Pewter { .. } => ForceModifierTag::Pewter,
         }
     }
 
+    /// This function will combine two force modifiers.
+    ///
+    /// # Arguments
+    /// * `other` - The other force modifier to combine with.
+    ///
+    /// # Returns
+    /// * `ForceModifier` - The combined force modifier.
     pub fn combine_modifiers(&self, other: ForceModifier) -> ForceModifier {
         match (self, other) {
             (
