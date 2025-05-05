@@ -1,13 +1,13 @@
-//! input_manager.rs
-//!
-//! This module defines the InputManager class, which is responsible for handling all input events
-//! for a given player and device. It will convert button presses into player events and metal events.
-//! This allows for extra functionality such as being able to map different events to the same button
-//! based on how long the button is held down.
-//!
-//! Author: Charles Barth
-//! Version: Spring 2025
-use godot::classes::InputMap;
+/// input_manager.rs
+///
+/// This module defines the InputManager class, which is responsible for handling all input events
+/// for a given player and device. It will convert button presses into player events and metal events.
+/// This allows for extra functionality such as being able to map different events to the same button
+/// based on how long the button is held down.
+///
+/// Author: Charles Barth
+/// Version: Spring 2025
+use godot::classes::{Input, InputMap};
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::{HashMap, HashSet};
 
