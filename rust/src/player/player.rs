@@ -13,6 +13,7 @@ use std::collections::VecDeque;
 use std::time::Duration;
 use std::time::Instant;
 
+use godot::classes::Camera2D;
 use godot::classes::CanvasItem;
 use godot::classes::CharacterBody2D;
 use godot::classes::ConfigFile;
@@ -20,6 +21,7 @@ use godot::classes::Control;
 use godot::classes::Engine;
 use godot::classes::GpuParticles2D;
 use godot::classes::ICharacterBody2D;
+use godot::classes::Input;
 use godot::classes::PointLight2D;
 use godot::classes::Sprite2D;
 use godot::classes::SubViewport;

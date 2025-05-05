@@ -11,7 +11,7 @@ use crate::{
     split_screen::SplitScreen,
 };
 
-use godot::classes::Label;
+use godot::classes::{Input, Label};
 use godot::global::HorizontalAlignment;
 use godot::{
     classes::{
