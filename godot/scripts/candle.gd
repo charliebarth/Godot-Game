@@ -26,14 +26,14 @@ func _on_frame_changed() -> void:
 	var min_speed_scale: float = 0.8
 	var max_speed_scale: float = 1.5
 	var num_frames: int = 10
-	var min_energy_decrease: float = 0.008
+	var min_energy_change: float = 0.008
 
 	if self.frame != 0 && self.frame % num_frames == 0:
 		new_energy = randf_range(min_energy, max_energy)
 	elif point_light.energy > new_energy:
-		point_light.energy -= (self.frame % num_frames) * min_energy_decrease
+		point_light.energy -= (self.frame % num_frames) * min_energy_change
 	elif point_light.energy <= new_energy:
-		point_light.energy += (self.frame % num_frames) * min_energy_increase
+		point_light.energy += (self.frame % num_frames) * min_energy_change
 	
 	if self.frame != 0 && self.frame % 15 == 0:
 		self.speed_scale = randf_range(min_speed_scale, max_speed_scale)

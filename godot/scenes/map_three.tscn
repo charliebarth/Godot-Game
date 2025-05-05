@@ -12695,7 +12695,6 @@ fill = 2
 [node name="MapThree" type="Map"]
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-visible = false
 color = Color(0.0392157, 0.0392157, 0.0392157, 1)
 
 [node name="TileMapLayers" type="Node" parent="."]

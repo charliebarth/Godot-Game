@@ -965,7 +965,7 @@ shader_parameter/width_out = 0.95
 shader_parameter/border_width = 0.03
 
 [node name="Player" type="Player"]
-z_index = 1
+z_index = 3
 collision_layer = 2049
 script = ExtResource("1_pp08i")
 

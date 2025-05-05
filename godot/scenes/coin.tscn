@@ -55,6 +55,7 @@ animations = [{
 radius = 8.0
 
 [node name="MetalObject" type="MetalObject"]
+z_index = 4
 collision_layer = 130
 physics_material_override = SubResource("PhysicsMaterial_nptqm")
 can_sleep = false
@@ -66,8 +67,10 @@ continuous_cd = 1
 shape = SubResource("CircleShape2D_jhmiw")
 
 [node name="Coin" type="Coin" parent="."]
+z_index = 4
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Coin"]
+z_index = 4
 position = Vector2(0.5, -0.5)
 scale = Vector2(1.0625, 1.0625)
 sprite_frames = SubResource("SpriteFrames_8dn5o")
