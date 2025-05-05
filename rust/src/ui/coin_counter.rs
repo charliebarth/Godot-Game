@@ -11,7 +11,10 @@ use crate::{
     items::coin::Coin,
     metal_object::MetalObject,
     player::{
-        enums::coin_events::{CoinEvents, CoinState},
+        enums::{
+            coin_events::{CoinEvents, CoinState},
+            player_events::PlayerEvents,
+        },
         input_manager::InputManager,
         player::Player,
     },
@@ -33,6 +36,8 @@ pub struct CoinCounter {
     charging: bool,
     charge_start: u64,
     device_id: i32,
+    input_manager: Option<Gd<InputManager>>,
+    charge_duration: u64,
 }
 
 #[godot_api]
@@ -53,6 +58,8 @@ impl ILabel for CoinCounter {
             charging: false,
             charge_start: 0,
             device_id: -1,
+            input_manager: None,
+            charge_duration: 0,
         }
     }
 
@@ -60,7 +67,7 @@ impl ILabel for CoinCounter {
     /// the first time.
     /// Sets the base value of coins and adds coins to the player.
     fn ready(&mut self) {
-        let player = self
+        let mut player = self
             .base()
             .get_parent()
             .unwrap()
@@ -71,6 +78,7 @@ impl ILabel for CoinCounter {
             .try_cast::<Player>()
             .unwrap();
         self.device_id = player.bind().get_device_id();
+        self.input_manager = Some(player.bind_mut().get_input_manager());
         let coin_cnt = GString::from(format!("{}", self.coins));
         self.base_mut().set_text(&coin_cnt);
 
@@ -83,22 +91,13 @@ impl ILabel for CoinCounter {
     /// # Arguments
     /// * `delta` (f64) - The time since the last frame.
     fn process(&mut self, _delta: f64) {
+        if let Some(input_manager) = &self.input_manager {
+            self.process_coin_events(input_manager.clone());
+        }
+
         if self.charging && Time::singleton().get_ticks_msec() - self.charge_start >= 3000 {
             godot_print!("HIT MAX\n");
-            self.throw();
-        }
-    }
-
-    /// On an input event, calls the process_coin_events method if the event is
-    /// a CoinEvent.
-    ///
-    /// # Arguments
-    /// * `event` (Gd<InputEvent>) - the input event that took place
-    fn input(&mut self, event: Gd<InputEvent>) {
-        let button_name = InputManager::event_to_input_name(event.clone());
-
-        if let Some(coin_event) = CoinEvents::from_string(&button_name) {
-            self.process_coin_events(coin_event, event);
+            self.charge_duration = 3000;
         }
     }
 }
@@ -156,24 +155,22 @@ impl CoinCounter {
         }
     }
 
-    /// Processes the coin event that happened
+    /// Check if the throw event is pressed and if so and not already charging,
+    /// start charging. If the throw event is released and we are charging, throw
+    /// the coin.
+    ///
     /// # Arguments
-    /// * `coin_event` (CoinEvents) - The coin event that took place
-    /// * `event` (Gd<InputEvent>) - The input event that took place
-    fn process_coin_events(&mut self, _coin_event: CoinEvents, event: Gd<InputEvent>) {
-        const ANY_DEVICE: i32 = -1;
-        if event.is_action_pressed("throw")
-            && (self.device_id == ANY_DEVICE || event.get_device() == self.device_id)
+    /// * `input_manager` (Gd<InputManager>) - The input manager to check for events
+    fn process_coin_events(&mut self, mut input_manager: Gd<InputManager>) {
+        let bound_input_manager = input_manager.bind_mut();
+        if bound_input_manager.check_for_player_event(PlayerEvents::Throw) && !self.charging {
+            self.charge_start = Time::singleton().get_ticks_msec();
+            self.charging = true;
+        } else if !bound_input_manager.check_for_player_event(PlayerEvents::Throw) && self.charging
         {
-            if !self.charging {
-                self.charge_start = Time::singleton().get_ticks_msec();
-                self.charging = true;
+            if self.charge_duration == 0 {
+                self.charge_duration = Time::singleton().get_ticks_msec() - self.charge_start;
             }
-        }
-        if event.is_action_released("throw")
-            && (self.device_id == ANY_DEVICE || event.get_device() == self.device_id)
-            && self.charging
-        {
             self.throw();
         }
     }
@@ -189,9 +186,9 @@ impl CoinCounter {
             let mut coin = coin_object.get_node_as::<Coin>("Coin");
 
             // Throw a coin
-            coin.bind_mut()
-                .throw(self.charge_start, Time::singleton().get_ticks_msec());
+            coin.bind_mut().throw(self.charge_duration as f32);
             self.charging = false;
+            self.charge_duration = 0;
         }
     }
 

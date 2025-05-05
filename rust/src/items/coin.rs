@@ -113,8 +113,11 @@ impl Coin {
     }
 
     /// Handles throwing of the coin, gets direction and applies impulse.
+    ///
+    /// # Arguments
+    /// * `charge_duration` (f32) - The duration of the charge
     #[func]
-    pub fn throw(&mut self, start: u64, end: u64) {
+    pub fn throw(&mut self, charge_duration: f32) {
         godot_print!("\nATTEMPTING THROWING {}", self.base().get_name());
         godot_print!("COIN IN STATE {}", self.state);
 
@@ -127,7 +130,7 @@ impl Coin {
             let max_charge_power_time = 3000.;
             let vertical_force = -20.;
             // Calculate charge
-            let mut charge = (end as f32 - start as f32) / max_charge_power_time;
+            let mut charge = charge_duration as f32 / max_charge_power_time;
             if charge < min_charge_rate {
                 charge = min_charge_rate;
             }

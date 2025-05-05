@@ -36,6 +36,7 @@ impl TriggerEvents {
             PlayerEvents::LowBurn => TriggerEvents::OnPress,
             PlayerEvents::Die => TriggerEvents::OnPress,
             PlayerEvents::MetalWheel => TriggerEvents::OnPress,
+            PlayerEvents::Throw => TriggerEvents::OnPress,
         }
     }
 }
@@ -63,6 +64,8 @@ pub enum PlayerEvents {
     Die,
     /// The player has opened the Metal Selector Wheel
     MetalWheel,
+    /// The player has thrown a coin.
+    Throw,
 }
 
 impl PlayerEvents {
@@ -82,6 +85,7 @@ impl PlayerEvents {
             "low_burn" => Some(PlayerEvents::LowBurn),
             "die" => Some(PlayerEvents::Die),
             "metal_selector" => Some(PlayerEvents::MetalWheel),
+            "throw" => Some(PlayerEvents::Throw),
             _ => None,
         }
     }
@@ -103,6 +107,7 @@ impl PlayerEvents {
             PlayerEvents::LowBurn => -1,
             PlayerEvents::Die => 10,
             PlayerEvents::MetalWheel => -1,
+            PlayerEvents::Throw => -1,
         }
     }
 }
