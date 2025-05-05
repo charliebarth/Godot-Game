@@ -32,6 +32,7 @@ pub struct CoinCounter {
     coin_holder: Vec<Gd<MetalObject>>,
     charging: bool,
     charge_start: u64,
+    device_id: i32,
 }
 
 #[godot_api]
@@ -51,6 +52,7 @@ impl ILabel for CoinCounter {
             coin_holder: Vec::new(), // Create a new vector to hold coins
             charging: false,
             charge_start: 0,
+            device_id: -1,
         }
     }
 
@@ -58,6 +60,17 @@ impl ILabel for CoinCounter {
     /// the first time.
     /// Sets the base value of coins and adds coins to the player.
     fn ready(&mut self) {
+        let player = self
+            .base()
+            .get_parent()
+            .unwrap()
+            .get_parent()
+            .unwrap()
+            .get_parent()
+            .unwrap()
+            .try_cast::<Player>()
+            .unwrap();
+        self.device_id = player.bind().get_device_id();
         let coin_cnt = GString::from(format!("{}", self.coins));
         self.base_mut().set_text(&coin_cnt);
 
@@ -148,13 +161,19 @@ impl CoinCounter {
     /// * `coin_event` (CoinEvents) - The coin event that took place
     /// * `event` (Gd<InputEvent>) - The input event that took place
     fn process_coin_events(&mut self, _coin_event: CoinEvents, event: Gd<InputEvent>) {
-        if event.is_action_pressed("throw") {
+        const ANY_DEVICE: i32 = -1;
+        if event.is_action_pressed("throw")
+            && (self.device_id == ANY_DEVICE || event.get_device() == self.device_id)
+        {
             if !self.charging {
                 self.charge_start = Time::singleton().get_ticks_msec();
                 self.charging = true;
             }
         }
-        if event.is_action_released("throw") && self.charging {
+        if event.is_action_released("throw")
+            && (self.device_id == ANY_DEVICE || event.get_device() == self.device_id)
+            && self.charging
+        {
             self.throw();
         }
     }
