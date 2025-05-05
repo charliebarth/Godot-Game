@@ -1,8 +1,9 @@
-/// Controls the metal bars on screen, stores bars that are not currently on
-/// screen and has methods to add and remove bars from the on screen Vbox by
-/// name.
-///
-/// Author: Trinity Pittman
+//! Controls the metal bars on screen, stores bars that are not currently on
+//! screen and has methods to add and remove bars from the on screen Vbox by
+//! name.
+//!
+//! Author: Trinity Pittman
+//! Version: Spring 2025
 use std::collections::HashMap;
 
 use godot::classes::{IVBoxContainer, InputMap, VBoxContainer};
@@ -11,7 +12,7 @@ use godot::prelude::*;
 pub use crate::ui::metal_bar::MetalBar;
 
 // The maximum number of bars to display on a players screen at a time
-const MAX_BARS_ON_SCREEN: u8 = 6;
+const MAX_BARS_ON_SCREEN: u8 = 3;
 
 // Change this to account for how many we currently support
 const TOTAL_BARS: u8 = 6;

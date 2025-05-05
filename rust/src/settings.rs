@@ -1,11 +1,11 @@
-/// settings.rs
-///
-/// This file contains the implementation of the Settings class, which is responsible for
-/// managing the game settings. It includes player settings, environment settings, map settings,
-/// general settings, and game mode settings.
-///
-/// Author: Trinity Pittman, Charles Barth
-/// Version: Spring 2025
+//! settings.rs
+//!
+//! This file contains the implementation of the Settings class, which is responsible for
+//! managing the game settings. It includes player settings, environment settings, map settings,
+//! general settings, and game mode settings.
+//!
+//! Author: Trinity Pittman, Charles Barth
+//! Version: Spring 2025
 use godot::{classes::Object, prelude::*};
 
 /// This is a struct for all the adjustable settings in the game
@@ -26,8 +26,15 @@ pub struct Settings {
     pub game_mode: GameMode,
 }
 
+/// IObject methods for Settings
 #[godot_api]
 impl IObject for Settings {
+    /// Constructer for the Settings class.
+    /// # Arguments
+    /// * `base` - The base node of the Settings.
+    ///
+    /// # Returns
+    /// * A settings object.
     fn init(base: Base<Object>) -> Self {
         Self {
             base,
@@ -40,6 +47,7 @@ impl IObject for Settings {
     }
 }
 
+/// Methods for the Settings
 #[godot_api]
 impl Settings {
     /// Gets the player's max health.
@@ -132,7 +140,11 @@ pub struct PlayerSettings {
     pub fall_gravity: f32,
 }
 
+/// Default methods for the PlayerSettings
 impl Default for PlayerSettings {
+    /// Default method for the Player Settings
+    /// # Returns
+    /// * PlayerSettings with default values for each
     fn default() -> Self {
         Self {
             max_health: 100.0,
@@ -162,7 +174,11 @@ pub struct EnvironmentSettings {
     pub air_density: f32,
 }
 
+/// Default methods for the Environment Settings
 impl Default for EnvironmentSettings {
+    /// Default method for the Environment Settings
+    /// # Returns
+    /// * EnvironmentSettings with default values
     fn default() -> Self {
         Self {
             day_night_length: 10.0,
@@ -184,7 +200,11 @@ pub struct MapSettings {
     pub selected_map: String,
 }
 
+///  Default methods for the Map Settings
 impl Default for MapSettings {
+    /// Default method for the Map Settings
+    /// # Returns
+    /// * MapSettings with default values
     fn default() -> Self {
         Self {
             maps: Vec::new(),
@@ -200,7 +220,11 @@ pub struct GeneralSettings {
     pub debug_mode: bool,
 }
 
+///  Default methods for the General Settings
 impl Default for GeneralSettings {
+    /// Default method for the General Settings
+    /// # Returns
+    /// * GeneralSettings with default values
     fn default() -> Self {
         Self { debug_mode: true }
     }

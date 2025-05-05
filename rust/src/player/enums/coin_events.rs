@@ -1,7 +1,7 @@
-/// Holds the CoinState and CoinEvents Enums
-///
-/// Author: Trinity Pittman
-/// Date: Fall 2024
+//! Holds the CoinState and CoinEvents Enums
+//!
+//! Author: Trinity Pittman
+//! Version: Fall 2024
 
 use std::fmt::{self};
 

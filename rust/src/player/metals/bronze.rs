@@ -1,11 +1,11 @@
-/// bronze.rs
-///
-/// This file contains the implementation of the Bronze player ability.
-/// The Bronze ability allows players to view the particles that other players emit when they burn
-/// metals, given that the other player is not burning copper.
-///
-/// Author: Michael Imerman, Charles Barth
-/// Version: Spring 2025
+//! bronze.rs
+//!
+//! This file contains the implementation of the Bronze player ability.
+//! The Bronze ability allows players to view the particles that other players emit when they burn
+//! metals, given that the other player is not burning copper.
+//!
+//! Author: Michael Imerman, Charles Barth
+//! Version: Spring 2025
 use crate::player::enums::metal_type::MetalType;
 use crate::player::player::Player;
 use crate::player::traits::metal::Metal;
@@ -33,7 +33,19 @@ pub struct Bronze {
     previous_reserve: f64,
 }
 
+/// Methods for Bronze
 impl Bronze {
+    /// Creates an instance of the Bronze 
+    /// # Arguments
+    /// * `capacity` - The maxiumum amount of bronze the player can store 
+    /// * `current_reserve` - The current amount of bronze the player has
+    /// * `low_burn_rate` - The rate at which the player burns bronze when using
+    ///                     the low burn ability
+    /// * `player` - A reference to the player
+    /// * `metal_type` - The type of metal 
+    /// 
+    /// # Returns
+    /// * An instance of Bronze class 
     pub fn new(
         capacity: f64,
         current_reserve: f64,
@@ -77,6 +89,8 @@ impl Bronze {
     }
 }
 
+
+/// Metal methods for Bronze
 impl Metal for Bronze {
     /// The burn function for bronze.
     /// It does the same as low_burn because copper has static performance.

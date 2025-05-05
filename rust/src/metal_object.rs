@@ -1,11 +1,11 @@
-/// metal_object.rs
-///
-/// This file contains the MetalObject class, which is responsible for managing the
-/// physics and interactions of metal objects in the game. It includes functions for
-/// applying forces, handling collisions, and determining the collision direction.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! metal_object.rs
+//!
+//! This file contains the MetalObject class, which is responsible for managing the
+//! physics and interactions of metal objects in the game. It includes functions for
+//! applying forces, handling collisions, and determining the collision direction.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use std::collections::VecDeque;
 
 use godot::{
@@ -32,11 +32,11 @@ pub struct MetalObject {
     delta: f64,
     /// The gravity of the MetalObject
     gravity: f64,
-
     /// The mass of the MetalObject
     mass: f32,
 }
 
+/// IRigidBody2D methods for MetalObject
 #[godot_api]
 impl IRigidBody2D for MetalObject {
     /// The Godot constructor for the MetalObject class.
@@ -82,6 +82,7 @@ impl IRigidBody2D for MetalObject {
         self.delta = delta;
     }
 
+    
     fn integrate_forces(&mut self, physics_body: Option<Gd<PhysicsDirectBodyState2D>>) {
         if let Some(mut body) = physics_body {
             let mut base_velocity = body.get_linear_velocity();

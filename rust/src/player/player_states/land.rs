@@ -1,11 +1,11 @@
-/// land.rs
-///
-/// This file contains the implementation of the Land state for the player.
-/// The Land state is responsible for handling the player's landing animation
-/// and transitioning to other states based on player input and conditions.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! land.rs
+//!
+//! This file contains the implementation of the Land state for the player.
+//! The Land state is responsible for handling the player's landing animation
+//! and transitioning to other states based on player input and conditions.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use godot::{classes::AnimatedSprite2D, obj::WithBaseField};
 
 use crate::player::{

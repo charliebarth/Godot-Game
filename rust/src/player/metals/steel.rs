@@ -1,12 +1,12 @@
-/// steel.rs
-///
-/// This file contains the implementation of the Steel player ability.
-/// The Steel ability allows players to push on metal objects. This gives the player the ability
-/// to damage other players via pushing metal objects into them, in addition to additional movement
-/// options.
-///
-/// Author: Charles Barth, Michael Imerman
-/// Version: Spring 2025
+//! steel.rs
+//!
+//! This file contains the implementation of the Steel player ability.
+//! The Steel ability allows players to push on metal objects. This gives the player the ability
+//! to damage other players via pushing metal objects into them, in addition to additional movement
+//! options.
+//!
+//! Author: Charles Barth, Michael Imerman
+//! Version: Spring 2025
 use godot::builtin::{Color, Vector2};
 use godot::classes::Input;
 use godot::global::JoyAxis;
@@ -220,6 +220,17 @@ impl Metal for Steel {
 }
 
 impl Steel {
+    /// Creates an instance of Steel 
+    /// # Arguments
+    /// * `capacity` - The maxiumum amount of steel the player can store 
+    /// * `current_reserve` - The current amount of steel the player has
+    /// * `low_burn_rate` - The rate at which the player burns steel when using
+    ///                     the low burn ability
+    /// * `player` - A reference to the player
+    /// * `metal_type` - The type of metal 
+    /// 
+    /// # Returns
+    /// * An instance of Steel class 
     pub fn new(
         capacity: f64,
         current_reserve: f64,

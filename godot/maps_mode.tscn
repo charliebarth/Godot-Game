@@ -46,7 +46,7 @@ theme_override_constants/margin_bottom = 24
 layout_mode = 2
 follow_focus = true
 draw_focus_border = true
-scroll_vertical = 324
+scroll_vertical = 100
 script = ExtResource("2_43853")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer"]
@@ -130,7 +130,7 @@ theme_override_fonts/font = ExtResource("1_my32b")
 theme_override_font_sizes/font_size = 64
 text = "Map Two
 3-4 Players
-3 Metal Spawn Points"
+4 Metal Spawn Points"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -164,7 +164,7 @@ theme_override_fonts/font = ExtResource("1_my32b")
 theme_override_font_sizes/font_size = 64
 text = "Map Three
 Up to 8 Players
-5 Metal Spawn Points"
+4 Metal Spawn Points"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -206,11 +206,11 @@ theme_override_constants/separation = 19
 layout_mode = 2
 
 [node name="Label" type="Label" parent="PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
-custom_minimum_size = Vector2(611, 150)
+custom_minimum_size = Vector2(611, 80)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_my32b")
 theme_override_font_sizes/font_size = 64
-text = "Players compete until only one remains, with the last survivor winning."
+text = "First to win three rounds wins the game."
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -230,11 +230,11 @@ text = "Last Player Standing
 layout_mode = 2
 
 [node name="Label" type="Label" parent="PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer3"]
-custom_minimum_size = Vector2(611, 150)
+custom_minimum_size = Vector2(611, 80)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_my32b")
 theme_override_font_sizes/font_size = 64
-text = "Each player competes to kill as many players as they can until one player gets <#> kills."
+text = "First to five eliminations wins the game."
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -249,6 +249,7 @@ toggle_mode = true
 text = "Head Hunters"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2"]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]

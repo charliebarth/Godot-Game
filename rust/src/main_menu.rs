@@ -1,11 +1,11 @@
-/// main_menu.rs
-///
-/// This file contains the MainMenu class, which is responsible for managing the main menu UI.
-/// It includes functions for adding and removing players, setting player teams, and swapping
-/// between different menus.
-///
-/// Author: Trinity Pittman, Charles Barth
-/// Version: Spring 2025
+//! main_menu.rs
+//!
+//! This file contains the MainMenu class, which is responsible for managing the main menu UI.
+//! It includes functions for adding and removing players, setting player teams, and swapping
+//! between different menus.
+//!
+//! Author: Trinity Pittman, Charles Barth
+//! Version: Spring 2025
 use godot::{
     classes::{
         AnimatedSprite2D, AnimationPlayer, Control, ResourceLoader, RichTextLabel, ShaderMaterial,
@@ -29,6 +29,7 @@ pub struct MainMenu {
     team_choice_menu: Option<Gd<Control>>,
 }
 
+/// INode2D Methods for the MainMenu
 #[godot_api]
 impl INode2D for MainMenu {
     /// The Godot constructor for the MainMenu class.
@@ -49,6 +50,7 @@ impl INode2D for MainMenu {
     }
 }
 
+/// Methods for the MainMenu
 #[godot_api]
 impl MainMenu {
     /// This function reveals the player sprite on the main menu

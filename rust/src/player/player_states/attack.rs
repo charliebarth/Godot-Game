@@ -1,16 +1,18 @@
-/// attack.rs
-///
-/// This file contains the implementation of the Attack state for the player.
-/// The Attack state is responsible for handling the player's attack animation
-/// and hitbox.
-///
-/// Author: Michael Imerman, Charles Barth
-/// Version: Spring 2025
+//! attack.rs
+//!
+//! This file contains the implementation of the Attack state for the player.
+//! The Attack state is responsible for handling the player's attack animation
+//! and hitbox.
+//!
+//! Author: Michael Imerman, Charles Barth
+//! Version: Spring 2025
 use crate::player::{player::Player, traits::player_state::PlayerState};
 
+/// A struct representing the attack state
 #[derive(Clone, Copy)]
 pub struct Attack;
 
+/// Methods for the Attack struct
 impl PlayerState for Attack {
     /// The player is now attacking. Enable the hitbox for the melee attack
     ///

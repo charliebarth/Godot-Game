@@ -1,10 +1,10 @@
-/// player_light.rs
-///
-/// This file contains the implementation of the PlayerLight class, which is responsible for
-/// creating and managing the light effect in the game with respect to the player's light point.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! player_light.rs
+//!
+//! This file contains the implementation of the PlayerLight class, which is responsible for
+//! creating and managing the light effect in the game with respect to the player's light point.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use godot::{
     classes::{IPointLight2D, PointLight2D},
     prelude::*,
@@ -12,9 +12,9 @@ use godot::{
 
 use crate::game::Game;
 
+/// Represents a light in the game
 #[derive(GodotClass)]
 #[class(base=PointLight2D)]
-/// Represents a light in the game
 pub struct PlayerLight {
     /// The base node of the PlayerLight
     base: Base<PointLight2D>,
@@ -22,6 +22,7 @@ pub struct PlayerLight {
     energy: f32,
 }
 
+/// IPointLight2D methods for the PlayerLight
 #[godot_api]
 impl IPointLight2D for PlayerLight {
     /// The Godot constructor for the PlayerLight class node
@@ -35,6 +36,9 @@ impl IPointLight2D for PlayerLight {
         Self { base, energy: 1.0 }
     }
 
+    /// This method is called when the node is added to the scene tree.
+    /// It gets the enery, game, and light and connects the lights signal to the method
+    /// `change_cycle_player`.
     fn ready(&mut self) {
         self.energy = self.base().get_energy();
 
@@ -47,14 +51,15 @@ impl IPointLight2D for PlayerLight {
     }
 }
 
+/// Methods for the PlayerLight
 #[godot_api]
 impl PlayerLight {
-    #[func]
     /// This function transitions the light levels of the PlayerLight node
     ///
     /// # Arguments
     /// * `light_level` - The light level to transition to
     /// * `transition_time` - The time it takes to transition to the new light level
+    #[func]
     pub fn transition_light_levels(&mut self, light_level: f32, transition_time: f64) {
         let target_energy = light_level * self.energy;
 

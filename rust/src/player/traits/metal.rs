@@ -1,10 +1,10 @@
-/// metal.rs
-/// This file defines a trait for metals in the game. Each metal has a reserve, a type, and can be
-/// burned or low burned. The trait provides methods to manage the metal's state and reserve, as
-/// well as to interact with the player.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! metal.rs
+//! This file defines a trait for metals in the game. Each metal has a reserve, a type, and can be
+//! burned or low burned. The trait provides methods to manage the metal's state and reserve, as
+//! well as to interact with the player.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use godot::obj::GdMut;
 
 use crate::player::{

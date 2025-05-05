@@ -1,12 +1,12 @@
-/// split_screen.rs
-///
-/// This file contains the implementation of the SplitScreen class, which is responsible for
-/// creating and managing a split screen view in the game. It handles the setup of two
-/// viewports and their respective containers, as well as the addition of levels and players
-/// to the split screen.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! split_screen.rs
+//!
+//! This file contains the implementation of the SplitScreen class, which is responsible for
+//! creating and managing a split screen view in the game. It handles the setup of two
+//! viewports and their respective containers, as well as the addition of levels and players
+//! to the split screen.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use godot::{
     classes::{
         viewport::DefaultCanvasItemTextureFilter, HBoxContainer, IHBoxContainer, SubViewport,
@@ -17,6 +17,7 @@ use godot::{
 
 use crate::{map::Map, player::player::Player};
 
+/// SplitScreen class, responsible for creating/managing split screens 
 #[derive(GodotClass)]
 #[class(base=HBoxContainer)]
 pub struct SplitScreen {
@@ -28,6 +29,7 @@ pub struct SplitScreen {
     viewports: [Gd<SubViewport>; 2],
 }
 
+/// IHBoxContainer methods for the SplitScreen
 #[godot_api]
 impl IHBoxContainer for SplitScreen {
     /// The Godot constructor for the SplitScreen class node
@@ -36,6 +38,7 @@ impl IHBoxContainer for SplitScreen {
     /// * `base` - The base node type for the SplitScreen
     ///
     /// # Returns
+    /// * An instance of the SplitScreen
     fn init(base: Base<HBoxContainer>) -> Self {
         Self {
             base,
@@ -71,6 +74,7 @@ impl IHBoxContainer for SplitScreen {
     }
 }
 
+/// Methods for the SplitScreen
 #[godot_api]
 impl SplitScreen {
     #[func]
@@ -85,44 +89,44 @@ impl SplitScreen {
         }
     }
 
-    #[func]
+    
     /// Set the size of the viewports
     ///
     /// # Arguments
     ///
     /// * `sizes` - A vector of Vector2i values representing the size of each viewport
+    #[func]
     pub fn set_viewport_sizes(&mut self, sizes: Vec<Vector2i>) {
         for (i, size) in sizes.iter().enumerate() {
             self.viewports[i].set_size(*size);
         }
     }
 
-    #[func]
     /// Add a level to the split screen
     /// The level will be added to the first viewport and the second viewport will be set to the same world
     ///
     /// # Arguments
     ///
     /// * `level` - A Gd<Map> value representing the level to add
+    #[func]
     pub fn add_level(&mut self, level: Gd<Map>) {
         self.viewports[0].add_child(&level);
         let world_2d = self.viewports[0].get_world_2d().expect("World2D not found");
         self.viewports[1].set_world_2d(&world_2d);
     }
 
-    #[func]
     /// Add a level to the split screen
     /// Two levels need to be passed so they can be added to the two viewports
     ///
     /// # Arguments
     /// * `level_one` - A Gd<Map> value representing the first level to add
     /// * `level_two` - A Gd<Map> value representing the second level to add
+    #[func]
     pub fn add_levels(&mut self, level_one: Gd<Map>, level_two: Gd<Map>) {
         self.viewports[0].add_child(&level_one);
         self.viewports[1].add_child(&level_two);
     }
 
-    #[func]
     /// Add a world to the split screen
     /// This is used for the second split screen so both viewports will use the world rather than having their own
     /// level added to them.
@@ -130,22 +134,22 @@ impl SplitScreen {
     /// # Arguments
     ///
     /// * `world` - A Gd<World2D> value representing the world to add
+    #[func]
     pub fn add_world(&mut self, world: Gd<World2D>) {
         self.viewports[0].set_world_2d(&world);
         self.viewports[1].set_world_2d(&world);
     }
 
-    #[func]
     /// Get the world of the split screen
     ///
     /// # Returns
     ///
     /// * A Gd<World2D> value representing the world of the split screen
+    #[func]
     pub fn get_world(&self) -> Gd<World2D> {
         self.viewports[1].get_world_2d().expect("World2D not found")
     }
 
-    #[func]
     /// Add players to the split screen
     /// If there is only one player then the first viewport will be used and the same size as the HBoxContainer
     /// If there are two players then the first viewport will be used for the first player and the second viewport will be used for the second player
@@ -154,6 +158,7 @@ impl SplitScreen {
     /// # Arguments
     ///
     /// * `players` - A vector of Gd<Player> values representing the players to add
+    #[func]
     pub fn add_players(&mut self, players: Vec<Gd<Player>>) {
         let hbox_size = self.base().get_size();
 
@@ -233,8 +238,8 @@ impl SplitScreen {
         }
     }
 
-    #[func]
     /// Reset the split screen
+    #[func]
     pub fn reset(&mut self) {
         self.set_container_sizes(vec![Vector2::new(0.0, 0.0), Vector2::new(0.0, 0.0)]);
         self.set_viewport_sizes(vec![Vector2i::new(0, 0), Vector2i::new(0, 0)]);

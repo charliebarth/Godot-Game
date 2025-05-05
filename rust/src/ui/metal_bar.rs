@@ -1,7 +1,8 @@
-/// Represents a Metal Bar that contains the amount of reserves for a particular 
-/// metal type.
-///
-/// Author : Trinity Pittman
+//! Represents a Metal Bar that contains the amount of reserves for a particular 
+//! metal type.
+//!
+//! Author : Trinity Pittman
+//! Version: Spring 2025
 use godot::classes::{ITextureProgressBar, ResourceLoader, Texture2D, TextureProgressBar};
 use godot::prelude::*;
 

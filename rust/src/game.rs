@@ -1,11 +1,11 @@
-/// game.rs
-///
-/// This file contains the Game class which is responsible for managing the game state such as
-/// players, maps, game modes, and the main menu. It also handles the day/night cycle and the
-/// split screen for multiplayer gameplay.
-///
-/// Author: Charles Barth, Michael Imerman, Trinity Pittman
-/// Version: Spring 2025
+//! game.rs
+//!
+//! This file contains the Game class which is responsible for managing the game state such as
+//! players, maps, game modes, and the main menu. It also handles the day/night cycle and the
+//! split screen for multiplayer gameplay.
+//!
+//! Author: Charles Barth, Michael Imerman, Trinity Pittman
+//! Version: Spring 2025
 use crate::{
     main_menu::MainMenu, map::Map, player::player::Player, settings::Settings,
     split_screen::SplitScreen,
@@ -90,6 +90,10 @@ pub struct Game {
 #[godot_api]
 impl INode2D for Game {
     /// The constructor for the Game class.
+    /// # Arguments
+    /// * `base` - The base node of the Game.
+    /// # Returns 
+    /// * A Game object.
     fn init(base: Base<Node2D>) -> Self {
         const CYCLE_LENGTH: f64 = 10.0;
         let mut day_night_timer = Timer::new_alloc();

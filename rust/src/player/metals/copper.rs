@@ -1,11 +1,11 @@
-/// copper.rs
-///
-/// This file contains the implementation of the Copper player ability.
-/// The Copper ability allows players to mask their particles from other players that are burning
-/// Bronze.
-///
-/// Author: Michael Imerman, Charles Barth
-/// Version: Spring 2025
+//! copper.rs
+//!
+//! This file contains the implementation of the Copper player ability.
+//! The Copper ability allows players to mask their particles from other players that are burning
+//! Bronze.
+//!
+//! Author: Michael Imerman, Charles Barth
+//! Version: Spring 2025
 use godot::obj::{Gd, GdMut};
 
 use crate::player::enums::metal_type::MetalType;
@@ -35,6 +35,17 @@ pub struct Copper {
 }
 
 impl Copper {
+    /// Creates an instance of the Copper 
+    /// # Arguments
+    /// * `capacity` - The maxiumum amount of copper the player can store 
+    /// * `current_reserve` - The current amount of copper the player has
+    /// * `low_burn_rate` - The rate at which the player burns copper when using
+    ///                     the low burn ability
+    /// * `player` - A reference to the player
+    /// * `metal_type` - The type of metal 
+    /// 
+    /// # Returns
+    /// * An instance of Copper class 
     pub fn new(
         capacity: f64,
         current_reserve: f64,
@@ -55,6 +66,7 @@ impl Copper {
     }
 }
 
+/// Metal methods for Copper
 impl Metal for Copper {
     /// The burn function for copper.
     /// It does the same as low_burn because copper has static performance.

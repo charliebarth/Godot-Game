@@ -2,6 +2,7 @@
 //!
 //! Author: Trinity Pittman
 //! Author: Charles Barth
+//! Version: Spring 2025
 
 use crate::metal_object::MetalObject;
 use crate::player::enums::coin_events::CoinState;
@@ -20,6 +21,7 @@ pub struct Coin {
     weight: i32,
     /// The current player whose coin counter the coin is in
     curr_player: Option<Gd<Player>>,
+    /// The metal object associated with this coin 
     metal_object: Option<Gd<MetalObject>>,
 }
 
@@ -60,12 +62,6 @@ impl INode2D for Coin {
         // By default this is set to 0, if we want to record contacts it needs to be greater
         metal_object.set_max_contacts_reported(1);
     }
-
-    // fn process(&mut self, _delta: f64) {
-    //     let metal_object = self.metal_object.as_ref().unwrap();
-    //     let position = self.base().to_local(metal_object.get_position());
-    //     self.base_mut().set_position(position);
-    // }
 }
 
 #[godot_api]

@@ -1,9 +1,9 @@
-/// force.rs
-///
-/// This file defines the `Force` enum and its associated methods.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! force.rs
+//!
+//! This file defines the `Force` enum and its associated methods.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use godot::{builtin::Vector2, obj::Gd};
 
 use crate::player::player::Player;
@@ -85,6 +85,7 @@ pub enum ForceModifier {
     Pewter { run_boost: f64, jump_boost: f64 },
 }
 
+/// Methods for the ForceModifier
 impl ForceModifier {
     /// This function will get the tag of the force modifier.
     ///

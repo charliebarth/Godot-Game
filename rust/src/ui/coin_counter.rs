@@ -1,9 +1,9 @@
-/// Represents a coin counter. Handles logic for adding and removing coins, and
-/// for catching the input event for throwing a coin.
-///
-/// Author: Trinity Pittman
+//! Represents a coin counter. Handles logic for adding and removing coins, and
+//! for catching the input event for throwing a coin.
+//!
+//! Author: Trinity Pittman
 use godot::{
-    classes::{ILabel, InputEvent, Label, Time},
+    classes::{ILabel, Label, Time},
     prelude::*,
 };
 
@@ -11,10 +11,7 @@ use crate::{
     items::coin::Coin,
     metal_object::MetalObject,
     player::{
-        enums::{
-            coin_events::{CoinEvents, CoinState},
-            player_events::PlayerEvents,
-        },
+        enums::{coin_events::CoinState, player_events::PlayerEvents},
         input_manager::InputManager,
         player::Player,
     },
@@ -139,7 +136,7 @@ impl CoinCounter {
     ///
     /// # Arguments
     /// * `text` (String) - The text to set the label to
-    fn set_text(&mut self, text: String) {
+    fn _set_text(&mut self, text: String) {
         let text_g = GString::from(text); // Change the string to a GString for godot
         self.base_mut().set_text(&text_g); // set label text
     }

@@ -1,10 +1,10 @@
-/// tin.rs
-///
-/// This file contains the implementation of the Tin player ability.
-/// The Tin ability allows players to see better in the dark.
-///
-/// Author: Michael Imerman, Charles Barth
-/// Version: Spring 2025
+//! tin.rs
+//!
+//! This file contains the implementation of the Tin player ability.
+//! The Tin ability allows players to see better in the dark.
+//!
+//! Author: Michael Imerman, Charles Barth
+//! Version: Spring 2025
 use godot::obj::{Gd, GdMut};
 
 use crate::player::enums::metal_type::MetalType;
@@ -35,6 +35,17 @@ pub struct Tin {
 }
 
 impl Tin {
+    /// Creates an instance of Tin 
+    /// # Arguments
+    /// * `capacity` - The maxiumum amount of tin the player can store 
+    /// * `current_reserve` - The current amount of tin the player has
+    /// * `low_burn_rate` - The rate at which the player burns tin when using
+    ///                     the low burn ability
+    /// * `player` - A reference to the player
+    /// * `metal_type` - The type of metal 
+    /// 
+    /// # Returns
+    /// * An instance of Tin class 
     pub fn new(
         capacity: f64,
         current_reserve: f64,
@@ -57,6 +68,7 @@ impl Tin {
     }
 }
 
+/// Metal methods for Tin
 impl Metal for Tin {
     /// The burn function for tin.
     /// This ability will allow players to see easier when the night cycle occurs.

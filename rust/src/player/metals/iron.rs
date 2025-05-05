@@ -1,12 +1,12 @@
-/// iron.rs
-///
-/// This file contains the implementation of the Iron player ability.
-/// The Iron ability allows players to pull metal objects toward them.
-/// This ability is useful for damaging other player via pulling metal objects into other player,
-/// but also for moving around the map.
-///
-/// Author: Charles Barth
-/// Version: Spring 2025
+//! iron.rs
+//!
+//! This file contains the implementation of the Iron player ability.
+//! The Iron ability allows players to pull metal objects toward them.
+//! This ability is useful for damaging other player via pulling metal objects into other player,
+//! but also for moving around the map.
+//!
+//! Author: Charles Barth
+//! Version: Spring 2025
 use godot::obj::Gd;
 
 use crate::player::{enums::metal_type::MetalType, player::Player, traits::metal::Metal};
@@ -16,11 +16,24 @@ use super::steel::Steel;
 /// The initial burn direction for the Iron ability.
 const PULL_BURN_DIRECTION: f32 = -1.0;
 
+/// The iron player ability 
 pub struct Iron {
     steel: Steel,
 }
 
+/// Methods for Iron 
 impl Iron {
+    /// Creates an instance of the Iron 
+    /// # Arguments
+    /// * `capacity` - The maxiumum amount of iron the player can store 
+    /// * `current_reserve` - The current amount of iron the player has
+    /// * `low_burn_rate` - The rate at which the player burns iron when using
+    ///                     the low burn ability
+    /// * `player` - A reference to the player
+    /// * `metal_type` - The type of metal 
+    /// 
+    /// # Returns
+    /// * An instance of Iron class 
     pub fn new(
         capacity: f64,
         current_reserve: f64,
@@ -42,6 +55,7 @@ impl Iron {
     }
 }
 
+/// Metal methods for Iron
 impl Metal for Iron {
     /// This function will burn the iron.
     fn burn(&mut self) {

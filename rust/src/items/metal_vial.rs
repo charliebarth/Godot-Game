@@ -1,6 +1,7 @@
 //! Represents a Metal Vial.
 //!
 //! Author: Trinity Pittman
+//! Version: Spring 2025
 
 use crate::player::player::Player;
 use godot::classes::{Area2D, AudioStreamPlayer2D, IArea2D};

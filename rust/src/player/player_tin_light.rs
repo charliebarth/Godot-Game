@@ -1,16 +1,15 @@
-/// player_tin_light.rs
-///
-/// This module defines the PlayerTinLight class, which represents a light source that is
-/// used for Tin lighting.
-///
-/// Author: Michael Imerman
-/// Version: Spring 2025
+//! player_tin_light.rs
+//!
+//! This module defines the PlayerTinLight class, which represents a light source that is
+//! used for Tin lighting.
+//!
+//! Author: Michael Imerman
+//! Version: Spring 2025
 use godot::{
     classes::{IPointLight2D, PointLight2D},
     prelude::*,
 };
 
-use crate::game::Game;
 
 #[derive(GodotClass)]
 #[class(base=PointLight2D)]

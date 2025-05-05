@@ -1,11 +1,12 @@
+//! player_events.rs
+//!
+//! This file defines the `PlayerEvents` enum and its associated methods.
+//!
+//! Author: Charles Barth, Michael Imerman
+//! Version: Spring 2025
+
 use godot::prelude::*;
 
-// player_events.rs
-//
-// This file defines the `PlayerEvents` enum and its associated methods.
-//
-// Author: Charles Barth, Michael Imerman
-// Version: Spring 2025
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 /// This enum is used to determine whether an event registered by the
 /// InputManager should be triggered on press or release.
@@ -16,6 +17,7 @@ pub enum TriggerEvents {
     OnRelease,
 }
 
+/// Methods for TriggerEvents
 impl TriggerEvents {
     /// Returns the corresponding trigger event for a given player event.
     /// This is used to determine whether a player event should be recorded on
@@ -68,6 +70,7 @@ pub enum PlayerEvents {
     Throw,
 }
 
+/// Methods for the PlayerEvents
 impl PlayerEvents {
     /// Converts a string to the corresponding player event.
     ///
