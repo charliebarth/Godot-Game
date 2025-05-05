@@ -1,4 +1,4 @@
-[gd_scene load_steps=161 format=3 uid="uid://gjuprjol1d4y"]
+[gd_scene load_steps=162 format=3 uid="uid://gjuprjol1d4y"]
 
 [ext_resource type="Texture2D" uid="uid://d00n5ml5s4bq" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_Fall.png" id="1_3j2pw"]
 [ext_resource type="Texture2D" uid="uid://b1vhfal7g17a0" path="res://assets/Character/Free-Knight/Colour2/Outline/120x80_PNGSheets/_CrouchWalk.png" id="1_7c6ui"]
@@ -1191,16 +1191,6 @@ process_material = SubResource("ParticleProcessMaterial_8cf5s")
 [node name="IronParticles" type="GPUParticles2D" parent="."]
 visible = false
 self_modulate = Color(1, 10, 10, 1)
-show_behind_parent = true
-light_mask = 524289
-position = Vector2(0, 3)
-amount = 12
-lifetime = 2.0
-process_material = SubResource("ParticleProcessMaterial_8cf5s")
-
-[node name="CopperParticles" type="GPUParticles2D" parent="."]
-visible = false
-self_modulate = Color(5, 10, 5, 1)
 show_behind_parent = true
 light_mask = 524289
 position = Vector2(0, 3)
