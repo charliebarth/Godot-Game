@@ -41,6 +41,7 @@ pub struct InputManager {
     device_id: i32,
     left_right: HashMap<&'static str, f32>,
     remote_player: bool,
+    recent_device: i32,
 }
 
 #[godot_api]
@@ -65,6 +66,7 @@ impl INode2D for InputManager {
             device_id: -1,
             left_right,
             remote_player: false,
+            recent_device: -1,
         }
     }
 
@@ -81,6 +83,8 @@ impl INode2D for InputManager {
             .unwrap()
             .bind()
             .is_remote_player();
+
+        godot_print!("device id: {}", self.device_id);
     }
 
     /// This is a built in method for Godot that is called when an input event is detected.
@@ -117,6 +121,32 @@ impl INode2D for InputManager {
     /// # Arguments
     /// * `delta` - The time since the last frame.
     fn physics_process(&mut self, _delta: f64) {
+        if self.device_id > -1 {
+            self.left_right.insert(
+                "move_left",
+                Input::singleton()
+                    .get_action_strength(format!("move_left{}", self.device_id).as_str()),
+            );
+
+            self.left_right.insert(
+                "move_right",
+                Input::singleton()
+                    .get_action_strength(format!("move_right{}", self.device_id).as_str()),
+            );
+        } else if self.recent_device != -1 {
+            self.left_right.insert(
+                "move_left",
+                Input::singleton()
+                    .get_action_strength(format!("move_left{}", self.recent_device).as_str()),
+            );
+
+            self.left_right.insert(
+                "move_right",
+                Input::singleton()
+                    .get_action_strength(format!("move_right{}", self.recent_device).as_str()),
+            );
+        }
+
         for (event, timer) in self.player_events.iter_mut() {
             if event.timeout() > -1 {
                 *timer += 1;
@@ -134,6 +164,16 @@ impl InputManager {
     #[func]
     pub fn get_device_id(&self) -> i32 {
         self.device_id
+    }
+
+    #[func]
+    pub fn get_recent_device(&self) -> i32 {
+        self.recent_device
+    }
+
+    #[func]
+    pub fn set_recent_device(&mut self, device: i32) {
+        self.recent_device = device;
     }
 
     #[func]
@@ -165,9 +205,9 @@ impl InputManager {
     }
 
     pub fn get_left_right_value(&self) -> f32 {
-        let move_left = StringName::from("move_left0");
-        let move_right = StringName::from("move_right0");
-        Input::singleton().get_axis(&move_left, &move_right)
+        let move_left = self.left_right.get("move_left").unwrap();
+        let move_right = self.left_right.get("move_right").unwrap();
+        -*move_left + *move_right
     }
 
     /// Fetching the events checks if the event is in the hashmap and if it is
