@@ -1068,7 +1068,7 @@ impl Player {
         if let Some(pos) = self.nearby_players.iter().position(|x| *x == player) {
             let mut player = self.nearby_players.remove(pos);
             let visibility_mask = 1 << player.bind().get_player_id() * 2;
-            player.bind_mut().hide_particles(visibility_mask);
+            //player.bind_mut().hide_particles(visibility_mask);
         }
     }
 
@@ -1102,6 +1102,7 @@ impl Player {
     /// # Arguments
     /// * `visibility_layer` - A given player's visibility layer
     pub fn hide_particles(&mut self, visibility_layer: u32) {
+        godot_print!("Hiding particles for player: {}", self.player_id);
         let mask_to_clear = !(visibility_layer); // Bitwise NOT to clear the target bit
         for metal in MetalType::iter() {
             let mut particles = self.get_metal_particles(metal);
