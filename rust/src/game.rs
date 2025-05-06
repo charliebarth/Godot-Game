@@ -85,8 +85,11 @@ pub struct Game {
     round_transition_timer: Gd<Timer>,
     /// Label to display the winner message
     winner_label: Option<Gd<Label>>,
+    /// The index of the local player
     local_player_index: i32,
+    /// Whether the game is accepting input
     accept_input: bool,
+    /// The local player
     local_player: Option<Gd<Player>>,
 }
 
@@ -249,11 +252,25 @@ impl INode2D for Game {
 
 #[godot_api]
 impl Game {
+    /// Sets whether the game is accepting input.
+    ///
+    /// # Arguments
+    /// * `accept_input` - Whether the game is accepting input
     #[func]
     pub fn set_accept_input(&mut self, accept_input: bool) {
         self.accept_input = accept_input;
     }
 
+    /// Handles the input for a player.
+    /// This receives input from clients via RPC and selects the correct input manager
+    /// to pass the input to.
+    ///
+    /// # Arguments
+    /// * `player_id` - The id of the player
+    /// * `button_name` - The name of the button
+    /// * `is_pressed` - Whether the button was pressed
+    /// * `is_released` - Whether the button was released
+    /// * `action_strength` - The strength of the button
     #[func]
     pub fn handle_input(
         &mut self,
@@ -278,6 +295,14 @@ impl Game {
         );
     }
 
+    /// Handles the movement for a player.
+    /// This receives movement from clients via RPC and selects the correct input manager
+    /// to pass the movement to.
+    ///
+    /// # Arguments
+    /// * `player_id` - The id of the player
+    /// * `left` - The left movement value
+    /// * `right` - The right movement value
     #[func]
     pub fn handle_movement(&mut self, player_id: i32, left: f32, right: f32) {
         let mut player = self
@@ -290,11 +315,22 @@ impl Game {
         input_manager.bind_mut().set_left_right(left, right);
     }
 
+    /// Sets the peer number for the local player.
+    ///
+    /// # Arguments
+    /// * `peer_number` - The peer number of the local player
     #[func]
     pub fn set_peer_number(&mut self, peer_number: i32) {
         self.local_player_index = peer_number;
     }
 
+    /// Updates the player data for a player.
+    /// This receives player data from from the server and passes it out to the correct player.
+    /// The player then overwrites their own data with the new authoritative data.
+    ///
+    /// # Arguments
+    /// * `data` - The data to update the player with
+    /// * `player_id` - The id of the player
     #[func]
     pub fn update_player_data(&mut self, data: Dictionary, player_id: i32) {
         let player = self

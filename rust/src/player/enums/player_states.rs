@@ -102,6 +102,10 @@ impl PlayerStates {
         }
     }
 
+    /// Serializes the player state to a string.
+    ///
+    /// # Returns
+    /// * `String` - The serialized state of the player
     pub fn serialize(&self) -> String {
         match self {
             PlayerStates::Attack => "attack".to_string(),
@@ -120,6 +124,13 @@ impl PlayerStates {
         }
     }
 
+    /// Deserializes a player state from a string.
+    ///
+    /// # Arguments
+    /// * `s` - The string to deserialize the player state from
+    ///
+    /// # Returns
+    /// * `Option<PlayerStates>` - The deserialized player state
     pub fn deserialize(s: &str) -> Option<PlayerStates> {
         match s {
             "attack" => Some(PlayerStates::Attack),

@@ -24,12 +24,23 @@ impl TimeoutEvents {
         }
     }
 
+    /// Serializes a timeout event to a string.
+    ///
+    /// # Returns
+    /// * `String` - The serialized timeout event.
     pub fn serialize(&self) -> String {
         match self {
             TimeoutEvents::CoyoteTime => "coyote_time".to_string(),
         }
     }
 
+    /// Deserializes a timeout event from a string.
+    ///
+    /// # Arguments
+    /// * `s` - The string to deserialize the timeout event from
+    ///
+    /// # Returns
+    /// * `Option<TimeoutEvents>` - The deserialized timeout event.
     pub fn deserialize(s: &str) -> Option<TimeoutEvents> {
         match s {
             "coyote_time" => Some(TimeoutEvents::CoyoteTime),

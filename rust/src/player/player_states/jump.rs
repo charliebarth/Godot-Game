@@ -54,6 +54,7 @@ impl Jump {
     ///
     /// # Arguments
     /// * `player` - The player
+    /// * `horizontal_movement` - The horizontal movement value
     fn run(player: &mut Player, horizontal_movement: f32) {
         let run_strength = horizontal_movement;
 

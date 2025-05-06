@@ -42,9 +42,13 @@ pub struct InputManager {
     button_released: HashMap<String, bool>,
     /// The device id that the input manager is listening for.
     device_id: i32,
+    /// A hashmap to keep track of the left and right movement values.
     left_right: HashMap<&'static str, f32>,
+    /// Whether the player is a remote player.
     remote_player: bool,
+    /// The recent device id that the input manager is listening for.
     recent_device: i32,
+    /// The player id of the player that the input manager is listening for.
     player_id: i32,
 }
 
@@ -186,39 +190,78 @@ impl INode2D for InputManager {
 
 #[godot_api]
 impl InputManager {
+    /// Returns whether the player is a remote player.
+    ///
+    /// # Returns
+    /// * `bool` - True if the player is a remote player, false otherwise
     #[func]
     pub fn get_is_remote_player(&self) -> bool {
         self.remote_player
     }
 
+    /// Returns the device id of the player that the input manager is listening for.
+    ///
+    /// # Returns
+    /// * `i32` - The device id of the player that the input manager is listening for
     #[func]
     pub fn get_device_id(&self) -> i32 {
         self.device_id
     }
 
+    /// Returns the recent device id that the input manager is listening for.
+    ///
+    /// # Returns
+    /// * `i32` - The recent device id that the input manager is listening for
     #[func]
     pub fn get_recent_device(&self) -> i32 {
         self.recent_device
     }
 
+    /// Sets the recent device id that the input manager is listening for.
+    ///
+    /// # Arguments
+    /// * `device` - The device id to set
     #[func]
     pub fn set_recent_device(&mut self, device: i32) {
         self.recent_device = device;
     }
 
+    /// Sets the left and right movement values.
+    ///
+    /// # Arguments
+    /// * `left` - The left movement value
+    /// * `right` - The right movement value
+    #[func]
     pub fn set_left_right(&mut self, left: f32, right: f32) {
         self.left_right.insert("move_left", left);
         self.left_right.insert("move_right", right);
     }
 
+    /// Returns the left movement value.
+    ///
+    /// # Returns
+    /// * `f32` - The left movement value
+    #[func]
     fn get_left_value(&self) -> f32 {
         *self.left_right.get("move_left").unwrap()
     }
 
+    /// Returns the right movement value.
+    ///
+    /// # Returns
+    /// * `f32` - The right movement value
+    #[func]
     fn get_right_value(&self) -> f32 {
         *self.left_right.get("move_right").unwrap()
     }
 
+    /// Handles the input event.
+    /// This is what used to be in the input method.
+    ///
+    /// # Arguments
+    /// * `button_name` - The name of the button that was pressed
+    /// * `is_pressed` - Whether the button was pressed
+    /// * `is_released` - Whether the button was released
     #[func]
     pub fn handle_input(
         &mut self,
@@ -242,11 +285,22 @@ impl InputManager {
         }
     }
 
+    /// Returns the name of the button that was pressed.
+    ///
+    /// # Arguments
+    /// * `event` - The input event that was detected
+    ///
+    /// # Returns
     #[func]
     pub fn get_button_name(&mut self, event: Gd<InputEvent>) -> String {
         InputManager::event_to_input_name(event)
     }
 
+    /// Returns the left and right movement values combined.
+    ///
+    /// # Returns
+    /// * `f32` - The left and right movement values combined
+    #[func]
     pub fn get_left_right_value(&self) -> f32 {
         let move_left = self.left_right.get("move_left").unwrap();
         let move_right = self.left_right.get("move_right").unwrap();

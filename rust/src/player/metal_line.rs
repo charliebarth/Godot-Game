@@ -50,6 +50,7 @@ impl INode2D for MetalLine {
         }
     }
 
+    /// This a built in method for Godot that is called when a node is first added to the scene.
     fn ready(&mut self) {
         self.remote_player = self
             .base()

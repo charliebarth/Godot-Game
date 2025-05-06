@@ -140,6 +140,7 @@ pub struct Player {
     settings: Gd<Settings>,
     /// The number of eliminations the player has
     eliminations: i32,
+    /// The previous velocity of the player
     previous_velocity: Vector2,
     /// This is collection of modifier meant to be applied to forces before they're applied
     /// to the player
@@ -367,6 +368,12 @@ impl ICharacterBody2D for Player {
 
 #[godot_api]
 impl Player {
+    /// Sets whether the player is a remote player.
+    /// If the player is a remote player, this will remove unnecessary nodes to
+    /// increase performance.
+    ///
+    /// # Arguments
+    /// * `remote_player` - Whether the player is a remote player
     pub fn set_remote_player(&mut self, remote_player: bool) {
         self.remote_player = remote_player;
 
@@ -385,6 +392,10 @@ impl Player {
         }
     }
 
+    /// Returns whether the player is a remote player.
+    ///
+    /// # Returns
+    /// * `bool` - Whether the player is a remote player
     #[func]
     pub fn is_remote_player(&self) -> bool {
         self.remote_player
@@ -1321,6 +1332,12 @@ impl Player {
         self.get_cached_node(CachedNode::InputManager, "InputManager")
     }
 
+    /// Serializes the player's state
+    /// This serialized data will only include data that has changed since the last serialization.
+    /// It will be sent to all the clients via RPC so they remain in sync.
+    ///
+    /// # Returns
+    /// * `HashMap<String, String>` - The serialized state of the player
     pub fn serialize(&mut self) -> HashMap<String, String> {
         let mut serialization = HashMap::new();
 

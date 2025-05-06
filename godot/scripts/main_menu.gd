@@ -10,8 +10,11 @@ extends Control
 @onready var main_menu = $".." as MainMenu
 # A reference to the play button
 @onready var play: Button = $MarginContainer/HBoxContainer/VBoxContainer/Play
+# A reference to the settings button
 @onready var settings: Button = $MarginContainer/HBoxContainer/VBoxContainer/Settings
+# A reference to the quit button
 @onready var quit: Button = $MarginContainer/HBoxContainer/VBoxContainer/Quit
+# A reference to the tutorial button
 @onready var tutorial: Button = $MarginContainer/HBoxContainer/VBoxContainer/Tutorial
 
 ## When the play button is pressed, swap to the new game menu 
@@ -59,11 +62,13 @@ func _on_ready() -> void:
 func _on_tutorial_pressed() -> void:
 	game.start_tutorial()
 	
+## Swaps to the online mode select menu
 func swap_to_online_mode_select():
 	Settings.set_online_multiplayer(true)
 	play.text = "Host"
 	settings.text = "Join"
 
+## Swaps to the main menu
 func swap_to_main_menu():
 	Settings.set_online_multiplayer(false)
 	game.set_accept_input(true)
@@ -71,10 +76,12 @@ func swap_to_main_menu():
 	play.text = "Play"
 	settings.text = "Settings"
 
+## Swaps to the client main menu
 func swap_to_client_main_menu():
 	play.text = "Ready"
 	settings.text = "Settings"
 
+## Swaps to the server main menu
 func swap_to_server_main_menu():
 	play.text = "Server"
 	settings.text = "Server"

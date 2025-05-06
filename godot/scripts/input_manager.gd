@@ -3,6 +3,9 @@ extends InputManager
 @onready var game = get_node("/root/Game") as GameGD
 @onready var player = get_parent() as Player
 
+## Handles input from the player
+## If the game is local then just handle the input as normal
+## If the game is online then send the input to the server
 func _input(event: InputEvent) -> void:
 	if self.get_device_id() == -1 || event.device == self.get_device_id():
 		var button_name: String = self.get_button_name(event)

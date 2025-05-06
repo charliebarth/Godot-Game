@@ -122,11 +122,17 @@ impl Settings {
         self.game_mode.team_game = team;
     }
 
+    /// Gets whether this is an online multiplayer game or not.
+    /// # Returns
+    /// * true if online multiplayer, false if not.
     #[func]
     pub fn get_online_multiplayer(&self) -> bool {
         self.general.online_multiplayer
     }
 
+    /// Sets whether this is an online multiplayer game or not.
+    /// # Arguments
+    /// * `online` - true if online multiplayer, false if not.
     #[func]
     pub fn set_online_multiplayer(&mut self, online: bool) {
         self.general.online_multiplayer = online;
@@ -228,6 +234,7 @@ impl Default for MapSettings {
 pub struct GeneralSettings {
     /// Whether the debug mode is enabled.
     pub debug_mode: bool,
+    /// Whether the game is an online multiplayer game.
     pub online_multiplayer: bool,
 }
 

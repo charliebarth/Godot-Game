@@ -6,6 +6,7 @@ var num_peers = 0
 var serialized_data: Array[Dictionary] = []
 var ready_peers: Array[int] = []
 
+## Creates a server for online multiplayer
 func host() -> void:
 	peer.create_server(25565)
 	multiplayer.multiplayer_peer = peer
@@ -19,6 +20,7 @@ func host() -> void:
 			num_peers += 1
 	)
 
+## Called when a client is ready to start the game
 @rpc("any_peer", "call_remote")
 func ready(id: int):
 	if id in ready_peers:
@@ -31,6 +33,8 @@ func ready(id: int):
 		self.start()
 		rpc("start")
 
+## Adds data to the serialized data array
+## When all the collected data is present, it will be sent to all the clients via RPC
 func add_serialization(data: Dictionary):
 	serialized_data.append(data)
 	
@@ -38,30 +42,39 @@ func add_serialization(data: Dictionary):
 		rpc("receive_server_data", serialized_data)
 		serialized_data.clear()
 
+## Joins a server for online multiplayer
 func join() -> void:
 	peer.create_client("100.65.218.78", 25565)
 	multiplayer.multiplayer_peer = peer
 
+## Receives the serialized data from the server
+## The data is then deserialized and used to update the player's data
 @rpc("any_peer", "call_remote")
 func receive_server_data(data: Array[Dictionary]):
 	for player_data in data:
 		var player_id = player_data["player_id"] as int
 		self.update_player_data(player_data, player_id)
 
+## Creates a player for the game
+## This is called when a client connects to the server
 @rpc("any_peer", "call_remote")
 func create_player(num_players: int):
 	var num_players_to_create = num_players - self.get_number_of_players()
 	for i in num_players_to_create:
 		self.register_player(-1)
 
+## Sets the peer number for the local player
 @rpc("any_peer", "call_remote")
 func set_peer_number_godot(peer_num: int):
 	self.set_peer_number(peer_num)
 
+## Starts the game
 @rpc("any_peer", "call_remote")
 func start():
 	self.start_game()
 
+## Receives input from the client
+## The input is then handled by the game
 @rpc("any_peer", "call_remote")
 func receive_input(input_data: Dictionary):
 	self.handle_input(int(input_data["player_id"]),
@@ -73,6 +86,8 @@ func receive_input(input_data: Dictionary):
 	if multiplayer.is_server():
 		rpc("receive_input", input_data)
 
+## Receives movement input from the client
+## The movement input is then handled by the game
 @rpc("any_peer", "call_remote")
 func receive_movement(player_id: int, left: float, right: float):
 	self.handle_movement(player_id, left, right)
