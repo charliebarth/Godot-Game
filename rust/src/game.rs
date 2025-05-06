@@ -644,11 +644,24 @@ impl Game {
         let mut even_players = Vec::new();
 
         for (i, player) in self.players.iter().enumerate() {
+            if player.bind().is_remote_player() {
+                self.get_map().add_child(player);
+                continue;
+            } else if player.bind().get_player_id() == self.local_player_index + 1 {
+                continue;
+            }
+
             if (i + 1) % 2 == 0 {
                 even_players.push(player.clone());
             } else {
                 odd_players.push(player.clone());
             }
+        }
+
+        if let Some(local_player) = self.local_player.as_ref() {
+            odd_players.clear();
+            even_players.clear();
+            odd_players.push(local_player.clone());
         }
 
         // Set sizes and add players
@@ -677,17 +690,23 @@ impl Game {
     /// * Vector2 - The size of the screen.
     pub fn determine_screen_size(&mut self) -> Vector2 {
         let screen_size: Vector2;
-        if self.players.len() == 1 {
+        if self.local_player_index > -1 {
             screen_size = Vector2::new(self.screen_size.x, self.screen_size.y);
+
+            self.split_screen_one.set_size(screen_size);
+        } else if self.players.len() == 1 {
+            screen_size = Vector2::new(self.screen_size.x, self.screen_size.y);
+            self.split_screen_one.set_size(screen_size);
         } else if self.players.len() == 2 {
             screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
+            self.split_screen_one.set_size(screen_size);
             self.split_screen_two.set_size(screen_size);
         } else {
             screen_size = Vector2::new(self.screen_size.x, self.screen_size.y / 2.0);
+            self.split_screen_one.set_size(screen_size);
             self.split_screen_two.set_size(screen_size);
         }
 
-        self.split_screen_one.set_size(screen_size);
         self.calculate_zoom(screen_size)
     }
 
