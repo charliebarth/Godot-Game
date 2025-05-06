@@ -345,11 +345,14 @@ impl Player {
 
         parent_viewport.set_canvas_cull_mask(1);
         parent_viewport.add_child(&camera);
-        self.base_mut().queue_free();
-        self.base()
-            .get_node_as::<Game>("/root/Game")
-            .bind_mut()
-            .remove_player(self.player_id, self.eliminations);
+        let mut game = self.base().get_node_as::<Game>("/root/Game").clone();
+        game.call_deferred(
+            "remove_player",
+            &[
+                Variant::from(self.player_id),
+                Variant::from(self.eliminations),
+            ],
+        );
     }
 
     /// Makes a given player visible to the current player

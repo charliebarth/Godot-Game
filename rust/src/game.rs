@@ -92,7 +92,7 @@ impl INode2D for Game {
     /// The constructor for the Game class.
     /// # Arguments
     /// * `base` - The base node of the Game.
-    /// # Returns 
+    /// # Returns
     /// * A Game object.
     fn init(base: Base<Node2D>) -> Self {
         const CYCLE_LENGTH: f64 = 10.0;
@@ -731,6 +731,7 @@ impl Game {
         }
     }
 
+    #[func]
     /// This will disconnect a player from the game.
     /// If there is only one player left in the game they will be declared the
     /// winner.
@@ -751,7 +752,17 @@ impl Game {
         self.eliminations
             .insert(player_id, eliminations + instance_elims);
 
-        self.players.remove(player_id as usize - 1);
+        let mut index: usize = 999;
+        for i in 0..self.players.len() {
+            if self.players[i].bind().get_player_id() == player_id {
+                index = i;
+            }
+        }
+
+        if index != 999 {
+            let mut player = self.players.remove(index);
+            player.queue_free();
+        }
 
         let player_length = self.players.len();
 
