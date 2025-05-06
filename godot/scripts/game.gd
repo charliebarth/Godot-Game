@@ -39,7 +39,7 @@ func add_serialization(data: Dictionary):
 		serialized_data.clear()
 
 func join() -> void:
-	peer.create_client("localhost", 25565)
+	peer.create_client("100.65.218.78", 25565)
 	multiplayer.multiplayer_peer = peer
 
 @rpc("any_peer", "call_remote")
