@@ -12,6 +12,7 @@ extends Control
 @onready var play: Button = $MarginContainer/HBoxContainer/VBoxContainer/Play
 @onready var settings: Button = $MarginContainer/HBoxContainer/VBoxContainer/Settings
 @onready var quit: Button = $MarginContainer/HBoxContainer/VBoxContainer/Quit
+@onready var tutorial: Button = $MarginContainer/HBoxContainer/VBoxContainer/Tutorial
 
 ## When the play button is pressed, swap to the new game menu 
 func _on_play_pressed() -> void:
@@ -66,6 +67,7 @@ func swap_to_online_mode_select():
 func swap_to_main_menu():
 	Settings.set_online_multiplayer(false)
 	game.set_accept_input(true)
+	tutorial.visible = true
 	play.text = "Play"
 	settings.text = "Settings"
 
