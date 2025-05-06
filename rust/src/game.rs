@@ -907,7 +907,9 @@ impl Game {
         }
 
         if player_length <= 1 {
-            if !self.check_win_condition() {
+            if self.settings.bind().get_online_multiplayer() {
+                self.end_game();
+            } else if !self.check_win_condition() {
                 self.start_new_round();
             } else {
                 self.end_game();
