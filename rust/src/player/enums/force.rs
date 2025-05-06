@@ -24,9 +24,7 @@ pub enum Force {
     /// Gravity
     /// This force is always applied to the player but will be countered by the normal force when
     /// the player is on the floor.
-    Gravity {
-        acceleration: f64,
-    },
+    Gravity { acceleration: f64 },
     /// Jump force applied when the player jumps
     Jump {
         /// applied every frame the player holds the jump button
@@ -34,42 +32,29 @@ pub enum Force {
     },
     /// Normal force applied when the player is on the floor
     /// The normal force is a force that is proportional to gravity and counteracts it's effect
-    NormalForce {
-        magnitude: f64,
-    },
+    NormalForce { magnitude: f64 },
     /// Run force applied when the player is on the floor
-    Run {
-        acceleration: f32,
-    },
+    Run { acceleration: f32 },
     /// Horizontal force applied when the player is in the air
-    AirRun {
-        acceleration: f32,
-    },
+    AirRun { acceleration: f32 },
     /// Stop all movement of the player based on the boolean values
-    Stop {
-        horizontal: bool,
-        vertical: bool,
-    },
+    Stop { horizontal: bool, vertical: bool },
     /// A force to push or pull a player relative to a metal object
     SteelPush {
         x_acceleration: f32,
         y_acceleration: f32,
     },
     /// A force to apply to a player when they are on the floor
-    Friction {
-        acceleration: f32,
-    },
+    Friction { acceleration: f32 },
     /// A force to apply to a player when they are in the air
-    AirResistance {
-        acceleration: f32,
-    },
+    AirResistance { acceleration: f32 },
+    /// The steel push returned to the player from a metal object
     PlayerSteelPush {
         acceleration: Vector2,
         player: Gd<Player>,
     },
-    Impact {
-        acceleration: Vector2,
-    },
+    /// A force applied to objects when they are hit by an impact
+    Impact { acceleration: Vector2 },
 }
 
 /// These are modifiers which will be applied to incoming player forces before they are actually
