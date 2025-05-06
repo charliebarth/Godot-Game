@@ -94,3 +94,13 @@ func receive_movement(player_id: int, left: float, right: float):
 		
 	if multiplayer.is_server():
 		rpc("receive_movement", player_id, left, right)
+		
+
+## Receives movement input from the client
+## The movement input is then handled by the game
+@rpc("any_peer", "call_remote")
+func player_death(player_id: int, elims: int):
+	self.remove_player(player_id, elims)
+	
+	if multiplayer.is_server():
+		rpc("player_death", player_id, elims)

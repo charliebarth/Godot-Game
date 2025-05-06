@@ -406,29 +406,44 @@ impl Player {
     /// This will clean up the player and the viewport they are in
     /// as well as notify the game that the player has died
     pub fn die(&mut self) {
-        let mut camera = Camera2D::new_alloc();
-        camera.set_name("OverviewCamera");
-        camera.set_position(Vector2::new(20.0, -225.0));
-        camera.set_zoom(Vector2::new(0.37, 0.37));
+        if !self.remote_player {
+            let mut camera = Camera2D::new_alloc();
+            camera.set_name("OverviewCamera");
+            camera.set_position(Vector2::new(20.0, -225.0));
+            camera.set_zoom(Vector2::new(0.37, 0.37));
 
-        //overview_container.set_canvas_cull_mask(1);
-        let mut parent_viewport = self
-            .base()
-            .get_parent()
-            .unwrap()
-            .try_cast::<SubViewport>()
-            .unwrap();
+            //overview_container.set_canvas_cull_mask(1);
+            let mut parent_viewport = self
+                .base()
+                .get_parent()
+                .unwrap()
+                .try_cast::<SubViewport>()
+                .unwrap();
 
-        parent_viewport.set_canvas_cull_mask(1);
-        parent_viewport.add_child(&camera);
+            parent_viewport.set_canvas_cull_mask(1);
+            parent_viewport.add_child(&camera);
+        }
+
+        let online = self.settings.bind().get_online_multiplayer();
         let mut game = self.base().get_node_as::<Game>("/root/Game").clone();
-        game.call_deferred(
-            "remove_player",
-            &[
-                Variant::from(self.player_id),
-                Variant::from(self.eliminations),
-            ],
-        );
+        if online {
+            game.rpc_id(
+                1,
+                "player_death",
+                &[
+                    Variant::from(self.player_id),
+                    Variant::from(self.eliminations),
+                ],
+            );
+        } else {
+            game.call_deferred(
+                "remove_player",
+                &[
+                    Variant::from(self.player_id),
+                    Variant::from(self.eliminations),
+                ],
+            );
+        }
     }
 
     /// Makes a given player visible to the current player
