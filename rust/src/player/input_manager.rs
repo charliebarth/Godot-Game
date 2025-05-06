@@ -7,9 +7,12 @@
 ///
 /// Author: Charles Barth
 /// Version: Spring 2025
-use godot::classes::{Input, InputMap};
+use godot::classes::{Engine, Input, InputMap};
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::{HashMap, HashSet};
+
+use crate::game::Game;
+use crate::settings::Settings;
 
 use super::enums::metal_type::{BurnType, ButtonState, MetalType};
 use super::enums::player_events::PlayerEvents;
@@ -42,6 +45,7 @@ pub struct InputManager {
     left_right: HashMap<&'static str, f32>,
     remote_player: bool,
     recent_device: i32,
+    player_id: i32,
 }
 
 #[godot_api]
@@ -67,6 +71,7 @@ impl INode2D for InputManager {
             left_right,
             remote_player: false,
             recent_device: -1,
+            player_id: -1,
         }
     }
 
@@ -75,14 +80,15 @@ impl INode2D for InputManager {
     /// An input event will be converted to either a PlayerEvent or a MetalEvent
     /// and then stored for use in the game.
     fn ready(&mut self) {
-        self.remote_player = self
+        let player = self
             .base()
             .get_parent()
             .unwrap()
             .try_cast::<Player>()
-            .unwrap()
-            .bind()
-            .is_remote_player();
+            .unwrap();
+
+        self.remote_player = player.bind().is_remote_player();
+        self.player_id = player.bind().get_player_id();
 
         godot_print!("device id: {}", self.device_id);
     }
@@ -121,32 +127,6 @@ impl INode2D for InputManager {
     /// # Arguments
     /// * `delta` - The time since the last frame.
     fn physics_process(&mut self, _delta: f64) {
-        if self.device_id > -1 {
-            self.left_right.insert(
-                "move_left",
-                Input::singleton()
-                    .get_action_strength(format!("move_left{}", self.device_id).as_str()),
-            );
-
-            self.left_right.insert(
-                "move_right",
-                Input::singleton()
-                    .get_action_strength(format!("move_right{}", self.device_id).as_str()),
-            );
-        } else if self.recent_device != -1 {
-            self.left_right.insert(
-                "move_left",
-                Input::singleton()
-                    .get_action_strength(format!("move_left{}", self.recent_device).as_str()),
-            );
-
-            self.left_right.insert(
-                "move_right",
-                Input::singleton()
-                    .get_action_strength(format!("move_right{}", self.recent_device).as_str()),
-            );
-        }
-
         for (event, timer) in self.player_events.iter_mut() {
             if event.timeout() > -1 {
                 *timer += 1;
@@ -156,6 +136,54 @@ impl INode2D for InputManager {
         // Expire events after a certain number of frames (e.g., 60 frames)
         self.player_events
             .retain(|event, timer| event.timeout() == -1 || *timer < event.timeout());
+
+        let multiplayer = self.base().get_multiplayer();
+        let settings = Engine::singleton()
+            .get_singleton("Settings")
+            .expect("settings singleton missing")
+            .try_cast::<Settings>()
+            .expect("settings is not a Settings");
+        let online = settings.bind().get_online_multiplayer();
+        if !online || multiplayer.is_some() && !multiplayer.unwrap().is_server() {
+            if self.device_id > -1 {
+                self.left_right.insert(
+                    "move_left",
+                    Input::singleton()
+                        .get_action_strength(format!("move_left{}", self.device_id).as_str()),
+                );
+
+                self.left_right.insert(
+                    "move_right",
+                    Input::singleton()
+                        .get_action_strength(format!("move_right{}", self.device_id).as_str()),
+                );
+            } else if self.recent_device != -1 {
+                self.left_right.insert(
+                    "move_left",
+                    Input::singleton()
+                        .get_action_strength(format!("move_left{}", self.recent_device).as_str()),
+                );
+
+                self.left_right.insert(
+                    "move_right",
+                    Input::singleton()
+                        .get_action_strength(format!("move_right{}", self.recent_device).as_str()),
+                );
+            }
+
+            if online {
+                let mut game = self.base().get_node_as::<Game>("/root/Game");
+                game.rpc_id(
+                    1,
+                    "handle_movement",
+                    &[
+                        Variant::from(self.player_id),
+                        Variant::from(self.get_left_value()),
+                        Variant::from(self.get_right_value()),
+                    ],
+                );
+            }
+        }
     }
 }
 
@@ -174,6 +202,19 @@ impl InputManager {
     #[func]
     pub fn set_recent_device(&mut self, device: i32) {
         self.recent_device = device;
+    }
+
+    pub fn set_left_right(&mut self, left: f32, right: f32) {
+        self.left_right.insert("move_left", left);
+        self.left_right.insert("move_right", right);
+    }
+
+    fn get_left_value(&self) -> f32 {
+        *self.left_right.get("move_left").unwrap()
+    }
+
+    fn get_right_value(&self) -> f32 {
+        *self.left_right.get("move_right").unwrap()
     }
 
     #[func]

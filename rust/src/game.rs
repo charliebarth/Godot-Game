@@ -263,7 +263,12 @@ impl Game {
         is_released: bool,
         action_strength: f32,
     ) {
-        let mut player = self.players[(player_id - 1) as usize].clone();
+        let mut player = self
+            .players
+            .iter()
+            .find(|p| p.bind().get_player_id() == player_id)
+            .unwrap()
+            .clone();
         let mut input_manager = player.bind_mut().get_input_manager();
         input_manager.bind_mut().handle_input(
             button_name,
@@ -271,6 +276,18 @@ impl Game {
             is_released,
             action_strength,
         );
+    }
+
+    #[func]
+    pub fn handle_movement(&mut self, player_id: i32, left: f32, right: f32) {
+        let mut player = self
+            .players
+            .iter()
+            .find(|p| p.bind().get_player_id() == player_id)
+            .unwrap()
+            .clone();
+        let mut input_manager = player.bind_mut().get_input_manager();
+        input_manager.bind_mut().set_left_right(left, right);
     }
 
     #[func]

@@ -15,7 +15,7 @@ func _input(event: InputEvent) -> void:
 		
 		if !Settings.get_online_multiplayer():
 			self.handle_input(button_name, event.is_action_pressed(button_name), event.is_action_released(button_name), event.get_action_strength(button_name))
-		else:
+		elif !multiplayer.is_server():
 			var input_data = {
 				"player_id": player.get_player_id(),
 				"button_name": button_name,
