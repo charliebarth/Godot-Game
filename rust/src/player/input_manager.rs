@@ -137,14 +137,13 @@ impl INode2D for InputManager {
         self.player_events
             .retain(|event, timer| event.timeout() == -1 || *timer < event.timeout());
 
-        let multiplayer = self.base().get_multiplayer();
         let settings = Engine::singleton()
             .get_singleton("Settings")
             .expect("settings singleton missing")
             .try_cast::<Settings>()
             .expect("settings is not a Settings");
         let online = settings.bind().get_online_multiplayer();
-        if !online || multiplayer.is_some() && !multiplayer.unwrap().is_server() {
+        if !self.remote_player {
             if self.device_id > -1 {
                 self.left_right.insert(
                     "move_left",
@@ -175,7 +174,7 @@ impl INode2D for InputManager {
                 let mut game = self.base().get_node_as::<Game>("/root/Game");
                 game.rpc_id(
                     1,
-                    "handle_movement",
+                    "receive_movement",
                     &[
                         Variant::from(self.player_id),
                         Variant::from(self.get_left_value()),
