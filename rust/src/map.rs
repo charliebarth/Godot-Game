@@ -16,7 +16,7 @@ use godot::{
 #[class(base=Node2D)]
 /// Map class responsible for managing spawn points
 pub struct Map {
-    /// The base node of the Map 
+    /// The base node of the Map
     base: Base<Node2D>,
     /// A HashMap of spawn point names to positions
     spawn_points: HashMap<String, Vector2>,
@@ -57,7 +57,6 @@ impl Map {
     /// * `name` - The name of the spawn point.
     #[func]
     pub fn get_spawn_point(&self, name: String) -> Vector2 {
-        godot_print!("Spawn point: {:?}", self.spawn_points);
         self.spawn_points
             .get(&name)
             .expect("Spawn point not found")

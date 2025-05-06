@@ -71,15 +71,11 @@ func receive_input(input_data: Dictionary):
 		float(input_data["action_strength"]))
 		
 	if multiplayer.is_server():
-		for pid in multiplayer.get_peers():
-			if pid != multiplayer.get_unique_id():
-				rpc_id(pid, "receive_input", input_data)
+		rpc("receive_input", input_data)
 
 @rpc("any_peer", "call_remote")
 func receive_movement(player_id: int, left: float, right: float):
 	self.handle_movement(player_id, left, right)
 		
 	if multiplayer.is_server():
-		for pid in multiplayer.get_peers():
-			if pid != multiplayer.get_unique_id():
-				rpc_id(pid, "receive_movement", player_id, left, right)
+		rpc("receive_movement", player_id, left, right)

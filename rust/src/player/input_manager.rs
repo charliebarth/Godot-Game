@@ -89,8 +89,6 @@ impl INode2D for InputManager {
 
         self.remote_player = player.bind().is_remote_player();
         self.player_id = player.bind().get_player_id();
-
-        godot_print!("device id: {}", self.device_id);
     }
 
     /// This is a built in method for Godot that is called when an input event is detected.
@@ -188,6 +186,11 @@ impl INode2D for InputManager {
 
 #[godot_api]
 impl InputManager {
+    #[func]
+    pub fn get_is_remote_player(&self) -> bool {
+        self.remote_player
+    }
+
     #[func]
     pub fn get_device_id(&self) -> i32 {
         self.device_id

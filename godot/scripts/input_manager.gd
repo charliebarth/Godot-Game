@@ -9,13 +9,13 @@ func _input(event: InputEvent) -> void:
 		if button_name == "":
 			return
 		
-		if button_name.contains("move_"):
+		if !self.get_is_remote_player():
 			self.set_recent_device(event.device)
 			
 		
 		if !Settings.get_online_multiplayer():
 			self.handle_input(button_name, event.is_action_pressed(button_name), event.is_action_released(button_name), event.get_action_strength(button_name))
-		elif !multiplayer.is_server():
+		elif !self.get_is_remote_player():
 			var input_data = {
 				"player_id": player.get_player_id(),
 				"button_name": button_name,
