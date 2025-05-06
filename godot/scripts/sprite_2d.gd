@@ -7,11 +7,13 @@ var lerp_speed = 15.0
 ## This function moves the line selector based on the joystick input
 func _process(delta):
 	var radius = 40
+	var input_manager: InputManager = player.get_input_manager()
+	var joy_position: Vector2 = input_manager.get_line_selector_position()
 
 
 	# Get the joystick direction
-	var joystick_x = Input.get_joy_axis(player.get_device_id(), JOY_AXIS_RIGHT_X)
-	var joystick_y = Input.get_joy_axis(player.get_device_id(), JOY_AXIS_RIGHT_Y)
+	var joystick_x = joy_position.x
+	var joystick_y = joy_position.y
 	
 	# Calculate the direction vector and invert y-axis
 	var direction = Vector2(joystick_x, joystick_y) # Negate y for intuitive direction

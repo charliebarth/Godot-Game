@@ -8,6 +8,7 @@
 /// Author: Charles Barth
 /// Version: Spring 2025
 use godot::classes::{Engine, Input, InputMap};
+use godot::global::JoyAxis;
 use godot::{classes::InputEvent, prelude::*};
 use std::collections::{HashMap, HashSet};
 
@@ -50,6 +51,10 @@ pub struct InputManager {
     recent_device: i32,
     /// The player id of the player that the input manager is listening for.
     player_id: i32,
+    /// Line selector position.
+    line_selector_position: Vector2,
+    /// The strength of both triggers.
+    triggers: HashMap<JoyAxis, f32>,
 }
 
 #[godot_api]
@@ -76,6 +81,8 @@ impl INode2D for InputManager {
             remote_player: false,
             recent_device: -1,
             player_id: -1,
+            line_selector_position: Vector2::ZERO,
+            triggers: HashMap::new(),
         }
     }
 
@@ -146,6 +153,7 @@ impl INode2D for InputManager {
             .expect("settings is not a Settings");
         let online = settings.bind().get_online_multiplayer();
         if !self.remote_player {
+            let mut joy_position = Vector2::ZERO;
             if self.device_id > -1 {
                 self.left_right.insert(
                     "move_left",
@@ -157,6 +165,20 @@ impl INode2D for InputManager {
                     "move_right",
                     Input::singleton()
                         .get_action_strength(format!("move_right{}", self.device_id).as_str()),
+                );
+
+                joy_position = Vector2::new(
+                    Input::singleton().get_joy_axis(self.device_id, JoyAxis::RIGHT_X),
+                    Input::singleton().get_joy_axis(self.device_id, JoyAxis::RIGHT_Y),
+                );
+
+                self.triggers.insert(
+                    JoyAxis::TRIGGER_LEFT,
+                    Input::singleton().get_joy_axis(self.device_id, JoyAxis::TRIGGER_LEFT),
+                );
+                self.triggers.insert(
+                    JoyAxis::TRIGGER_RIGHT,
+                    Input::singleton().get_joy_axis(self.device_id, JoyAxis::TRIGGER_RIGHT),
                 );
             } else if self.recent_device != -1 {
                 self.left_right.insert(
@@ -170,7 +192,23 @@ impl INode2D for InputManager {
                     Input::singleton()
                         .get_action_strength(format!("move_right{}", self.recent_device).as_str()),
                 );
+
+                joy_position = Vector2::new(
+                    Input::singleton().get_joy_axis(self.recent_device, JoyAxis::RIGHT_X),
+                    Input::singleton().get_joy_axis(self.recent_device, JoyAxis::RIGHT_Y),
+                );
+
+                self.triggers.insert(
+                    JoyAxis::TRIGGER_LEFT,
+                    Input::singleton().get_joy_axis(self.recent_device, JoyAxis::TRIGGER_LEFT),
+                );
+                self.triggers.insert(
+                    JoyAxis::TRIGGER_RIGHT,
+                    Input::singleton().get_joy_axis(self.recent_device, JoyAxis::TRIGGER_RIGHT),
+                );
             }
+
+            self.line_selector_position = joy_position;
 
             if online {
                 let mut game = self.base().get_node_as::<Game>("/root/Game");
@@ -181,6 +219,9 @@ impl INode2D for InputManager {
                         Variant::from(self.player_id),
                         Variant::from(self.get_left_value()),
                         Variant::from(self.get_right_value()),
+                        Variant::from(self.get_line_selector_position()),
+                        Variant::from(self.get_trigger_strength(JoyAxis::TRIGGER_LEFT)),
+                        Variant::from(self.get_trigger_strength(JoyAxis::TRIGGER_RIGHT)),
                     ],
                 );
             }
@@ -274,7 +315,18 @@ impl InputManager {
             self.button_released.insert(button_name.clone(), true);
         }
 
-        if button_name.contains("move_") {
+        if button_name.contains("steel") {
+            self.set_trigger_strength(JoyAxis::TRIGGER_RIGHT, action_strength);
+        } else if button_name.contains("iron") {
+            self.set_trigger_strength(JoyAxis::TRIGGER_LEFT, action_strength);
+        }
+
+        if button_name.contains("right_stick") {
+            self.line_selector_position = Vector2::new(
+                Input::singleton().get_joy_axis(self.device_id, JoyAxis::RIGHT_X),
+                Input::singleton().get_joy_axis(self.device_id, JoyAxis::RIGHT_Y),
+            );
+        } else if button_name.contains("move_") {
             self.left_right.insert("move_left", action_strength);
         } else if button_name.contains("move_right") {
             self.left_right.insert("move_right", action_strength);
@@ -485,5 +537,49 @@ impl InputManager {
     /// * `device_id` - The device id to set
     pub fn set_device_id(&mut self, device_id: i32) {
         self.device_id = device_id;
+    }
+
+    /// Returns the line selector position.
+    ///
+    /// # Returns
+    /// * `Vector2` - The line selector position
+    #[func]
+    pub fn get_line_selector_position(&self) -> Vector2 {
+        self.line_selector_position
+    }
+
+    /// Sets the line selector position.
+    ///
+    /// # Arguments
+    /// * `position` - The position to set the line selector to
+    #[func]
+    pub fn set_line_selector_position(&mut self, position: Vector2) {
+        self.line_selector_position = position;
+    }
+
+    /// Returns the strength of the trigger
+    ///
+    /// # Arguments
+    /// * `trigger` - The trigger to get the strength of
+    ///
+    /// # Returns
+    /// * `f32` - The strength of the trigger
+    #[func]
+    pub fn get_trigger_strength(&self, trigger: JoyAxis) -> f32 {
+        if trigger == JoyAxis::TRIGGER_LEFT || trigger == JoyAxis::TRIGGER_RIGHT {
+            *self.triggers.get(&trigger).unwrap()
+        } else {
+            0.0
+        }
+    }
+
+    /// Sets the strength of a trigger
+    ///
+    /// # Arguments
+    /// * `trigger` - The trigger to set the strength of
+    /// * `strength` - The strength to set the trigger to
+    #[func]
+    pub fn set_trigger_strength(&mut self, trigger: JoyAxis, strength: f32) {
+        self.triggers.insert(trigger, strength);
     }
 }

@@ -66,6 +66,13 @@ impl Metal for Steel {
     fn burn(&mut self) {
         let mut player_clone = self.player.clone();
         let mut player = player_clone.bind_mut();
+        let input_manager = player.get_input_manager();
+        let trigger_left = input_manager
+            .bind()
+            .get_trigger_strength(JoyAxis::TRIGGER_LEFT);
+        let trigger_right = input_manager
+            .bind()
+            .get_trigger_strength(JoyAxis::TRIGGER_RIGHT);
 
         if self.object.is_none() {
             return;
@@ -79,13 +86,12 @@ impl Metal for Steel {
 
         // TODO: Make constant
         let max_acceleration: f32 = 200.0;
-        let trigger = if self.metal_type == MetalType::Steel {
-            JoyAxis::TRIGGER_RIGHT
-        } else {
-            JoyAxis::TRIGGER_LEFT
-        };
 
-        let strength = Input::singleton().get_joy_axis(player.get_device_id(), trigger);
+        let strength = if self.metal_type == MetalType::Steel {
+            trigger_right
+        } else {
+            trigger_left
+        };
 
         // If the player is not on the floor, try to update their up direction based on nearby surfaces.
         if !player.base().is_on_floor() {
@@ -220,17 +226,17 @@ impl Metal for Steel {
 }
 
 impl Steel {
-    /// Creates an instance of Steel 
+    /// Creates an instance of Steel
     /// # Arguments
-    /// * `capacity` - The maxiumum amount of steel the player can store 
+    /// * `capacity` - The maxiumum amount of steel the player can store
     /// * `current_reserve` - The current amount of steel the player has
     /// * `low_burn_rate` - The rate at which the player burns steel when using
     ///                     the low burn ability
     /// * `player` - A reference to the player
-    /// * `metal_type` - The type of metal 
-    /// 
+    /// * `metal_type` - The type of metal
+    ///
     /// # Returns
-    /// * An instance of Steel class 
+    /// * An instance of Steel class
     pub fn new(
         capacity: f64,
         current_reserve: f64,
@@ -352,11 +358,8 @@ impl Steel {
         let mut bound_metal_line = metal_line.bind_mut();
 
         // Get the joystick position.
-        let joy_position_x =
-            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_X);
-        let joy_position_y =
-            Input::singleton().get_joy_axis(player.get_device_id(), JoyAxis::RIGHT_Y);
-        let joy_position = Vector2::new(joy_position_x, joy_position_y);
+        let input_manager = player.get_input_manager();
+        let joy_position = input_manager.bind().get_line_selector_position();
 
         // A metal object must be within ±25 degrees to be selected.
         let mut closest_obj_angle_diff: f32 = 40.0_f32.to_radians();

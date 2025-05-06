@@ -89,11 +89,11 @@ func receive_input(input_data: Dictionary):
 ## Receives movement input from the client
 ## The movement input is then handled by the game
 @rpc("any_peer", "call_remote")
-func receive_movement(player_id: int, left: float, right: float):
-	self.handle_movement(player_id, left, right)
+func receive_movement(player_id: int, left: float, right: float, line_selector_position: Vector2, trigger_left: float, trigger_right: float):
+	self.handle_movement(player_id, left, right, line_selector_position, trigger_left, trigger_right)
 		
 	if multiplayer.is_server():
-		rpc("receive_movement", player_id, left, right)
+		rpc("receive_movement", player_id, left, right, line_selector_position, trigger_left, trigger_right)
 		
 
 ## Removes a player when they die and notifies all clients of the player death

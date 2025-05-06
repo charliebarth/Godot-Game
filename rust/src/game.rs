@@ -12,7 +12,7 @@ use crate::{
 };
 
 use godot::classes::{Input, Label};
-use godot::global::HorizontalAlignment;
+use godot::global::{HorizontalAlignment, JoyAxis};
 use godot::{
     classes::{
         AnimatedSprite2D, DisplayServer, Engine, InputEvent, InputMap, ResourceLoader,
@@ -303,8 +303,17 @@ impl Game {
     /// * `player_id` - The id of the player
     /// * `left` - The left movement value
     /// * `right` - The right movement value
+    /// * `line_selector_position` - The line selector position
     #[func]
-    pub fn handle_movement(&mut self, player_id: i32, left: f32, right: f32) {
+    pub fn handle_movement(
+        &mut self,
+        player_id: i32,
+        left: f32,
+        right: f32,
+        line_selector_position: Vector2,
+        trigger_left: f32,
+        trigger_right: f32,
+    ) {
         let mut player = self
             .players
             .iter()
@@ -313,6 +322,15 @@ impl Game {
             .clone();
         let mut input_manager = player.bind_mut().get_input_manager();
         input_manager.bind_mut().set_left_right(left, right);
+        input_manager
+            .bind_mut()
+            .set_line_selector_position(line_selector_position);
+        input_manager
+            .bind_mut()
+            .set_trigger_strength(JoyAxis::TRIGGER_LEFT, trigger_left);
+        input_manager
+            .bind_mut()
+            .set_trigger_strength(JoyAxis::TRIGGER_RIGHT, trigger_right);
     }
 
     /// Sets the peer number for the local player.
