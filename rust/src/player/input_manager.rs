@@ -566,7 +566,7 @@ impl InputManager {
     /// * `f32` - The strength of the trigger
     #[func]
     pub fn get_trigger_strength(&self, trigger: JoyAxis) -> f32 {
-        if trigger == JoyAxis::TRIGGER_LEFT || trigger == JoyAxis::TRIGGER_RIGHT {
+        if self.triggers.contains_key(&trigger) {
             *self.triggers.get(&trigger).unwrap()
         } else {
             0.0
