@@ -82,4 +82,4 @@ func receive_movement(player_id: int, left: float, right: float):
 	if multiplayer.is_server():
 		for pid in multiplayer.get_peers():
 			if pid != multiplayer.get_unique_id():
-				rpc_id(pid, "receive_movement", left, right)
+				rpc_id(pid, "receive_movement", player_id, left, right)
