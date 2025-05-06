@@ -1,3 +1,7 @@
+## Handles player logic 
+##
+## @author Charles Barth
+## @version Spring 2025
 extends Player
 @onready var nearby_players = []
 

@@ -1,11 +1,20 @@
+## Handles an audio slider in the settings menu tab
+##
+## @author Charles Barth
+## @version Spring 2025
 extends Control
 
+## The name of the audio
 @onready var audio_name: Label = $HBoxContainer/AudioName
+## The audio number corresponding to this audio
 @onready var audio_num: Label = $HBoxContainer/AudioNum
+## The hslider corresponding to this audio
 @onready var h_slider: HSlider = $HBoxContainer/HSlider
 
+## The bus name 
 @export_enum("Master", "Music", "SFX", "PlayerSFX", "WorldSFX") var bus_name: String
 
+## The index of the bus
 var bus_index: int = 0
 
 ## This function is called when the node is added to the scene for the first time.

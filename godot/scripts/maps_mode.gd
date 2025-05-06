@@ -1,6 +1,7 @@
 ## Handles button actions for the new game menu. 
 ##
-## @author Trinity Pittman
+## @author Trinity Pittman 
+## @version Spring 2025
 extends Control
 
 ## The buttons corresponding to each map 

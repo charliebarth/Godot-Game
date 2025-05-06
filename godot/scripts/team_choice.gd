@@ -1,9 +1,15 @@
+## Handles the logic for the team choice menu
+## 
+## @author Trinity Pittman 
+## @version Spring 2025
 extends Control
 
+## The main menu node
 @onready var main_menu = $".." as MainMenu
+## The game 
 @onready var game = get_node("/root/Game") as Game
+## The start game button
 @onready var start_game: Button = $"MarginContainer/VBoxContainer/HBoxContainer/Start Game"
-@onready var player_1: AnimatedSprite2D = $"../Player1"
 
 ## When the team choice menu is visible in the tree, this function recieves 
 ## input and if the input matches the actions "blue" or "red" we call the main 

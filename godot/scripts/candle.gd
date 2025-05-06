@@ -1,3 +1,7 @@
+## Handles logic for candle lighting
+## 
+## @author Charles Barth
+## @version Spring 2025
 extends AnimatedSprite2D
 
 @onready var point_light: PointLight2D = $"../PointLight2D"

@@ -1,3 +1,7 @@
+## Handles logic for the tutorial
+## 
+## @author Charles Barth
+## @version Spring 2025
 extends Map
 
 @onready var game = get_node("/root/Game") as Game

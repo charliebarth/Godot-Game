@@ -1,11 +1,10 @@
+## Handles the logic for the Settings tab menu
+## @author Charles Barth
+## @version Spring 2025
 extends Control
 
+## The associated tab container
 @onready var tab_container: TabContainer = $TabContainer
-
-@onready var sound: TabBar = $TabContainer/Sound
-@onready var graphics: TabBar = $TabContainer/Graphics
-@onready var controls: Controls = $TabContainer/Controls
-@onready var ui_customization: TabBar = $"TabContainer/UI Customization"
 
 
 ## When the visibility of the settings tab menu is changed, grab the focus

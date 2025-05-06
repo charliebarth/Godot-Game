@@ -1,3 +1,7 @@
+## Handles the logic for the Settings menu 
+##
+## @author Charles Barth
+## @version Spring 2025
 extends Control
 @onready var main_menu = $".." as MainMenu
 

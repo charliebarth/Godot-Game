@@ -1,3 +1,7 @@
+## Contains a signal for hitbox entering
+##
+## @author Michael Imerman
+## @version Spring 2025
 extends Area2D
 
 # Reference to the parent player

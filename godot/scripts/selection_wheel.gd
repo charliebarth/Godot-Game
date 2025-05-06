@@ -1,14 +1,26 @@
+## Draws and handles input for the selection wheel
+##
+## @author Trinity Pittman 
+## @version Spring 2025
 extends Control
 
+## The Background color of the circle
 @export var bkg_color: Color
+## The line color that creates the seperators
 @export var line_color: Color
+## The highlight color
 @export var highlight_color: Color
 
+## How big the wheel is 
 @export var outer_radius: int = 256
+## How big the circle in the middle is
 @export var inner_radius: int = 64
+## How thick the seperator lines are 
 @export var line_width: int = 4
 
+## Stores the choices in the circle
 @export var options: Array[String]
+## Stores the colors of the sections 
 @export var section_colors: Array[Color]
 @onready var player = self.get_parent().get_parent().get_parent() as Player
 
@@ -17,14 +29,18 @@ var selected_index: int = 0
 ## This is a built in function to Godot.
 ## It draws the selection wheel and is trigger whenever the node has redraw called.
 func _draw():
+	# Draw the background circle
 	draw_circle(Vector2.ZERO, outer_radius, bkg_color)
-	draw_arc(Vector2.ZERO, inner_radius, 0, TAU, 128, line_color, line_width, true)
+	# Draw the parameter of the inner circle 
+	draw_arc(Vector2.ZERO, inner_radius, 0, TAU, 128, line_color, line_width, true) # TAU is 2pi
 	
 	if len(options) >= 3:
 		for i in range(len(options)):
 			# Draw the seperator lines
-			var rads = TAU * i / (len(options))
-			var point = Vector2.from_angle(rads)
+			var rads = TAU * i / (len(options)) # Coordinate points around the edge of the circle
+			var point = Vector2.from_angle(rads) # Converts the radian value to coordinate value
+			# Multiplying inner and outer here makes it so the line only goes from the inner to the
+			# outer circle 
 			draw_line(
 				point * inner_radius,
 				point * outer_radius,
@@ -33,35 +49,41 @@ func _draw():
 				true
 			)
 	
-			# Draw the text 
-			var start_rads = (TAU * (i - 1)) / (len(options))
-			var end_rads = (TAU * (i)) / (len(options))
-			var mid_rads = (start_rads + end_rads) / 2.0 * -1
-			var radius_mid = (inner_radius + outer_radius) / 2.0
+			# Draw the text and highlight color
+			var start_rads = (TAU * (i - 1)) / (len(options)) # Boundary line of the cell
+			var end_rads = (TAU * (i)) / (len(options)) # Boundary line of the cell
+			var mid_rads = (start_rads + end_rads) / 2.0 * -1 # Midpoint of the cell angle
+			var radius_mid = (inner_radius + outer_radius) / 2.0 # Midpoint radius 
 			
 			var draw_pos = radius_mid * Vector2.from_angle(mid_rads)
-			
+			# The font to write the text in
 			var font: Font = preload("res://assets/pixelated-times-new-roman.ttf")
-			
+			# The size of the font
 			var size = font.get_string_size(options[i])
 			
 			# Draw highlight color 
 			if selected_index == i:
-				var points_per_arc = 32
-				var points_inner = PackedVector2Array()
-				var points_outer = PackedVector2Array()
+				# How many points we want to collect
+				var points_per_arc = 32 
+				# Where we collect the inner points to draw from
+				var points_inner = PackedVector2Array() 
+				# Where we collect the outer points to draw from
+				var points_outer = PackedVector2Array() 
 				
+				# Go through and collect all of the points
 				for j in range(points_per_arc + 1):
 					var angle = start_rads + j * (end_rads - start_rads) / points_per_arc
 					points_inner.append(inner_radius * Vector2.from_angle(TAU - angle))
 					points_outer.append(outer_radius * Vector2.from_angle(TAU - angle))
-					
+				
+				# Draw the higlight color from inner to outer radius 
 				points_outer.reverse()
 				draw_polygon(
 					points_inner + points_outer,
 					PackedColorArray([section_colors[i]])
 				)
 
+			# Draw the string in the cell
 			draw_string(
 				font,
 				draw_pos - (size * 1.7),

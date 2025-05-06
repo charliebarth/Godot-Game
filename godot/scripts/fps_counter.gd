@@ -1,3 +1,6 @@
+## Displays FPS on screen
+## @author Charles Barth
+## @version Spring 2025
 extends Label
 
 ## This function is called every frame and is used to display the frames per second

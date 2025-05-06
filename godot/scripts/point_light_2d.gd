@@ -1,3 +1,7 @@
+## Signal for player id changed
+## 
+## @author Charles Barth
+## @version Spring 2025
 extends PointLight2D
 
 ## This function is called when the player id is changed

@@ -1,8 +1,16 @@
+## Contains signal functions for the player animations
+## 
+## @author Charles Barth
+## @version Spring 2025
 extends AnimatedSprite2D
 
+## The footstep sound
 @onready var footstep = $"../Footstep" as AudioStreamPlayer2D
+## The landing sound
 @onready var landing = $"../Landing" as AudioStreamPlayer2D
+## The jump sound
 @onready var jump = $"../Jump" as AudioStreamPlayer2D
+## The previously played animation
 @export var previous_animation = ""
 
 ## This function is called when the animation_finished signal is emitted.

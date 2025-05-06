@@ -9073,7 +9073,7 @@ theme_override_fonts/font = ExtResource("9_nlqja")
 theme_override_font_sizes/font_size = 25
 text = "Hold Y and press the left bumper to low burn steel
 Hold Y and press right bumper to low burn iron
-Then press left or right trigger to push on pull on a coin"
+Then press left or right trigger to push or pull on a coin"
 horizontal_alignment = 1
 
 [node name="Label5" type="Label" parent="."]

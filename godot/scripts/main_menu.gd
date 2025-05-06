@@ -1,7 +1,9 @@
 ## Handles logic for the main menu buttons and screen swapping
 ## 
 ## @author Charles Barth
-## @author Trinity Pittman
+##
+## @author Trinity Pittman 
+## @version Spring 2025
 extends Control
 
 # A reference to the game

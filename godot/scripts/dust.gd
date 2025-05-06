@@ -1,3 +1,7 @@
+## Handles logic for showing the dust animation
+##
+## @author Charles Barth
+## @version Spring 2025
 extends AnimatedSprite2D
 
 ## When the visibility of the dust is changed, play the dust animation

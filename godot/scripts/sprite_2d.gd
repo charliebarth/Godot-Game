@@ -1,3 +1,7 @@
+## The logic for the lime selector 
+##
+## @author Charles Barth
+## @version Spring 2025
 extends Sprite2D
 
 # Variable for setting the lerp speed
@@ -7,7 +11,6 @@ var lerp_speed = 15.0
 ## This function moves the line selector based on the joystick input
 func _process(delta):
 	var radius = 40
-
 
 	# Get the joystick direction
 	var joystick_x = Input.get_joy_axis(player.get_device_id(), JOY_AXIS_RIGHT_X)
