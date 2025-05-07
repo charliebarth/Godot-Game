@@ -1089,11 +1089,14 @@ impl Player {
     /// * `visibility_layer` - The visibility layer to set for the particles
     pub fn reveal_particles(&mut self, visibility_layer: u32) {
         let current_layer = 1 << (self.player_id * 2);
-        if !self.is_burning_metal(MetalType::Copper) {
-            for metal in MetalType::iter() {
-                let mut particles = self.get_metal_particles(metal);
-                if particles.is_visible_in_tree() {
+
+        for metal in MetalType::iter() {
+            let mut particles = self.get_metal_particles(metal);
+            if particles.is_visible_in_tree() {
+                if !self.is_burning_metal(MetalType::Copper) {
                     particles.set_visibility_layer(current_layer | visibility_layer);
+                } else {
+                    particles.set_visibility_layer(current_layer & !visibility_layer);
                 }
             }
         }

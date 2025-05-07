@@ -28,7 +28,7 @@ static mut GAME_MODE: Option<String> = None;
 // could/should be changed to be more dynamic in the future
 const REQUIRED_ELIMINATIONS: i32 = 5;
 // The number of rounds required to win the game
-const REQUIRED_ROUNDS: i32 = 3;
+const REQUIRED_ROUNDS: i32 = 1;
 
 /// The Game class is responsible for managing the game state such as players,
 /// maps, and the main menu.
@@ -98,7 +98,7 @@ impl INode2D for Game {
         const CYCLE_LENGTH: f64 = 10.0;
         let mut day_night_timer = Timer::new_alloc();
         day_night_timer.set_wait_time(CYCLE_LENGTH);
-        day_night_timer.set_autostart(true);
+        //day_night_timer.set_autostart(true);
 
         /// The time it takes to transition between rounds
         const ROUND_TRANSITION_TIME: f64 = 3.0;
@@ -608,7 +608,7 @@ impl Game {
         }
 
         self.started = true;
-        self.day_night_cycle();
+        //self.day_night_cycle();
     }
 
     /// This will determine the screen size based on the number of players.
@@ -651,6 +651,7 @@ impl Game {
 
         // Show winner screen
         let mut main_menu = self.get_main_menu();
+        main_menu.bind_mut().swap_to_main_menu();
         self.base_mut().add_child(&main_menu);
 
         // Show who won!

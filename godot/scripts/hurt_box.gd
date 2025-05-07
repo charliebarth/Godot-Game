@@ -16,7 +16,7 @@ func _on_area_entered(area: Area2D):
 		# Make sure we don't damage ourselves
 		if attacker != parent_player:
 			# Deal damage
-			var damage = -10.0
+			var damage = -45.0
 			if parent_player.is_burning_metal_from_string("pewter"):
 				damage = damage * 1.35
 			
